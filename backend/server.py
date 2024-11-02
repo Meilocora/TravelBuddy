@@ -1,13 +1,13 @@
 import sys
 import os
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from db import db
 sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
 
 from app.dummy_data import add_dummy_data
-from app.models import Journey, MajorStage, MinorStage, Costs, Transportation, Accommodation, Activity, PlaceToVisit
+from app.models import *
 
 
 
@@ -19,22 +19,33 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 db.init_app(app)
 
-# Check if the database file exists
-db_path = os.path.join(os.path.dirname(__file__), 'instance/travel_buddy.db')
-if not os.path.exists(db_path):
-    with app.app_context():
-        db.create_all()     # Create the database
-        add_dummy_data()    # insert some dummy data
+
+with app.app_context():
+    db.create_all()     # Create the database
+    # add_dummy_data()    # insert some dummy data
 
 
 @app.route('/get-journeys', methods=['GET'])
 def get_journeys():
-    result = db.session.execute(db.select(Journey))
-    journeys = result.scalars().all()
-    
-    print(journeys)
-    
-    return journeys
+    try:
+        # Get all the journeys from the database
+        result = db.session.execute(db.select(Journey))
+        
+        journeys = result.scalars().all()
+        
+        journeys_list =  [{
+        'id': journey.id,
+        'name': journey.name,
+        'description': journey.description,
+        'scheduled_start_time': journey.scheduled_start_time,
+        'scheduled_end_time': journey.scheduled_end_time,
+        'countries': journey.countries,
+        'done': journey.done,
+        } for journey in journeys]
+        
+        return jsonify(journeys_list, 200)
+    except:
+        return jsonify({'message': 'Internal Server Error'}, 500)
     
 
 

@@ -1,4 +1,4 @@
-from models import *
+# from models import *
 from db import db
 
 def add_dummy_data():
