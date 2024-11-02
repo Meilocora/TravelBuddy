@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, ForeignKey, Float
 
 from db import db
@@ -17,8 +17,8 @@ class Journey(db.Model):
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
     
     # Define relationships to children
-    major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', backref='journey', cascade='all, delete-orphan')    
-    costs: Mapped['Costs'] = relationship('Costs', backref='journey', uselist=False, cascade='all, delete-orphan')
+    major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', back_populates='journey', cascade='all, delete-orphan')    
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete-orphan')
 
 class MajorStage(db.Model):
     __tablename__ = 'major_stages'
@@ -32,12 +32,16 @@ class MajorStage(db.Model):
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
     
     # Define relationships to children
-    costs: Mapped[list['Costs']] = relationship('Costs', backref='major_stage', cascade='all, delete-orphan')
-    transportations: Mapped[list['Transportation']] = relationship('Transportation', backref='major_stage', cascade='all, delete-orphan')
-    minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', backref='major_stage', cascade='all, delete-orphan')
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='major_stage', uselist=False, cascade='all, delete-orphan')
+    transportation: Mapped['Transportation'] = relationship('Transportation', back_populates='major_stage', uselist=False, cascade='all, delete-orphan')
+    minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')
     
     # Foreign keys to the parent
     journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id'), nullable=False)
+    
+    # Define the relationship to the parent
+    journey: Mapped['Journey'] = relationship('Journey', back_populates='major_stages')
+    
     
 class MinorStage(db.Model):
     __tablename__ = 'minor_stages'
@@ -50,14 +54,17 @@ class MinorStage(db.Model):
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
     
     # Define relationships to children
-    costs: Mapped[list['Costs']] = relationship('Costs', backref='minor_stage', cascade='all, delete-orphan')
-    transportations: Mapped[list['Transportation']] = relationship('Transportation', backref='minor_stage', cascade='all, delete-orphan')
-    accommodations: Mapped[list['Accommodation']] = relationship('Accommodation', backref='minor_stage', cascade='all, delete-orphan')
-    activities: Mapped[list['Activity']] = relationship('Activity', backref='minor_stage', cascade='all, delete-orphan')
-    places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', backref='minor_stage', cascade='all, delete-orphan')
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='minor_stage', uselist=False, cascade='all, delete-orphan')
+    transportation: Mapped['Transportation'] = relationship('Transportation', back_populates='minor_stage', uselist=False, cascade='all, delete-orphan')
+    accommodation: Mapped['Accommodation'] = relationship('Accommodation', back_populates='minor_stage', uselist=False, cascade='all, delete-orphan')
+    activities: Mapped[list['Activity']] = relationship('Activity', back_populates='minor_stage', cascade='all, delete-orphan')
+    places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='minor_stage', cascade='all, delete-orphan')
     
     # Foreign keys to the parent
     major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=False)
+    
+    # Define the relationship to the parent
+    major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='minor_stages')
     
 class Costs(db.Model):
     __tablename__ = 'costs'
@@ -73,6 +80,12 @@ class Costs(db.Model):
     major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
                                           
+    # Define the relationships to the parents
+    journey: Mapped['Journey'] = relationship('Journey', back_populates='costs')
+    major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='costs')
+    minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='costs')
+    
+    
 class Transportation(db.Model):
     __tablename__ = 'transportations'
     __table_args__ = {'extend_existing': True}
@@ -90,6 +103,11 @@ class Transportation(db.Model):
     major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
      
+     # Define the relationships to the parents
+    major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='transportation')
+    minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='transportation')
+    
+
 class Accommodation(db.Model):
     __tablename__ = 'accommodations'
     __table_args__ = {'extend_existing': True}
@@ -109,6 +127,10 @@ class Accommodation(db.Model):
     # Foreign keys to the parents
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
      
+    # Define the relationships to the parents
+    minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='accommodation')
+    
+
 class Activity(db.Model):
     __tablename__ = 'activities'
     __table_args__ = {'extend_existing': True}
@@ -125,10 +147,13 @@ class Activity(db.Model):
     # Foreign keys to the parents
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
      
+    # Define the relationships to the parents
+    minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='activities')
+    
+    
 class PlaceToVisit(db.Model):
     __tablename__ = 'places_to_visit'
     __table_args__ = {'extend_existing': True}
-    
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
@@ -143,3 +168,6 @@ class PlaceToVisit(db.Model):
     
     # Foreign keys to the parents
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+     
+    # Define the relationships to the parents
+    minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='places_to_visit')

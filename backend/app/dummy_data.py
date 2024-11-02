@@ -1,4 +1,4 @@
-from models import Journey, MajorStage, MinorStage, Costs, Transportation, Accommodation, Activity, PlaceToVisit
+from models import *
 from db import db
 
 def add_dummy_data():

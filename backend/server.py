@@ -7,6 +7,7 @@ from db import db
 sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
 
 from app.dummy_data import add_dummy_data
+from app.models import Journey, MajorStage, MinorStage, Costs, Transportation, Accommodation, Activity, PlaceToVisit
 
 
 
@@ -28,10 +29,13 @@ if not os.path.exists(db_path):
 
 @app.route('/get-journeys', methods=['GET'])
 def get_journeys():
-    result = db.session.execute("SELECT * FROM journeys")
-    journeys = [dict(row) for row in result]
+    result = db.session.execute(db.select(Journey))
+    journeys = result.scalars().all()
     
     print(journeys)
+    
+    return journeys
+    
 
 
 if __name__ == '__main__':

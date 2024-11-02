@@ -38,7 +38,7 @@ const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   });
 
   useEffect(() => {
-    fetch('http://192.168.178.32:3000/data', { method: 'GET' })
+    fetch('http://192.168.178.32:3000/get-journeys', { method: 'GET' })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
