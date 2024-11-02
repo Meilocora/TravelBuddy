@@ -18,8 +18,6 @@ interface JourneyListElementProps {
   journey: Journey;
 }
 
-// TODO: map over list to generate ElemenetDetail components
-
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
 }): ReactElement => {

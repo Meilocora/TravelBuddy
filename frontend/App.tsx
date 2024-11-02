@@ -15,69 +15,72 @@ import { BottomTabsParamList, Icons, StackParamList } from './src/models';
 import AddJourney from './src/screens/AddJourney';
 import Camera from './src/screens/Camera';
 import Planning from './src/screens/Journey/Planning';
+import JourneyContextProvider from './src/store/journey-context';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 
 const BottomTabsNavigator = () => {
   return (
-    <BottomTabs.Navigator
-      screenOptions={({
-        navigation,
-      }: {
-        navigation: BottomTabNavigationProp<BottomTabsParamList>;
-      }) => ({
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-        headerTitleAlign: 'center',
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-        tabBarActiveTintColor: GlobalStyles.colors.accent500,
-        tabBarIconStyle: { color: 'white' },
-        headerRight: ({ tintColor }) => (
-          <IconButton
-            color={tintColor}
-            size={24}
-            icon={Icons.person}
-            onPress={() => {
-              navigation.navigate('UserProfile');
-            }}
-          />
-        ),
-      })}
-    >
-      <BottomTabs.Screen
-        name='AllJourneys'
-        component={AllJourneys}
-        options={{
-          title: 'All Journeys',
-          tabBarLabel: 'Journeys',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.listCircle} size={size} color={color} />
+    <JourneyContextProvider>
+      <BottomTabs.Navigator
+        screenOptions={({
+          navigation,
+        }: {
+          navigation: BottomTabNavigationProp<BottomTabsParamList>;
+        }) => ({
+          headerTintColor: 'white',
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTitleAlign: 'center',
+          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          tabBarActiveTintColor: GlobalStyles.colors.accent500,
+          tabBarIconStyle: { color: 'white' },
+          headerRight: ({ tintColor }) => (
+            <IconButton
+              color={tintColor}
+              size={24}
+              icon={Icons.person}
+              onPress={() => {
+                navigation.navigate('UserProfile');
+              }}
+            />
           ),
-        }}
-      />
-      <BottomTabs.Screen
-        name='AddJourney'
-        component={AddJourney}
-        options={{
-          title: 'Add Journeys',
-          tabBarLabel: 'Add',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.add} size={size} color={color} />
-          ),
-        }}
-      />
-      <BottomTabs.Screen
-        name='Camera'
-        component={Camera}
-        options={{
-          tabBarLabel: 'Camera',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.cameraOutline} size={size} color={color} />
-          ),
-        }}
-      />
-    </BottomTabs.Navigator>
+        })}
+      >
+        <BottomTabs.Screen
+          name='AllJourneys'
+          component={AllJourneys}
+          options={{
+            title: 'All Journeys',
+            tabBarLabel: 'Journeys',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.listCircle} size={size} color={color} />
+            ),
+          }}
+        />
+        <BottomTabs.Screen
+          name='AddJourney'
+          component={AddJourney}
+          options={{
+            title: 'Add Journeys',
+            tabBarLabel: 'Add',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.add} size={size} color={color} />
+            ),
+          }}
+        />
+        <BottomTabs.Screen
+          name='Camera'
+          component={Camera}
+          options={{
+            tabBarLabel: 'Camera',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.cameraOutline} size={size} color={color} />
+            ),
+          }}
+        />
+      </BottomTabs.Navigator>
+    </JourneyContextProvider>
   );
 };
 

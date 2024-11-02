@@ -2,6 +2,8 @@ export function formatAmount(amount: number): string {
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -13,7 +15,7 @@ export function formatDate(date: Date): string {
 }
 
 export function formatDurationToDays(startDate: Date, endDate: Date): number {
-  return (startDate.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24);
+  return startDate.getDate() - endDate.getDate();
 }
 
 export function formatProgress(startDate: Date, endDate: Date): number {
@@ -21,6 +23,8 @@ export function formatProgress(startDate: Date, endDate: Date): number {
 
   if (today < startDate) {
     return 0;
+  } else if (today > endDate) {
+    return 1;
   } else {
     const totalDuration = formatDurationToDays(startDate, endDate);
     const daysPassed = formatDurationToDays(startDate, today);
