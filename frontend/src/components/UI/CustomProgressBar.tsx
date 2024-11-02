@@ -4,13 +4,13 @@ import { ProgressBar } from 'react-native-paper';
 
 import { GlobalStyles } from '../../constants/styles';
 
-interface ProgressBarProps {
+interface CustomProgressBarProps {
   progress: number;
 }
 
 //TODO: Improve the progress bar
 
-const CustomProgressBar: React.FC<ProgressBarProps> = ({
+const CustomProgressBar: React.FC<CustomProgressBarProps> = ({
   progress,
 }): ReactElement => {
   return (

@@ -4,8 +4,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 1,
     title: 'Minor Stage 1',
-    country: 'Germany',
     baseLocation: {
+      place: 'Hotel 1',
       name: 'Hotel 1',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -26,6 +26,7 @@ export const MINORSTAGES: MinorStage[] = [
     activities: [
       {
         description: 'Activity 1',
+        name: 'Activity 1',
         costs: 100,
         booked: false,
         place: 'Place 1',
@@ -44,8 +45,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 2,
     title: 'Minor Stage 2',
-    country: 'France',
     baseLocation: {
+      place: 'Hotel 2',
       name: 'Hotel 2',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -70,6 +71,7 @@ export const MINORSTAGES: MinorStage[] = [
         booked: false,
         place: 'Place 2',
         link: 'https://www.google.com',
+        name: 'Activity 2',
       },
     ],
     done: false,
@@ -84,8 +86,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 3,
     title: 'Minor Stage 3',
-    country: 'Spain',
     baseLocation: {
+      place: 'Hotel 3',
       name: 'Hotel 3',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -110,6 +112,7 @@ export const MINORSTAGES: MinorStage[] = [
         booked: false,
         place: 'Place 3',
         link: 'https://www.google.com',
+        name: 'Activity 3',
       },
     ],
     done: false,
@@ -124,8 +127,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 4,
     title: 'Minor Stage 4',
-    country: 'Italy',
     baseLocation: {
+      place: 'Hotel 4',
       name: 'Hotel 4',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -150,6 +153,7 @@ export const MINORSTAGES: MinorStage[] = [
         booked: false,
         place: 'Place 4',
         link: 'https://www.google.com',
+        name: 'Activity 4',
       },
     ],
     done: false,
@@ -164,8 +168,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 5,
     title: 'Minor Stage 5',
-    country: 'Greece',
     baseLocation: {
+      place: 'Hotel 5',
       name: 'Hotel 5',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -185,6 +189,7 @@ export const MINORSTAGES: MinorStage[] = [
     ],
     activities: [
       {
+        name: 'Activity 5',
         description: 'Activity 5',
         costs: 100,
         booked: false,
@@ -204,8 +209,8 @@ export const MINORSTAGES: MinorStage[] = [
   {
     id: 6,
     title: 'Minor Stage 6',
-    country: 'Portugal',
     baseLocation: {
+      place: 'Hotel 6',
       name: 'Hotel 6',
       description: 'A nice hotel',
       coordinates: { lat: 1, lon: 1 },
@@ -230,6 +235,7 @@ export const MINORSTAGES: MinorStage[] = [
         booked: false,
         place: 'Place 6',
         link: 'https://www.google.com',
+        name: 'Activity 6',
       },
     ],
     done: false,

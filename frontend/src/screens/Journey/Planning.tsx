@@ -14,40 +14,6 @@ interface PlanningProps {
 const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   const { journeyId } = route.params;
 
-  const [majorStages, setMajorStages] = useState<MajorStage[]>([]);
-
-  // TODO: Fetch Data from API into Context via useEffect
-  // useEffect(() => {
-  //   const journey = JOURNEYS.find((j) => j.id === journeyId);
-
-  //   if (journey) {
-  //     // TODO: Backend should receive journeyId and return Journey and MajorStages with MinorStages
-  //     const stages = journey.majorStagesIds
-  //       .map((id) => MAJORSTAGES.find((ms) => ms.id === id))
-  //       .filter((stage): stage is MajorStage => stage !== undefined); // Filter out undefined values
-
-  //     setMajorStages(stages);
-  //   }
-  // }, [journeyId]);
-
-  const [data, setdata] = useState({
-    name: '',
-    age: 0,
-    date: '',
-    programming: '',
-  });
-
-  useEffect(() => {
-    fetch('http://192.168.178.32:3000/get-journeys', { method: 'GET' })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
-
   return (
     <View>
       <Text>Planning</Text>
