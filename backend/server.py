@@ -26,9 +26,12 @@ if not os.path.exists(db_path):
         add_dummy_data()    # insert some dummy data
 
 
-@app.route('/data', methods=['GET'])
-def get_data():
-    return {"TEST": ["1", "2", "3"]}
+@app.route('/get-journeys', methods=['GET'])
+def get_journeys():
+    result = db.session.execute("SELECT * FROM journeys")
+    journeys = [dict(row) for row in result]
+    
+    print(journeys)
 
 
 if __name__ == '__main__':
