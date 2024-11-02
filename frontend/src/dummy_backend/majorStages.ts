@@ -1,0 +1,70 @@
+import { MajorStage, TransportationType } from '../models';
+
+export const MAJORSTAGES: MajorStage[] = [
+  {
+    id: 1,
+    title: 'Major Stage 1',
+    country: 'Germany',
+    transportation: {
+      type: TransportationType.plane,
+      start_time: new Date('2025-01-09'),
+      arrival_time: new Date('2025-01-10'),
+      place_of_arrival: 'Berlin',
+      transportation_costs: 1000,
+      link: 'https://www.google.com',
+    },
+    done: false,
+    scheduled_start_time: new Date('2025-01-09'),
+    scheduled_end_time: new Date('2025-01-10'),
+    costs: {
+      available_money: 20000,
+      planned_costs: 10000,
+      money_exceeded: false,
+    },
+    minorStagesIds: [1, 2],
+  },
+  {
+    id: 2,
+    title: 'Major Stage 2',
+    country: 'France',
+    transportation: {
+      type: TransportationType.train,
+      start_time: new Date('2025-01-10'),
+      arrival_time: new Date('2025-01-11'),
+      place_of_arrival: 'Paris',
+      transportation_costs: 500,
+      link: 'https://www.google.com',
+    },
+    done: false,
+    scheduled_start_time: new Date('2025-01-10'),
+    scheduled_end_time: new Date('2025-01-11'),
+    costs: {
+      available_money: 20000,
+      planned_costs: 10000,
+      money_exceeded: false,
+    },
+    minorStagesIds: [3, 4],
+  },
+  {
+    id: 3,
+    title: 'Major Stage 3',
+    country: 'Spain',
+    transportation: {
+      type: TransportationType.bus,
+      start_time: new Date('2025-01-11'),
+      arrival_time: new Date('2025-01-12'),
+      place_of_arrival: 'Madrid',
+      transportation_costs: 200,
+      link: 'https://www.google.com',
+    },
+    done: false,
+    scheduled_start_time: new Date('2025-01-11'),
+    scheduled_end_time: new Date('2025-01-12'),
+    costs: {
+      available_money: 20000,
+      planned_costs: 10000,
+      money_exceeded: false,
+    },
+    minorStagesIds: [5, 6],
+  },
+];
