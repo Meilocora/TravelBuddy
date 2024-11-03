@@ -1,22 +1,29 @@
-import { ReactElement, useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { ReactElement, useLayoutEffect } from 'react';
+import { View } from 'react-native';
 
-import { MajorStage, PlanningRouteProp } from '../../models';
-
-import { JOURNEYS } from '../../dummy_backend/journeys';
-import { MINORSTAGES } from '../../dummy_backend/minorStages';
-import { MAJORSTAGES } from '../../dummy_backend/majorStages';
+import { PlanningRouteProp, StackParamList } from '../../models';
+import MajorStageContextProvider from '../../store/majorStage-context.';
+import MajorStageList from '../../components/MajorStage/MajorStageList';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface PlanningProps {
   route: PlanningRouteProp;
 }
 
 const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
-  const { journeyId } = route.params;
+  const { journeyId, journeyName } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: journeyName });
+  }, [navigation, journeyName]);
 
   return (
     <View>
-      <Text>Planning</Text>
+      <MajorStageContextProvider>
+        <MajorStageList journeyId={journeyId} />
+      </MajorStageContextProvider>
     </View>
   );
 };

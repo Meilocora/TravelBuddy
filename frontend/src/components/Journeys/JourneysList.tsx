@@ -11,8 +11,6 @@ interface JourneysListProps {
 const JourneysList: React.FC<JourneysListProps> = ({
   journeys,
 }): ReactElement => {
-  function handleOnPress() {}
-
   return (
     <FlatList
       data={journeys}

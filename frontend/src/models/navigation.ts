@@ -10,7 +10,7 @@ export type BottomTabsParamList = {
 export type StackParamList = {
   BottomTabsNavigator: NavigatorScreenParams<BottomTabsParamList>;
   UserProfile: undefined;
-  Planning: { journeyId: number };
+  Planning: { journeyId: number; journeyName: string };
 };
 
 export type PlanningRouteProp = RouteProp<StackParamList, 'Planning'>;

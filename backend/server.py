@@ -67,10 +67,10 @@ def get_journeys():
 def get_major_stages(journeyId):
     try:
         # Get all the major stages from the database
-        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
+        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
         majorStages = result.scalars().all()
         
-        # Fetch costs and major_stages for each journey
+        # Fetch costs, transportation and minor_stages for each major_stage
         major_stages_list = []
         for majorStage in majorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
@@ -81,6 +81,8 @@ def get_major_stages(journeyId):
             
             minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStage.id))
             minorStages = minorStages_result.scalars().all()
+            
+            print(costs, transportation, minorStages)
             
             # Append the whole major stage, that matches the model from frontend to the list
             major_stages_list.append({

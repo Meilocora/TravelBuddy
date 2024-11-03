@@ -21,22 +21,38 @@ interface JourneyListElementProps {
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
 }): ReactElement => {
-  const costs = formatAmount(journey.costs.available_money);
+  const moneyAvailable = formatAmount(journey.costs.available_money);
+  const moneyPlanned = formatAmount(journey.costs.planned_costs);
   const startDate = formatDate(journey.scheduled_start_time);
   const endDate = formatDate(journey.scheduled_end_time);
   const durationInDays = formatDurationToDays(
     journey.scheduled_end_time,
     journey.scheduled_start_time
   );
+
+  const elementDetailInfo = [
+    { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
+    { title: 'Duration', value: `${durationInDays} days` },
+    { title: 'Start Date', value: startDate },
+    { title: 'End Date', value: endDate },
+  ];
+
   const progress = formatProgress(
     journey.scheduled_start_time,
     journey.scheduled_end_time
   );
 
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   function handleOnPress() {
-    navigation.navigate('Planning', { journeyId: journey.id });
+    navigation.navigate('Planning', {
+      journeyId: journey.id,
+      journeyName: journey.name,
+    });
   }
+
+  // TODO: Highlight, when money exceeded
+  //TODO: Buttons to edit and delete
 
   return (
     <View style={styles.outerContainer}>
@@ -48,26 +64,14 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
         <View style={styles.innerContainer}>
           <Text style={styles.title}>{journey.name}</Text>
           <View style={styles.detailsContainer}>
-            <ElementDetail
-              title='Costs'
-              value={costs}
-              style={styles.elementDetail}
-            />
-            <ElementDetail
-              title='Duration'
-              value={`${durationInDays} days`}
-              style={styles.elementDetail}
-            />
-            <ElementDetail
-              title='Start Date'
-              value={startDate}
-              style={styles.elementDetail}
-            />
-            <ElementDetail
-              title='End Date'
-              value={endDate}
-              style={styles.elementDetail}
-            />
+            {elementDetailInfo.map((info, index) => (
+              <ElementDetail
+                key={index}
+                title={info.title}
+                value={info.value}
+                style={styles.elementDetail}
+              />
+            ))}
           </View>
           <Text style={styles.countriesList}>
             {journey.countries.join(', ')}

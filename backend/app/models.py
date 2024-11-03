@@ -24,10 +24,10 @@ class MajorStage(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(40), nullable=False)
-    scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
-    scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
     country: Mapped[str] = mapped_column(String(40), nullable=False)
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
+    scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
 
     # Define relationships to children
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')

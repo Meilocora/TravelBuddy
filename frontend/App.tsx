@@ -16,6 +16,7 @@ import AddJourney from './src/screens/AddJourney';
 import Camera from './src/screens/Camera';
 import Planning from './src/screens/Journey/Planning';
 import JourneyContextProvider from './src/store/journey-context';
+import MajorStageContextProvider from './src/store/majorStage-context.';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
