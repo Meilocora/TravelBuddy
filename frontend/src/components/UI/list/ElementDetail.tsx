@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginVertical: 3,
+    flexBasis: '50%',
   },
   title: {
     fontWeight: 'bold',

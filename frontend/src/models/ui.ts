@@ -8,3 +8,7 @@ export enum Icons {
   readerOutline = 'reader-outline',
   heartOutline = 'heart-outline',
 }
+
+export enum DateFormatMode {
+  shortened = 'shortened',
+}

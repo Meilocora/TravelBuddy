@@ -1,8 +1,9 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
-import { Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { fetchMajorStageById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
+import MajorStageListElement from './MajorStageListElement';
 
 interface MajorStageListProps {
   journeyId: number;
@@ -44,9 +45,12 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   }
 
   return (
-    <View>
-      <Text>MajorStage {majorStageCtx.majorStages[0].title}</Text>
-    </View>
+    <FlatList
+      data={majorStageCtx.majorStages}
+      renderItem={({ item, index }) => (
+        <MajorStageListElement majorStage={item} index={index} />
+      )}
+    />
   );
 };
 

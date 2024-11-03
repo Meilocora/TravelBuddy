@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { ReactElement } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-import { Journey, JourneyBottomTabsParamsList } from '../../models';
+import { Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
@@ -10,9 +10,10 @@ import {
   formatDurationToDays,
   formatProgress,
 } from '../../utils';
-import ElementDetail from './ElementDetail';
 import CustomProgressBar from '../UI/CustomProgressBar';
 import { StackParamList } from '../../models';
+import ElementTitle from '../UI/list/ElementTitle';
+import DetailArea from '../UI/list/DetailArea';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -31,8 +32,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   );
 
   const elementDetailInfo = [
-    { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
     { title: 'Duration', value: `${durationInDays} days` },
+    { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
     { title: 'Start Date', value: startDate },
     { title: 'End Date', value: endDate },
   ];
@@ -62,17 +63,11 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
         onPress={handleOnPress}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>{journey.name}</Text>
-          <View style={styles.detailsContainer}>
-            {elementDetailInfo.map((info, index) => (
-              <ElementDetail
-                key={index}
-                title={info.title}
-                value={info.value}
-                style={styles.elementDetail}
-              />
-            ))}
-          </View>
+          <ElementTitle>{journey.name}</ElementTitle>
+          <DetailArea
+            elementDetailInfo={elementDetailInfo}
+            areaStyle={styles.detailArea}
+          />
           <Text style={styles.countriesList}>
             {journey.countries.join(', ')}
           </Text>
@@ -106,27 +101,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
   },
-  detailsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    borderTopWidth: 2,
-    borderTopColor: GlobalStyles.colors.primary700,
-    marginVertical: 8,
-    paddingTop: 6,
-    width: '90%',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  elementDetail: {
-    flexBasis: '50%', // max. 2 ElementDetails in a row
-  },
   countriesList: {
     marginVertical: 8,
     fontStyle: 'italic',
+  },
+  detailArea: {
+    borderTopWidth: 2,
+    borderTopColor: GlobalStyles.colors.primary700,
   },
 });
 

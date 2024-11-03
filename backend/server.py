@@ -81,9 +81,7 @@ def get_major_stages(journeyId):
             
             minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStage.id))
             minorStages = minorStages_result.scalars().all()
-            
-            print(costs, transportation, minorStages)
-            
+                        
             # Append the whole major stage, that matches the model from frontend to the list
             major_stages_list.append({
                 'id': majorStage.id,
