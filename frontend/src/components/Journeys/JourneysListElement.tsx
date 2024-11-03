@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { ReactElement } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-import { Journey } from '../../models';
+import { Journey, JourneyBottomTabsParamsList } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
@@ -45,9 +45,9 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   function handleOnPress() {
-    navigation.navigate('Planning', {
-      journeyId: journey.id,
-      journeyName: journey.name,
+    navigation.navigate('JourneyBottomTabsNavigator', {
+      screen: 'Planning',
+      params: { journeyId: journey.id, journeyName: journey.name },
     });
   }
 
