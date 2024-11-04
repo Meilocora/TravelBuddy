@@ -7,6 +7,7 @@ export enum Icons {
   compassOutline = 'compass-outline',
   readerOutline = 'reader-outline',
   heartOutline = 'heart-outline',
+  arrowBack = 'arrow-back-outline',
 }
 
 export enum DateFormatMode {

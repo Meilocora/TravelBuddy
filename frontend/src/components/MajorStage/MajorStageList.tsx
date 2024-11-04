@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Text } from 'react-native';
 
-import { fetchMajorStageById } from '../../utils/http';
+import { fetchMajorStagesById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
 
@@ -20,7 +20,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   useEffect(() => {
     async function getMajorStages(journeyId: number) {
       setIsFetching(true);
-      const response = await fetchMajorStageById(journeyId);
+      const response = await fetchMajorStagesById(journeyId);
       if (!response.error) {
         majorStageCtx.setMajorStages(response.typedMajorStages || []);
       } else {

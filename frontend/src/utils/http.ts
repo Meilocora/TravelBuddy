@@ -60,7 +60,7 @@ export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
   }
 };
 
-export const fetchMajorStageById = async (
+export const fetchMajorStagesById = async (
   id: number
 ): Promise<FetchMajorStagesResponse> => {
   try {
@@ -111,3 +111,5 @@ export const fetchMajorStageById = async (
     return { status: 500, error: 'Could not fetch journeys!' };
   }
 };
+
+//TODO: fetchMinorStagesById

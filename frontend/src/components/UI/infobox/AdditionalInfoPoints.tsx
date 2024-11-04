@@ -1,15 +1,21 @@
 import { StyleSheet } from 'react-native';
 import { View, Text } from 'react-native';
 
+import Link from '../Link';
+
 interface AdditionalInfoPointsProps {
   additionalInfo: { title: string; value: string }[];
   openInfoBox: boolean;
+  link?: string;
 }
 
 const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
   additionalInfo,
   openInfoBox,
+  link,
 }) => {
+  // Button to edit Transport
+
   return (
     <View style={[styles.infoBox, openInfoBox && styles.openedBox]}>
       {openInfoBox &&
@@ -23,6 +29,7 @@ const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
             </Text>
           </View>
         ))}
+      {openInfoBox && link && <Link link={link} style={styles.link} />}
     </View>
   );
 };
@@ -33,7 +40,8 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   openedBox: {
-    marginVertical: 10,
+    marginTop: 10,
+    marginBottom: 6,
   },
   infoPointContainer: {
     flexDirection: 'row',
@@ -53,6 +61,9 @@ const styles = StyleSheet.create({
   value: {
     textAlign: 'left',
     flexBasis: '75%',
+  },
+  link: {
+    marginTop: 3,
   },
 });
 export default AdditionalInfoPoints;

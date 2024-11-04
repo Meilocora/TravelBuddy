@@ -2,13 +2,16 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
 import AllJourneys from './src/screens/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
-import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
 import {
@@ -44,7 +47,7 @@ const BottomTabsNavigator = () => {
           headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
           headerTitleAlign: 'center',
           tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-          tabBarActiveTintColor: GlobalStyles.colors.accent500,
+          tabBarActiveTintColor: GlobalStyles.colors.accent600,
           tabBarIconStyle: { color: 'white' },
           headerRight: ({ tintColor }) => (
             <IconButton
@@ -109,15 +112,29 @@ const JourneyBottomTabsNavigator = () => {
   return (
     <MajorStageContextProvider>
       <JourneyBottomTabs.Navigator
-        screenOptions={{
-          headerShown: false,
+        screenOptions={({
+          navigation,
+        }: {
+          navigation: NativeStackNavigationProp<BottomTabsParamList>;
+        }) => ({
           headerTintColor: 'white',
-          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
           headerTitleAlign: 'center',
-          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-          tabBarActiveTintColor: GlobalStyles.colors.accent500,
+          headerLeft: ({ tintColor }) => (
+            <IconButton
+              color={tintColor}
+              size={24}
+              icon={Icons.arrowBack}
+              onPress={() => {
+                navigation.navigate('AllJourneys');
+              }}
+            />
+          ),
+          tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+          tabBarInactiveTintColor: GlobalStyles.colors.gray200,
+          tabBarActiveTintColor: 'white',
           tabBarIconStyle: { color: 'white' },
-        }}
+        })}
       >
         <JourneyBottomTabs.Screen
           name='Overview'
@@ -185,13 +202,7 @@ export default function App() {
           <Stack.Screen
             name='JourneyBottomTabsNavigator'
             component={JourneyBottomTabsNavigator}
-            options={({
-              route,
-            }: {
-              route: RouteProp<StackParamList, 'JourneyBottomTabsNavigator'>;
-            }) => ({
-              title: route.params.params?.journeyName,
-            })}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

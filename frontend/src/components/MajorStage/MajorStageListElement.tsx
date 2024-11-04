@@ -1,7 +1,13 @@
-import { ReactElement } from 'react';
+import { ReactElement, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import { DateFormatMode, MajorStage } from '../../models';
+import {
+  DateFormatMode,
+  Icons,
+  MajorStage,
+  StackParamList,
+} from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import DetailArea from '../UI/list/DetailArea';
 import {
@@ -12,6 +18,10 @@ import {
 } from '../../utils';
 import ElementComment from '../UI/list/ElementComment';
 import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
+import { GlobalStyles } from '../../constants/styles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import IconButton from '../UI/IconButton';
+import MinorStageContextProvider from '../../store/minorStage-context';
 
 interface MajorStageListElementProps {
   majorStage: MajorStage;
@@ -76,24 +86,35 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
       title: 'Details: ',
       value: `${majorStage.transportation.type} (${transportCosts})`,
     },
-    {
-      title: 'Link: ', //TODO: Make a link symbol on the bottom with the actual link (only if link provided!)
-      value: majorStage.transportation.link,
-    },
   ];
 
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: ({}) => (
+        <IconButton icon={Icons.add} size={30} onPress={() => {}} />
+      ),
+    });
+  }, [navigation]);
+
+  // Buttons to delete and edit MajorStage
+
   return (
-    <View style={styles.majorStage}>
-      <ElementTitle>{title}</ElementTitle>
-      <ElementComment content={`${startDate} - ${endDate}`} />
-      <DetailArea elementDetailInfo={elementDetailInfo} />
-      <AdditionalInfoBox
-        title='Transportation'
-        info={mainTransportationInfo}
-        additionalInfo={additionalInfo}
-      />
-      <Text>Show Minor Stages</Text>
-    </View>
+    <MinorStageContextProvider>
+      <View style={styles.majorStage}>
+        <ElementTitle>{title}</ElementTitle>
+        <ElementComment content={`${startDate} - ${endDate}`} />
+        <DetailArea elementDetailInfo={elementDetailInfo} />
+        <AdditionalInfoBox
+          title='Transportation'
+          info={mainTransportationInfo}
+          additionalInfo={additionalInfo}
+          link={majorStage.transportation.link}
+        />
+        <Text>Show Minor Stages</Text>
+      </View>
+    </MinorStageContextProvider>
   );
 };
 
@@ -107,10 +128,15 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
     marginHorizontal: 20,
-    backgroundColor: 'white',
-    borderWidth: 1,
+    backgroundColor: GlobalStyles.colors.accent50,
+    borderWidth: 2,
     borderRadius: 20,
-    borderColor: 'black',
+    borderColor: GlobalStyles.colors.accent800,
+    elevation: 5,
+    shadowColor: GlobalStyles.colors.gray500,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
   },
 });
 

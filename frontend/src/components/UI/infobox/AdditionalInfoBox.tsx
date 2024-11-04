@@ -9,11 +9,13 @@ interface AdditionalInfoBoxProps {
   title: string;
   info: { title: string; value: string };
   additionalInfo: { title: string; value: string }[];
+  link?: string;
   style?: ViewStyle;
 }
 
 const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
   additionalInfo,
+  link,
   info,
   title,
   style,
@@ -24,7 +26,7 @@ const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
     <View style={styles.outerContainer}>
       <Pressable
         onPress={() => setOpenInfoBox((prevState) => !prevState)}
-        android_ripple={{ color: 'grey' }}
+        android_ripple={{ color: GlobalStyles.colors.accent200 }}
         style={({ pressed }) => [
           styles.innerContainer,
           pressed && styles.pressed,
@@ -37,6 +39,7 @@ const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
         <AdditionalInfoPoints
           additionalInfo={additionalInfo}
           openInfoBox={openInfoBox}
+          link={link}
         />
       </Pressable>
     </View>
@@ -52,10 +55,11 @@ const styles = StyleSheet.create({
     width: '90%',
     marginTop: 10,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: GlobalStyles.colors.accent700,
     borderTopLeftRadius: 10,
     borderBottomRightRadius: 10,
     overflow: 'hidden',
+    backgroundColor: GlobalStyles.colors.accent100,
   },
   innerContainer: {
     alignItems: 'center',

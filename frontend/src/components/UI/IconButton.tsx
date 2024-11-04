@@ -6,15 +6,15 @@ import { Icons } from '../../models';
 
 interface IconButtonProps {
   icon: Icons;
-  size: number;
-  color: string | undefined;
+  size?: number;
+  color?: string;
   onPress: () => void;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
   icon,
-  size,
-  color,
+  size = 24,
+  color = 'white',
   onPress,
 }): ReactElement => {
   return (
