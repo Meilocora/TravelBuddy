@@ -69,7 +69,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
             areaStyle={styles.detailArea}
           />
           <Text style={styles.countriesList}>
-            {journey.countries.join(', ')}
+            {journey.countries!.join(', ')}
           </Text>
         </View>
         <CustomProgressBar progress={progress} />
