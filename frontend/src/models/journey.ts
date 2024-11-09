@@ -5,9 +5,9 @@ export interface Journey {
   costs: Costs;
   scheduled_start_time: Date;
   scheduled_end_time: Date;
-  countries: string[];
+  countries?: string[];
   done: boolean;
-  majorStagesIds: number[];
+  majorStagesIds?: number[];
 }
 
 export interface Costs {

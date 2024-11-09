@@ -1,5 +1,12 @@
 import { ReactElement, useState } from 'react';
-import { Pressable, StyleSheet, View, Text, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  ViewStyle,
+  LayoutAnimation,
+} from 'react-native';
 
 import ElementTitle from '../list/ElementTitle';
 import AdditionalInfoPoints from './AdditionalInfoPoints';
@@ -9,7 +16,7 @@ interface AdditionalInfoBoxProps {
   title: string;
   info: { title: string; value: string };
   additionalInfo: { title: string; value: string }[];
-  link?: string;
+  link?: string | undefined;
   style?: ViewStyle;
 }
 
@@ -22,10 +29,18 @@ const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
 }): ReactElement => {
   const [openInfoBox, setOpenInfoBox] = useState(false);
 
+  const handleOpenInfoBox = () => {
+    LayoutAnimation.configureNext({
+      duration: 500,
+      update: { type: 'spring', springDamping: 0.6 },
+    });
+    setOpenInfoBox((prevState) => !prevState);
+  };
+
   return (
     <View style={styles.outerContainer}>
       <Pressable
-        onPress={() => setOpenInfoBox((prevState) => !prevState)}
+        onPress={handleOpenInfoBox}
         android_ripple={{ color: GlobalStyles.colors.accent200 }}
         style={({ pressed }) => [
           styles.innerContainer,

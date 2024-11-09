@@ -3,9 +3,9 @@ import { Costs } from './journey';
 export interface MinorStage {
   id: number;
   title: string;
-  baseLocation: Accommodation;
-  placesToVisit: PlaceToVisit[];
-  activities: Activity[];
+  baseLocation?: Accommodation;
+  placesToVisit?: PlaceToVisit[];
+  activities?: Activity[];
   done: boolean;
   scheduled_start_time: Date;
   scheduled_end_time: Date;
@@ -15,7 +15,6 @@ export interface MinorStage {
 export interface Accommodation {
   name: string;
   description: string;
-  coordinates: { lat: number; lon: number };
   place: string;
   costs: number;
   booked: boolean;
@@ -25,7 +24,6 @@ export interface Accommodation {
 export interface PlaceToVisit {
   name: string;
   description: string;
-  coordinates: { lat: number; lon: number };
   visited: boolean;
   favorite: boolean;
   link: string;

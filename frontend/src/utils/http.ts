@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { Journey, MajorStage } from '../models';
+import { Journey, MajorStage, MinorStage } from '../models';
 
 const BACKEND_URL = 'http://192.168.178.32:3000';
 
@@ -12,18 +12,6 @@ interface JourneyResponse {
 
 interface FetchJourneysResponse {
   typedJourneys?: Journey[];
-  status: number;
-  error?: string;
-}
-
-interface MajorStageResponse {
-  majorStages?: MajorStage[];
-  status: number;
-  error?: string;
-}
-
-interface FetchMajorStagesResponse {
-  typedMajorStages?: MajorStage[];
   status: number;
   error?: string;
 }
@@ -60,6 +48,18 @@ export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
   }
 };
 
+interface MajorStageResponse {
+  majorStages?: MajorStage[];
+  status: number;
+  error?: string;
+}
+
+interface FetchMajorStagesResponse {
+  typedMajorStages?: MajorStage[];
+  status: number;
+  error?: string;
+}
+
 export const fetchMajorStagesById = async (
   id: number
 ): Promise<FetchMajorStagesResponse> => {
@@ -84,15 +84,18 @@ export const fetchMajorStagesById = async (
         id: majorStage.id,
         title: majorStage.title,
         country: majorStage.country,
-        transportation: {
-          type: majorStage.transportation.type,
-          start_time: new Date(majorStage.transportation.start_time),
-          arrival_time: new Date(majorStage.transportation.arrival_time),
-          place_of_departure: majorStage.transportation.place_of_departure,
-          place_of_arrival: majorStage.transportation.place_of_arrival,
-          transportation_costs: majorStage.transportation.transportation_costs,
-          link: majorStage.transportation.link,
-        },
+        ...(majorStage.transportation && {
+          transportation: {
+            type: majorStage.transportation.type,
+            start_time: new Date(majorStage.transportation.start_time),
+            arrival_time: new Date(majorStage.transportation.arrival_time),
+            place_of_departure: majorStage.transportation.place_of_departure,
+            place_of_arrival: majorStage.transportation.place_of_arrival,
+            transportation_costs:
+              majorStage.transportation.transportation_costs,
+            link: majorStage.transportation.link,
+          },
+        }),
         done: majorStage.done,
         scheduled_start_time: new Date(majorStage.scheduled_start_time),
         scheduled_end_time: new Date(majorStage.scheduled_end_time),
@@ -112,4 +115,81 @@ export const fetchMajorStagesById = async (
   }
 };
 
-//TODO: fetchMinorStagesById
+interface MinorStageResponse {
+  minorStages?: MinorStage[];
+  status: number;
+  error?: string;
+}
+
+interface FetchMinorStagesResponse {
+  typedMinorStages?: MinorStage[];
+  status: number;
+  error?: string;
+}
+
+export const fetchMinorStagesById = async (
+  id: number
+): Promise<FetchMinorStagesResponse> => {
+  try {
+    const response: AxiosResponse<MinorStageResponse> = await axios.get(
+      `${BACKEND_URL}/get-minor-stages/${id}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    const { minorStages, status } = response.data;
+
+    if (!minorStages) {
+      return { status };
+    }
+
+    const typedMinorStages: MinorStage[] = minorStages.map((minorStage) => {
+      return {
+        id: minorStage.id,
+        title: minorStage.title,
+        ...(minorStage.baseLocation && {
+          baseLocation: {
+            name: minorStage.baseLocation.name,
+            description: minorStage.baseLocation.description,
+            place: minorStage.baseLocation.place,
+            costs: minorStage.baseLocation.costs,
+            booked: minorStage.baseLocation.booked,
+            link: minorStage.baseLocation.link,
+          },
+        }),
+        placesToVisit: minorStage.placesToVisit?.map((place) => ({
+          name: place.name,
+          description: place.description,
+          visited: place.visited,
+          favorite: place.favorite,
+          link: place.link,
+        })),
+        activities: minorStage.activities?.map((activity) => ({
+          name: activity.name,
+          description: activity.description,
+          costs: activity.costs,
+          booked: activity.booked,
+          place: activity.place,
+          link: activity.link,
+        })),
+        done: minorStage.done,
+        scheduled_start_time: new Date(minorStage.scheduled_start_time),
+        scheduled_end_time: new Date(minorStage.scheduled_end_time),
+        costs: {
+          available_money: minorStage.costs.available_money,
+          planned_costs: minorStage.costs.planned_costs,
+          money_exceeded: minorStage.costs.money_exceeded,
+        },
+      };
+    });
+
+    return { typedMinorStages, status };
+  } catch (error) {
+    // Error from frontend
+
+    return { status: 500, error: 'Could not fetch major stages!' };
+  }
+};

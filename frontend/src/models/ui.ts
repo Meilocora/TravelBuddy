@@ -13,3 +13,14 @@ export enum Icons {
 export enum DateFormatMode {
   shortened = 'shortened',
 }
+
+export enum ButtonMode {
+  default = 'default',
+  flat = 'flat',
+}
+
+export enum ColorScheme {
+  primary = 'primary',
+  accent = 'accent',
+  complementary = 'complementary',
+}

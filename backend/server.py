@@ -137,7 +137,7 @@ def get_minor_stages(majorStageId):
             places_to_visit_result = db.session.execute(db.select(PlaceToVisit).filter_by(minor_stage_id=minorStage.id))
             places_to_visit = places_to_visit_result.scalars().all()
                         
-            # Append the whole major stage, that matches the model from frontend to the list
+            # Append the whole minor stage, that matches the model from frontend to the list
             minor_stages_list.append({
                 'id': minorStage.id,
                 'title': minorStage.title,
@@ -158,18 +158,16 @@ def get_minor_stages(majorStageId):
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 },
-                'accommodation': {
+                'baseLocation': {
                     'name': accommodation.name,
                     'description': accommodation.description,
-                    'latitude': accommodation.latitute,
-                    'longitude': accommodation.longitude,
                     'place': accommodation.place,
                     'costs': accommodation.costs,
                     'booked': accommodation.booked,
                     'link': accommodation.link,
                 },
                 'activities': [{'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities],
-                'places_to_visit': [{'name': place_to_visit.name, 'description': place_to_visit.description, 'latitude': place_to_visit.latitude, 'longitude': place_to_visit.longitude ,'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
+                'placesToVisit': [{'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
             })
         
         return jsonify({'minorStages': minor_stages_list, 'status': 200})

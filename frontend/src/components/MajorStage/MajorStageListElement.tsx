@@ -1,27 +1,31 @@
-import { ReactElement, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { ReactElement, useLayoutEffect, useState } from 'react';
+import { StyleSheet, View, Text, LayoutAnimation } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import {
+  ButtonMode,
+  ColorScheme,
   DateFormatMode,
   Icons,
   MajorStage,
   StackParamList,
 } from '../../models';
-import ElementTitle from '../UI/list/ElementTitle';
-import DetailArea from '../UI/list/DetailArea';
 import {
   formatAmount,
   formatDate,
   formatDateAndTime,
   formatDurationToDays,
 } from '../../utils';
-import ElementComment from '../UI/list/ElementComment';
-import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
 import MinorStageContextProvider from '../../store/minorStage-context';
+import DetailArea from '../UI/list/DetailArea';
+import ElementTitle from '../UI/list/ElementTitle';
+import ElementComment from '../UI/list/ElementComment';
+import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
+import MinorStageList from '../MinorStage/MinorStageList';
+import Button from '../UI/Button';
 
 interface MajorStageListElementProps {
   majorStage: MajorStage;
@@ -32,6 +36,9 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   majorStage,
   index,
 }): ReactElement => {
+  const [showMinorStages, setShowMinorStages] = useState(false);
+
+  // useReducser to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.available_money);
   const moneyPlanned = formatAmount(majorStage.costs.planned_costs);
   const startDate = formatDate(majorStage.scheduled_start_time);
@@ -49,44 +56,55 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
       value: `${durationInDays} days`,
     },
     { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
-    {
-      title: 'Minor Stages',
-      value: majorStage.minorStagesIds.length.toString(),
-    },
     { title: 'Country', value: majorStage.country },
   ];
 
-  const transportStartDate = formatDateAndTime(
-    majorStage.transportation.start_time,
-    DateFormatMode.shortened
-  );
-  const transportEndDate = formatDateAndTime(
-    majorStage.transportation.arrival_time,
-    DateFormatMode.shortened
-  );
-  const transportCosts = formatAmount(
-    majorStage.transportation.transportation_costs
-  );
+  if (majorStage.minorStagesIds) {
+    elementDetailInfo.push({
+      title: 'Minor Stages',
+      value: majorStage.minorStagesIds.length.toString(),
+    });
+  }
 
-  const mainTransportationInfo = {
-    title: 'Time until departure: ',
-    value: '2 days',
+  let mainTransportationInfo: { title: string; value: string } = {
+    title: '',
+    value: '',
   };
+  let additionalInfo: { title: string; value: string }[] = [];
 
-  const additionalInfo = [
-    {
-      title: 'Departure: ',
-      value: `${transportStartDate} at ${majorStage.transportation.place_of_departure}`, // TODO: lat + lng for place and quick-link to google maps
-    },
-    {
-      title: 'Arrival: ',
-      value: `${transportEndDate} at ${majorStage.transportation.place_of_arrival}`,
-    },
-    {
-      title: 'Details: ',
-      value: `${majorStage.transportation.type} (${transportCosts})`,
-    },
-  ];
+  if (majorStage.transportation) {
+    const transportStartDate = formatDateAndTime(
+      majorStage.transportation.start_time,
+      DateFormatMode.shortened
+    );
+    const transportEndDate = formatDateAndTime(
+      majorStage.transportation!.arrival_time,
+      DateFormatMode.shortened
+    );
+    const transportCosts = formatAmount(
+      majorStage.transportation.transportation_costs
+    );
+
+    mainTransportationInfo = {
+      title: 'Time until departure: ',
+      value: '2 days',
+    };
+
+    additionalInfo = [
+      {
+        title: 'Departure: ',
+        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`, // TODO: lat + lng for place and quick-link to google maps
+      },
+      {
+        title: 'Arrival: ',
+        value: `${transportEndDate} at ${majorStage.transportation?.place_of_arrival}`,
+      },
+      {
+        title: 'Details: ',
+        value: `${majorStage.transportation?.type} (${transportCosts})`,
+      },
+    ];
+  }
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
@@ -98,21 +116,40 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     });
   }, [navigation]);
 
+  const handleshowMinorStages = () => {
+    LayoutAnimation.configureNext({
+      duration: 500,
+      update: { type: 'spring', springDamping: 0.6 },
+    });
+    setShowMinorStages((prevState) => !prevState);
+  };
+
   // Buttons to delete and edit MajorStage
 
   return (
     <MinorStageContextProvider>
-      <View style={styles.majorStage}>
+      <View style={styles.container}>
         <ElementTitle>{title}</ElementTitle>
         <ElementComment content={`${startDate} - ${endDate}`} />
         <DetailArea elementDetailInfo={elementDetailInfo} />
-        <AdditionalInfoBox
-          title='Transportation'
-          info={mainTransportationInfo}
-          additionalInfo={additionalInfo}
-          link={majorStage.transportation.link}
-        />
-        <Text>Show Minor Stages</Text>
+        {majorStage.transportation && (
+          <AdditionalInfoBox
+            title='Transportation'
+            info={mainTransportationInfo}
+            additionalInfo={additionalInfo}
+            link={majorStage.transportation?.link}
+          />
+        )}
+        <Button
+          onPress={handleshowMinorStages}
+          mode={ButtonMode.flat}
+          colorScheme={
+            !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
+          }
+        >
+          {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
+        </Button>
+        {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
       </View>
     </MinorStageContextProvider>
   );
@@ -121,7 +158,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 //TODO: Add a flat button to show minor stages
 
 const styles = StyleSheet.create({
-  majorStage: {
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

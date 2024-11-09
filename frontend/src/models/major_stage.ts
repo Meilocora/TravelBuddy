@@ -4,12 +4,12 @@ export interface MajorStage {
   id: number;
   title: string;
   country: string;
-  transportation: Transportation;
+  transportation?: Transportation;
   done: boolean;
   scheduled_start_time: Date;
   scheduled_end_time: Date;
   costs: Costs;
-  minorStagesIds: number[];
+  minorStagesIds?: number[];
 }
 
 export interface Transportation {
