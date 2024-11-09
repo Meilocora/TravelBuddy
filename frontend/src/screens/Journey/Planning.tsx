@@ -1,12 +1,11 @@
 import { ReactElement, useLayoutEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Icons, PlanningRouteProp, StackParamList } from '../../models';
+import { PlanningRouteProp, StackParamList } from '../../models';
 import MajorStageContextProvider from '../../store/majorStage-context.';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import IconButton from '../../components/UI/IconButton';
 
 interface PlanningProps {
   route: PlanningRouteProp;

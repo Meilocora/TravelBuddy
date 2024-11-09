@@ -23,4 +23,5 @@ export enum ColorScheme {
   primary = 'primary',
   accent = 'accent',
   complementary = 'complementary',
+  error = 'error',
 }

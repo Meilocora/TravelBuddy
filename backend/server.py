@@ -23,7 +23,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()     # Create the database
     # add_dummy_data()    # insert some dummy data
-
+    
 
 @app.route('/get-journeys', methods=['GET'])
 def get_journeys():
@@ -56,8 +56,7 @@ def get_journeys():
                 'countries': journey.countries.split(','),
                 'done': journey.done,
                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
-            })
-        
+            })    
         return jsonify({'journeys': journeys_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
@@ -107,6 +106,7 @@ def get_major_stages(journeyId):
                 'minorStagesIds': [minorStage.id for minorStage in minorStages]
             })
         
+        # return jsonify({'error': 'This is an error!', 'status': 500})
         return jsonify({'majorStages': major_stages_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)

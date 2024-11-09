@@ -36,6 +36,27 @@ export function formatDurationToDays(startDate: Date, endDate: Date): number {
   return startDate.getDate() - endDate.getDate();
 }
 
+export function formatCountdown(startDate: Date): string {
+  const today = new Date();
+  const timeDifference = startDate.getTime() - today.getTime();
+
+  if (timeDifference < 0) {
+    return 'already departed';
+  }
+
+  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (days >= 3) {
+    return `${days}d`;
+  }
+
+  return `${days}d ${hours}h ${minutes}m`;
+}
+
 export function formatProgress(startDate: Date, endDate: Date): number {
   const today = new Date();
 

@@ -19,14 +19,14 @@ const Button: React.FC<ButtonProps> = ({
   mode = ButtonMode.default,
   colorScheme,
 }): ReactElement => {
-  let schemeStyles;
+  let schemeStyles = primaryStyles;
 
-  if (colorScheme === ColorScheme.primary) {
-    schemeStyles = primaryStyles;
-  } else if (colorScheme === ColorScheme.accent) {
+  if (colorScheme === ColorScheme.accent) {
     schemeStyles = accentStyles;
-  } else {
+  } else if (colorScheme === ColorScheme.complementary) {
     schemeStyles = complementaryStyles;
+  } else if (colorScheme === ColorScheme.error) {
+    schemeStyles = errorStyles;
   }
 
   return (
@@ -113,6 +113,18 @@ const complementaryStyles = StyleSheet.create({
   },
   pressed: {
     backgroundColor: GlobalStyles.colors.complementary100,
+  },
+});
+
+const errorStyles = StyleSheet.create({
+  button: {
+    backgroundColor: GlobalStyles.colors.error500,
+  },
+  flatText: {
+    color: GlobalStyles.colors.error500,
+  },
+  pressed: {
+    backgroundColor: GlobalStyles.colors.error50,
   },
 });
 

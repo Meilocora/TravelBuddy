@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontStyle: 'italic',
+    fontSize: 12,
   },
 });
 

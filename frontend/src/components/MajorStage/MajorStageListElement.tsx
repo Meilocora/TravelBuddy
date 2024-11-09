@@ -12,6 +12,7 @@ import {
 } from '../../models';
 import {
   formatAmount,
+  formatCountdown,
   formatDate,
   formatDateAndTime,
   formatDurationToDays,
@@ -87,7 +88,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 
     mainTransportationInfo = {
       title: 'Time until departure: ',
-      value: '2 days',
+      value: formatCountdown(majorStage.transportation.start_time),
     };
 
     additionalInfo = [
