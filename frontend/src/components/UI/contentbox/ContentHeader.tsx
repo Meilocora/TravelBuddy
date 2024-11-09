@@ -1,17 +1,10 @@
 import { ReactElement } from 'react';
-import {
-  Text,
-  Pressable,
-  StyleSheet,
-  TextStyle,
-  ViewStyle,
-  View,
-} from 'react-native';
+import { Text, Pressable, StyleSheet, TextStyle, View } from 'react-native';
 
 interface ContentHeaderProps {
   title: string;
   onPress: (title: string) => void;
-  headerStyle?: TextStyle | null;
+  headerStyle?: TextStyle;
 }
 
 const ContentHeader: React.FC<ContentHeaderProps> = ({
