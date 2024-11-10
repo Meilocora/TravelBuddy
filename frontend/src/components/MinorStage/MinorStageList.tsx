@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text } from 'react-native';
 import { fetchMinorStagesById } from '../../utils/http';
 import { MinorStageContext } from '../../store/minorStage-context';
 import MinorStageListElement from './MinorStageListElement';
+import { generateRandomString } from '../../utils/generator';
 
 interface MinorStageListProps {
   majorStageId: number;
@@ -46,7 +47,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
       style={styles.container}
       data={minorStageCtx.minorStages}
       renderItem={({ item }) => (
-        <MinorStageListElement key={item.id} minorStage={item} />
+        <MinorStageListElement key={generateRandomString()} minorStage={item} />
       )}
       keyExtractor={(item) => item.id.toString()}
     />

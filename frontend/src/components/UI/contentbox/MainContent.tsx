@@ -5,6 +5,7 @@ import { MinorStage } from '../../../models';
 import { formatAmount } from '../../../utils';
 import Link from '../Link';
 import TextLink from '../TextLink';
+import { generateRandomString } from '../../../utils/generator';
 
 interface MainContentProps {
   minorStage: MinorStage;
@@ -111,7 +112,7 @@ const MainContent: React.FC<MainContentProps> = ({
     <View style={styles.container}>
       {displayedContent?.contents.map((content, index) => {
         return (
-          <View style={styles.detailContainer} key={content.subtitle}>
+          <View style={styles.detailContainer} key={generateRandomString()}>
             <Text style={styles.subtitle}>
               {content.link ? (
                 <TextLink link={content.link}>{content.subtitle}</TextLink>

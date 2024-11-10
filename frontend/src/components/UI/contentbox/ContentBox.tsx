@@ -5,6 +5,7 @@ import { MinorStage } from '../../../models';
 import ContentHeader from './ContentHeader';
 import { GlobalStyles } from '../../../constants/styles';
 import MainContent from './MainContent';
+import { generateRandomString } from '../../../utils/generator';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
@@ -14,7 +15,10 @@ const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
   const [contentState, setContentState] = useState({ activeHeader: 'costs' });
 
   const handleOnPressHeader = (header: string) => {
-    LayoutAnimation.easeInEaseOut();
+    LayoutAnimation.configureNext({
+      duration: 500,
+      update: { type: 'spring', springDamping: 0.7 },
+    });
     setContentState({ activeHeader: header.toLowerCase() });
   };
 
@@ -40,7 +44,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
             <ContentHeader
               onPress={handleOnPressHeader}
               title={header}
-              key={header}
+              key={generateRandomString()}
               headerStyle={
                 contentState.activeHeader === header.toLowerCase()
                   ? styles.activeHeader

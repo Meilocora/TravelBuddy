@@ -20,7 +20,7 @@ import {
   JourneyBottomTabsParamsList,
   StackParamList,
 } from './src/models';
-import AddJourney from './src/screens/AddJourney';
+import AddJourney from './src/screens/ManageJourney';
 import Camera from './src/screens/Camera';
 import Planning from './src/screens/Journey/Planning';
 import JourneyContextProvider from './src/store/journey-context';
@@ -73,7 +73,7 @@ const BottomTabsNavigator = () => {
           }}
         />
         <BottomTabs.Screen
-          name='AddJourney'
+          name='ManageJourney'
           component={AddJourney}
           options={{
             title: 'Add Journeys',

@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { View, Text } from 'react-native';
 
 import Link from '../Link';
+import { generateRandomString } from '../../../utils/generator';
 
 interface AdditionalInfoPointsProps {
   additionalInfo: { title: string; value: string }[];
@@ -20,7 +21,7 @@ const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
     <View style={[styles.infoBox, openInfoBox && styles.openedBox]}>
       {openInfoBox &&
         additionalInfo.map((info, index) => (
-          <View key={index} style={styles.infoPointContainer}>
+          <View key={generateRandomString()} style={styles.infoPointContainer}>
             <Text style={[styles.additionalInfo, styles.title]}>
               {info.title}
             </Text>

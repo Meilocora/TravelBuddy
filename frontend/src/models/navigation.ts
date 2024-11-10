@@ -2,7 +2,7 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined;
-  AddJourney: undefined;
+  ManageJourney: undefined;
   Camera: undefined;
   UserProfile: undefined;
   Favorites: undefined;

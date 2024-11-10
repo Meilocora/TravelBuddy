@@ -3,6 +3,7 @@ import { StyleSheet, ViewStyle } from 'react-native';
 import { View } from 'react-native';
 
 import ElementDetail from './ElementDetail';
+import { generateRandomString } from '../../../utils/generator';
 
 interface DetailProps {
   areaStyle?: ViewStyle;
@@ -17,9 +18,9 @@ const DetailArea: React.FC<DetailProps> = ({
 }): ReactElement => {
   return (
     <View style={[styles.detailsContainer, areaStyle]}>
-      {elementDetailInfo.map((info, index) => (
+      {elementDetailInfo.map((info) => (
         <ElementDetail
-          key={index}
+          key={generateRandomString()}
           title={info.title}
           value={info.value}
           style={detailStyle}
