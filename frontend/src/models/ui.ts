@@ -8,6 +8,8 @@ export enum Icons {
   readerOutline = 'reader-outline',
   heartOutline = 'heart-outline',
   arrowBack = 'arrow-back-outline',
+  edit = 'create-outline',
+  delete = 'trash',
 }
 
 export enum DateFormatMode {

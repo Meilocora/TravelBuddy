@@ -39,6 +39,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 }): ReactElement => {
   const [showMinorStages, setShowMinorStages] = useState(false);
 
+  const hasMinorStages =
+    majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
   // useReducser to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.available_money);
   const moneyPlanned = formatAmount(majorStage.costs.planned_costs);
@@ -141,15 +143,17 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
             link={majorStage.transportation?.link}
           />
         )}
-        <Button
-          onPress={handleshowMinorStages}
-          mode={ButtonMode.flat}
-          colorScheme={
-            !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
-          }
-        >
-          {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
-        </Button>
+        {hasMinorStages && (
+          <Button
+            onPress={handleshowMinorStages}
+            mode={ButtonMode.flat}
+            colorScheme={
+              !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
+            }
+          >
+            {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
+          </Button>
+        )}
         {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
       </View>
     </MinorStageContextProvider>

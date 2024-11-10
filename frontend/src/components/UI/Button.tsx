@@ -72,6 +72,7 @@ const generalStyles = StyleSheet.create({
   buttonText: {
     color: 'white',
     textAlign: 'center',
+    fontSize: 16,
   },
   flatText: {},
   pressed: {

@@ -8,10 +8,11 @@ import {
 } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
 
 import AllJourneys from './src/screens/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
-import { NavigationContainer } from '@react-navigation/native';
+
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
 import {
@@ -19,8 +20,9 @@ import {
   Icons,
   JourneyBottomTabsParamsList,
   StackParamList,
+  ManageJourneyRouteProp,
 } from './src/models';
-import AddJourney from './src/screens/ManageJourney';
+import ManageJourney from './src/screens/ManageJourney';
 import Camera from './src/screens/Camera';
 import Planning from './src/screens/Journey/Planning';
 import JourneyContextProvider from './src/store/journey-context';
@@ -74,14 +76,19 @@ const BottomTabsNavigator = () => {
         />
         <BottomTabs.Screen
           name='ManageJourney'
-          component={AddJourney}
-          options={{
-            title: 'Add Journeys',
-            tabBarLabel: 'Add',
+          component={ManageJourney}
+          options={({ route }: { route: ManageJourneyRouteProp }) => ({
+            title: !!route.params?.journeyId ? 'Edit Journey' : 'Add Journey',
+            tabBarLabel: !!route.params?.journeyId ? 'Edit' : 'Add',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.add} size={size} color={color} />
+              <Ionicons
+                name={!!route.params?.journeyId ? Icons.edit : Icons.add}
+                size={size}
+                color={color}
+              />
             ),
-          }}
+            unmountOnBlur: true,
+          })}
         />
         <BottomTabs.Screen
           name='Favorites'
@@ -93,7 +100,7 @@ const BottomTabsNavigator = () => {
             ),
           }}
         />
-        <BottomTabs.Screen
+        {/* <BottomTabs.Screen
           name='Camera'
           component={Camera}
           options={{
@@ -102,7 +109,7 @@ const BottomTabsNavigator = () => {
               <Ionicons name={Icons.cameraOutline} size={size} color={color} />
             ),
           }}
-        />
+        /> */}
       </BottomTabs.Navigator>
     </JourneyContextProvider>
   );

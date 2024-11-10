@@ -2,7 +2,7 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined;
-  ManageJourney: undefined;
+  ManageJourney: { journeyId?: number };
   Camera: undefined;
   UserProfile: undefined;
   Favorites: undefined;
@@ -25,3 +25,8 @@ export type PlanningRouteProp = RouteProp<
   'Planning'
 >;
 export type UserProfileRouteProp = RouteProp<StackParamList, 'UserProfile'>;
+
+export type ManageJourneyRouteProp = RouteProp<
+  BottomTabsParamList,
+  'ManageJourney'
+>;

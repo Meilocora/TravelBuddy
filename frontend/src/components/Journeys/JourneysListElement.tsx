@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { ReactElement } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-import { Journey } from '../../models';
+import { BottomTabsParamList, Icons, Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
@@ -14,6 +14,7 @@ import CustomProgressBar from '../UI/CustomProgressBar';
 import { StackParamList } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import DetailArea from '../UI/list/DetailArea';
+import IconButton from '../UI/IconButton';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -43,17 +44,24 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_end_time
   );
 
-  const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const navigationJourneyBottomTabs =
+    useNavigation<NavigationProp<StackParamList>>();
 
   function handleOnPress() {
-    navigation.navigate('JourneyBottomTabsNavigator', {
+    navigationJourneyBottomTabs.navigate('JourneyBottomTabsNavigator', {
       screen: 'Planning',
       params: { journeyId: journey.id, journeyName: journey.name },
     });
   }
 
+  const navigationBottomTabs =
+    useNavigation<NavigationProp<BottomTabsParamList>>();
+
+  function handleEdit() {
+    navigationBottomTabs.navigate('ManageJourney', { journeyId: journey.id });
+  }
+
   // TODO: Highlight, when money exceeded
-  //TODO: Buttons to edit and delete
 
   return (
     <View style={styles.outerContainer}>
@@ -63,7 +71,14 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
         onPress={handleOnPress}
       >
         <View style={styles.innerContainer}>
-          <ElementTitle>{journey.name}</ElementTitle>
+          <View style={styles.headerContainer}>
+            <ElementTitle>{journey.name}</ElementTitle>
+            <IconButton
+              icon={Icons.edit}
+              color={GlobalStyles.colors.primary800}
+              onPress={handleEdit}
+            />
+          </View>
           <DetailArea
             elementDetailInfo={elementDetailInfo}
             areaStyle={styles.detailArea}
@@ -99,6 +114,13 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     padding: 10,
+    alignItems: 'center',
+  },
+  headerContainer: {
+    flex: 1,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   countriesList: {

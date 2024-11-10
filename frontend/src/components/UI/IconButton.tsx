@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ReactElement } from 'react';
 
@@ -8,6 +8,7 @@ interface IconButtonProps {
   icon: Icons;
   size?: number;
   color?: string;
+  style?: ViewStyle;
   onPress: () => void;
 }
 
@@ -15,12 +16,13 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   size = 24,
   color = 'white',
+  style,
   onPress,
 }): ReactElement => {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => pressed && styles.pressed}
+      style={({ pressed }) => [pressed && styles.pressed, style]}
     >
       <View style={styles.buttonContainer}>
         <Ionicons name={icon} size={size} color={color} />
