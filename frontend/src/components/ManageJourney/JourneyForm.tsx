@@ -6,15 +6,24 @@ import {
   ColorScheme,
   JourneyFormValues,
   JourneyValues,
+  Journey,
 } from '../../models';
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
 import Button from '../UI/Button';
 import { formatDate } from '../../utils';
+import { createJourney } from '../../utils';
+
+type InputValidationResponse = {
+  journey?: Journey;
+  journeyFormValues?: JourneyFormValues;
+  error?: string;
+  status: number;
+};
 
 interface JourneyFormProps {
   onCancel: () => void;
-  onSubmit: () => void;
+  onSubmit: (response: InputValidationResponse) => void;
   submitButtonLabel: string;
   defaultValues?: JourneyValues;
 }
@@ -43,6 +52,24 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     },
     countries: { value: defaultValues?.countries || [], isValid: true },
   });
+
+  async function validateInputs(): Promise<void> {
+    const {
+      error,
+      status,
+      journey,
+      journeyFormValues,
+    }: InputValidationResponse = await createJourney(inputs);
+
+    if (!error && journey) {
+      onSubmit({ journey, status });
+    } else if (error) {
+      onSubmit({ error, status });
+    } else if (journeyFormValues) {
+      setInputs(journeyFormValues);
+    }
+    return;
+  }
 
   function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
     setInputs((currInputs) => {
@@ -143,8 +170,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         >
           Cancel
         </Button>
-        <Button onPress={onSubmit} colorScheme={ColorScheme.primary}>
-          Submit
+        <Button onPress={validateInputs} colorScheme={ColorScheme.primary}>
+          {submitButtonLabel}
         </Button>
       </View>
     </View>

@@ -1,7 +1,8 @@
 import sys
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+
 
 from db import db
 sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
@@ -58,6 +59,57 @@ def get_journeys():
                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
             })    
         return jsonify({'journeys': journeys_list, 'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
+@app.route('/create-journey', methods=['POST'])
+def create_journey():
+    print('Create Journey')
+    print(request.get_json())
+    
+    # 1)Validation
+    # 2)Add to database
+    # 3)Return the journey or joruneyFormValues
+    
+    # must return a full journey!
+    return
+    # try:
+    #     # Get the data from the request
+    #     data = request.get_json()
+        
+    #     # Create a new journey
+    #     journey = Journey(
+    #         name=data['name'],
+    #         description=data['description'],
+    #         scheduled_start_time=data['scheduled_start_time'],
+    #         scheduled_end_time=data['scheduled_end_time'],
+    #         countries=','.join(data['countries']),
+    #         done=data['done']
+    #     )
+    #     db.session.add(journey)
+    #     db.session.commit()
+        
+    #     # Create a new costs for the journey
+    #     costs = Costs(
+    #         journey_id=journey.id,
+    #         available_money=data['costs']['available_money'],
+    #         planned_costs=data['costs']['planned_costs'],
+    #         money_exceeded=data['costs']['money_exceeded']
+    #     )
+    #     db.session.add(costs)
+    #     db.session.commit()
+        
+    #     return jsonify({'status': 200})
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}, 500)
+    
+@app.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
+def delete_journey(journeyId):
+    try:
+        # Delete the journey from the database
+        db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
+        db.session.commit()
+        return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
 

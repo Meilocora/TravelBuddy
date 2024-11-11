@@ -1,10 +1,16 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { Journey, MajorStage, MinorStage } from '../models';
+import {
+  Journey,
+  JourneyFormValues,
+  JourneyValues,
+  MajorStage,
+  MinorStage,
+} from '../models';
 
 const BACKEND_URL = 'http://192.168.178.32:3000';
 
-interface JourneyResponse {
+interface FetchJourneyBackendResponse {
   journeys?: Journey[];
   status: number;
   error?: string;
@@ -18,9 +24,8 @@ interface FetchJourneysResponse {
 
 export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
   try {
-    const response: AxiosResponse<JourneyResponse> = await axios.get(
-      `${BACKEND_URL}/get-journeys`
-    );
+    const response: AxiosResponse<FetchJourneyBackendResponse> =
+      await axios.get(`${BACKEND_URL}/get-journeys`);
 
     // Error from backend
     if (response.data.error) {
@@ -45,6 +50,41 @@ export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch journeys!' };
+  }
+};
+
+interface JourneyCreationResponse {
+  journey?: Journey;
+  journeyFormValues?: JourneyFormValues;
+  status: number;
+  error?: string;
+}
+
+export const createJourney = async (
+  journeyFormValues: JourneyFormValues
+): Promise<JourneyCreationResponse> => {
+  try {
+    const response: AxiosResponse<JourneyCreationResponse> = await axios.post(
+      `${BACKEND_URL}/create-journey`,
+      journeyFormValues
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    if (response.data.journeyFormValues) {
+      return {
+        journeyFormValues: response.data.journeyFormValues,
+        status: response.data.status,
+      };
+    }
+
+    return { journey: response.data.journey, status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not create journey!' };
   }
 };
 

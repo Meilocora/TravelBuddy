@@ -41,7 +41,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 
   const hasMinorStages =
     majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
-  // useReducser to get rid of alle that code
+  // useReducer to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.available_money);
   const moneyPlanned = formatAmount(majorStage.costs.planned_costs);
   const startDate = formatDate(majorStage.scheduled_start_time);
@@ -159,8 +159,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     </MinorStageContextProvider>
   );
 };
-
-//TODO: Add a flat button to show minor stages
 
 const styles = StyleSheet.create({
   container: {
