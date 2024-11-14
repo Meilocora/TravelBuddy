@@ -9,36 +9,49 @@ export function formatAmount(amount: number): string {
   }).format(amount);
 }
 
-export function formatDate(date: Date): string {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const year = date.getFullYear();
+// TODO: Might rework this to take string aswell, because backend responsen is also string
+export function formatDateString(date: string): string {
+  const dateObject = new Date(date);
+  const day = String(dateObject.getDate()).padStart(2, '0');
+  const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const year = dateObject.getFullYear();
   return `${year}-${month}-${day}`;
 }
 
-export function formatDateAndTime(date: Date, mode?: string): string {
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+export function formatDateAndTime(date: string, mode?: string): string {
+  const dateObject = new Date(date);
+  const day = String(dateObject.getDate()).padStart(2, '0');
+  const year = dateObject.getFullYear();
+  const hours = String(dateObject.getHours()).padStart(2, '0');
+  const minutes = String(dateObject.getMinutes()).padStart(2, '0');
   if (mode === DateFormatMode.shortened) {
     const month = String(
-      date.toLocaleString('en-US', { month: 'short' }).slice(0, 3)
+      dateObject.toLocaleString('en-US', { month: 'short' }).slice(0, 3)
     ); // Months are zero-based
     return `${day}.${month} - ${hours}:${minutes}`;
   }
 
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   return `${day}.${month}.${year} - ${hours}:${minutes}`;
 }
 
-export function formatDurationToDays(startDate: Date, endDate: Date): number {
-  return startDate.getDate() - endDate.getDate();
+export function formatDurationToDays(
+  startDate: string,
+  endDate: string
+): number {
+  const startDateObject = new Date(startDate);
+  const endDateObject = new Date(endDate);
+
+  return (
+    (endDateObject.getTime() - startDateObject.getTime()) /
+    (1000 * 60 * 60 * 24)
+  );
 }
 
-export function formatCountdown(startDate: Date): string {
+export function formatCountdown(startDate: string): string {
   const today = new Date();
-  const timeDifference = startDate.getTime() - today.getTime();
+  const startDateObject = new Date(startDate);
+  const timeDifference = startDateObject.getTime() - today.getTime();
 
   if (timeDifference < 0) {
     return 'already departed';
@@ -57,16 +70,18 @@ export function formatCountdown(startDate: Date): string {
   return `${days}d ${hours}h ${minutes}m`;
 }
 
-export function formatProgress(startDate: Date, endDate: Date): number {
+export function formatProgress(startDate: string, endDate: string): number {
   const today = new Date();
+  const startDateObject = new Date(startDate);
+  const endDateObject = new Date(endDate);
 
-  if (today < startDate) {
+  if (today < startDateObject) {
     return 0;
-  } else if (today > endDate) {
+  } else if (today > endDateObject) {
     return 1;
   } else {
     const totalDuration = formatDurationToDays(startDate, endDate);
-    const daysPassed = formatDurationToDays(startDate, today);
+    const daysPassed = formatDurationToDays(startDate, today.toISOString());
 
     return daysPassed / totalDuration;
   }

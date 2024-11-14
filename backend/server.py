@@ -5,8 +5,10 @@ from flask_cors import CORS
 
 
 from db import db
+
 sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
 
+from app.journey_validation import JourneyValidation
 from app.dummy_data import add_dummy_data
 from app.models import *
 
@@ -64,44 +66,57 @@ def get_journeys():
     
 @app.route('/create-journey', methods=['POST'])
 def create_journey():
-    print('Create Journey')
-    print(request.get_json())
+    try:
+        journey = request.get_json()
+    except:
+        return jsonify({'error': 'Unknown error'}, 400)
     
-    # 1)Validation
-    # 2)Add to database
-    # 3)Return the journey or joruneyFormValues
+    response, isValid = JourneyValidation.validate_journey(journey=journey)
     
-    # must return a full journey!
-    return
-    # try:
-    #     # Get the data from the request
-    #     data = request.get_json()
+    if not isValid:
+        return jsonify({'journeyFormValues': response, 'status': 400})
+    
+    try:
+        # Create a new journey
+        new_journey = Journey(
+            name=journey['name']['value'],
+            description=journey['description']['value'],
+            scheduled_start_time=journey['scheduled_start_time']['value'],
+            scheduled_end_time=journey['scheduled_end_time']['value'],
+            countries=journey['countries']['value'],
+            done=False
+        )
+        db.session.add(new_journey)
+        db.session.commit()
         
-    #     # Create a new journey
-    #     journey = Journey(
-    #         name=data['name'],
-    #         description=data['description'],
-    #         scheduled_start_time=data['scheduled_start_time'],
-    #         scheduled_end_time=data['scheduled_end_time'],
-    #         countries=','.join(data['countries']),
-    #         done=data['done']
-    #     )
-    #     db.session.add(journey)
-    #     db.session.commit()
         
-    #     # Create a new costs for the journey
-    #     costs = Costs(
-    #         journey_id=journey.id,
-    #         available_money=data['costs']['available_money'],
-    #         planned_costs=data['costs']['planned_costs'],
-    #         money_exceeded=data['costs']['money_exceeded']
-    #     )
-    #     db.session.add(costs)
-    #     db.session.commit()
+        # Create a new costs for the journey
+        costs = Costs(
+            journey_id=new_journey.id,
+            available_money=journey['available_money']['value'],
+            planned_costs=0,
+            money_exceeded=False
+        )
+        db.session.add(costs)
+        db.session.commit()
         
-    #     return jsonify({'status': 200})
-    # except Exception as e:
-    #     return jsonify({'error': str(e)}, 500)
+        response_journey = {'id': new_journey.id,
+                'name': new_journey.name,
+                'description': new_journey.description,
+                'costs': {
+                    'available_money': costs.available_money,
+                    'planned_costs': costs.planned_costs,
+                    'money_exceeded': costs.money_exceeded,
+                },
+                'scheduled_start_time': new_journey.scheduled_start_time,
+                'scheduled_end_time': new_journey.scheduled_end_time,
+                'countries': new_journey.countries.split(','),
+                'done': new_journey.done,
+                'majorStagesIds': []}
+        
+        return jsonify({'journey': response_journey,'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
     
 @app.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
 def delete_journey(journeyId):

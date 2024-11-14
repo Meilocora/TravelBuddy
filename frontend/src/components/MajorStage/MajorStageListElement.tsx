@@ -13,7 +13,7 @@ import {
 import {
   formatAmount,
   formatCountdown,
-  formatDate,
+  formatDateString,
   formatDateAndTime,
   formatDurationToDays,
 } from '../../utils';
@@ -44,8 +44,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   // useReducer to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.available_money);
   const moneyPlanned = formatAmount(majorStage.costs.planned_costs);
-  const startDate = formatDate(majorStage.scheduled_start_time);
-  const endDate = formatDate(majorStage.scheduled_end_time);
+  const startDate = formatDateString(majorStage.scheduled_start_time);
+  const endDate = formatDateString(majorStage.scheduled_end_time);
   const durationInDays = formatDurationToDays(
     majorStage.scheduled_end_time,
     majorStage.scheduled_start_time

@@ -6,7 +6,7 @@ import { BottomTabsParamList, Icons, Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
-  formatDate,
+  formatDateString,
   formatDurationToDays,
   formatProgress,
 } from '../../utils';
@@ -25,11 +25,11 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
 }): ReactElement => {
   const moneyAvailable = formatAmount(journey.costs.available_money);
   const moneyPlanned = formatAmount(journey.costs.planned_costs);
-  const startDate = formatDate(journey.scheduled_start_time);
-  const endDate = formatDate(journey.scheduled_end_time);
+  const startDate = formatDateString(journey.scheduled_start_time);
+  const endDate = formatDateString(journey.scheduled_end_time);
   const durationInDays = formatDurationToDays(
-    journey.scheduled_end_time,
-    journey.scheduled_start_time
+    journey.scheduled_start_time,
+    journey.scheduled_end_time
   );
 
   const elementDetailInfo = [
@@ -62,6 +62,10 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   }
 
   // TODO: Highlight, when money exceeded
+  // TODO: Add, that joruney is started or ended
+  // TODO: Add Major stages z.b. 3/5
+  // TODO: Countrylist, mark countries that are visited
+  // TODO: Add Countdown till journey starts
 
   return (
     <View style={styles.outerContainer}>

@@ -88,6 +88,8 @@ const BottomTabsNavigator = () => {
               />
             ),
             unmountOnBlur: true,
+            presentation: 'modal',
+            animation: 'fade',
           })}
         />
         <BottomTabs.Screen

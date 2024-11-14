@@ -25,8 +25,9 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     async function getJourneys() {
       setIsFetching(true);
       const response = await fetchJourneys();
+
       if (!response.error) {
-        journeyCtx.setJourneys(response.typedJourneys || []);
+        journeyCtx.setJourneys(response.journeys || []);
       } else {
         setError(response.error);
       }

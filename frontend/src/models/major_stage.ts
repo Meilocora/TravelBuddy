@@ -6,16 +6,16 @@ export interface MajorStage {
   country: string;
   transportation?: Transportation;
   done: boolean;
-  scheduled_start_time: Date;
-  scheduled_end_time: Date;
+  scheduled_start_time: string;
+  scheduled_end_time: string;
   costs: Costs;
   minorStagesIds?: number[];
 }
 
 export interface Transportation {
   type: TransportationType;
-  start_time: Date;
-  arrival_time: Date;
+  start_time: string;
+  arrival_time: string;
   place_of_departure: string;
   place_of_arrival: string;
   transportation_costs: number;

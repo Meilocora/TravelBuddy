@@ -3,8 +3,8 @@ export interface Journey {
   name: string;
   description: string;
   costs: Costs;
-  scheduled_start_time: Date;
-  scheduled_end_time: Date;
+  scheduled_start_time: string;
+  scheduled_end_time: string;
   countries: string[];
   done: boolean;
   majorStagesIds?: number[];
@@ -15,19 +15,25 @@ export interface JourneyValues {
   description: string;
   available_money: number;
   planned_costs: number;
-  scheduled_start_time: Date | null;
-  scheduled_end_time: Date | null;
+  scheduled_start_time: string | null;
+  scheduled_end_time: string | null;
   countries: string[];
 }
 
+interface Validable<T> {
+  value: T;
+  isValid: boolean;
+  errors: string[];
+}
+
 export interface JourneyFormValues {
-  name: { value: string; isValid: boolean };
-  description: { value: string; isValid: boolean };
-  available_money: { value: number; isValid: boolean };
-  planned_costs: { value: number; isValid: boolean };
-  scheduled_start_time: { value: Date | null; isValid: boolean };
-  scheduled_end_time: { value: Date | null; isValid: boolean };
-  countries: { value: string[]; isValid: boolean };
+  name: Validable<string>;
+  description: Validable<string>;
+  available_money: Validable<number>;
+  planned_costs: Validable<number>;
+  scheduled_start_time: Validable<string | null>;
+  scheduled_end_time: Validable<string | null>;
+  countries: Validable<string[]>;
 }
 
 export interface Costs {

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 
 import { MinorStage } from '../../../models';
 import { formatAmount } from '../../../utils';
-import Link from '../Link';
 import TextLink from '../TextLink';
 import { generateRandomString } from '../../../utils/generator';
 

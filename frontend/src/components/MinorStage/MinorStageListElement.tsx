@@ -4,7 +4,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { MinorStage } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
-import { formatDate } from '../../utils';
+import { formatDateString } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import ContentBox from '../UI/contentbox/ContentBox';
 
@@ -15,8 +15,8 @@ interface MinorStageListElementProps {
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   minorStage,
 }): ReactElement => {
-  const startDate = formatDate(minorStage.scheduled_start_time);
-  const endDate = formatDate(minorStage.scheduled_end_time);
+  const startDate = formatDateString(minorStage.scheduled_start_time);
+  const endDate = formatDateString(minorStage.scheduled_end_time);
 
   return (
     <View style={styles.container}>

@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LayoutAnimation, StyleSheet, Text, View } from 'react-native';
 
 import {
   ButtonMode,
@@ -11,7 +11,6 @@ import {
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
 import Button from '../UI/Button';
-import { formatDate } from '../../utils';
 import { createJourney } from '../../utils';
 
 type InputValidationResponse = {
@@ -34,26 +33,48 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   submitButtonLabel,
   defaultValues,
 }): ReactElement => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputs, setInputs] = useState<JourneyFormValues>({
-    name: { value: defaultValues?.name || '', isValid: true },
-    description: { value: defaultValues?.description || '', isValid: true },
+    name: { value: defaultValues?.name || '', isValid: true, errors: [] },
+    description: {
+      value: defaultValues?.description || '',
+      isValid: true,
+      errors: [],
+    },
     available_money: {
       value: defaultValues?.available_money || 0,
       isValid: true,
+      errors: [],
     },
-    planned_costs: { value: defaultValues?.planned_costs || 0, isValid: true },
+    planned_costs: {
+      value: defaultValues?.planned_costs || 0,
+      isValid: true,
+      errors: [],
+    },
     scheduled_start_time: {
       value: defaultValues?.scheduled_start_time || null,
       isValid: true,
+      errors: [],
     },
     scheduled_end_time: {
       value: defaultValues?.scheduled_end_time || null,
       isValid: true,
+      errors: [],
     },
-    countries: { value: defaultValues?.countries || [], isValid: true },
+    countries: {
+      value: defaultValues?.countries || [],
+      isValid: true,
+      errors: [],
+    },
   });
 
   async function validateInputs(): Promise<void> {
+    // Set all errors to empty array to prevent stacking of errors
+    setIsSubmitting(true);
+    for (const key in inputs) {
+      inputs[key as keyof JourneyFormValues].errors = [];
+    }
+
     const {
       error,
       status,
@@ -66,8 +87,15 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (journeyFormValues) {
-      setInputs(journeyFormValues);
+      LayoutAnimation.configureNext({
+        duration: 500,
+        create: { type: 'linear', property: 'opacity' },
+        update: { type: 'easeInEaseOut', property: 'opacity' },
+        delete: { type: 'linear', property: 'opacity' },
+      });
+      setInputs((prevValues) => journeyFormValues);
     }
+    setIsSubmitting(false);
     return;
   }
 
@@ -75,9 +103,13 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        [inputIdentifier]: { value: enteredValue, isValid: true }, // dynamically use propertynames for objects
+        [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
       };
     });
+  }
+
+  if (isSubmitting) {
+    const submitButtonLabel = 'Submitting...';
   }
 
   return (
@@ -87,6 +119,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         <Input
           label='Name'
           invalid={!inputs.name.isValid}
+          errors={inputs.name.errors}
           textInputConfig={{
             value: inputs.name.value,
             onChangeText: inputChangedHandler.bind(this, 'name'),
@@ -95,6 +128,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         <Input
           label='Description'
           invalid={!inputs.description.isValid}
+          errors={inputs.description.errors}
           textInputConfig={{
             multiline: true,
             value: inputs.description.value,
@@ -103,20 +137,21 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         />
         <View style={styles.formRow}>
           <Input
-            label='Available Money'
-            invalid={!inputs.available_money.isValid}
-            textInputConfig={{
-              keyboardType: 'decimal-pad',
-              value: inputs.available_money.value.toString(),
-              onChangeText: inputChangedHandler.bind(this, 'available_money'),
-            }}
-          />
-          <Input
             label='Planned Costs'
             invalid={!inputs.planned_costs.isValid}
             textInputConfig={{
               readOnly: true,
-              value: inputs.planned_costs.value.toString(),
+              placeholder: inputs.planned_costs.value.toString(),
+            }}
+          />
+          <Input
+            label='Available Money'
+            invalid={!inputs.available_money.isValid}
+            errors={inputs.available_money.errors}
+            textInputConfig={{
+              keyboardType: 'decimal-pad',
+              value: inputs.available_money.value.toString(),
+              onChangeText: inputChangedHandler.bind(this, 'available_money'),
             }}
           />
         </View>
@@ -124,12 +159,11 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           <Input
             label='Starts on'
             invalid={!inputs.scheduled_start_time.isValid}
+            errors={inputs.scheduled_start_time.errors}
             textInputConfig={{
               placeholder: 'YYYY-MM-DD',
               maxLength: 10,
-              value: inputs.scheduled_start_time.value
-                ? formatDate(inputs.scheduled_start_time.value)
-                : '',
+              value: inputs.scheduled_start_time.value?.toString(),
               onChangeText: inputChangedHandler.bind(
                 this,
                 'scheduled_start_time'
@@ -139,12 +173,11 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           <Input
             label='Ends on'
             invalid={!inputs.scheduled_end_time.isValid}
+            errors={inputs.scheduled_end_time.errors}
             textInputConfig={{
               placeholder: 'YYYY-MM-DD',
               maxLength: 10,
-              value: inputs.scheduled_end_time.value!
-                ? formatDate(inputs.scheduled_end_time.value)
-                : '',
+              value: inputs.scheduled_end_time.value?.toString(),
               onChangeText: inputChangedHandler.bind(
                 this,
                 'scheduled_end_time'
@@ -155,6 +188,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         <Input
           label='Countries'
           invalid={!inputs.countries.isValid}
+          errors={inputs.countries.errors}
           textInputConfig={{
             placeholder: 'Country1, Country2, ...',
             value: inputs.countries.value.toString(),
@@ -205,6 +239,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 8,
+    maxWidth: '900%',
   },
   buttonsContainer: {
     flexDirection: 'row',

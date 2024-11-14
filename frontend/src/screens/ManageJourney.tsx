@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useState, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -17,6 +17,7 @@ import Button from '../components/UI/Button';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import { createJourney } from '../utils/http';
+import { formatDateString } from '../utils';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;
@@ -33,7 +34,6 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   route,
   navigation,
 }): ReactElement => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const journeyCtx = useContext(JourneyContext);
@@ -48,8 +48,12 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   const [journeyValues, setJourneyValues] = useState<JourneyValues>({
     name: selectedJourney?.name || '',
     description: selectedJourney?.description || '',
-    scheduled_start_time: selectedJourney?.scheduled_start_time || null,
-    scheduled_end_time: selectedJourney?.scheduled_end_time || null,
+    scheduled_start_time: selectedJourney?.scheduled_start_time
+      ? formatDateString(selectedJourney.scheduled_start_time)
+      : null,
+    scheduled_end_time: selectedJourney?.scheduled_end_time
+      ? formatDateString(selectedJourney.scheduled_end_time)
+      : null,
     available_money: selectedJourney?.costs.available_money || 0,
     planned_costs: selectedJourney?.costs.planned_costs || 0,
     countries: selectedJourney?.countries || [],
@@ -61,8 +65,12 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
       setJourneyValues({
         name: selectedJourney?.name || '',
         description: selectedJourney?.description || '',
-        scheduled_start_time: selectedJourney?.scheduled_start_time || null,
-        scheduled_end_time: selectedJourney?.scheduled_end_time || null,
+        scheduled_start_time: selectedJourney?.scheduled_start_time
+          ? formatDateString(selectedJourney.scheduled_start_time)
+          : null,
+        scheduled_end_time: selectedJourney?.scheduled_end_time
+          ? formatDateString(selectedJourney.scheduled_end_time)
+          : null,
         available_money: selectedJourney?.costs.available_money || 0,
         planned_costs: selectedJourney?.costs.planned_costs || 0,
         countries: selectedJourney?.countries || [],
@@ -103,8 +111,6 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   }
 
   function confirmHandler({ status, error, journey }: ConfirmHandlerProps) {
-    setIsSubmitting(true);
-
     // if (isEditing) {
     //   // Optimistic Updating
     //   journeyCtx.updateJourney(editedJourneyId, journeyData);
@@ -113,21 +119,18 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 
     if (error) {
       setError(error);
-      setIsSubmitting(false);
       return;
     } else if (journey) {
       journeyCtx.addJourney(journey);
       // TODO: Add little badge, that tells the user that the data was saved
     }
 
-    setIsSubmitting(false);
-
     // }
-    navigation.goBack();
+    navigation.navigate('AllJourneys');
   }
 
   return (
-    <View>
+    <ScrollView>
       <JourneyForm
         onCancel={cancelHandler}
         onSubmit={confirmHandler}
@@ -142,7 +145,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           size={36}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
