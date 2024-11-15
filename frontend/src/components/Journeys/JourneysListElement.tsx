@@ -35,7 +35,14 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
 
   const elementDetailInfo = [
     { title: 'Duration', value: `${durationInDays} days` },
-    { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
+    {
+      title: 'Costs',
+      value: `${moneyPlanned} / ${moneyAvailable}`,
+      textStyle:
+        moneyAvailable < moneyPlanned
+          ? { color: GlobalStyles.colors.error200 }
+          : undefined,
+    },
     { title: 'Start Date', value: startDate },
     { title: 'End Date', value: endDate },
   ];
@@ -91,9 +98,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
               elementDetailInfo={elementDetailInfo}
               areaStyle={styles.detailArea}
             />
-            <Text style={styles.countriesList}>
-              {journey.countries!}
-            </Text>
+            <Text style={styles.countriesList}>{journey.countries!}</Text>
           </View>
           <CustomProgressBar progress={progress} />
         </Pressable>

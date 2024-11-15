@@ -1,21 +1,23 @@
 import { ReactElement } from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 interface ElementDetailProps {
   title: string;
   value: string;
   style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
 const ElementDetail = ({
   title,
   value,
   style,
+  textStyle,
 }: ElementDetailProps): ReactElement => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.title}>{title}</Text>
-      <Text>{value}</Text>
+      <Text style={[styles.title, textStyle]}>{title}</Text>
+      <Text style={textStyle}>{value}</Text>
     </View>
   );
 };

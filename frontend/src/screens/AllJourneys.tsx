@@ -1,4 +1,10 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import JourneysList from '../components/Journeys/JourneysList';
@@ -8,6 +14,7 @@ import { JourneyContext } from '../store/journey-context';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
 import { BottomTabsParamList } from '../models';
 import { RouteProp } from '@react-navigation/native';
+import Popup from '../components/UI/Popup';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -15,14 +22,25 @@ interface AllJourneysProps {
 }
 
 const AllJourneys: React.FC<AllJourneysProps> = ({
-  navigation, route
+  navigation,
+  route,
 }): ReactElement => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
+  const [popupText, setPopupText] = useState<string | null>();
+
+  useEffect(() => {
+    function activatePopup() {
+      if (route.params?.popupText) {
+        setPopupText(route.params?.popupText);
+      }
+    }
+
+    activatePopup();
+  }, [route.params]);
 
   const journeyCtx = useContext(JourneyContext);
-  const popupText = route.params?.popupText;
 
   useEffect(() => {
     async function getJourneys() {
@@ -39,6 +57,10 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
     getJourneys();
   }, [refresh]);
+
+  function handleClosePopup() {
+    setPopupText(null);
+  }
 
   function handlePressReload() {
     setRefresh((prev) => prev + 1);
@@ -62,7 +84,12 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     );
   }
 
-  return <>{popupText && <Text>{popupText}</Text>}<JourneysList journeys={journeyCtx.journeys} /></>;
+  return (
+    <>
+      {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
+      <JourneysList journeys={journeyCtx.journeys} />
+    </>
+  );
 };
 
 export default AllJourneys;

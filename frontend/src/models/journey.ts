@@ -41,3 +41,5 @@ export interface Costs {
   planned_costs: number;
   money_exceeded: boolean;
 }
+
+export interface Country {}

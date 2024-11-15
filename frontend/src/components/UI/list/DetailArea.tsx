@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { View } from 'react-native';
 
 import ElementDetail from './ElementDetail';
@@ -8,7 +8,7 @@ import { generateRandomString } from '../../../utils/generator';
 interface DetailProps {
   areaStyle?: ViewStyle;
   detailStyle?: ViewStyle;
-  elementDetailInfo: { title: string; value: string }[];
+  elementDetailInfo: { title: string; value: string; textStyle?: TextStyle }[];
 }
 
 const DetailArea: React.FC<DetailProps> = ({
@@ -24,6 +24,7 @@ const DetailArea: React.FC<DetailProps> = ({
           title={info.title}
           value={info.value}
           style={detailStyle}
+          textStyle={info.textStyle}
         />
       ))}
     </View>

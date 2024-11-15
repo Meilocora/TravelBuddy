@@ -69,7 +69,7 @@ def create_journey():
     try:
         journey = request.get_json()
     except:
-        return jsonify({'error': 'Unknown error'}, 400)
+        return jsonify({'error': 'Unknown error'}, 400) 
     
     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
@@ -83,7 +83,7 @@ def create_journey():
             description=journey['description']['value'],
             scheduled_start_time=journey['scheduled_start_time']['value'],
             scheduled_end_time=journey['scheduled_end_time']['value'],
-            countries=journey['countries']['value'][0],
+            countries=journey['countries']['value'],
             done=False
         )
         db.session.add(new_journey)
