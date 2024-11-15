@@ -27,6 +27,8 @@ const Button: React.FC<ButtonProps> = ({
     schemeStyles = complementaryStyles;
   } else if (colorScheme === ColorScheme.error) {
     schemeStyles = errorStyles;
+  } else if (colorScheme === ColorScheme.neutral) {
+    schemeStyles = neutralStyles;
   }
 
   return (
@@ -61,6 +63,7 @@ const Button: React.FC<ButtonProps> = ({
 const generalStyles = StyleSheet.create({
   container: {
     marginVertical: 4,
+    minWidth: 75,
   },
   button: {
     borderRadius: 4,
@@ -74,10 +77,21 @@ const generalStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
-  flatText: {},
   pressed: {
     opacity: 0.75,
     borderRadius: 4,
+  },
+});
+
+const neutralStyles = StyleSheet.create({
+  button: {
+    backgroundColor: GlobalStyles.colors.gray700,
+  },
+  flatText: {
+    color: GlobalStyles.colors.gray50,
+  },
+  pressed: {
+    backgroundColor: GlobalStyles.colors.gray500,
   },
 });
 

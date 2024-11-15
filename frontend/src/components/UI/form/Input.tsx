@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { memo, ReactElement } from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -6,9 +6,9 @@ import {
   TextInput,
   TextInputProps,
   TextStyle,
-  View,
   ViewStyle,
 } from 'react-native';
+import Animated, { FadeInDown, FadeInUp, FadeOut, SlideInDown, SlideInUp } from 'react-native-reanimated';
 
 import { GlobalStyles } from '../../../constants/styles';
 import { generateRandomString } from '../../../utils';
@@ -29,7 +29,6 @@ const Input: React.FC<InputProps> = ({
   errors,
 }): ReactElement => {
   const inputStyles: StyleProp<TextStyle>[] = [styles.input];
-  const [isInvalid, setIsInvalid] = useState(false);
 
   if (textInputConfig && textInputConfig.multiline) {
     inputStyles.push(styles.inputMultiline);
@@ -39,7 +38,6 @@ const Input: React.FC<InputProps> = ({
     inputStyles.push(styles.invalidInput);
   }
 
-  // console.log(textInputConfig?.value);
   if (
     textInputConfig &&
     (textInputConfig.value === undefined || !textInputConfig.value)
@@ -48,18 +46,29 @@ const Input: React.FC<InputProps> = ({
   }
 
   return (
-    <View style={[styles.inputContainer, style]}>
+    <Animated.View style={[styles.inputContainer, style]}>
       <Text style={[styles.label, invalid && styles.invalidLabel]}>
         {label}
       </Text>
-      <TextInput style={inputStyles} {...textInputConfig} />
+      <TextInput
+        style={inputStyles}
+        {...textInputConfig}
+        selectionColor='white'
+      />
       {errors &&
-        errors.map((error) => (
-          <Text key={generateRandomString()} style={styles.invalidInfo}>
+        errors.map((error, index) => (
+          <Animated.Text
+            style={styles.invalidInfo}
+            key={generateRandomString()}
+            entering={FadeInUp
+              .duration(500)
+              .delay(index * 200)}
+            exiting={FadeOut.duration(50)}
+          >
             {error.replace(', ', '')}
-          </Text>
+          </Animated.Text>
         ))}
-    </View>
+    </Animated.View>
   );
 };
 
@@ -71,12 +80,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: GlobalStyles.colors.primary400,
+    color: GlobalStyles.colors.gray100,
     marginBottom: 4,
   },
   input: {
-    backgroundColor: GlobalStyles.colors.primary50,
-    color: GlobalStyles.colors.primary400,
+    backgroundColor: GlobalStyles.colors.gray300,
+    color: GlobalStyles.colors.gray50,
     padding: 6,
     borderRadius: 6,
     fontSize: 18,
@@ -89,17 +98,22 @@ const styles = StyleSheet.create({
   invalidLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: GlobalStyles.colors.error500,
+    color: GlobalStyles.colors.error200,
   },
   invalidInput: {
     backgroundColor: GlobalStyles.colors.error50,
   },
   invalidInfo: {
-    color: GlobalStyles.colors.error500,
+    color: GlobalStyles.colors.error200,
     fontSize: 14,
     fontStyle: 'italic',
     flexWrap: 'wrap',
   },
 });
 
-export default Input;
+// Make sure the compoennt is only reexecuted by JourneyForm, when the errors change
+function areEqual(prevProps: InputProps, nextProps: InputProps): boolean {
+  return prevProps.errors === nextProps.errors;
+}
+
+export default memo(Input, areEqual);

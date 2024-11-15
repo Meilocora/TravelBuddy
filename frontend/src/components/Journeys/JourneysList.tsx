@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { FlatList } from 'react-native';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 import { Journey } from '../../models';
 import JourneyListElement from './JourneysListElement';
@@ -14,7 +15,11 @@ const JourneysList: React.FC<JourneysListProps> = ({
   return (
     <FlatList
       data={journeys}
-      renderItem={({ item }) => <JourneyListElement journey={item} />}
+      renderItem={({ item, index }) => (
+        <Animated.View entering={FadeInDown.delay(index * 200).duration(1000)}>
+          <JourneyListElement journey={item} />
+        </Animated.View>
+      )}
     />
   );
 };

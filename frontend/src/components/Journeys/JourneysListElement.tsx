@@ -15,6 +15,7 @@ import { StackParamList } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import DetailArea from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -62,51 +63,56 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   }
 
   // TODO: Highlight, when money exceeded
-  // TODO: Add, that joruney is started or ended
   // TODO: Add Major stages z.b. 3/5
   // TODO: Countrylist, mark countries that are visited
   // TODO: Add Countdown till journey starts
 
   return (
     <View style={styles.outerContainer}>
-      <Pressable
-        style={({ pressed }) => pressed && styles.pressed}
-        android_ripple={{ color: GlobalStyles.colors.primary100 }}
-        onPress={handleOnPress}
+      <LinearGradient
+        colors={['#ced4da', '#5b936c']}
+        style={{ height: '100%' }}
       >
-        <View style={styles.innerContainer}>
-          <View style={styles.headerContainer}>
-            <ElementTitle>{journey.name}</ElementTitle>
-            <IconButton
-              icon={Icons.edit}
-              color={GlobalStyles.colors.primary800}
-              onPress={handleEdit}
+        <Pressable
+          style={({ pressed }) => pressed && styles.pressed}
+          android_ripple={{ color: GlobalStyles.colors.primary100 }}
+          onPress={handleOnPress}
+        >
+          <View style={styles.innerContainer}>
+            <View style={styles.headerContainer}>
+              <ElementTitle>{journey.name}</ElementTitle>
+              <IconButton
+                icon={Icons.edit}
+                color={GlobalStyles.colors.primary500}
+                onPress={handleEdit}
+              />
+            </View>
+            <DetailArea
+              elementDetailInfo={elementDetailInfo}
+              areaStyle={styles.detailArea}
             />
+            <Text style={styles.countriesList}>
+              {journey.countries!.join(', ')}
+            </Text>
           </View>
-          <DetailArea
-            elementDetailInfo={elementDetailInfo}
-            areaStyle={styles.detailArea}
-          />
-          <Text style={styles.countriesList}>
-            {journey.countries!.join(', ')}
-          </Text>
-        </View>
-        <CustomProgressBar progress={progress} />
-      </Pressable>
+          <CustomProgressBar progress={progress} />
+        </Pressable>
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   outerContainer: {
-    borderColor: GlobalStyles.colors.primary700,
+    borderColor: GlobalStyles.colors.primary400,
     borderWidth: 2,
     borderRadius: 20,
     flex: 1,
     marginVertical: 8,
     marginHorizontal: 16,
     overflow: 'hidden',
-    backgroundColor: GlobalStyles.colors.primary50,
+    // backgroundColor: GlobalStyles.colors.gray200,
+    backgroundColor: 'transparent',
     elevation: 5,
     shadowColor: GlobalStyles.colors.gray500,
     shadowOffset: { width: 0, height: 2 },
@@ -133,7 +139,7 @@ const styles = StyleSheet.create({
   },
   detailArea: {
     borderTopWidth: 2,
-    borderTopColor: GlobalStyles.colors.primary700,
+    borderTopColor: GlobalStyles.colors.primary500,
   },
 });
 

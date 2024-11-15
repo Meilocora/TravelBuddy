@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useState, useCallback } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -18,6 +18,13 @@ import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import { createJourney } from '../utils/http';
 import { formatDateString } from '../utils';
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  SlideInDown,
+  SlideInLeft,
+} from 'react-native-reanimated';
+import Modal from '../components/UI/Modal';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;
@@ -35,6 +42,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   navigation,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const journeyCtx = useContext(JourneyContext);
   const editedJourneyId = route.params?.journeyId;
@@ -106,6 +114,20 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   //   }
   // }
 
+  function deleteHandler() {
+    setIsDeleting(true);
+  }
+
+  function confirmDeleteHandler() {
+    // journeyCtx.deleteJourney(editedJourneyId);
+    // navigation.navigate('AllJourneys');
+    setIsDeleting(false);
+  }
+
+  function closeModalHandler() {
+    setIsDeleting(false);
+  }
+
   function cancelHandler() {
     navigation.goBack();
   }
@@ -130,22 +152,27 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   }
 
   return (
-    <ScrollView>
-      <JourneyForm
-        onCancel={cancelHandler}
-        onSubmit={confirmHandler}
-        submitButtonLabel={isEditing ? 'Update' : 'Add'}
-        defaultValues={isEditing ? journeyValues : undefined}
-      />
-      <View style={styles.btnContainer}>
-        <IconButton
-          icon={Icons.delete}
-          color={GlobalStyles.colors.error200}
-          onPress={() => {}}
-          size={36}
+    <View style={{ flex: 1 }}>
+      {isDeleting && <Modal title='Are you sure?' content={`If you delete ${journeyValues.name}, all related Major and Minor Stages will also be deleted permanently`} onConfirm={confirmDeleteHandler} onCancel={closeModalHandler}/>}
+      <Animated.ScrollView entering={FadeInDown}>
+        <JourneyForm
+          onCancel={cancelHandler}
+          onSubmit={confirmHandler}
+          submitButtonLabel={isEditing ? 'Update' : 'Add'}
+          defaultValues={isEditing ? journeyValues : undefined}
         />
-      </View>
-    </ScrollView>
+        {isEditing && (
+        <View style={styles.btnContainer}>
+          <IconButton
+            icon={Icons.delete}
+            color={GlobalStyles.colors.error200}
+            onPress={deleteHandler}
+            size={36}
+          />
+        </View>
+        )}
+      </Animated.ScrollView>
+    </View>
   );
 };
 

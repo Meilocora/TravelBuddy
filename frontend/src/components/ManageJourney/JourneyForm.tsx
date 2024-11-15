@@ -1,5 +1,6 @@
 import { ReactElement, useState } from 'react';
-import { LayoutAnimation, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import {
   ButtonMode,
@@ -87,12 +88,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (journeyFormValues) {
-      LayoutAnimation.configureNext({
-        duration: 500,
-        create: { type: 'linear', property: 'opacity' },
-        update: { type: 'easeInEaseOut', property: 'opacity' },
-        delete: { type: 'linear', property: 'opacity' },
-      });
       setInputs((prevValues) => journeyFormValues);
     }
     setIsSubmitting(false);
@@ -199,12 +194,12 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       <View style={styles.buttonsContainer}>
         <Button
           onPress={onCancel}
-          colorScheme={ColorScheme.primary}
+          colorScheme={ColorScheme.neutral}
           mode={ButtonMode.flat}
         >
           Cancel
         </Button>
-        <Button onPress={validateInputs} colorScheme={ColorScheme.primary}>
+        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
           {submitButtonLabel}
         </Button>
       </View>
@@ -214,14 +209,15 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
 
 const styles = StyleSheet.create({
   formContainer: {
+    opacity: 0.75,
     marginHorizontal: 16,
     marginVertical: 8,
     paddingHorizontal: 8,
     paddingVertical: 16,
     borderWidth: 2,
     borderRadius: 8,
-    borderColor: GlobalStyles.colors.primary500,
-    backgroundColor: GlobalStyles.colors.gray50,
+    borderColor: GlobalStyles.colors.gray100,
+    backgroundColor: GlobalStyles.colors.gray400,
     elevation: 5,
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
@@ -231,7 +227,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 22,
     textAlign: 'center',
-    color: GlobalStyles.colors.primary700,
+    color: GlobalStyles.colors.gray50,
     fontWeight: 'bold',
   },
   formRow: {
@@ -239,7 +235,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 8,
-    maxWidth: '900%',
   },
   buttonsContainer: {
     flexDirection: 'row',

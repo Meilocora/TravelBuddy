@@ -8,11 +8,11 @@ import {
 } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import AllJourneys from './src/screens/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
-
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
 import {
@@ -30,11 +30,15 @@ import MajorStageContextProvider from './src/store/majorStage-context.';
 import Overview from './src/screens/Journey/Overview';
 import Map from './src/screens/Journey/Map';
 import Favorites from './src/screens/Favorites';
+import { View } from 'react-native';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 const JourneyBottomTabs =
   createBottomTabNavigator<JourneyBottomTabsParamsList>();
+
+const navTheme = DefaultTheme;
+navTheme.colors.background = 'transparent';
 
 const BottomTabsNavigator = () => {
   return (
@@ -187,8 +191,20 @@ const JourneyBottomTabsNavigator = () => {
 export default function App() {
   return (
     <>
+      <LinearGradient
+        style={{
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
+        colors={['#042f01', '#02461a', '#006f21']}
+        locations={[0.1, 0.85, 1]}
+      />
       <StatusBar style='inverted' />
-      <NavigationContainer>
+      <NavigationContainer theme={navTheme}>
         <Stack.Navigator
           screenOptions={() => ({
             headerTintColor: 'white',

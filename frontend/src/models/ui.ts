@@ -22,6 +22,7 @@ export enum ButtonMode {
 }
 
 export enum ColorScheme {
+  neutral = 'neutral',
   primary = 'primary',
   accent = 'accent',
   complementary = 'complementary',
