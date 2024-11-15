@@ -3,28 +3,21 @@ import axios, { AxiosResponse } from 'axios';
 import {
   Journey,
   JourneyFormValues,
-  JourneyValues,
   MajorStage,
   MinorStage,
 } from '../models';
 
 const BACKEND_URL = 'http://192.168.178.32:3000';
 
-interface FetchJourneyBackendResponse {
+interface FetchJourneysProps {
   journeys?: Journey[];
   status: number;
   error?: string;
 }
 
-interface FetchJourneysResponse {
-  journeys?: Journey[];
-  status: number;
-  error?: string;
-}
-
-export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
+export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
   try {
-    const response: AxiosResponse<FetchJourneyBackendResponse> =
+    const response: AxiosResponse<FetchJourneysProps> =
       await axios.get(`${BACKEND_URL}/get-journeys`);
 
     // Error from backend
@@ -45,7 +38,7 @@ export const fetchJourneys = async (): Promise<FetchJourneysResponse> => {
   }
 };
 
-interface JourneyCreationResponse {
+interface ManageJourneyProps {
   journey?: Journey;
   journeyFormValues?: JourneyFormValues;
   status: number;
@@ -54,9 +47,9 @@ interface JourneyCreationResponse {
 
 export const createJourney = async (
   journeyFormValues: JourneyFormValues
-): Promise<JourneyCreationResponse> => {
+): Promise<ManageJourneyProps> => {
   try {
-    const response: AxiosResponse<JourneyCreationResponse> = await axios.post(
+    const response: AxiosResponse<ManageJourneyProps> = await axios.post(
       `${BACKEND_URL}/create-journey`,
       journeyFormValues
     );
@@ -80,13 +73,59 @@ export const createJourney = async (
   }
 };
 
-interface MajorStageResponse {
-  majorStages?: MajorStage[];
-  status: number;
-  error?: string;
-}
 
-interface FetchMajorStagesResponse {
+export const updateJourney = async (
+  journeyFormValues: JourneyFormValues, journeyId: number
+): Promise<ManageJourneyProps> => {
+
+  try {
+    const response: AxiosResponse<ManageJourneyProps> = await axios.post(
+      `${BACKEND_URL}/update-journey/${journeyId}`,
+      journeyFormValues
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    if (response.data.journeyFormValues) {
+      return {
+        journeyFormValues: response.data.journeyFormValues,
+        status: response.data.status,
+      };
+    }
+
+    return { journey: response.data.journey, status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not update journey!' };
+  }
+};
+
+export const deleteJourney = async (
+  journeyId: number
+): Promise<ManageJourneyProps> => {
+
+  try {
+    const response: AxiosResponse<ManageJourneyProps> = await axios.delete(
+      `${BACKEND_URL}/delete-journey/${journeyId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not delete journey!' };
+  }
+};
+
+
+interface FetchMajorStageProps {
   majorStages?: MajorStage[];
   status: number;
   error?: string;
@@ -94,9 +133,9 @@ interface FetchMajorStagesResponse {
 
 export const fetchMajorStagesById = async (
   id: number
-): Promise<FetchMajorStagesResponse> => {
+): Promise<FetchMajorStageProps> => {
   try {
-    const response: AxiosResponse<MajorStageResponse> = await axios.get(
+    const response: AxiosResponse<FetchMajorStageProps> = await axios.get(
       `${BACKEND_URL}/get-major-stages/${id}`
     );
 
@@ -111,36 +150,6 @@ export const fetchMajorStagesById = async (
       return { status };
     }
 
-    // const typedMajorStages: MajorStage[] = majorStages.map((majorStage) => {
-    //   // TODO: maybe just spread operator?
-    //   return {
-    //     id: majorStage.id,
-    //     title: majorStage.title,
-    //     country: majorStage.country,
-    //     ...(majorStage.transportation && {
-    //       transportation: {
-    //         type: majorStage.transportation.type,
-    //         start_time: majorStage.transportation.start_time,
-    //         arrival_time: majorStage.transportation.arrival_time,
-    //         place_of_departure: majorStage.transportation.place_of_departure,
-    //         place_of_arrival: majorStage.transportation.place_of_arrival,
-    //         transportation_costs:
-    //           majorStage.transportation.transportation_costs,
-    //         link: majorStage.transportation.link,
-    //       },
-    //     }),
-    //     done: majorStage.done,
-    //     scheduled_start_time: majorStage.scheduled_start_time,
-    //     scheduled_end_time: majorStage.scheduled_end_time,
-    //     costs: {
-    //       available_money: majorStage.costs.available_money,
-    //       planned_costs: majorStage.costs.planned_costs,
-    //       money_exceeded: majorStage.costs.money_exceeded,
-    //     },
-    //     minorStagesIds: majorStage.minorStagesIds,
-    //   };
-    // });
-
     return { majorStages, status };
   } catch (error) {
     // Error from frontend
@@ -148,13 +157,8 @@ export const fetchMajorStagesById = async (
   }
 };
 
-interface MinorStageResponse {
-  minorStages?: MinorStage[];
-  status: number;
-  error?: string;
-}
 
-interface FetchMinorStagesResponse {
+interface FetchMinorStagesProps {
   minorStages?: MinorStage[];
   status: number;
   error?: string;
@@ -162,9 +166,9 @@ interface FetchMinorStagesResponse {
 
 export const fetchMinorStagesById = async (
   id: number
-): Promise<FetchMinorStagesResponse> => {
+): Promise<FetchMinorStagesProps> => {
   try {
-    const response: AxiosResponse<MinorStageResponse> = await axios.get(
+    const response: AxiosResponse<FetchMinorStagesProps> = await axios.get(
       `${BACKEND_URL}/get-minor-stages/${id}`
     );
 
@@ -178,47 +182,6 @@ export const fetchMinorStagesById = async (
     if (!minorStages) {
       return { status };
     }
-
-    // const typedMinorStages: MinorStage[] = minorStages.map((minorStage) => {
-    //   // TODO: maybe just spread operator?
-    //   return {
-    //     id: minorStage.id,
-    //     title: minorStage.title,
-    //     ...(minorStage.baseLocation && {
-    //       baseLocation: {
-    //         name: minorStage.baseLocation.name,
-    //         description: minorStage.baseLocation.description,
-    //         place: minorStage.baseLocation.place,
-    //         costs: minorStage.baseLocation.costs,
-    //         booked: minorStage.baseLocation.booked,
-    //         link: minorStage.baseLocation.link,
-    //       },
-    //     }),
-    //     placesToVisit: minorStage.placesToVisit?.map((place) => ({
-    //       name: place.name,
-    //       description: place.description,
-    //       visited: place.visited,
-    //       favorite: place.favorite,
-    //       link: place.link,
-    //     })),
-    //     activities: minorStage.activities?.map((activity) => ({
-    //       name: activity.name,
-    //       description: activity.description,
-    //       costs: activity.costs,
-    //       booked: activity.booked,
-    //       place: activity.place,
-    //       link: activity.link,
-    //     })),
-    //     done: minorStage.done,
-    //     scheduled_start_time: new Date(minorStage.scheduled_start_time),
-    //     scheduled_end_time: new Date(minorStage.scheduled_end_time),
-    //     costs: {
-    //       available_money: minorStage.costs.available_money,
-    //       planned_costs: minorStage.costs.planned_costs,
-    //       money_exceeded: minorStage.costs.money_exceeded,
-    //     },
-    //   };
-    // });
 
     return { minorStages, status };
   } catch (error) {

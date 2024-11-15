@@ -83,7 +83,7 @@ def create_journey():
             description=journey['description']['value'],
             scheduled_start_time=journey['scheduled_start_time']['value'],
             scheduled_end_time=journey['scheduled_end_time']['value'],
-            countries=journey['countries']['value'],
+            countries=journey['countries']['value'][0],
             done=False
         )
         db.session.add(new_journey)
@@ -114,9 +114,67 @@ def create_journey():
                 'done': new_journey.done,
                 'majorStagesIds': []}
         
+        return jsonify({'journey': response_journey,'status': 201})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
+@app.route('/update-journey/<int:journeyId>', methods=['POST'])
+def update_journey(journeyId):
+    try:
+        journey = request.get_json()
+    except:
+        return jsonify({'error': 'Unknown error'}, 400)
+    
+    response, isValid = JourneyValidation.validate_journey(journey=journey)
+    
+    if not isValid:
+        return jsonify({'journeyFormValues': response, 'status': 400})
+    
+    old_journey = db.get_or_404(Journey, journeyId)
+    money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
+    
+    majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
+    majorStages = majorStages_result.scalars().all()
+    majorStagesIds = [majorStage.id for majorStage in majorStages]
+    
+    try:
+        # Update the journey
+        db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
+            name=journey['name']['value'],
+            description=journey['description']['value'],
+            scheduled_start_time=journey['scheduled_start_time']['value'],
+            scheduled_end_time=journey['scheduled_end_time']['value'],
+            countries=journey['countries']['value'][0],
+        ))
+        db.session.commit()
+        
+        # Update the costs for the journey
+        db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
+            available_money=journey['available_money']['value'],
+            planned_costs=journey['planned_costs']['value'],
+            money_exceeded=money_exceeded
+        ))
+        db.session.commit()
+            
+        response_journey = {'id': journeyId,
+                'name': journey['name']['value'],
+                'description': journey['description']['value'],
+                'costs': {
+                    'available_money': journey['available_money']['value'],
+                    'planned_costs': journey['planned_costs']['value'],
+                    'money_exceeded': money_exceeded,
+                },
+                'scheduled_start_time': journey['scheduled_start_time']['value'],
+                'scheduled_end_time': journey['scheduled_end_time']['value'],
+                'countries': journey['countries']['value'],
+                'done': old_journey.done,
+                'majorStagesIds': majorStagesIds}
+        
         return jsonify({'journey': response_journey,'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+        
+    
     
 @app.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
 def delete_journey(journeyId):

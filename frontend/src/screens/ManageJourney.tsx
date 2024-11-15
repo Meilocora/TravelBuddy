@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useState, useCallback } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -9,20 +9,14 @@ import {
   JourneyValues,
   Journey,
   Icons,
-  JourneyFormValues,
 } from '../models';
 import { JourneyContext } from '../store/journey-context';
 import JourneyForm from '../components/ManageJourney/JourneyForm';
-import Button from '../components/UI/Button';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
-import { createJourney } from '../utils/http';
-import { formatDateString } from '../utils';
+import { deleteJourney, formatDateString } from '../utils';
 import Animated, {
-  FadeIn,
   FadeInDown,
-  SlideInDown,
-  SlideInLeft,
 } from 'react-native-reanimated';
 import Modal from '../components/UI/Modal';
 
@@ -64,7 +58,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
       : null,
     available_money: selectedJourney?.costs.available_money || 0,
     planned_costs: selectedJourney?.costs.planned_costs || 0,
-    countries: selectedJourney?.countries || [],
+    countries: selectedJourney?.countries || "",
   });
 
   useFocusEffect(
@@ -81,7 +75,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           : null,
         available_money: selectedJourney?.costs.available_money || 0,
         planned_costs: selectedJourney?.costs.planned_costs || 0,
-        countries: selectedJourney?.countries || [],
+        countries: selectedJourney?.countries || "",
       });
 
       return () => {
@@ -94,7 +88,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           scheduled_end_time: null,
           available_money: 0,
           planned_costs: 0,
-          countries: [],
+          countries: "",
         });
         // reset journeyId in navigation params for BottomTab
         navigation.setParams({ journeyId: undefined });
@@ -102,64 +96,71 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     }, [])
   );
 
-  // async function deleteJourneyHandler() {
-  //   setisSubmitting(true);
-  //   try {
-  //     await deleteExpense(editedExpenseId);
-  //     expenseCtx.deleteExpense(editedExpenseId);
-  //     navigation.goBack();
-  //   } catch (error) {
-  //     setError("Could not delete expense!");
-  //     setisSubmitting(false);
-  //   }
-  // }
+  async function deleteJourneyHandler() {
+    try {
+      const {error, status} = await deleteJourney(editedJourneyId!);
+      if (!error && status === 200) {
+        journeyCtx.deleteJourney(editedJourneyId!);
+        const popupText = "Journey successfully deleted!";
+        navigation.navigate('AllJourneys', { popupText: popupText });
+      } else {
+        setError(error!);
+        return
+      }
+
+    } catch (error) {
+      setError("Could not delete expense!");
+    }
+    setIsDeleting(false);
+    return
+  }
 
   function deleteHandler() {
     setIsDeleting(true);
   }
 
-  function confirmDeleteHandler() {
-    // journeyCtx.deleteJourney(editedJourneyId);
-    // navigation.navigate('AllJourneys');
-    setIsDeleting(false);
-  }
 
   function closeModalHandler() {
     setIsDeleting(false);
   }
 
   function cancelHandler() {
-    navigation.goBack();
+    navigation.navigate('AllJourneys');
   }
 
   function confirmHandler({ status, error, journey }: ConfirmHandlerProps) {
-    // if (isEditing) {
-    //   // Optimistic Updating
-    //   journeyCtx.updateJourney(editedJourneyId, journeyData);
-    //   await updateExpense(editedExpenseId, expenseData);
-    // } else {
-
-    if (error) {
-      setError(error);
-      return;
-    } else if (journey) {
-      journeyCtx.addJourney(journey);
-      // TODO: Add little badge, that tells the user that the data was saved
+    if (isEditing) {
+      if (error) {
+        setError(error);
+        return;
+      } else if (journey && status === 200) {
+        journeyCtx.updateJourney(journey);
+        const popupText = "Journey successfully updated!";
+        navigation.navigate('AllJourneys', { popupText: popupText });
+      }
+    } else {
+      if (error) {
+        setError(error);
+        return;
+      } else if (journey && status === 201) {
+        journeyCtx.addJourney(journey);
+        const popupText = "Journey successfully created!";
+        navigation.navigate('AllJourneys', { popupText: popupText });
+      }
     }
-
-    // }
-    navigation.navigate('AllJourneys');
   }
 
   return (
     <View style={{ flex: 1 }}>
-      {isDeleting && <Modal title='Are you sure?' content={`If you delete ${journeyValues.name}, all related Major and Minor Stages will also be deleted permanently`} onConfirm={confirmDeleteHandler} onCancel={closeModalHandler}/>}
+      {isDeleting && <Modal title='Are you sure?' content={`If you delete ${journeyValues.name}, all related Major and Minor Stages will also be deleted permanently`} onConfirm={deleteJourneyHandler} onCancel={closeModalHandler}/>}
       <Animated.ScrollView entering={FadeInDown}>
         <JourneyForm
           onCancel={cancelHandler}
           onSubmit={confirmHandler}
           submitButtonLabel={isEditing ? 'Update' : 'Add'}
           defaultValues={isEditing ? journeyValues : undefined}
+          isEditing={isEditing}
+          editJourneyId={editedJourneyId}
         />
         {isEditing && (
         <View style={styles.btnContainer}>

@@ -12,7 +12,7 @@ import {
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
 import Button from '../UI/Button';
-import { createJourney } from '../../utils';
+import { createJourney, updateJourney } from '../../utils';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -26,6 +26,8 @@ interface JourneyFormProps {
   onSubmit: (response: InputValidationResponse) => void;
   submitButtonLabel: string;
   defaultValues?: JourneyValues;
+  isEditing?: boolean;
+  editJourneyId?: number;
 }
 
 const JourneyForm: React.FC<JourneyFormProps> = ({
@@ -33,6 +35,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   onSubmit,
   submitButtonLabel,
   defaultValues,
+  isEditing,
+  editJourneyId
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputs, setInputs] = useState<JourneyFormValues>({
@@ -63,7 +67,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       errors: [],
     },
     countries: {
-      value: defaultValues?.countries || [],
+      value: defaultValues?.countries || "",
       isValid: true,
       errors: [],
     },
@@ -76,12 +80,19 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       inputs[key as keyof JourneyFormValues].errors = [];
     }
 
+    let response: InputValidationResponse;
+    if(isEditing) {
+      response = await updateJourney(inputs, editJourneyId!);
+    } else if(!isEditing) {
+      response = await createJourney(inputs);
+    }
+    
     const {
       error,
       status,
       journey,
       journeyFormValues,
-    }: InputValidationResponse = await createJourney(inputs);
+    } = response!;
 
     if (!error && journey) {
       onSubmit({ journey, status });

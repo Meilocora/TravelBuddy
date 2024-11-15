@@ -7,19 +7,22 @@ import { Text } from 'react-native';
 import { JourneyContext } from '../store/journey-context';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
 import { BottomTabsParamList } from '../models';
+import { RouteProp } from '@react-navigation/native';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
+  route: RouteProp<BottomTabsParamList, 'AllJourneys'>;
 }
 
 const AllJourneys: React.FC<AllJourneysProps> = ({
-  navigation,
+  navigation, route
 }): ReactElement => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
 
   const journeyCtx = useContext(JourneyContext);
+  const popupText = route.params?.popupText;
 
   useEffect(() => {
     async function getJourneys() {
@@ -59,7 +62,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     );
   }
 
-  return <JourneysList journeys={journeyCtx.journeys} />;
+  return <>{popupText && <Text>{popupText}</Text>}<JourneysList journeys={journeyCtx.journeys} /></>;
 };
 
 export default AllJourneys;
