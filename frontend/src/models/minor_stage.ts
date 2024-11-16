@@ -7,8 +7,8 @@ export interface MinorStage {
   placesToVisit?: PlaceToVisit[];
   activities?: Activity[];
   done: boolean;
-  scheduled_start_time: Date;
-  scheduled_end_time: Date;
+  scheduled_start_time: string;
+  scheduled_end_time: string;
   costs: Costs;
 }
 

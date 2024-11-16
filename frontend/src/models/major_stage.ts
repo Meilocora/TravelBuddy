@@ -8,6 +8,7 @@ export interface MajorStage {
   done: boolean;
   scheduled_start_time: string;
   scheduled_end_time: string;
+  additional_info: string;
   costs: Costs;
   minorStagesIds?: number[];
 }

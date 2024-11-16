@@ -22,7 +22,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
       setIsFetching(true);
       const response = await fetchMajorStagesById(journeyId);
       if (!response.error) {
-        majorStageCtx.setMajorStages(response.typedMajorStages || []);
+        majorStageCtx.setMajorStages(response.majorStages || []);
       } else {
         setError(response.error);
       }

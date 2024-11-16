@@ -2,6 +2,19 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, ForeignKey, Float
 from db import db
 
+class User(db.Model):
+    __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
+    token: Mapped[str] = mapped_column(String, nullable=True)
+
+    # Define relationships to children
+    # journeys: Mapped[list['Journey']] = relationship('Journey', back_populates='user', cascade='all, delete-orphan')
+
 class Journey(db.Model):
     __tablename__ = 'journeys'
     __table_args__ = {'extend_existing': True}
@@ -17,6 +30,12 @@ class Journey(db.Model):
     # Define relationships to children
     major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', back_populates='journey', cascade='all, delete-orphan')
     costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete-orphan')
+    
+    # Foreign keys to the parent
+    # user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    
+    # Define the relationship to the parent
+    # user: Mapped['User'] = relationship('User', back_populates='journeys')
 
 class MajorStage(db.Model):
     __tablename__ = 'major_stages'
@@ -28,6 +47,7 @@ class MajorStage(db.Model):
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
     scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
     scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
+    additional_info: Mapped[str] = mapped_column(String, nullable=True)
 
     # Define relationships to children
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')

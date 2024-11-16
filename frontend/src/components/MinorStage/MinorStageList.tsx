@@ -24,7 +24,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
       const response = await fetchMinorStagesById(majorStageId);
 
       if (!response.error) {
-        minorStageCtx.setMinorStages(response.typedMinorStages || []);
+        minorStageCtx.setMinorStages(response.minorStages || []);
       } else {
         setError(response.error);
       }
