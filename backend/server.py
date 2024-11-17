@@ -9,7 +9,6 @@ from db import db
 sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
 
 from app.journey_validation import JourneyValidation
-from app.dummy_data import add_dummy_data
 from app.models import *
 
 
@@ -24,8 +23,7 @@ db.init_app(app)
 
 
 with app.app_context():
-    db.create_all()     # Create the database
-    # add_dummy_data()    # insert some dummy data
+    db.create_all()     # Create the database if not exists
     
 
 @app.route('/get-journeys', methods=['GET'])
