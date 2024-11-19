@@ -14,10 +14,9 @@ import { JourneyContext } from '../store/journey-context';
 import JourneyForm from '../components/ManageJourney/JourneyForm';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
-import { deleteJourney, formatDateString } from '../utils';
-import Animated, {
-  FadeInDown,
-} from 'react-native-reanimated';
+import { formatDateString } from '../utils';
+import { deleteJourney } from '../utils/http';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import Modal from '../components/UI/Modal';
 
 interface ManageJourneyProps {
@@ -58,7 +57,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
       : null,
     available_money: selectedJourney?.costs.available_money || 0,
     planned_costs: selectedJourney?.costs.planned_costs || 0,
-    countries: selectedJourney?.countries || "",
+    countries: selectedJourney?.countries || '',
   });
 
   useFocusEffect(
@@ -75,7 +74,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           : null,
         available_money: selectedJourney?.costs.available_money || 0,
         planned_costs: selectedJourney?.costs.planned_costs || 0,
-        countries: selectedJourney?.countries || "",
+        countries: selectedJourney?.countries || '',
       });
 
       return () => {
@@ -88,7 +87,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           scheduled_end_time: null,
           available_money: 0,
           planned_costs: 0,
-          countries: "",
+          countries: '',
         });
         // reset journeyId in navigation params for BottomTab
         navigation.setParams({ journeyId: undefined });
@@ -98,27 +97,25 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 
   async function deleteJourneyHandler() {
     try {
-      const {error, status} = await deleteJourney(editedJourneyId!);
+      const { error, status } = await deleteJourney(editedJourneyId!);
       if (!error && status === 200) {
         journeyCtx.deleteJourney(editedJourneyId!);
-        const popupText = "Journey successfully deleted!";
+        const popupText = 'Journey successfully deleted!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       } else {
         setError(error!);
-        return
+        return;
       }
-
     } catch (error) {
-      setError("Could not delete expense!");
+      setError('Could not delete expense!');
     }
     setIsDeleting(false);
-    return
+    return;
   }
 
   function deleteHandler() {
     setIsDeleting(true);
   }
-
 
   function closeModalHandler() {
     setIsDeleting(false);
@@ -135,7 +132,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         return;
       } else if (journey && status === 200) {
         journeyCtx.updateJourney(journey);
-        const popupText = "Journey successfully updated!";
+        const popupText = 'Journey successfully updated!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }
     } else {
@@ -144,7 +141,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         return;
       } else if (journey && status === 201) {
         journeyCtx.addJourney(journey);
-        const popupText = "Journey successfully created!";
+        const popupText = 'Journey successfully created!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }
     }
@@ -152,7 +149,14 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 
   return (
     <View style={{ flex: 1 }}>
-      {isDeleting && <Modal title='Are you sure?' content={`If you delete ${journeyValues.name}, all related Major and Minor Stages will also be deleted permanently`} onConfirm={deleteJourneyHandler} onCancel={closeModalHandler}/>}
+      {isDeleting && (
+        <Modal
+          title='Are you sure?'
+          content={`If you delete ${journeyValues.name}, all related Major and Minor Stages will also be deleted permanently`}
+          onConfirm={deleteJourneyHandler}
+          onCancel={closeModalHandler}
+        />
+      )}
       <Animated.ScrollView entering={FadeInDown}>
         <JourneyForm
           onCancel={cancelHandler}
@@ -163,14 +167,14 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           editJourneyId={editedJourneyId}
         />
         {isEditing && (
-        <View style={styles.btnContainer}>
-          <IconButton
-            icon={Icons.delete}
-            color={GlobalStyles.colors.error200}
-            onPress={deleteHandler}
-            size={36}
-          />
-        </View>
+          <View style={styles.btnContainer}>
+            <IconButton
+              icon={Icons.delete}
+              color={GlobalStyles.colors.error200}
+              onPress={deleteHandler}
+              size={36}
+            />
+          </View>
         )}
       </Animated.ScrollView>
     </View>

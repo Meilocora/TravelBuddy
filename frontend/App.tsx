@@ -21,24 +21,54 @@ import {
   JourneyBottomTabsParamsList,
   StackParamList,
   ManageJourneyRouteProp,
+  AuthStackParamList,
 } from './src/models';
 import ManageJourney from './src/screens/ManageJourney';
-import Camera from './src/screens/Camera';
+import Locations from './src/screens/Locations';
 import Planning from './src/screens/Journey/Planning';
 import JourneyContextProvider from './src/store/journey-context';
 import MajorStageContextProvider from './src/store/majorStage-context.';
 import Overview from './src/screens/Journey/Overview';
 import Map from './src/screens/Journey/Map';
-import Favorites from './src/screens/Favorites';
-import { View } from 'react-native';
+import Login from './src/screens/Auth/Login';
+import SignUp from './src/screens/Auth/SignUp';
+import AuthContextProvider, { AuthContext } from './src/store/auth-context';
+import { useContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthScreen from './src/screens/AuthScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 const JourneyBottomTabs =
   createBottomTabNavigator<JourneyBottomTabsParamsList>();
 
 const navTheme = DefaultTheme;
 navTheme.colors.background = 'transparent';
+
+// TODOS:
+// 1. Add Login and Registration Screens
+// 2. Add Authentication Context
+// 3. Add AuthStack and AuthenticatedStack
+// 4. Add Backend Authentication
+// 5. Add Backend for country Information
+// 6. Add Creating a country by choosing from dropdown, and the filling out form
+// 7. Add Creating PlacesToVisit for the CustomCountry
+// 8. Adjust http requests for Journey, MajorStage and MinorStage
+
+const AuthStackNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {/* <Stack.Screen name='Login' component={Login} /> */}
+      {/* <Stack.Screen name='SignUp' component={SignUp} /> */}
+      <Stack.Screen name='AuthScreen' component={AuthScreen} />
+    </Stack.Navigator>
+  );
+};
 
 const BottomTabsNavigator = () => {
   return (
@@ -97,25 +127,15 @@ const BottomTabsNavigator = () => {
           })}
         />
         <BottomTabs.Screen
-          name='Favorites'
-          component={Favorites}
+          name='Locations'
+          component={Locations}
           options={{
-            tabBarLabel: 'Favorites',
+            tabBarLabel: 'Locations',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.heartOutline} size={size} color={color} />
+              <Ionicons name={Icons.pin} size={size} color={color} />
             ),
           }}
         />
-        {/* <BottomTabs.Screen
-          name='Camera'
-          component={Camera}
-          options={{
-            tabBarLabel: 'Camera',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.cameraOutline} size={size} color={color} />
-            ),
-          }}
-        /> */}
       </BottomTabs.Navigator>
     </JourneyContextProvider>
   );
@@ -189,8 +209,27 @@ const JourneyBottomTabsNavigator = () => {
 };
 
 export default function App() {
+  const [isTryingLogin, setIsTryingLogin] = useState(true);
+  const authCtx = useContext(AuthContext);
+
+  // Logic for auto login
+  useEffect(() => {
+    async function fetchToken() {
+      const storedToken = await AsyncStorage.getItem('token');
+
+      if (storedToken) {
+        authCtx.authenticate(storedToken);
+      }
+
+      setIsTryingLogin(false);
+    }
+
+    fetchToken();
+  }, []);
+
+  // TODO: Split the return statement into smaller components
   return (
-    <>
+    <AuthContextProvider>
       <LinearGradient
         style={{
           height: '100%',
@@ -212,25 +251,35 @@ export default function App() {
             headerTitleAlign: 'center',
           })}
         >
-          <Stack.Screen
-            name='BottomTabsNavigator'
-            component={BottomTabsNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='UserProfile'
-            component={UserProfile}
-            options={{
-              title: 'User Profile',
-            }}
-          />
-          <Stack.Screen
-            name='JourneyBottomTabsNavigator'
-            component={JourneyBottomTabsNavigator}
-            options={{ headerShown: false }}
-          />
+          {authCtx.isAuthenticated ? (
+            <>
+              <Stack.Screen
+                name='BottomTabsNavigator'
+                component={BottomTabsNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='UserProfile'
+                component={UserProfile}
+                options={{
+                  title: 'User Profile',
+                }}
+              />
+              <Stack.Screen
+                name='JourneyBottomTabsNavigator'
+                component={JourneyBottomTabsNavigator}
+                options={{ headerShown: false }}
+              />
+            </>
+          ) : (
+            <Stack.Screen
+              name='AuthStackNavigator'
+              component={AuthStackNavigator}
+              options={{ headerShown: false }}
+            />
+          )}
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </AuthContextProvider>
   );
 }

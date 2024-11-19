@@ -1,15 +1,16 @@
-import { Costs } from './journey';
+import { PlaceToVisit, Costs, Transportation } from './other_models';
 
 export interface MinorStage {
   id: number;
   title: string;
-  baseLocation?: Accommodation;
-  placesToVisit?: PlaceToVisit[];
-  activities?: Activity[];
-  done: boolean;
   scheduled_start_time: string;
   scheduled_end_time: string;
+  done: boolean;
   costs: Costs;
+  transportation?: Transportation;
+  accommodation?: Accommodation;
+  activities?: Activity[];
+  placesToVisit?: PlaceToVisit[];
 }
 
 export interface Accommodation {
@@ -18,14 +19,6 @@ export interface Accommodation {
   place: string;
   costs: number;
   booked: boolean;
-  link: string;
-}
-
-export interface PlaceToVisit {
-  name: string;
-  description: string;
-  visited: boolean;
-  favorite: boolean;
   link: string;
 }
 

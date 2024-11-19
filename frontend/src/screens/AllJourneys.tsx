@@ -9,12 +9,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import JourneysList from '../components/Journeys/JourneysList';
 import { fetchJourneys } from '../utils/http';
-import { Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { JourneyContext } from '../store/journey-context';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
 import { BottomTabsParamList } from '../models';
 import { RouteProp } from '@react-navigation/native';
 import Popup from '../components/UI/Popup';
+import InfoText from '../components/UI/InfoText';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -67,11 +68,11 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }
 
   if (isFetching) {
-    return <Text>Loading...</Text>;
+    return <InfoText content='Loading Journeys...' />;
   }
 
   if (journeyCtx.journeys.length === 0 && !error) {
-    return <Text>No journeys found!</Text>;
+    return <InfoText content='No Journeys found!' />;
   }
 
   if (error) {
@@ -91,5 +92,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     </>
   );
 };
+
+const styles = StyleSheet.create({});
 
 export default AllJourneys;

@@ -1,13 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
-import {
-  Journey,
-  JourneyFormValues,
-  MajorStage,
-  MinorStage,
-} from '../models';
-
-const BACKEND_URL = 'http://192.168.178.32:3000';
+import { Journey, JourneyFormValues } from '../../models';
+import { BACKEND_URL } from './backend_url';
 
 interface FetchJourneysProps {
   journeys?: Journey[];
@@ -17,8 +11,9 @@ interface FetchJourneysProps {
 
 export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
   try {
-    const response: AxiosResponse<FetchJourneysProps> =
-      await axios.get(`${BACKEND_URL}/get-journeys`);
+    const response: AxiosResponse<FetchJourneysProps> = await axios.get(
+      `${BACKEND_URL}/get-journeys`
+    );
 
     // Error from backend
     if (response.data.error) {
@@ -73,11 +68,10 @@ export const createJourney = async (
   }
 };
 
-
 export const updateJourney = async (
-  journeyFormValues: JourneyFormValues, journeyId: number
+  journeyFormValues: JourneyFormValues,
+  journeyId: number
 ): Promise<ManageJourneyProps> => {
-
   try {
     const response: AxiosResponse<ManageJourneyProps> = await axios.post(
       `${BACKEND_URL}/update-journey/${journeyId}`,
@@ -106,7 +100,6 @@ export const updateJourney = async (
 export const deleteJourney = async (
   journeyId: number
 ): Promise<ManageJourneyProps> => {
-
   try {
     const response: AxiosResponse<ManageJourneyProps> = await axios.delete(
       `${BACKEND_URL}/delete-journey/${journeyId}`
@@ -121,72 +114,5 @@ export const deleteJourney = async (
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not delete journey!' };
-  }
-};
-
-
-interface FetchMajorStageProps {
-  majorStages?: MajorStage[];
-  status: number;
-  error?: string;
-}
-
-export const fetchMajorStagesById = async (
-  id: number
-): Promise<FetchMajorStageProps> => {
-  try {
-    const response: AxiosResponse<FetchMajorStageProps> = await axios.get(
-      `${BACKEND_URL}/get-major-stages/${id}`
-    );
-
-    // Error from backend
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    const { majorStages, status } = response.data;
-
-    if (!majorStages) {
-      return { status };
-    }
-
-    return { majorStages, status };
-  } catch (error) {
-    // Error from frontend
-    return { status: 500, error: 'Could not fetch journeys!' };
-  }
-};
-
-
-interface FetchMinorStagesProps {
-  minorStages?: MinorStage[];
-  status: number;
-  error?: string;
-}
-
-export const fetchMinorStagesById = async (
-  id: number
-): Promise<FetchMinorStagesProps> => {
-  try {
-    const response: AxiosResponse<FetchMinorStagesProps> = await axios.get(
-      `${BACKEND_URL}/get-minor-stages/${id}`
-    );
-
-    // Error from backend
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    const { minorStages, status } = response.data;
-
-    if (!minorStages) {
-      return { status };
-    }
-
-    return { minorStages, status };
-  } catch (error) {
-    // Error from frontend
-
-    return { status: 500, error: 'Could not fetch major stages!' };
   }
 };

@@ -1,3 +1,3 @@
 export * from './formatting';
-export * from './http';
+export * from './http/minor_stage';
 export * from './generator';

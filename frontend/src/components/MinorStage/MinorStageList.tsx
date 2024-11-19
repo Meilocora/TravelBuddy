@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
 import { FlatList, StyleSheet, Text } from 'react-native';
 
-import { fetchMinorStagesById } from '../../utils/http';
+import { fetchMinorStagesById } from '../../utils/http/minor_stage';
 import { MinorStageContext } from '../../store/minorStage-context';
 import MinorStageListElement from './MinorStageListElement';
 import { generateRandomString } from '../../utils/generator';

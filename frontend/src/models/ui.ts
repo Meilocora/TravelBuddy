@@ -10,6 +10,9 @@ export enum Icons {
   arrowBack = 'arrow-back-outline',
   edit = 'create-outline',
   delete = 'trash',
+  pin = 'pin',
+  eyeOff = 'eye-off-outline',
+  eyeOn = 'eye-outline',
 }
 
 export enum DateFormatMode {

@@ -3,9 +3,8 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
   ManageJourney: { journeyId?: number };
-  Camera: undefined;
+  Locations: undefined;
   UserProfile: undefined;
-  Favorites: undefined;
 };
 
 export type JourneyBottomTabsParamsList = {
@@ -15,9 +14,19 @@ export type JourneyBottomTabsParamsList = {
 };
 
 export type StackParamList = {
+  AuthStackNavigator: NavigatorScreenParams<AuthStackParamList>;
   BottomTabsNavigator: NavigatorScreenParams<BottomTabsParamList>;
   UserProfile: undefined;
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
+  // Login: undefined;
+  // SignUp: undefined;
+  AuthScreen: undefined;
+};
+
+export type AuthStackParamList = {
+  // Login: undefined;
+  // SignUp: undefined;
+  AuthScreen: undefined;
 };
 
 export type PlanningRouteProp = RouteProp<

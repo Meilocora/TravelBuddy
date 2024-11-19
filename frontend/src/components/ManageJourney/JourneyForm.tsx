@@ -1,6 +1,5 @@
 import { ReactElement, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated from 'react-native-reanimated';
 
 import {
   ButtonMode,
@@ -12,7 +11,7 @@ import {
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
 import Button from '../UI/Button';
-import { createJourney, updateJourney } from '../../utils';
+import { createJourney, updateJourney } from '../../utils/http';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -36,7 +35,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   submitButtonLabel,
   defaultValues,
   isEditing,
-  editJourneyId
+  editJourneyId,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputs, setInputs] = useState<JourneyFormValues>({
@@ -67,7 +66,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       errors: [],
     },
     countries: {
-      value: defaultValues?.countries || "",
+      value: defaultValues?.countries || '',
       isValid: true,
       errors: [],
     },
@@ -81,18 +80,13 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     }
 
     let response: InputValidationResponse;
-    if(isEditing) {
+    if (isEditing) {
       response = await updateJourney(inputs, editJourneyId!);
-    } else if(!isEditing) {
+    } else if (!isEditing) {
       response = await createJourney(inputs);
     }
-    
-    const {
-      error,
-      status,
-      journey,
-      journeyFormValues,
-    } = response!;
+
+    const { error, status, journey, journeyFormValues } = response!;
 
     if (!error && journey) {
       onSubmit({ journey, status });

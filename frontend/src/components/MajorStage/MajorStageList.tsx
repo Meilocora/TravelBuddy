@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
 import { FlatList, Text } from 'react-native';
 
-import { fetchMajorStagesById } from '../../utils/http';
+import { fetchMajorStagesById } from '../../utils/http/minor_stage';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
 

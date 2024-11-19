@@ -1,13 +1,16 @@
+import { Costs, Validable } from './other_models';
+
 export interface Journey {
   id: number;
   name: string;
   description: string;
-  costs: Costs;
   scheduled_start_time: string;
   scheduled_end_time: string;
-  countries: string;
   done: boolean;
   majorStagesIds?: number[];
+  costs: Costs;
+  countries: string;
+  countriesIds: number[];
 }
 
 export interface JourneyValues {
@@ -20,12 +23,6 @@ export interface JourneyValues {
   countries: string;
 }
 
-interface Validable<T> {
-  value: T;
-  isValid: boolean;
-  errors: string[];
-}
-
 export interface JourneyFormValues {
   name: Validable<string>;
   description: Validable<string>;
@@ -35,11 +32,3 @@ export interface JourneyFormValues {
   scheduled_end_time: Validable<string | null>;
   countries: Validable<string>;
 }
-
-export interface Costs {
-  available_money: number;
-  planned_costs: number;
-  money_exceeded: boolean;
-}
-
-export interface Country {}
