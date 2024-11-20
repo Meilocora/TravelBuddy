@@ -9,12 +9,18 @@ import AuthForm from '../components/Auth/AuthForm';
 
 interface AuthScreenProps {}
 
+export interface AuthHandlerProps {
+  token?: string;
+  error?: string;
+  status: number;
+}
+
 const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   const authCtx = useContext(AuthContext);
 
-  async function loginHandler(authFormValues: AuthFormValues) {
+  async function authHandler({ token, error, status }: AuthHandlerProps) {
     // setIsAuthenticating(true);
     // try {
     //   const token = await createUser(email, password);
@@ -23,17 +29,22 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
     //   console.error(error);
     //   setIsAuthenticating(false);
     // }
-    console.log(authFormValues);
+    console.log(token, status);
   }
 
-  if (isAuthenticating) {
-    return <InfoText content='Logging you in...' />;
+  function switchAuthModeHandler() {
+    setIsLogin((currValue) => !currValue);
+    console.log(isLogin);
   }
 
   return (
     <View style={styles.root}>
       <MainHeader title='Travelbuddy' />
-      <AuthForm onAuthenticate={loginHandler} />
+      <AuthForm
+        onAuthenticate={authHandler}
+        isLogin={isLogin}
+        onSwitchMode={switchAuthModeHandler}
+      />
     </View>
   );
 };

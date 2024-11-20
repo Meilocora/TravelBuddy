@@ -86,3 +86,7 @@ export function formatProgress(startDate: string, endDate: string): number {
     return daysPassed / totalDuration;
   }
 }
+
+export function formatStringToList(string: string): string[] {
+  return string.split(',').map((item) => item.trim());
+}

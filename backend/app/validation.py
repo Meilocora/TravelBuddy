@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 
 class Validation:
   def __init__(self):
@@ -12,19 +13,16 @@ class Validation:
       return self.error_list[0]
     elif len(self.error_list) > 1:
       return ', '.join(self.error_list)
+      # print(self.error_list)
+      # return self.error_list
   
   
-  def validate_string(self, value: str, min_length: int = 1, max_length: int = 250, mustContain: list = None) -> bool | None:    
+  def validate_string(self, value: str, min_length: int = 1, max_length: int = 250) -> bool | None:    
     if len(value.strip()) < min_length:
-      self.error_list.append(f'The input must have a length of at least {min_length}')
+      self.error_list.append(f'Min length is {min_length}')
       
     if len(value.strip()) > max_length:
-      self.error_list.append(f'The input must have a length of at most {max_length}')
-    
-    if mustContain:
-      for item in mustContain:
-        if item not in value:
-          self.error_list.append(f'The string must contain {item}')
+      self.error_list.append(f'Max length is {max_length}')
     
     return self.__return_feedback()
     
@@ -61,5 +59,35 @@ class Validation:
     amount = int(amount)
     if amount < 0:
       self.error_list.append('Amount cannot be negative')
+    
+    return self.__return_feedback()
+  
+  
+  def validate_email(self, email:str):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+    if(not re.fullmatch(regex, email)):
+        self.error_list.append("Invalid Email")
+    
+    return self.__return_feedback()
+  
+  def validate_password(self, password:str, min_length:int = 6, max_length:int = 20):
+    print(password)
+    if len(password) < min_length:
+      self.error_list.append(f'Min length is {min_length}')
+      
+    if len(password) > max_length:
+      self.error_list.append(f'Max length is {max_length}')
+      
+    if(not re.match(r'(.*?[A-Z])', password)):
+      self.error_list.append("Must contain one uppercase letter")
+      
+    if(not re.match(r'(.*?[a-z])', password)):
+      self.error_list.append("Must contain one lowercase letter")
+      
+    if(not re.match(r'(.*?[0-9])', password)):
+      self.error_list.append("Must contain one digit")
+      
+    if(not re.match(r"(.*?[!\?\(\)\[\]@#$%^&*])", password)):
+      self.error_list.append("Must contain one special character")
     
     return self.__return_feedback()

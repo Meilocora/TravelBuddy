@@ -1,16 +1,19 @@
-import sys
-import os
+# import sys
+# import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-
 from db import db
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
 
-from app.journey_validation import JourneyValidation
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'app'))
+
+# from app.journey_validation import JourneyValidation
 from app.models import *
-
+from app.routes.journey_routes  import journey_bp
+from app.routes.major_stage_routes import major_stage_bp
+from app.routes.minor_stage_routes import minor_stage_bp
+from app.routes.auth_routes import auth_bp
 
 
 app = Flask(__name__)
@@ -18,221 +21,226 @@ app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C0sKR6b"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travel_buddy.db'
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-
 db.init_app(app)
+
+# Register Blueprints
+app.register_blueprint(journey_bp, url_prefix='/journey')
+app.register_blueprint(major_stage_bp, url_prefix='/major-stage')
+app.register_blueprint(minor_stage_bp, url_prefix='/minor-stage')
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
 
 with app.app_context():
     db.create_all()     # Create the database if not exists
     
 
-@app.route('/get-journeys', methods=['GET'])
-def get_journeys():
-    try:
-        # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey))
-        journeys = result.scalars().all()
+# @app.route('/get-journeys', methods=['GET'])
+# def get_journeys():
+#     try:
+#         # Get all the journeys from the database
+#         result = db.session.execute(db.select(Journey))
+#         journeys = result.scalars().all()
         
-        # Fetch costs and major_stages for each journey
-        journeys_list = []
-        for journey in journeys:
-            costs_result = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id))
-            costs = costs_result.scalars().first()
+#         # Fetch costs and major_stages for each journey
+#         journeys_list = []
+#         for journey in journeys:
+#             costs_result = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id))
+#             costs = costs_result.scalars().first()
             
-            majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journey.id))
-            majorStages = majorStages_result.scalars().all()
+#             majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journey.id))
+#             majorStages = majorStages_result.scalars().all()
             
-            # Append the whole journey, that matches the model from frontend to the list
-            journeys_list.append({
-                'id': journey.id,
-                'name': journey.name,
-                'description': journey.description,
-                'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
-                    'money_exceeded': costs.money_exceeded,
-                },
-                'scheduled_start_time': journey.scheduled_start_time,
-                'scheduled_end_time': journey.scheduled_end_time,
-                'countries': journey.countries.split(','),
-                'done': journey.done,
-                'majorStagesIds': [majorStage.id for majorStage in majorStages]
-            })    
-        return jsonify({'journeys': journeys_list, 'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+#             # Append the whole journey, that matches the model from frontend to the list
+#             journeys_list.append({
+#                 'id': journey.id,
+#                 'name': journey.name,
+#                 'description': journey.description,
+#                 'costs': {
+#                     'available_money': costs.available_money,
+#                     'planned_costs': costs.planned_costs,
+#                     'money_exceeded': costs.money_exceeded,
+#                 },
+#                 'scheduled_start_time': journey.scheduled_start_time,
+#                 'scheduled_end_time': journey.scheduled_end_time,
+#                 'countries': journey.countries.split(','),
+#                 'done': journey.done,
+#                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
+#             })    
+#         return jsonify({'journeys': journeys_list, 'status': 200})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}, 500)
     
-@app.route('/create-journey', methods=['POST'])
-def create_journey():
-    try:
-        journey = request.get_json()
-    except:
-        return jsonify({'error': 'Unknown error'}, 400) 
+# @app.route('/create-journey', methods=['POST'])
+# def create_journey():
+#     try:
+#         journey = request.get_json()
+#     except:
+#         return jsonify({'error': 'Unknown error'}, 400) 
     
-    response, isValid = JourneyValidation.validate_journey(journey=journey)
+#     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
-    if not isValid:
-        return jsonify({'journeyFormValues': response, 'status': 400})
+#     if not isValid:
+#         return jsonify({'journeyFormValues': response, 'status': 400})
     
-    try:
-        # Create a new journey
-        new_journey = Journey(
-            name=journey['name']['value'],
-            description=journey['description']['value'],
-            scheduled_start_time=journey['scheduled_start_time']['value'],
-            scheduled_end_time=journey['scheduled_end_time']['value'],
-            countries=journey['countries']['value'],
-            done=False
-        )
-        db.session.add(new_journey)
-        db.session.commit()
+#     try:
+#         # Create a new journey
+#         new_journey = Journey(
+#             name=journey['name']['value'],
+#             description=journey['description']['value'],
+#             scheduled_start_time=journey['scheduled_start_time']['value'],
+#             scheduled_end_time=journey['scheduled_end_time']['value'],
+#             countries=journey['countries']['value'],
+#             done=False
+#         )
+#         db.session.add(new_journey)
+#         db.session.commit()
         
         
-        # Create a new costs for the journey
-        costs = Costs(
-            journey_id=new_journey.id,
-            available_money=journey['available_money']['value'],
-            planned_costs=0,
-            money_exceeded=False
-        )
-        db.session.add(costs)
-        db.session.commit()
+#         # Create a new costs for the journey
+#         costs = Costs(
+#             journey_id=new_journey.id,
+#             available_money=journey['available_money']['value'],
+#             planned_costs=0,
+#             money_exceeded=False
+#         )
+#         db.session.add(costs)
+#         db.session.commit()
         
-        response_journey = {'id': new_journey.id,
-                'name': new_journey.name,
-                'description': new_journey.description,
-                'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
-                    'money_exceeded': costs.money_exceeded,
-                },
-                'scheduled_start_time': new_journey.scheduled_start_time,
-                'scheduled_end_time': new_journey.scheduled_end_time,
-                'countries': new_journey.countries.split(','),
-                'done': new_journey.done,
-                'majorStagesIds': []}
+#         response_journey = {'id': new_journey.id,
+#                 'name': new_journey.name,
+#                 'description': new_journey.description,
+#                 'costs': {
+#                     'available_money': costs.available_money,
+#                     'planned_costs': costs.planned_costs,
+#                     'money_exceeded': costs.money_exceeded,
+#                 },
+#                 'scheduled_start_time': new_journey.scheduled_start_time,
+#                 'scheduled_end_time': new_journey.scheduled_end_time,
+#                 'countries': new_journey.countries.split(','),
+#                 'done': new_journey.done,
+#                 'majorStagesIds': []}
         
-        return jsonify({'journey': response_journey,'status': 201})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+#         return jsonify({'journey': response_journey,'status': 201})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}, 500)
     
-@app.route('/update-journey/<int:journeyId>', methods=['POST'])
-def update_journey(journeyId):
-    try:
-        journey = request.get_json()
-    except:
-        return jsonify({'error': 'Unknown error'}, 400)
+# @app.route('/update-journey/<int:journeyId>', methods=['POST'])
+# def update_journey(journeyId):
+#     try:
+#         journey = request.get_json()
+#     except:
+#         return jsonify({'error': 'Unknown error'}, 400)
     
-    response, isValid = JourneyValidation.validate_journey(journey=journey)
+#     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
-    if not isValid:
-        return jsonify({'journeyFormValues': response, 'status': 400})
+#     if not isValid:
+#         return jsonify({'journeyFormValues': response, 'status': 400})
     
-    old_journey = db.get_or_404(Journey, journeyId)
-    money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
+#     old_journey = db.get_or_404(Journey, journeyId)
+#     money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
     
-    majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
-    majorStages = majorStages_result.scalars().all()
-    majorStagesIds = [majorStage.id for majorStage in majorStages]
+#     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
+#     majorStages = majorStages_result.scalars().all()
+#     majorStagesIds = [majorStage.id for majorStage in majorStages]
     
-    try:
-        # Update the journey
-        db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
-            name=journey['name']['value'],
-            description=journey['description']['value'],
-            scheduled_start_time=journey['scheduled_start_time']['value'],
-            scheduled_end_time=journey['scheduled_end_time']['value'],
-            countries=journey['countries']['value'][0],
-        ))
-        db.session.commit()
+#     try:
+#         # Update the journey
+#         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
+#             name=journey['name']['value'],
+#             description=journey['description']['value'],
+#             scheduled_start_time=journey['scheduled_start_time']['value'],
+#             scheduled_end_time=journey['scheduled_end_time']['value'],
+#             countries=journey['countries']['value'][0],
+#         ))
+#         db.session.commit()
         
-        # Update the costs for the journey
-        db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
-            available_money=journey['available_money']['value'],
-            planned_costs=journey['planned_costs']['value'],
-            money_exceeded=money_exceeded
-        ))
-        db.session.commit()
+#         # Update the costs for the journey
+#         db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
+#             available_money=journey['available_money']['value'],
+#             planned_costs=journey['planned_costs']['value'],
+#             money_exceeded=money_exceeded
+#         ))
+#         db.session.commit()
             
-        response_journey = {'id': journeyId,
-                'name': journey['name']['value'],
-                'description': journey['description']['value'],
-                'costs': {
-                    'available_money': journey['available_money']['value'],
-                    'planned_costs': journey['planned_costs']['value'],
-                    'money_exceeded': money_exceeded,
-                },
-                'scheduled_start_time': journey['scheduled_start_time']['value'],
-                'scheduled_end_time': journey['scheduled_end_time']['value'],
-                'countries': journey['countries']['value'],
-                'done': old_journey.done,
-                'majorStagesIds': majorStagesIds}
+#         response_journey = {'id': journeyId,
+#                 'name': journey['name']['value'],
+#                 'description': journey['description']['value'],
+#                 'costs': {
+#                     'available_money': journey['available_money']['value'],
+#                     'planned_costs': journey['planned_costs']['value'],
+#                     'money_exceeded': money_exceeded,
+#                 },
+#                 'scheduled_start_time': journey['scheduled_start_time']['value'],
+#                 'scheduled_end_time': journey['scheduled_end_time']['value'],
+#                 'countries': journey['countries']['value'],
+#                 'done': old_journey.done,
+#                 'majorStagesIds': majorStagesIds}
         
-        return jsonify({'journey': response_journey,'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+#         return jsonify({'journey': response_journey,'status': 200})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}, 500)
         
     
     
-@app.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
-def delete_journey(journeyId):
-    try:
-        # Delete the journey from the database
-        db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
-        db.session.commit()
-        return jsonify({'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+# @app.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
+# def delete_journey(journeyId):
+#     try:
+#         # Delete the journey from the database
+#         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
+#         db.session.commit()
+#         return jsonify({'status': 200})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}, 500)
 
 
-@app.route('/get-major-stages/<int:journeyId>', methods=['GET'])
-def get_major_stages(journeyId):
-    try:
-        # Get all the major stages from the database
-        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
-        majorStages = result.scalars().all()
+# @app.route('/get-major-stages/<int:journeyId>', methods=['GET'])
+# def get_major_stages(journeyId):
+#     try:
+#         # Get all the major stages from the database
+#         result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
+#         majorStages = result.scalars().all()
         
-        # Fetch costs, transportation and minor_stages for each major_stage
-        major_stages_list = []
-        for majorStage in majorStages:
-            costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
-            costs = costs_result.scalars().first()
+#         # Fetch costs, transportation and minor_stages for each major_stage
+#         major_stages_list = []
+#         for majorStage in majorStages:
+#             costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
+#             costs = costs_result.scalars().first()
             
-            transportation_result = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStage.id))
-            transportation = transportation_result.scalars().first()
+#             transportation_result = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStage.id))
+#             transportation = transportation_result.scalars().first()
             
-            minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStage.id))
-            minorStages = minorStages_result.scalars().all()
+#             minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStage.id))
+#             minorStages = minorStages_result.scalars().all()
                         
-            # Append the whole major stage, that matches the model from frontend to the list
-            major_stages_list.append({
-                'id': majorStage.id,
-                'title': majorStage.title,
-                'country': majorStage.country,
-                'transportation': {
-                    'type': transportation.type,
-                    'start_time': transportation.start_time,
-                    'arrival_time': transportation.arrival_time,
-                    'place_of_departure': transportation.place_of_departure,
-                    'place_of_arrival': transportation.place_of_arrival,
-                    'transportation_costs': transportation.transportation_costs,
-                    'link': transportation.link,
-                },
-                'done': majorStage.done,
-                'scheduled_start_time': majorStage.scheduled_start_time,
-                'scheduled_end_time': majorStage.scheduled_end_time,
-                'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
-                    'money_exceeded': costs.money_exceeded,
-                },
-                'minorStagesIds': [minorStage.id for minorStage in minorStages]
-            })
+#             # Append the whole major stage, that matches the model from frontend to the list
+#             major_stages_list.append({
+#                 'id': majorStage.id,
+#                 'title': majorStage.title,
+#                 'country': majorStage.country,
+#                 'transportation': {
+#                     'type': transportation.type,
+#                     'start_time': transportation.start_time,
+#                     'arrival_time': transportation.arrival_time,
+#                     'place_of_departure': transportation.place_of_departure,
+#                     'place_of_arrival': transportation.place_of_arrival,
+#                     'transportation_costs': transportation.transportation_costs,
+#                     'link': transportation.link,
+#                 },
+#                 'done': majorStage.done,
+#                 'scheduled_start_time': majorStage.scheduled_start_time,
+#                 'scheduled_end_time': majorStage.scheduled_end_time,
+#                 'costs': {
+#                     'available_money': costs.available_money,
+#                     'planned_costs': costs.planned_costs,
+#                     'money_exceeded': costs.money_exceeded,
+#                 },
+#                 'minorStagesIds': [minorStage.id for minorStage in minorStages]
+#             })
         
-        # return jsonify({'error': 'This is an error!', 'status': 500})
-        return jsonify({'majorStages': major_stages_list, 'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+#         # return jsonify({'error': 'This is an error!', 'status': 500})
+#         return jsonify({'majorStages': major_stages_list, 'status': 200})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}, 500)
 
 
 @app.route('/get-minor-stages/<int:majorStageId>', methods=['GET'])

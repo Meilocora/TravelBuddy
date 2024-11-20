@@ -1,5 +1,5 @@
 from datetime import datetime
-from validation import Validation
+from app.validation import Validation
 
 class JourneyValidation(Validation):
   def __init__(self):
@@ -21,7 +21,7 @@ class JourneyValidation(Validation):
             
                  
         if JourneyValidation().validate_string(journey['name']['value'], min_length=3):
-            journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 10)}")
+            journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3)}")
             journey['name']['isValid'] = False
             
         if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):

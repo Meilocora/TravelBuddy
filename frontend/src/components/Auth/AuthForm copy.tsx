@@ -14,20 +14,16 @@ import Button from '../UI/Button';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import Input from '../UI/form/Input';
 import IconButton from '../UI/IconButton';
-import { createUser, loginUser } from '../../utils/http';
-import { AuthHandlerProps } from '../../screens/AuthScreen';
-
-type CredentialValidationResponse = {
-  token?: string;
-  authFormValues?: AuthFormValues;
-  error?: string;
-  status: number;
-};
 
 interface AuthFormProps {
-  isLogin: boolean;
+  isLogin?: boolean;
   onSwitchMode: () => void;
-  onAuthenticate: ({ token, error, status }: AuthHandlerProps) => void;
+  onAuthenticate: (authFormValues: AuthFormValues) => void;
+}
+
+enum AuthMode {
+  Login = 'Login',
+  SignUp = 'SignUp',
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -37,23 +33,24 @@ const AuthForm: React.FC<AuthFormProps> = ({
 }): ReactElement => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
+  const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.Login);
   const [hidePassword, setHidePassword] = useState(true);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [credentials, setCredentials] = useState<AuthFormValues>({
+
+  const [credential, setCredentials] = useState<AuthFormValues>({
     email: { value: '', isValid: true, errors: [] },
     username: { value: '', isValid: true, errors: [] },
     password: { value: '', isValid: true, errors: [] },
   });
 
-  let submitButtonLabel = 'Login';
-  if (!isLogin) {
-    submitButtonLabel = 'SignUp';
-  }
-
-  if (isAuthenticating && isLogin) {
-    submitButtonLabel = 'Logging in...';
-  } else if (isAuthenticating && !isLogin) {
-    submitButtonLabel = 'Signing up...';
+  function handlePressIcon() {
+    setHidePassword((currHidePassword) => !currHidePassword);
+    // trigger rerender of password input to show/hide password
+    setCredentials((currCredentials) => {
+      return {
+        ...currCredentials,
+        password: { ...currCredentials.password, isValid: true, errors: [] },
+      };
+    });
   }
 
   let formContent = (
@@ -61,10 +58,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
       <View style={styles.formRow}>
         <Input
           label='E-Mail'
-          invalid={!credentials.email.isValid}
-          errors={credentials.email.errors}
+          invalid={!credential.email.isValid}
+          errors={credential.email.errors}
           textInputConfig={{
-            value: credentials.email.value,
+            value: credential.email.value,
             onChangeText: inputChangedHandler.bind(null, 'email'),
           }}
         />
@@ -72,10 +69,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
       <View style={styles.formRow}>
         <Input
           label='Password'
-          invalid={!credentials.password.isValid}
-          errors={credentials.password.errors}
+          invalid={!credential.password.isValid}
+          errors={credential.password.errors}
           textInputConfig={{
-            value: credentials.password.value,
+            value: credential.password.value,
             onChangeText: inputChangedHandler.bind(null, 'password'),
             secureTextEntry: hidePassword,
           }}
@@ -89,16 +86,16 @@ const AuthForm: React.FC<AuthFormProps> = ({
     </View>
   );
 
-  if (!isLogin) {
+  if (authMode === AuthMode.SignUp) {
     formContent = (
       <>
         <View style={styles.formRow}>
           <Input
             label='Username'
-            invalid={!credentials.username.isValid}
-            errors={credentials.username.errors}
+            invalid={!credential.username.isValid}
+            errors={credential.username.errors}
             textInputConfig={{
-              value: credentials.username.value,
+              value: credential.username.value,
               onChangeText: inputChangedHandler.bind(null, 'username'),
             }}
           />
@@ -108,53 +105,22 @@ const AuthForm: React.FC<AuthFormProps> = ({
     );
   }
 
-  function handlePressIcon() {
-    setHidePassword((currHidePassword) => !currHidePassword);
-    // trigger rerender of password input to show/hide password
-    setCredentials((currCredentials) => {
-      return {
-        ...currCredentials,
-        password: { ...currCredentials.password, isValid: true, errors: [] },
-      };
-    });
-  }
+  // function switchAuthModeHandler() {
+  //   setAuthMode((currAuthMode) => {
+  //     if (currAuthMode === AuthMode.Login) {
+  //       return AuthMode.SignUp;
+  //     } else {
+  //       return AuthMode.Login;
+  //     }
+  //   });
+  // }
 
-  async function validateInputs(): Promise<void> {
-    // Set all errors to empty array to prevent stacking of errors
-    setIsAuthenticating(true);
-    for (const key in credentials) {
-      credentials[key as keyof AuthFormValues].errors = [];
-    }
-
-    let response: CredentialValidationResponse;
-    if (isLogin) {
-      response = await loginUser(credentials);
-    } else if (!isLogin) {
-      response = await createUser(credentials);
-    }
-
-    const { error, status, token, authFormValues } = response!;
-
-    console.log(authFormValues);
-
-    if (!error && token) {
-      onAuthenticate({ token, status });
-    } else if (error) {
-      onAuthenticate({ error, status });
-    } else if (authFormValues) {
-      setCredentials((prevValues) => authFormValues);
-    }
-    setIsAuthenticating(false);
+  function submitHandler() {
     return;
   }
 
-  function onSwitchHandler() {
-    setCredentials({
-      email: { value: '', isValid: true, errors: [] },
-      username: { value: '', isValid: true, errors: [] },
-      password: { value: '', isValid: true, errors: [] },
-    });
-    onSwitchMode();
+  async function validateInputs(): Promise<void> {
+    return;
   }
 
   function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
@@ -168,18 +134,20 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
   return (
     <Animated.View style={styles.container} layout={FadeInUp.duration(300)}>
-      <FormShell title={isLogin ? 'Login' : 'SignUp'}>
+      <FormShell title={authMode.toString()}>
         {formContent}
         <View style={styles.buttonsContainer}>
           <Button
-            onPress={onSwitchHandler}
+            onPress={onSwitchMode}
             colorScheme={ColorScheme.neutral}
             mode={ButtonMode.flat}
           >
-            {isLogin ? 'Switch to SignUp' : 'Switch to Login'}
+            {authMode === AuthMode.Login
+              ? 'Switch to SignUp'
+              : 'Switch to Login'}
           </Button>
           <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
-            {isLogin ? 'Login' : 'SignUp'}
+            {authMode.toString()}
           </Button>
         </View>
       </FormShell>

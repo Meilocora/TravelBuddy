@@ -3,6 +3,8 @@ import axios, { AxiosResponse } from 'axios';
 import { MajorStage } from '../../models';
 import { BACKEND_URL } from './backend_url';
 
+const prefix = `${BACKEND_URL}/major_stage`;
+
 interface FetchMajorStageProps {
   majorStages?: MajorStage[];
   status: number;
@@ -14,7 +16,7 @@ export const fetchMajorStagesById = async (
 ): Promise<FetchMajorStageProps> => {
   try {
     const response: AxiosResponse<FetchMajorStageProps> = await axios.get(
-      `${BACKEND_URL}/get-major-stages/${id}`
+      `${prefix}/get-major-stages/${id}`
     );
 
     // Error from backend

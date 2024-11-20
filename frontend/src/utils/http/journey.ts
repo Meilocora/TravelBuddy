@@ -9,10 +9,12 @@ interface FetchJourneysProps {
   error?: string;
 }
 
+const prefix = `${BACKEND_URL}/journey`;
+
 export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
   try {
     const response: AxiosResponse<FetchJourneysProps> = await axios.get(
-      `${BACKEND_URL}/get-journeys`
+      `${prefix}/get-journeys`
     );
 
     // Error from backend
@@ -45,7 +47,7 @@ export const createJourney = async (
 ): Promise<ManageJourneyProps> => {
   try {
     const response: AxiosResponse<ManageJourneyProps> = await axios.post(
-      `${BACKEND_URL}/create-journey`,
+      `${prefix}/create-journey`,
       journeyFormValues
     );
 
@@ -74,7 +76,7 @@ export const updateJourney = async (
 ): Promise<ManageJourneyProps> => {
   try {
     const response: AxiosResponse<ManageJourneyProps> = await axios.post(
-      `${BACKEND_URL}/update-journey/${journeyId}`,
+      `${prefix}/update-journey/${journeyId}`,
       journeyFormValues
     );
 
@@ -102,7 +104,7 @@ export const deleteJourney = async (
 ): Promise<ManageJourneyProps> => {
   try {
     const response: AxiosResponse<ManageJourneyProps> = await axios.delete(
-      `${BACKEND_URL}/delete-journey/${journeyId}`
+      `${prefix}/delete-journey/${journeyId}`
     );
 
     // Error from backend
