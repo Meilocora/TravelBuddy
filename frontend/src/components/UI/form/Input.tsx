@@ -8,7 +8,7 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, FadeOut, SlideInDown, SlideInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeOut } from 'react-native-reanimated';
 
 import { GlobalStyles } from '../../../constants/styles';
 import { generateRandomString } from '../../../utils';
@@ -60,9 +60,7 @@ const Input: React.FC<InputProps> = ({
           <Animated.Text
             style={styles.invalidInfo}
             key={generateRandomString()}
-            entering={FadeInUp
-              .duration(500)
-              .delay(index * 200)}
+            entering={FadeInUp.duration(500).delay(index * 200)}
             exiting={FadeOut.duration(50)}
           >
             {error.replace(', ', '')}

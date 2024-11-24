@@ -1,14 +1,18 @@
 import { PlaceToVisit } from './other_models';
 
 export interface CustomCountry {
-  id: number;
+  id?: number;
   name: string;
   code: string;
-  timezone: string;
-  currency: string;
-  language: string;
+  timezones: string;
+  currencies: string;
+  languagees: string;
   capital: string;
-  visited: boolean;
+  population: number;
+  region: string;
+  subregion: string;
+  wiki_link: string;
+  visited?: boolean;
   visum_regulations?: string;
   best_time_to_visit?: string;
   general_information?: string;

@@ -2,11 +2,13 @@ from flask import Blueprint, request, jsonify
 from db import db
 from app.models import Journey, Costs, MajorStage
 from app.journey_validation import JourneyValidation
+from app.routes.route_protection import token_required
 
 journey_bp = Blueprint('journey', __name__)
 
 @journey_bp.route('/get-journeys', methods=['GET'])
-def get_journeys():
+@token_required
+def get_journeys(current_user):
     try:
         # Get all the journeys from the database
         result = db.session.execute(db.select(Journey))
@@ -42,7 +44,8 @@ def get_journeys():
         return jsonify({'error': str(e)}, 500)
     
 @journey_bp.route('/create-journey', methods=['POST'])
-def create_journey():
+@token_required
+def create_journey(current_user):
     try:
         journey = request.get_json()
     except:
@@ -61,10 +64,13 @@ def create_journey():
             scheduled_start_time=journey['scheduled_start_time']['value'],
             scheduled_end_time=journey['scheduled_end_time']['value'],
             countries=journey['countries']['value'],
-            done=False
+            done=False,
+            user_id=current_user
         )
         db.session.add(new_journey)
         db.session.commit()
+        
+        print(new_journey)
         
         
         # Create a new costs for the journey
@@ -96,7 +102,8 @@ def create_journey():
         return jsonify({'error': str(e)}, 500)
     
 @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
-def update_journey(journeyId):
+@token_required
+def update_journey(current_user, journeyId):
     try:
         journey = request.get_json()
     except:
@@ -154,7 +161,8 @@ def update_journey(journeyId):
     
     
 @journey_bp.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
-def delete_journey(journeyId):
+@token_required
+def delete_journey(current_user, journeyId):
     try:
         # Delete the journey from the database
         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))

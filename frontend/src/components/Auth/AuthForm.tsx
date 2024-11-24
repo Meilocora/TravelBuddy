@@ -62,58 +62,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
     submitButtonLabel = 'Signing up...';
   }
 
-  let formContent = (
-    <View>
-      <View style={styles.formRow}>
-        <Input
-          label='E-Mail'
-          invalid={!credentials.email.isValid}
-          errors={credentials.email.errors}
-          textInputConfig={{
-            value: credentials.email.value,
-            onChangeText: inputChangedHandler.bind(null, 'email'),
-          }}
-        />
-      </View>
-      <View style={styles.formRow}>
-        <Input
-          label='Password'
-          invalid={!credentials.password.isValid}
-          errors={credentials.password.errors}
-          textInputConfig={{
-            value: credentials.password.value,
-            onChangeText: inputChangedHandler.bind(null, 'password'),
-            secureTextEntry: hidePassword,
-          }}
-        />
-        <IconButton
-          icon={hidePassword ? Icons.eyeOff : Icons.eyeOn}
-          onPress={handlePressIcon}
-          style={{ marginTop: 22 }}
-        />
-      </View>
-    </View>
-  );
-
-  if (!isLogin) {
-    formContent = (
-      <>
-        <View style={styles.formRow}>
-          <Input
-            label='Username'
-            invalid={!credentials.username.isValid}
-            errors={credentials.username.errors}
-            textInputConfig={{
-              value: credentials.username.value,
-              onChangeText: inputChangedHandler.bind(null, 'username'),
-            }}
-          />
-        </View>
-        {formContent}
-      </>
-    );
-  }
-
   function handlePressIcon() {
     setHidePassword((currHidePassword) => !currHidePassword);
     // trigger rerender of password input to show/hide password
@@ -168,6 +116,58 @@ const AuthForm: React.FC<AuthFormProps> = ({
         [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
       };
     });
+  }
+
+  let formContent = (
+    <View>
+      <View style={styles.formRow}>
+        <Input
+          label='E-Mail'
+          invalid={!credentials.email.isValid}
+          errors={credentials.email.errors}
+          textInputConfig={{
+            value: credentials.email.value,
+            onChangeText: inputChangedHandler.bind(null, 'email'),
+          }}
+        />
+      </View>
+      <View style={styles.formRow}>
+        <Input
+          label='Password'
+          invalid={!credentials.password.isValid}
+          errors={credentials.password.errors}
+          textInputConfig={{
+            value: credentials.password.value,
+            onChangeText: inputChangedHandler.bind(null, 'password'),
+            secureTextEntry: hidePassword,
+          }}
+        />
+        <IconButton
+          icon={hidePassword ? Icons.eyeOff : Icons.eyeOn}
+          onPress={handlePressIcon}
+          style={{ marginTop: 22 }}
+        />
+      </View>
+    </View>
+  );
+
+  if (!isLogin) {
+    formContent = (
+      <>
+        <View style={styles.formRow}>
+          <Input
+            label='Username'
+            invalid={!credentials.username.isValid}
+            errors={credentials.username.errors}
+            textInputConfig={{
+              value: credentials.username.value,
+              onChangeText: inputChangedHandler.bind(null, 'username'),
+            }}
+          />
+        </View>
+        {formContent}
+      </>
+    );
   }
 
   return (

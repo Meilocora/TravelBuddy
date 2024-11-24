@@ -80,7 +80,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     }
 
     activatePopup();
-  }, [authCtx.username]);
+  }, [authCtx]);
 
   useEffect(() => {
     async function getJourneys() {
@@ -107,29 +107,30 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     setRefresh((prev) => prev + 1);
   }
 
-  if (isFetching) {
-    return <InfoText content='Loading Journeys...' />;
-  }
+  let content;
 
-  if (journeyCtx.journeys.length === 0 && !error) {
-    return <InfoText content='No Journeys found!' />;
+  if (isFetching) {
+    content = <InfoText content='Loading Journeys...' />;
+  } else if (journeyCtx.journeys.length === 0 && !error) {
+    content = <InfoText content='No Journeys found!' />;
+  } else {
+    content = <JourneysList journeys={journeyCtx.journeys} />;
   }
 
   if (error) {
     return (
-      // <ErrorOverlay
-      // message={error}
-      // onPress={handlePressReload}
-      // buttonText='Reload'
-      // />
-      <Text>{error}</Text>
+      <ErrorOverlay
+        message={error}
+        onPress={handlePressReload}
+        buttonText='Reload'
+      />
     );
   }
 
   return (
     <>
       {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
-      <JourneysList journeys={journeyCtx.journeys} />
+      {content}
     </>
   );
 };

@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useEffect, useState } from 'react';
-// import JwtDecode, { JwtPayload } from 'jwt-decode';
 import { Buffer } from 'buffer';
 import { refreshAuthToken } from '../utils/http';
 
@@ -36,7 +35,6 @@ export default function AuthContextProvider({
       const storedToken = await AsyncStorage.getItem('token');
       const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
       if (storedToken) {
-        // const decodedToken = JwtDecode<JwtPayload>(storedToken);
         const decodedToken = JSON.parse(
           Buffer.from(storedToken.split('.')[1], 'base64').toString()
         );
@@ -58,8 +56,7 @@ export default function AuthContextProvider({
             AsyncStorage.setItem('token', new_token);
             AsyncStorage.setItem('refreshToken', new_refreshToken);
           } else {
-            console.error('Token is expired');
-            // TODO: Improve so the user has to login
+            return;
           }
         }
       }
@@ -68,7 +65,6 @@ export default function AuthContextProvider({
   }, []);
 
   function authenticate(token: string, refreshToken: string) {
-    // const decodedToken = jwtDecode<JwtDecode>(token);
     const decodedToken = JSON.parse(
       Buffer.from(token.split('.')[1], 'base64').toString()
     );
@@ -80,7 +76,7 @@ export default function AuthContextProvider({
       AsyncStorage.setItem('token', token);
       AsyncStorage.setItem('refreshToken', refreshToken!);
     } else {
-      console.error('Token is expired'); // TODO: Improve so the user hat so login
+      return;
     }
   }
 

@@ -34,7 +34,6 @@ import AuthContextProvider, { AuthContext } from './src/store/auth-context';
 import { useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from './src/screens/AuthScreen';
-import { View } from 'react-native';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -49,7 +48,7 @@ navTheme.colors.background = 'transparent';
 // 1. Add Login and Registration Screens - DONE
 // 2. Add Authentication Context - DONE
 // 3. Add AuthStack and AuthenticatedStack - DONE
-// 4. Add Backend Authentication
+// 4. Add Backend Authentication - DONE
 // 5. Add Backend for country Information
 // 6. Add Creating a country by choosing from dropdown, and the filling out form
 // 7. Add Creating PlacesToVisit for the CustomCountry
@@ -68,8 +67,6 @@ const AuthStack = () => {
 };
 
 const BottomTabsNavigator = () => {
-  const authCtx = useContext(AuthContext);
-
   return (
     <JourneyContextProvider>
       <BottomTabs.Navigator
@@ -85,24 +82,14 @@ const BottomTabsNavigator = () => {
           tabBarActiveTintColor: GlobalStyles.colors.accent600,
           tabBarIconStyle: { color: 'white' },
           headerRight: ({ tintColor }) => (
-            <View style={{ flexDirection: 'row' }}>
-              <IconButton
-                color={tintColor}
-                size={24}
-                icon={Icons.person}
-                onPress={() => {
-                  navigation.navigate('UserProfile');
-                }}
-              />
-              <IconButton
-                color={tintColor}
-                size={24}
-                icon={Icons.logout}
-                onPress={() => {
-                  authCtx.logout();
-                }}
-              />
-            </View>
+            <IconButton
+              color={tintColor}
+              size={24}
+              icon={Icons.person}
+              onPress={() => {
+                navigation.navigate('UserProfile');
+              }}
+            />
           ),
         })}
       >
@@ -219,6 +206,8 @@ const JourneyBottomTabsNavigator = () => {
 
 // All Screens, that require Authentication, are wrapped in AuthenticatedStack
 const AuthenticatedStack = () => {
+  const authCtx = useContext(AuthContext);
+
   return (
     <Stack.Navigator
       screenOptions={() => ({
@@ -237,7 +226,17 @@ const AuthenticatedStack = () => {
           name='UserProfile'
           component={UserProfile}
           options={{
-            title: 'User Profile',
+            title: `${authCtx.username}'s Profile`,
+            headerRight: ({ tintColor }) => (
+              <IconButton
+                color={tintColor}
+                size={24}
+                icon={Icons.logout}
+                onPress={() => {
+                  authCtx.logout();
+                }}
+              />
+            ),
           }}
         />
         <Stack.Screen

@@ -1,18 +1,20 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
+import { BACKEND_URL } from '@env';
 import { Journey, JourneyFormValues } from '../../models';
+import api from './api';
 
 interface FetchJourneysProps {
   journeys?: Journey[];
   status: number;
   error?: string;
 }
-const BACKEND_URL = process.env.BACKEND_URL;
+
 const prefix = `${BACKEND_URL}/journey`;
 
 export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
   try {
-    const response: AxiosResponse<FetchJourneysProps> = await axios.get(
+    const response: AxiosResponse<FetchJourneysProps> = await api.get(
       `${prefix}/get-journeys`
     );
 
@@ -45,10 +47,12 @@ export const createJourney = async (
   journeyFormValues: JourneyFormValues
 ): Promise<ManageJourneyProps> => {
   try {
-    const response: AxiosResponse<ManageJourneyProps> = await axios.post(
+    const response: AxiosResponse<ManageJourneyProps> = await api.post(
       `${prefix}/create-journey`,
       journeyFormValues
     );
+
+    console.log(response.data);
 
     // Error from backend
     if (response.data.error) {
@@ -74,7 +78,7 @@ export const updateJourney = async (
   journeyId: number
 ): Promise<ManageJourneyProps> => {
   try {
-    const response: AxiosResponse<ManageJourneyProps> = await axios.post(
+    const response: AxiosResponse<ManageJourneyProps> = await api.post(
       `${prefix}/update-journey/${journeyId}`,
       journeyFormValues
     );
@@ -102,7 +106,7 @@ export const deleteJourney = async (
   journeyId: number
 ): Promise<ManageJourneyProps> => {
   try {
-    const response: AxiosResponse<ManageJourneyProps> = await axios.delete(
+    const response: AxiosResponse<ManageJourneyProps> = await api.delete(
       `${prefix}/delete-journey/${journeyId}`
     );
 
