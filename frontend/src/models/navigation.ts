@@ -18,14 +18,9 @@ export type StackParamList = {
   BottomTabsNavigator: NavigatorScreenParams<BottomTabsParamList>;
   UserProfile: undefined;
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
-  // Login: undefined;
-  // SignUp: undefined;
-  AuthScreen: undefined;
 };
 
 export type AuthStackParamList = {
-  // Login: undefined;
-  // SignUp: undefined;
   AuthScreen: undefined;
 };
 

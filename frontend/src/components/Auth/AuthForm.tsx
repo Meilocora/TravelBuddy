@@ -19,6 +19,7 @@ import { AuthHandlerProps } from '../../screens/AuthScreen';
 
 type CredentialValidationResponse = {
   token?: string;
+  refreshToken?: string;
   authFormValues?: AuthFormValues;
   error?: string;
   status: number;
@@ -27,7 +28,12 @@ type CredentialValidationResponse = {
 interface AuthFormProps {
   isLogin: boolean;
   onSwitchMode: () => void;
-  onAuthenticate: ({ token, error, status }: AuthHandlerProps) => void;
+  onAuthenticate: ({
+    token,
+    refreshToken,
+    error,
+    status,
+  }: AuthHandlerProps) => void;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -133,12 +139,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
       response = await createUser(credentials);
     }
 
-    const { error, status, token, authFormValues } = response!;
-
-    console.log(authFormValues);
+    const { error, status, token, refreshToken, authFormValues } = response!;
 
     if (!error && token) {
-      onAuthenticate({ token, status });
+      onAuthenticate({ token, refreshToken, status });
     } else if (error) {
       onAuthenticate({ error, status });
     } else if (authFormValues) {

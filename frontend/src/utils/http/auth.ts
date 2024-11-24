@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { BACKEND_URL } from './backend_url';
+import { BACKEND_URL } from '@env';
 import { AuthFormValues } from '../../models';
-import { formatStringToList } from '../formatting';
 
 const prefix = `${BACKEND_URL}/auth`;
 
@@ -10,16 +9,23 @@ interface UserCreationProps {
   status: number;
   error?: string;
   authFormValues?: AuthFormValues;
+  token?: string;
+  refreshToken?: string;
 }
 
 export const createUser = async (
   authFormValues: AuthFormValues
 ): Promise<UserCreationProps> => {
+  console.log('Creating user with values:', authFormValues);
+  console.log(prefix);
+
   try {
     const response: AxiosResponse<UserCreationProps> = await axios.post(
       `${prefix}/create-user`,
       authFormValues
     );
+
+    console.log(response.data);
 
     // Error from backend
     if (response.data.error) {
@@ -33,7 +39,14 @@ export const createUser = async (
       };
     }
 
-    return { status: response.data.status };
+    console.log(response.data.token);
+    console.log(response.data.refreshToken);
+
+    return {
+      token: response.data.token,
+      refreshToken: response.data.refreshToken,
+      status: response.data.status,
+    };
   } catch (error) {
     return { status: 500, error: 'Could not create user!' };
   }
@@ -60,8 +73,45 @@ export const loginUser = async (
       };
     }
 
-    return { status: response.data.status };
+    return {
+      token: response.data.token,
+      refreshToken: response.data.refreshToken,
+      status: response.data.status,
+    };
   } catch (error) {
     return { status: 500, error: 'Could not login user!' };
+  }
+};
+
+interface RefreshTokenProps {
+  token?: string;
+  new_token?: string;
+  refreshToken?: string;
+  new_refreshToken?: string;
+  error?: string;
+  status: number;
+}
+
+export const refreshAuthToken = async (
+  refreshToken: string
+): Promise<RefreshTokenProps> => {
+  try {
+    const response: AxiosResponse<RefreshTokenProps> = await axios.post(
+      `${prefix}/refresh-token`,
+      { refreshToken }
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return {
+      new_token: response.data.token,
+      new_refreshToken: response.data.refreshToken,
+      status: response.data.status,
+    };
+  } catch (error) {
+    return { status: 500, error: 'Could not refresh token!' };
   }
 };

@@ -1,11 +1,6 @@
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Text } from 'react-native';
 
 import JourneysList from '../components/Journeys/JourneysList';
 import { fetchJourneys } from '../utils/http';
@@ -16,6 +11,8 @@ import { BottomTabsParamList } from '../models';
 import { RouteProp } from '@react-navigation/native';
 import Popup from '../components/UI/Popup';
 import InfoText from '../components/UI/InfoText';
+import { AuthContext } from '../store/auth-context';
+import { Buffer } from 'buffer';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -31,6 +28,40 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
 
+  const authCtx = useContext(AuthContext);
+  const journeyCtx = useContext(JourneyContext);
+
+  // TEST PURPOSES \\
+  // if (authCtx.token && authCtx.refreshToken) {
+  //   const decodedToken = JSON.parse(
+  //     Buffer.from(authCtx.token!.split('.')[1], 'base64').toString()
+  //   );
+
+  //   const decodedRefreshToken = JSON.parse(
+  //     Buffer.from(authCtx.refreshToken!.split('.')[1], 'base64').toString()
+  //   );
+
+  //   console.log(
+  //     'TOKEN: ',
+  //     decodedToken.username,
+  //     '\n',
+  //     `${
+  //       (decodedToken.exp * 1000 - Date.now()) / (1000 * 60 * 60)
+  //     } hours remaining\n`,
+  //     decodedToken.user_id
+  //   );
+  //   console.log(
+  //     'REFRESH TOKEN: ',
+  //     decodedRefreshToken.username,
+  //     '\n',
+  //     `${
+  //       (decodedRefreshToken.exp * 1000 - Date.now()) / (1000 * 60 * 60)
+  //     } hours remaining\n`,
+  //     decodedRefreshToken.user_id
+  //   );
+  // }
+  // ++++++++ \\
+
   useEffect(() => {
     function activatePopup() {
       if (route.params?.popupText) {
@@ -41,7 +72,15 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     activatePopup();
   }, [route.params]);
 
-  const journeyCtx = useContext(JourneyContext);
+  useEffect(() => {
+    function activatePopup() {
+      if (authCtx.username) {
+        setPopupText(`Welcome ${authCtx.username}!`);
+      }
+    }
+
+    activatePopup();
+  }, [authCtx.username]);
 
   useEffect(() => {
     async function getJourneys() {
@@ -64,6 +103,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }
 
   function handlePressReload() {
+    setError(null);
     setRefresh((prev) => prev + 1);
   }
 
@@ -77,11 +117,12 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
   if (error) {
     return (
-      <ErrorOverlay
-        message={error}
-        onPress={handlePressReload}
-        buttonText='Reload'
-      />
+      // <ErrorOverlay
+      // message={error}
+      // onPress={handlePressReload}
+      // buttonText='Reload'
+      // />
+      <Text>{error}</Text>
     );
   }
 

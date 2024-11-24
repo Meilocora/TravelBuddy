@@ -1,14 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { Journey, JourneyFormValues } from '../../models';
-import { BACKEND_URL } from './backend_url';
 
 interface FetchJourneysProps {
   journeys?: Journey[];
   status: number;
   error?: string;
 }
-
+const BACKEND_URL = process.env.BACKEND_URL;
 const prefix = `${BACKEND_URL}/journey`;
 
 export const fetchJourneys = async (): Promise<FetchJourneysProps> => {

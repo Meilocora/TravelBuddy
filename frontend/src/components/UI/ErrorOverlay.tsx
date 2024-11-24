@@ -25,7 +25,7 @@ export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
   }
 
   return (
-    <Modal visible={true} animationType='slide' transparent={true}>
+    <Modal visible={true} animationType='fade' transparent={true}>
       <View style={styles.container}>
         <Text style={[styles.text, styles.title]}>An Error occurred!</Text>
         <Text style={styles.text}>{message}</Text>

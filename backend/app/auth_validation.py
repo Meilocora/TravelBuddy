@@ -50,11 +50,11 @@ class AuthValidation(Validation):
             # signUpData['email']['errors'].append(f", {emailInvalid}")
             # signUpData['email']['isValid'] = False
             
-        passwordInvalid = AuthValidation().validate_password(signUpData['password']['value'], min_length=6, max_length=20)
-        if passwordInvalid:
-            print(passwordInvalid.split(', '))
-            signUpData['password']['errors'] += passwordInvalid.split(', ')
-            signUpData['password']['isValid'] = False
+        # passwordInvalid = AuthValidation().validate_password(signUpData['password']['value'], min_length=6, max_length=20)
+        # if passwordInvalid:
+        #     print(passwordInvalid.split(', '))
+        #     signUpData['password']['errors'] += passwordInvalid.split(', ')
+        #     signUpData['password']['isValid'] = False
                 
         for key, value in signUpData.items():
             if 'errors' in value and value['errors']:

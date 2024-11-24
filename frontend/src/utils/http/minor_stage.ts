@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { MinorStage } from '../../models';
-import { BACKEND_URL } from './backend_url';
 
+const BACKEND_URL = process.env.BACKEND_URL;
 const prefix = `${BACKEND_URL}/minor_stage`;
 
 interface FetchMinorStagesProps {

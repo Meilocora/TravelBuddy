@@ -13,6 +13,7 @@ export enum Icons {
   pin = 'pin',
   eyeOff = 'eye-off-outline',
   eyeOn = 'eye-outline',
+  logout = 'exit',
 }
 
 export enum DateFormatMode {
