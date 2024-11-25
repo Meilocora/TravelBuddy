@@ -1,18 +1,11 @@
 import { ReactElement, useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import Animated, { BounceIn } from 'react-native-reanimated';
+
 import Input from '../form/Input';
 import Button from '../Button';
 import { ColorScheme } from '../../../models';
-import {
-  fetchCountries,
-  FetchCountriesProps,
-} from '../../../utils/http/custom_country';
+import { addCountry, fetchCountries } from '../../../utils/http/custom_country';
 import { generateRandomString } from '../../../utils';
 import InfoText from '../InfoText';
 import { GlobalStyles } from '../../../constants/styles';
@@ -43,7 +36,7 @@ const SearchElement: React.FC<SearchElementProps> = (): ReactElement => {
   // Fetch countries data
   useEffect(() => {
     async function fetchCountriesData() {
-      if (debouncedCountryName !== '' && countryName.length > 2) {
+      if (debouncedCountryName !== '' && debouncedCountryName.length > 1) {
         const { countries, status, error } = await fetchCountries(
           debouncedCountryName
         );
@@ -53,6 +46,8 @@ const SearchElement: React.FC<SearchElementProps> = (): ReactElement => {
         } else if (error) {
           setError(error);
         }
+      } else {
+        setCountries([]);
       }
       setIsLoading(false);
     }
@@ -65,28 +60,51 @@ const SearchElement: React.FC<SearchElementProps> = (): ReactElement => {
     setCountryName(value);
   }
 
-  let content: ReactElement;
+  function handlePressListElement(choosenCountryName: string) {
+    setCountryName(choosenCountryName);
+  }
+
+  async function handleAddCountry() {
+    const response = await addCountry(countryName);
+  }
+
+  let content: ReactElement | null = null;
 
   if (error) {
     content = <ErrorOverlay message={error} onPress={() => setError(null)} />;
-  } else if (countries.length === 0 && countryName !== '' && !isLoading) {
-    content = <InfoText content='No countries found' />;
-  } else if (isLoading) {
+  } else if (isLoading && debouncedCountryName.length > 1) {
     content = (
       <ActivityIndicator size='large' color={GlobalStyles.colors.accent200} />
     );
-  } else {
+  } else if (
+    debouncedCountryName.length > 1 &&
+    !isLoading &&
+    countries.length > 0 &&
+    countries[0] !== countryName
+  ) {
+    // TODO: Improve Animation mit Lesezeichen
     content = (
-      <FlatList
+      <Animated.FlatList
+        entering={BounceIn}
         style={styles.countriesList}
+        contentContainerStyle={{ paddingBottom: 10, paddingTop: 5 }}
         data={countries}
         renderItem={({ item }) => (
-          <ListItem key={generateRandomString()} onPress={() => {}}>
+          <ListItem
+            key={generateRandomString()}
+            onPress={handlePressListElement}
+          >
             {item}
           </ListItem>
         )}
       />
     );
+  } else if (
+    debouncedCountryName.length > 1 &&
+    !isLoading &&
+    countries.length === 0
+  ) {
+    content = <InfoText content='No countries found' />;
   }
 
   return (
@@ -102,7 +120,7 @@ const SearchElement: React.FC<SearchElementProps> = (): ReactElement => {
           }}
         />
         <Button
-          onPress={() => {}}
+          onPress={handleAddCountry}
           colorScheme={ColorScheme.accent}
           style={{
             marginHorizontal: 10,
@@ -129,7 +147,13 @@ const styles = StyleSheet.create({
   },
   countriesList: {
     marginHorizontal: 15,
-    paddingBottom: 30,
+    paddingHorizontal: 10,
+    maxHeight: 240,
+    maxWidth: 290,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: GlobalStyles.colors.primary500,
+    backgroundColor: GlobalStyles.colors.primary800,
   },
 });
 

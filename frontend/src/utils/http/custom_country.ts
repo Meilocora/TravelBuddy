@@ -37,3 +37,27 @@ export const fetchCountries = async (
     return { status: 500, error: 'Could not fetch countries!' };
   }
 };
+
+export interface AddCountryProps {
+  status: number;
+  error?: string;
+}
+
+export const addCountry = async (
+  countryName: string
+): Promise<AddCountryProps> => {
+  try {
+    const response: AxiosResponse<AddCountryProps> = await api.post(
+      `${prefix}/create-custom-country`,
+      { countryName }
+    );
+
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    return { status: 500, error: 'Could not add country!' };
+  }
+};

@@ -27,6 +27,8 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
     error,
     status,
   }: AuthHandlerProps) {
+    console.log('AuthHandlerProps:', { token, refreshToken, error, status });
+
     if (error) {
       setError(error);
       return;
@@ -39,19 +41,24 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
     setIsLogin((currValue) => !currValue);
   }
 
-  if (error) {
-    return <ErrorOverlay message={error} onPress={() => setError(null)} />;
-  }
-
   return (
-    <View style={styles.root}>
-      <MainHeader title='Travelbuddy' />
-      <AuthForm
-        onAuthenticate={authHandler}
-        isLogin={isLogin}
-        onSwitchMode={switchAuthModeHandler}
-      />
-    </View>
+    <>
+      {error && (
+        <ErrorOverlay
+          title='Authentication failed!'
+          message={error}
+          onPress={() => setError(null)}
+        />
+      )}
+      <View style={styles.root}>
+        <MainHeader title='Travelbuddy' />
+        <AuthForm
+          onAuthenticate={authHandler}
+          isLogin={isLogin}
+          onSwitchMode={switchAuthModeHandler}
+        />
+      </View>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { GlobalStyles } from '../../../constants/styles';
 
 interface ListItemProps {
   children: string;
-  onPress: () => void;
+  onPress: (choosenCountryName: string) => void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
@@ -13,7 +13,7 @@ const ListItem: React.FC<ListItemProps> = ({
 }): ReactElement => {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={onPress.bind(null, children)}
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
       android_ripple={{ color: GlobalStyles.colors.gray100 }}
     >
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     color: GlobalStyles.colors.gray100,
+    flexWrap: 'wrap',
   },
 });
 

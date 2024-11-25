@@ -7,12 +7,14 @@ import { ButtonMode, ColorScheme } from '../../models';
 import Button from './Button';
 
 interface ErrorOverlayProps {
+  title?: string;
   message: string;
   onPress: () => void;
   buttonText?: string;
 }
 
 export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
+  title = 'An Error occurred!',
   message,
   onPress,
   buttonText = 'Close',
@@ -27,7 +29,7 @@ export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
   return (
     <Modal visible={true} animationType='fade' transparent={true}>
       <View style={styles.container}>
-        <Text style={[styles.text, styles.title]}>An Error occurred!</Text>
+        <Text style={[styles.text, styles.title]}>{title}</Text>
         <Text style={styles.text}>{message}</Text>
         <Button
           mode={ButtonMode.default}

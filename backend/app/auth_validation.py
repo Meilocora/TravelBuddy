@@ -5,31 +5,6 @@ class AuthValidation(Validation):
   def __init__(self):
     super().__init__()
     
-  
-#   @staticmethod
-#   def validate_login(loginData):
-#         errors = False
-      
-#         for key, value in loginData.items():
-#             if value['value'] == "" or value['value'] == None:
-#                 loginData[key]['errors'].append(f'Input is required')
-#                 loginData[key]['isValid'] = False
-        
-#         if len(loginData['']['value']) == 0:
-#             journey['countries']['errors'].append(f'At least one country is required')
-#             journey['countries']['isValid'] = False
-            
-                 
-        
-            
-            
-#         for key, value in journey.items():
-#             if 'errors' in value and value['errors']:
-#                 errors = True
-#                 break
-        
-     
-#         return journey, not errors
      
   @staticmethod
   def validate_signUp(signUpData):

@@ -16,17 +16,41 @@ def get_countries(current_user, country_name):
         countries_list = []
         regex = re.compile(f".*{search_term}.*")
         
-        # TODO: Sort the countries list, so that the countries that start with the search term are at the top
-        
         for country in all_countries:
             if re.match(regex, country):
-                countries_list.append(country.capitalize())
-        
-        print(countries_list)
+                if country.startswith(search_term):
+                    countries_list.insert(0, country.capitalize())
+                else:
+                    countries_list.append(country.capitalize())             
         
         return jsonify({'countries': countries_list, 'status': 200})
     except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+        return jsonify({'error': str(e), 'status': 500})
+
+
+@country_bp.route('/create-custom-country', methods=['POST'])
+@token_required
+def create_custom_country(current_user):
+    try:
+        country_name = request.get_json()['countryName']
+        
+        
+        country = CustomCountry.query.filter_by(name=country_name).first()
+        if country:
+            return jsonify({'error': 'Country already exists', 'status': 400})
+        
+        # TODO: Check if it is a valid country
+        
+        print(country_name)
+        # new_country = CustomCountry(name=country_name)
+        # db.session.add(new_country)
+        # db.session.commit()
+        
+        return jsonify({'status': 201})
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 500})
+    
+    
     
 # @journey_bp.route('/create-journey', methods=['POST'])
 # @token_required

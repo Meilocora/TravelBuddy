@@ -38,9 +38,9 @@ def login():
             }, SECRET_KEY, algorithm='HS256')
             return jsonify({'status': 200, 'token': token, 'refreshToken': refresh_token})
         else:
-            return jsonify({'error': 'Invalid credentials'}, 401)
+            return jsonify({'error': 'Invalid credentials','status': 401})
     except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+        return jsonify({'error': str(e), 'status': 500})
 
 
 @auth_bp.route('/create-user', methods=['POST'])
@@ -96,7 +96,7 @@ def register():
         
         return jsonify({'status': 201, 'token': token, 'refreshToken': refresh_token})
     except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+        return jsonify({'error': str(e), 'status': 500})
   
 
 @auth_bp.route('/refresh-token', methods=['POST'])
@@ -122,5 +122,5 @@ def refresh_token():
         
         return jsonify({'token': new_token, 'newRefreshToken': new_refresh_token})
     except Exception as e:
-        return jsonify({'error': str(e)}, 500)
+        return jsonify({'error': str(e), 'status': 500})
  

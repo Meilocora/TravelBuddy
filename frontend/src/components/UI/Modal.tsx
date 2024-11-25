@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeInDown, FadeInUp, FadeOutDown, FadeOutUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 
 import { GlobalStyles } from '../../constants/styles';
@@ -22,14 +22,16 @@ const Modal: React.FC<ModalProps> = ({
 }): ReactElement => {
   return (
     <BlurView intensity={85} tint='dark' style={styles.blurcontainer}>
-      <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={styles.container}>
+      <Animated.View
+        entering={FadeInDown}
+        exiting={FadeOutDown}
+        style={styles.container}
+      >
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.content}>
-          {content}
-        </Text>
+        <Text style={styles.content}>{content}</Text>
         <View style={styles.buttonContainer}>
           <Button
-          style={styles.button}
+            style={styles.button}
             mode={ButtonMode.flat}
             onPress={onCancel!}
             colorScheme={ColorScheme.neutral}
@@ -37,7 +39,11 @@ const Modal: React.FC<ModalProps> = ({
             Cancel
           </Button>
           {onConfirm && (
-            <Button onPress={onConfirm} colorScheme={ColorScheme.error} style={styles.button}>
+            <Button
+              onPress={onConfirm}
+              colorScheme={ColorScheme.error}
+              style={styles.button}
+            >
               Delete
             </Button>
           )}
@@ -65,7 +71,6 @@ const styles = StyleSheet.create({
     width: '80%',
     padding: 24,
     backgroundColor: GlobalStyles.colors.gray700,
-    // opacity: 0.85,
     borderRadius: 20,
   },
   title: {
@@ -86,8 +91,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   button: {
-    marginHorizontal: 4
-  }
+    marginHorizontal: 4,
+  },
 });
 
 export default Modal;
