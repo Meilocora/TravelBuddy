@@ -6,7 +6,7 @@ export interface CustomCountry {
   code: string;
   timezones: string;
   currencies: string;
-  languagees: string;
+  languages: string;
   capital: string;
   population: number;
   region: string;
@@ -16,6 +16,6 @@ export interface CustomCountry {
   visum_regulations?: string;
   best_time_to_visit?: string;
   general_information?: string;
-  JourneyIds?: number[];
+  // JourneyIds?: number[];
   placesToVisit?: PlaceToVisit[];
 }

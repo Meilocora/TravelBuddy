@@ -24,6 +24,8 @@ class JourneyValidation(Validation):
             journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3)}")
             journey['name']['isValid'] = False
             
+        # TODO: Check if overlaps with another journey
+            
         if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
             journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
             journey['scheduled_start_time']['isValid'] = False

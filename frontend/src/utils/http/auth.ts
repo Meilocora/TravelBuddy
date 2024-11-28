@@ -16,16 +16,11 @@ interface UserCreationProps {
 export const createUser = async (
   authFormValues: AuthFormValues
 ): Promise<UserCreationProps> => {
-  console.log('Creating user with values:', authFormValues);
-  console.log(prefix);
-
   try {
     const response: AxiosResponse<UserCreationProps> = await axios.post(
       `${prefix}/create-user`,
       authFormValues
     );
-
-    console.log(response.data);
 
     // Error from backend
     if (response.data.error) {
@@ -38,9 +33,6 @@ export const createUser = async (
         status: response.data.status,
       };
     }
-
-    console.log(response.data.token);
-    console.log(response.data.refreshToken);
 
     return {
       token: response.data.token,

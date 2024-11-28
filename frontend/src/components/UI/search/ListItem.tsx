@@ -4,7 +4,7 @@ import { GlobalStyles } from '../../../constants/styles';
 
 interface ListItemProps {
   children: string;
-  onPress: (choosenCountryName: string) => void;
+  onPress: (choosenItem: string) => void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({

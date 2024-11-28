@@ -14,6 +14,11 @@ export enum Icons {
   eyeOff = 'eye-off-outline',
   eyeOn = 'eye-outline',
   logout = 'exit',
+  population = 'accessibility-outline',
+  currency = 'cash-outline',
+  capital = 'golf-outline',
+  language = 'chatbubbles-outline',
+  placesToVisit = 'location-outline',
 }
 
 export enum DateFormatMode {

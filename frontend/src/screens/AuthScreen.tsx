@@ -27,8 +27,6 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
     error,
     status,
   }: AuthHandlerProps) {
-    console.log('AuthHandlerProps:', { token, refreshToken, error, status });
-
     if (error) {
       setError(error);
       return;

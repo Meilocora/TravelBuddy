@@ -10,11 +10,17 @@ export interface FetchCountriesProps {
   error?: string;
 }
 
+export interface FetchCountriesResponseProps {
+  items?: string[];
+  status: number;
+  error?: string;
+}
+
 const prefix = `${BACKEND_URL}/country`;
 
 export const fetchCountries = async (
   countryName: string
-): Promise<FetchCountriesProps> => {
+): Promise<FetchCountriesResponseProps> => {
   try {
     const response: AxiosResponse<FetchCountriesProps> = await api.get(
       `${prefix}/get-countries/${countryName}`
@@ -31,23 +37,30 @@ export const fetchCountries = async (
       return { status };
     }
 
-    return { countries, status };
+    return { items: countries, status: status };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch countries!' };
   }
 };
 
-export interface AddCountryProps {
+export interface AddCustomCountryProps {
+  customCountry?: CustomCountry;
+  status: number;
+  error?: string;
+}
+
+export interface AddCustomCountryResponseProps {
+  addedItem?: CustomCountry;
   status: number;
   error?: string;
 }
 
 export const addCountry = async (
   countryName: string
-): Promise<AddCountryProps> => {
+): Promise<AddCustomCountryResponseProps> => {
   try {
-    const response: AxiosResponse<AddCountryProps> = await api.post(
+    const response: AxiosResponse<AddCustomCountryProps> = await api.post(
       `${prefix}/create-custom-country`,
       { countryName }
     );
@@ -56,8 +69,43 @@ export const addCountry = async (
       return { status: response.data.status, error: response.data.error };
     }
 
-    return { status: response.data.status };
+    return {
+      addedItem: response.data.customCountry,
+      status: response.data.status,
+    };
   } catch (error) {
     return { status: 500, error: 'Could not add country!' };
   }
 };
+
+export interface FetchCustomCountryProps {
+  customCountries?: CustomCountry[];
+  status: number;
+  error?: string;
+}
+
+export interface FetchCustomCountryResponseProps {
+  data?: CustomCountry[];
+  status: number;
+  error?: string;
+}
+
+export const fetchCustomCountries =
+  async (): Promise<FetchCustomCountryResponseProps> => {
+    try {
+      const response: AxiosResponse<FetchCustomCountryProps> = await api.get(
+        `${prefix}/get-custom-countries`
+      );
+
+      if (response.data.error) {
+        return { status: response.data.status, error: response.data.error };
+      }
+
+      return {
+        data: response.data.customCountries,
+        status: response.data.status,
+      };
+    } catch (error) {
+      return { status: 500, error: 'Could not fetch custom countries!' };
+    }
+  };

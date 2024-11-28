@@ -31,37 +31,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   const authCtx = useContext(AuthContext);
   const journeyCtx = useContext(JourneyContext);
 
-  // TEST PURPOSES \\
-  // if (authCtx.token && authCtx.refreshToken) {
-  //   const decodedToken = JSON.parse(
-  //     Buffer.from(authCtx.token!.split('.')[1], 'base64').toString()
-  //   );
-
-  //   const decodedRefreshToken = JSON.parse(
-  //     Buffer.from(authCtx.refreshToken!.split('.')[1], 'base64').toString()
-  //   );
-
-  //   console.log(
-  //     'TOKEN: ',
-  //     decodedToken.username,
-  //     '\n',
-  //     `${
-  //       (decodedToken.exp * 1000 - Date.now()) / (1000 * 60 * 60)
-  //     } hours remaining\n`,
-  //     decodedToken.user_id
-  //   );
-  //   console.log(
-  //     'REFRESH TOKEN: ',
-  //     decodedRefreshToken.username,
-  //     '\n',
-  //     `${
-  //       (decodedRefreshToken.exp * 1000 - Date.now()) / (1000 * 60 * 60)
-  //     } hours remaining\n`,
-  //     decodedRefreshToken.user_id
-  //   );
-  // }
-  // ++++++++ \\
-
   useEffect(() => {
     function activatePopup() {
       if (route.params?.popupText) {

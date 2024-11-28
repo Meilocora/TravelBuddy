@@ -89,8 +89,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     const { error, status, token, refreshToken, authFormValues } = response!;
 
-    console.log(response!);
-
     if (!error && token) {
       onAuthenticate({ token, refreshToken, status });
     } else if (error) {

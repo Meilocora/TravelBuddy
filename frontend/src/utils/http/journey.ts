@@ -52,8 +52,6 @@ export const createJourney = async (
       journeyFormValues
     );
 
-    console.log(response.data);
-
     // Error from backend
     if (response.data.error) {
       return { status: response.data.status, error: response.data.error };

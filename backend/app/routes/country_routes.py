@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import db
 from countryinfo import CountryInfo
-from app.models import CustomCountry
+from app.models import CustomCountry, PlaceToVisit
 from app.routes.route_protection import token_required
 import re
 
@@ -26,6 +26,45 @@ def get_countries(current_user, country_name):
         return jsonify({'countries': countries_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e), 'status': 500})
+    
+
+@country_bp.route('/get-custom-countries', methods=['GET'])
+@token_required
+def get_custom_countries(current_user):
+    try:
+        custom_countries = CustomCountry.query.filter_by(user_id=current_user).all()
+        response_custom_countries = []
+        
+        places_to_visit = []
+        for custom_country in custom_countries:       
+            placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
+            if placesToVisit: 
+                places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
+                places_to_visit += places
+            
+        
+        for custom_country in custom_countries:
+            response_custom_countries.append({'id': custom_country.id,
+                                              'name': custom_country.name,
+                                              'code': custom_country.code,
+                                              'timezones': custom_country.timezones.split(',') if custom_country.timezones else None, 
+                                              'currencies': custom_country.currencies.split(',') if custom_country.currencies else None,
+                                              'languages': custom_country.languages.split(',') if custom_country.languages else None,
+                                              'capital': custom_country.capital,
+                                              'population': custom_country.population,
+                                              'region': custom_country.region,
+                                              'subregion': custom_country.subregion,
+                                              'wiki_link': custom_country.wiki_link, 
+                                              'visited': custom_country.visited,
+                                              'visum_regulations': custom_country.visum_regulations,
+                                                'best_time_to_visit': custom_country.best_time_to_visit,
+                                                'general_information': custom_country.general_information,
+                                                'placesToVisit': places_to_visit
+                                              })
+        
+        return jsonify({'customCountries': response_custom_countries, 'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 500})
 
 
 @country_bp.route('/create-custom-country', methods=['POST'])
@@ -33,82 +72,55 @@ def get_countries(current_user, country_name):
 def create_custom_country(current_user):
     try:
         country_name = request.get_json()['countryName']
-        
-        
-        country = CustomCountry.query.filter_by(name=country_name).first()
-        if country:
+        country_exists = CustomCountry.query.filter_by(name=country_name).first()
+        if country_exists:
             return jsonify({'error': 'Country already exists', 'status': 400})
         
-        # TODO: Check if it is a valid country
+        if country_name.lower() not in CountryInfo().all().keys():
+            return jsonify({'error': 'Country does not exist', 'status': 400})
+        else:
+            countryInfo = CountryInfo(country_name)
+            
+            new_country = CustomCountry(
+                name=country_name,
+                code = countryInfo.iso(3) if countryInfo.iso(3) else None,
+                timezones = ', '.join(countryInfo.timezones()) if countryInfo.timezones() else None, 
+                currencies = ', '.join(countryInfo.currencies()) if countryInfo.currencies() else None,
+                languages = ', '.join(countryInfo.languages()) if countryInfo.languages() else None,
+                capital = countryInfo.capital() if countryInfo.capital() else None,
+                population = countryInfo.population() if countryInfo.population() else None,
+                region = countryInfo.region() if countryInfo.region() else None,
+                subregion = countryInfo.subregion() if countryInfo.subregion() else None,
+                wiki_link = countryInfo.wiki() if countryInfo.wiki() else None,
+                visited = False,
+                visum_regulations = None,
+                best_time_to_visit = None,
+                general_information = None,
+                user_id = current_user,
+                major_stage_id = None
+            )
+            
+            db.session.add(new_country)
+            db.session.commit()
+            
+            response_country = {'id': new_country.id,
+                                'name': new_country.name,
+                                'code': new_country.code,
+                                'timezones': new_country.timezones.split(',') if new_country.timezones else None,
+                                'currencies': new_country.currencies.split(',') if new_country.currencies else None,
+                                'languages': new_country.languages.split(',') if new_country.languages else None,
+                                'capital': new_country.capital,
+                                'population': new_country.population,
+                                'region': new_country.region,
+                                'subregion': new_country.subregion,
+                                'wiki_link': new_country.wiki_link, 
+                                }
         
-        print(country_name)
-        # new_country = CustomCountry(name=country_name)
-        # db.session.add(new_country)
-        # db.session.commit()
-        
-        return jsonify({'status': 201})
+        return jsonify({'customCountry': response_country,'status': 201})
     except Exception as e:
         return jsonify({'error': str(e), 'status': 500})
     
-    
-    
-# @journey_bp.route('/create-journey', methods=['POST'])
-# @token_required
-# def create_journey(current_user):
-#     try:
-#         journey = request.get_json()
-#     except:
-#         return jsonify({'error': 'Unknown error'}, 400) 
-    
-#     response, isValid = JourneyValidation.validate_journey(journey=journey)
-    
-#     if not isValid:
-#         return jsonify({'journeyFormValues': response, 'status': 400})
-    
-#     try:
-#         # Create a new journey
-#         new_journey = Journey(
-#             name=journey['name']['value'],
-#             description=journey['description']['value'],
-#             scheduled_start_time=journey['scheduled_start_time']['value'],
-#             scheduled_end_time=journey['scheduled_end_time']['value'],
-#             countries=journey['countries']['value'],
-#             done=False,
-#             user_id=current_user
-#         )
-#         db.session.add(new_journey)
-#         db.session.commit()
-        
-#         print(new_journey)
-        
-        
-#         # Create a new costs for the journey
-#         costs = Costs(
-#             journey_id=new_journey.id,
-#             available_money=journey['available_money']['value'],
-#             planned_costs=0,
-#             money_exceeded=False
-#         )
-#         db.session.add(costs)
-#         db.session.commit()
-        
-#         response_journey = {'id': new_journey.id,
-#                 'name': new_journey.name,
-#                 'description': new_journey.description,
-#                 'costs': {
-#                     'available_money': costs.available_money,
-#                     'planned_costs': costs.planned_costs,
-#                     'money_exceeded': costs.money_exceeded,
-#                 },
-#                 'scheduled_start_time': new_journey.scheduled_start_time,
-#                 'scheduled_end_time': new_journey.scheduled_end_time,
-#                 'countries': new_journey.countries.split(','),
-#                 'done': new_journey.done,
-#                 'majorStagesIds': []}
-        
-#         return jsonify({'journey': response_journey,'status': 201})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+
     
 # @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
 # @token_required

@@ -34,6 +34,7 @@ import AuthContextProvider, { AuthContext } from './src/store/auth-context';
 import { useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from './src/screens/AuthScreen';
+import CustomCountryContextProvider from './src/store/custom-country-context';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -137,6 +138,8 @@ const BottomTabsNavigator = () => {
   );
 };
 
+// TODO: Rework position for ContextProviders
+
 const JourneyBottomTabsNavigator = () => {
   return (
     <MajorStageContextProvider>
@@ -209,43 +212,45 @@ const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
 
   return (
-    <Stack.Navigator
-      screenOptions={() => ({
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-        headerTitleAlign: 'center',
-      })}
-    >
-      <>
-        <Stack.Screen
-          name='BottomTabsNavigator'
-          component={BottomTabsNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='UserProfile'
-          component={UserProfile}
-          options={{
-            title: `${authCtx.username}'s Profile`,
-            headerRight: ({ tintColor }) => (
-              <IconButton
-                color={tintColor}
-                size={24}
-                icon={Icons.logout}
-                onPress={() => {
-                  authCtx.logout();
-                }}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name='JourneyBottomTabsNavigator'
-          component={JourneyBottomTabsNavigator}
-          options={{ headerShown: false }}
-        />
-      </>
-    </Stack.Navigator>
+    <CustomCountryContextProvider>
+      <Stack.Navigator
+        screenOptions={() => ({
+          headerTintColor: 'white',
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTitleAlign: 'center',
+        })}
+      >
+        <>
+          <Stack.Screen
+            name='BottomTabsNavigator'
+            component={BottomTabsNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='UserProfile'
+            component={UserProfile}
+            options={{
+              title: `${authCtx.username}'s Profile`,
+              headerRight: ({ tintColor }) => (
+                <IconButton
+                  color={tintColor}
+                  size={24}
+                  icon={Icons.logout}
+                  onPress={() => {
+                    authCtx.logout();
+                  }}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='JourneyBottomTabsNavigator'
+            component={JourneyBottomTabsNavigator}
+            options={{ headerShown: false }}
+          />
+        </>
+      </Stack.Navigator>
+    </CustomCountryContextProvider>
   );
 };
 

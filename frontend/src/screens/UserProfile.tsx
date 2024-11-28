@@ -1,7 +1,7 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { Text, View } from 'react-native';
 import { UserProfileRouteProp } from '../models';
-import SearchElement from '../components/UI/search/SearchElement';
+import InfoText from '../components/UI/InfoText';
 
 interface UserProfileProps {
   route: UserProfileRouteProp;
@@ -10,7 +10,7 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   return (
     <View>
-      <SearchElement />
+      <InfoText content='User Profile' />
     </View>
   );
 };
