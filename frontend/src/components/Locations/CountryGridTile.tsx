@@ -4,18 +4,21 @@ import { CustomCountry } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import { Icons } from '../../models';
 import GridInfoLine from './GridInfoLine';
+import { formatQuantity } from '../../utils';
+import { getLanguageNames } from '../../utils/languages';
 
 interface CountryGridTileProps {
   country: CustomCountry;
 }
 
 const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
-  // TODO: Format lamguages
-  // TODO: Format population (k, mio)
-  // TODO: Dynamically display values, when exist
+  const languages = getLanguageNames(country.languages, true);
+  const population = formatQuantity(country.population);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, country.visited ? styles.visited : undefined]}
+    >
       <Pressable
         android_ripple={{ color: GlobalStyles.colors.accent100 }}
         style={({ pressed }) => [
@@ -24,14 +27,26 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
         ]}
       >
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>{country.name}</Text>
-          <GridInfoLine icon={Icons.capital} value={country.capital} />
-          <GridInfoLine icon={Icons.language} value={country.languages} />
-          <GridInfoLine icon={Icons.currency} value={country.currencies} />
-          <GridInfoLine
-            icon={Icons.population}
-            value={country.population.toString()}
-          />
+          <Text style={styles.title} numberOfLines={1}>
+            {country.name}
+          </Text>
+          {country.subregion && (
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {country.subregion}
+            </Text>
+          )}
+          {country.capital && (
+            <GridInfoLine icon={Icons.capital} value={country.capital} />
+          )}
+          {languages && (
+            <GridInfoLine icon={Icons.language} value={languages} />
+          )}
+          {country.currencies && (
+            <GridInfoLine icon={Icons.currency} value={country.currencies} />
+          )}
+          {population && (
+            <GridInfoLine icon={Icons.population} value={population} />
+          )}
           <GridInfoLine
             icon={Icons.placesToVisit}
             value={country.placesToVisit?.length.toString() || '0'}
@@ -44,8 +59,8 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '40%',
-    height: 175,
+    width: '45%',
+    height: 210,
     marginVertical: 10,
     marginHorizontal: 'auto',
     borderWidth: 1,
@@ -53,6 +68,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
     backgroundColor: 'transparent',
+  },
+  visited: {
+    borderColor: GlobalStyles.colors.accent500,
   },
   button: {
     flex: 1,
@@ -70,6 +88,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: GlobalStyles.colors.gray100,
     flexWrap: 'wrap',
+  },
+  subtitle: {
+    fontStyle: 'italic',
+    color: GlobalStyles.colors.gray200,
     marginBottom: 6,
   },
 });

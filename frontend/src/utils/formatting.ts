@@ -9,7 +9,19 @@ export function formatAmount(amount: number): string {
   }).format(amount);
 }
 
-// TODO: Might rework this to take string aswell, because backend responsen is also string
+export function formatQuantity(qty: number): string | null {
+  if (!qty) {
+    return null;
+  } else if (qty < 1000) {
+    return qty.toString();
+  } else if (qty < 1000000) {
+    return (qty / 1000).toFixed(1) + 'k';
+  } else {
+    return (qty / 1000000).toFixed(1) + 'mio';
+  }
+}
+
+// TODO: Change to format DD.MM.YYYY
 export function formatDateString(date: string): string {
   const dateObject = new Date(date);
   const day = String(dateObject.getDate()).padStart(2, '0');

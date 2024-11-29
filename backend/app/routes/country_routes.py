@@ -32,7 +32,7 @@ def get_countries(current_user, country_name):
 @token_required
 def get_custom_countries(current_user):
     try:
-        custom_countries = CustomCountry.query.filter_by(user_id=current_user).all()
+        custom_countries = CustomCountry.query.filter_by(user_id=current_user).order_by(CustomCountry.name).all()
         response_custom_countries = []
         
         places_to_visit = []

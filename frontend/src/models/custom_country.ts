@@ -6,7 +6,7 @@ export interface CustomCountry {
   code: string;
   timezones: string;
   currencies: string;
-  languages: string;
+  languages: string[];
   capital: string;
   population: number;
   region: string;

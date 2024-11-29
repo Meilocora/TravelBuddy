@@ -1,4 +1,30 @@
-export const LANGUAGES = [
+export function getLanguageNames(
+  codes: string[],
+  mainLangOnly?: boolean
+): string | null {
+  if (!codes) {
+    return null;
+  }
+
+  let languages: string[] = [];
+
+  codes.forEach((code) => {
+    const lang = LANGUAGES.find((language) => language.code === code.trim());
+    if (!lang) {
+      return null;
+    } else if (lang.name) {
+      return languages.push(lang.name);
+    }
+  });
+
+  if (mainLangOnly) {
+    return languages[0];
+  }
+
+  return codes.length > 1 ? languages.join(', ') : languages[0];
+}
+
+const LANGUAGES = [
   {
     code: 'ab',
     name: 'Abkhaz',

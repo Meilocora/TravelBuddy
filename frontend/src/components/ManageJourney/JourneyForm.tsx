@@ -156,6 +156,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
+          {/* TODO: Change format to DD.MM.YYYY */}
           <Input
             label='Starts on'
             invalid={!inputs.scheduled_start_time.isValid}

@@ -3,6 +3,7 @@ import { Text, StyleSheet, FlatList, View } from 'react-native';
 
 import { CustomCountryContext } from '../../store/custom-country-context';
 import CountryItem from './CountryGridTile';
+import InfoText from '../UI/InfoText';
 
 interface CountriesListProps {}
 
@@ -18,6 +19,7 @@ const CountriesList: React.FC<CountriesListProps> = (): ReactElement => {
         key='customCountries'
         numColumns={2}
       />
+      {countries.length === 0 && <InfoText content='No countries added yet!' />}
     </View>
   );
 };

@@ -22,7 +22,9 @@ const GridInfoLine: React.FC<GridInfoLineProps> = ({
         color={GlobalStyles.colors.gray200}
         style={styles.icon}
       />
-      <Text style={styles.text}>{value}</Text>
+      <Text style={styles.text} numberOfLines={1}>
+        {value}
+      </Text>
     </View>
   );
 };
@@ -31,16 +33,18 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     alignItems: 'center',
     marginVertical: 5,
   },
   icon: {
-    // marginLeft: 10,
+    flex: 1,
+    marginLeft: 30,
+    marginRight: 10,
   },
   text: {
+    flex: 4,
     color: GlobalStyles.colors.gray100,
-    flexWrap: 'wrap',
   },
 });
 
