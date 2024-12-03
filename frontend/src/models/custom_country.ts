@@ -1,7 +1,7 @@
-import { PlaceToVisit } from './other_models';
+import { PlaceToVisit, Validable } from './other_models';
 
 export interface CustomCountry {
-  id?: number;
+  id: number;
   name: string;
   code: string;
   timezones: string;
@@ -18,4 +18,11 @@ export interface CustomCountry {
   general_information?: string;
   // JourneyIds?: number[];
   placesToVisit?: PlaceToVisit[];
+}
+
+export interface CustomCountryFormValues {
+  visum_regulations: Validable<string | null>;
+  best_time_to_visit: Validable<string | null>;
+  general_information: Validable<string | null>;
+  // placesToVisit: Validable<PlaceToVisit[]>;
 }

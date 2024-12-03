@@ -19,6 +19,9 @@ export enum Icons {
   capital = 'golf-outline',
   language = 'chatbubbles-outline',
   placesToVisit = 'location-outline',
+  search = 'search-outline',
+  filter = 'filter-outline',
+  menu = 'menu',
 }
 
 export enum DateFormatMode {

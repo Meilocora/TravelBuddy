@@ -10,10 +10,6 @@ interface LocationsProps {}
 const Locations: React.FC = (): ReactElement => {
   const customCountryCtx = useContext(CustomCountryContext);
 
-  // TODO: Add LeftTop to add new Country with SearchElement
-  // TODO: Add Filtercriteria (not visited, by number of places, by subregion)
-  // TODO: Add Searchbar
-
   useEffect(() => {
     async function getCustomCountries() {
       const { data } = await fetchCustomCountries();

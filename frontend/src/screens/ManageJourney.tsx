@@ -11,13 +11,14 @@ import {
   Icons,
 } from '../models';
 import { JourneyContext } from '../store/journey-context';
-import JourneyForm from '../components/ManageJourney/JourneyForm';
+import JourneyForm from '../components/Journeys/ManageJourney/JourneyForm';
 import IconButton from '../components/UI/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import { formatDateString } from '../utils';
 import { deleteJourney } from '../utils/http';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Modal from '../components/UI/Modal';
+import ErrorOverlay from '../components/UI/ErrorOverlay';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;
@@ -107,7 +108,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         return;
       }
     } catch (error) {
-      setError('Could not delete expense!');
+      setError('Could not delete journey!');
     }
     setIsDeleting(false);
     return;
@@ -157,6 +158,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           onCancel={closeModalHandler}
         />
       )}
+      {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
       <Animated.ScrollView entering={FadeInDown}>
         <JourneyForm
           onCancel={cancelHandler}

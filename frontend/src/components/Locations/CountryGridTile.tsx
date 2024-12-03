@@ -1,19 +1,28 @@
 import { Text, View, StyleSheet, Pressable, Platform } from 'react-native';
 
-import { CustomCountry } from '../../models';
+import { CustomCountry, StackParamList } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import { Icons } from '../../models';
 import GridInfoLine from './GridInfoLine';
 import { formatQuantity } from '../../utils';
 import { getLanguageNames } from '../../utils/languages';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 interface CountryGridTileProps {
   country: CustomCountry;
 }
 
 const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   const languages = getLanguageNames(country.languages, true);
-  const population = formatQuantity(country.population);
+  const population = formatQuantity(country.population ?? 0);
+
+  function onPressHandler(): void {
+    navigation.navigate('ManageCustomCountry', {
+      countryId: country.id,
+    });
+  }
 
   return (
     <View
@@ -21,6 +30,7 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
     >
       <Pressable
         android_ripple={{ color: GlobalStyles.colors.accent100 }}
+        onPress={onPressHandler}
         style={({ pressed }) => [
           styles.button,
           pressed ? styles.buttonPressed : null,
@@ -60,7 +70,7 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
 const styles = StyleSheet.create({
   container: {
     width: '45%',
-    height: 210,
+    height: 215,
     marginVertical: 10,
     marginHorizontal: 'auto',
     borderWidth: 1,

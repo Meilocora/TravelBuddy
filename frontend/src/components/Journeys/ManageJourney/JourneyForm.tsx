@@ -7,11 +7,11 @@ import {
   JourneyFormValues,
   JourneyValues,
   Journey,
-} from '../../models';
-import Input from '../UI/form/Input';
-import { GlobalStyles } from '../../constants/styles';
-import Button from '../UI/Button';
-import { createJourney, updateJourney } from '../../utils/http';
+} from '../../../models';
+import Input from '../../UI/form/Input';
+import { GlobalStyles } from '../../../constants/styles';
+import Button from '../../UI/Button';
+import { createJourney, updateJourney } from '../../../utils/http';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -72,6 +72,15 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     },
   });
 
+  function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
+
   async function validateInputs(): Promise<void> {
     // Set all errors to empty array to prevent stacking of errors
     setIsSubmitting(true);
@@ -99,14 +108,31 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     return;
   }
 
-  function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
-    setInputs((currInputs) => {
-      return {
-        ...currInputs,
-        [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
-      };
-    });
-  }
+  // async function deleteJourneyHandler() {
+  //   try {
+  //     const { error, status } = await deleteJourney(editedJourneyId!);
+  //     if (!error && status === 200) {
+  //       journeyCtx.deleteJourney(editedJourneyId!);
+  //       const popupText = 'Journey successfully deleted!';
+  //       navigation.navigate('AllJourneys', { popupText: popupText });
+  //     } else {
+  //       setError(error!);
+  //       return;
+  //     }
+  //   } catch (error) {
+  //     setError('Could not delete journey!');
+  //   }
+  //   setIsDeleting(false);
+  //   return;
+  // }
+
+  // function deleteHandler() {
+  //   setIsDeleting(true);
+  // }
+
+  // function closeModalHandler() {
+  //   setIsDeleting(false);
+  // }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';

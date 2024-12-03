@@ -1,6 +1,16 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import Animated, { BounceIn } from 'react-native-reanimated';
+import {
+  ActivityIndicator,
+  FlatList,
+  LayoutAnimation,
+  StyleSheet,
+  View,
+} from 'react-native';
+import Animated, {
+  BounceIn,
+  FadeInUp,
+  FadeOutUp,
+} from 'react-native-reanimated';
 
 import Input from '../form/Input';
 import Button from '../Button';
@@ -10,7 +20,7 @@ import InfoText from '../InfoText';
 import { GlobalStyles } from '../../../constants/styles';
 import ListItem from './ListItem';
 import ErrorOverlay from '../ErrorOverlay';
-import { set } from 'zod';
+import { BlurView } from 'expo-blur';
 
 interface SearchElementProps<T, U> {
   onFetchRequest: (
@@ -54,6 +64,7 @@ const SearchElement = <T, U>({
         const { items, error } = await onFetchRequest(debouncedSearchTerm);
 
         if (!error && items) {
+          LayoutAnimation.linear();
           setFetchedData(items);
         } else if (error) {
           setError(error);
@@ -103,10 +114,8 @@ const SearchElement = <T, U>({
     fetchedData.length > 0 &&
     fetchedData[0] !== searchTerm
   ) {
-    // TODO: Improve Animation mit siehe Lesezeichen
     content = (
-      <Animated.FlatList
-        entering={BounceIn}
+      <FlatList
         style={styles.list}
         contentContainerStyle={{ paddingBottom: 10, paddingTop: 5 }}
         data={fetchedData}
@@ -129,35 +138,56 @@ const SearchElement = <T, U>({
   }
 
   return (
-    <View>
-      <View style={styles.innerContainer}>
-        <Input
-          errors={[]}
-          invalid={false}
-          label={searchTermLabel}
-          textInputConfig={{
-            value: searchTerm,
-            onChangeText: inputChangedHandler,
-          }}
-        />
-        <Button
-          onPress={handleAddItem}
-          colorScheme={ColorScheme.accent}
-          style={{
-            marginHorizontal: 10,
-            alignSelf: 'flex-end',
-            marginBottom: 12,
-          }}
-        >
-          Add
-        </Button>
-      </View>
-      {content}
-    </View>
+    <BlurView intensity={95} tint='dark' style={styles.blurContainer}>
+      <Animated.View
+        entering={FadeInUp}
+        exiting={FadeOutUp}
+        style={styles.outerContainer}
+      >
+        <View style={styles.innerContainer}>
+          <Input
+            errors={[]}
+            invalid={false}
+            label={searchTermLabel}
+            textInputConfig={{
+              value: searchTerm,
+              onChangeText: inputChangedHandler,
+            }}
+          />
+          <Button
+            onPress={handleAddItem}
+            colorScheme={ColorScheme.accent}
+            style={{
+              marginHorizontal: 10,
+              alignSelf: 'flex-end',
+              marginBottom: 12,
+            }}
+          >
+            Add
+          </Button>
+        </View>
+        {content}
+      </Animated.View>
+    </BlurView>
   );
 };
 
 const styles = StyleSheet.create({
+  blurContainer: {
+    flex: 1,
+    zIndex: 1,
+    ...StyleSheet.absoluteFillObject,
+  },
+  outerContainer: {
+    marginTop: 70,
+    padding: 10,
+    width: '90%',
+    marginHorizontal: 'auto',
+    backgroundColor: GlobalStyles.colors.gray700,
+    borderWidth: 2,
+    borderColor: GlobalStyles.colors.gray300,
+    borderRadius: 10,
+  },
   innerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -169,12 +199,8 @@ const styles = StyleSheet.create({
   list: {
     marginHorizontal: 15,
     paddingHorizontal: 10,
-    maxHeight: 240,
+    maxHeight: '90%',
     maxWidth: 290,
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: GlobalStyles.colors.primary500,
-    backgroundColor: GlobalStyles.colors.primary800,
   },
 });
 

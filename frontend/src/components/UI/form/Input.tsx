@@ -17,16 +17,18 @@ interface InputProps {
   label: string;
   style?: ViewStyle;
   textInputConfig?: TextInputProps;
-  invalid: boolean;
+  invalid?: boolean;
   errors?: string[];
+  isEditing?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
   label,
   style,
   textInputConfig,
-  invalid,
+  invalid = false,
   errors,
+  isEditing = true,
 }): ReactElement => {
   const inputStyles: StyleProp<TextStyle>[] = [styles.input];
 
@@ -52,6 +54,7 @@ const Input: React.FC<InputProps> = ({
       </Text>
       <TextInput
         style={inputStyles}
+        readOnly={!isEditing}
         {...textInputConfig}
         selectionColor='white'
       />
@@ -109,9 +112,12 @@ const styles = StyleSheet.create({
   },
 });
 
-// Make sure the compoennt is only reexecuted by JourneyForm, when the errors change
+// Make sure the compoennt is only reexecuted by the Form, when the errors of editing state change
 function areEqual(prevProps: InputProps, nextProps: InputProps): boolean {
-  return prevProps.errors === nextProps.errors;
+  return (
+    prevProps.errors === nextProps.errors &&
+    prevProps.isEditing === nextProps.isEditing
+  );
 }
 
 export default memo(Input, areEqual);

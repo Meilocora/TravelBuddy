@@ -3,6 +3,7 @@ import {
   Linking,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -11,18 +12,23 @@ import {
 interface TextLinkProps {
   link: string;
   style?: ViewStyle;
+  textStyle?: TextStyle;
   children: string;
 }
 
 const TextLink: React.FC<TextLinkProps> = ({
   link,
   style,
+  textStyle,
   children,
 }): ReactElement => {
   return (
     <View style={[styles.container, style]}>
-      <TouchableOpacity onPress={() => Linking.openURL(link)}>
-        <Text style={styles.text}>{children}</Text>
+      <TouchableOpacity
+        onPress={() => Linking.openURL(link)}
+        style={{ height: 'auto' }}
+      >
+        <Text style={[styles.text, textStyle]}>{children}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -30,7 +36,6 @@ const TextLink: React.FC<TextLinkProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

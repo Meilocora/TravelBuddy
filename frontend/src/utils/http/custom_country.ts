@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { CustomCountry } from '../../models';
+import { CustomCountry, CustomCountryFormValues } from '../../models';
 import api from './api';
 
 export interface FetchCountriesProps {
@@ -109,3 +109,37 @@ export const fetchCustomCountries =
       return { status: 500, error: 'Could not fetch custom countries!' };
     }
   };
+
+export interface UpdateCustomCountryProps {
+  customCountryFormValues?: CustomCountryFormValues;
+  customCountryId?: number;
+  customCountry?: CustomCountry;
+  status: number;
+  error?: string;
+}
+
+export const updateCountry = async (
+  customCountryFormValues: CustomCountryFormValues,
+  customCountryId: number
+): Promise<UpdateCustomCountryProps> => {
+  try {
+    const response: AxiosResponse<UpdateCustomCountryProps> = await api.post(
+      `${prefix}/update-custom-country/${customCountryId}`,
+      customCountryFormValues
+    );
+
+    if (response.data.customCountryFormValues) {
+      return {
+        customCountryFormValues: response.data.customCountryFormValues,
+        status: response.data.status,
+      };
+    }
+
+    return {
+      customCountry: response.data.customCountry,
+      status: response.data.status,
+    };
+  } catch (error) {
+    return { status: 500, error: 'Could not update country!' };
+  }
+};

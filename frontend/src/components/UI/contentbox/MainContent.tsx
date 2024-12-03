@@ -20,6 +20,7 @@ interface Content {
   }[];
 }
 
+// TODO: Make this 100% generic
 const MainContent: React.FC<MainContentProps> = ({
   minorStage,
   contentState,
@@ -38,26 +39,26 @@ const MainContent: React.FC<MainContentProps> = ({
     },
   ];
 
-  if (minorStage.baseLocation) {
+  if (minorStage.accommodation) {
     contents.push({
       title: 'accommodation',
       contents: [
         {
           subtitle: 'Location: ',
-          data: `"${minorStage.baseLocation.name}" in ${minorStage.baseLocation.place}`,
-          link: minorStage.baseLocation.link,
+          data: `"${minorStage.accommodation.name}" in ${minorStage.accommodation.place}`,
+          link: minorStage.accommodation.link,
         },
         {
           subtitle: 'Description: ',
-          data: minorStage.baseLocation.description,
+          data: minorStage.accommodation.description,
         },
         {
           subtitle: 'Costs: ',
-          data: formatAmount(minorStage.baseLocation.costs),
+          data: formatAmount(minorStage.accommodation.costs),
         },
         {
           subtitle: 'Booked? ',
-          data: minorStage.baseLocation.booked ? 'Yes' : 'Not yet',
+          data: minorStage.accommodation.booked ? 'Yes' : 'Not yet',
         },
       ],
     });

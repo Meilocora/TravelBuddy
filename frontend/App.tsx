@@ -35,6 +35,7 @@ import { useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from './src/screens/AuthScreen';
 import CustomCountryContextProvider from './src/store/custom-country-context';
+import ManageCustomCountry from './src/screens/ManageCustomCountry';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -50,8 +51,8 @@ navTheme.colors.background = 'transparent';
 // 2. Add Authentication Context - DONE
 // 3. Add AuthStack and AuthenticatedStack - DONE
 // 4. Add Backend Authentication - DONE
-// 5. Add Backend for country Information
-// 6. Add Creating a country by choosing from dropdown, and the filling out form
+// 5. Add Backend for country Information - DONE
+// 6. Add Creating a country by choosing from dropdown, and the filling out form - DONE
 // 7. Add Creating PlacesToVisit for the CustomCountry
 // 8. Adjust http requests for Journey, MajorStage and MinorStage
 
@@ -248,6 +249,10 @@ const AuthenticatedStack = () => {
             component={JourneyBottomTabsNavigator}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name='ManageCustomCountry'
+            component={ManageCustomCountry}
+          />
         </>
       </Stack.Navigator>
     </CustomCountryContextProvider>
@@ -265,7 +270,7 @@ const Navigation = () => {
 };
 
 const Root = () => {
-  const [isTryingLogin, setIsTryingLogin] = useState(true);
+  // const [isTryingLogin, setIsTryingLogin] = useState(true);
   const authCtx = useContext(AuthContext);
 
   // Logic for auto login
@@ -278,7 +283,7 @@ const Root = () => {
         authCtx.authenticate(storedToken, storedRefreshToken || '');
       }
 
-      setIsTryingLogin(false);
+      // setIsTryingLogin(false);
     }
 
     fetchToken();

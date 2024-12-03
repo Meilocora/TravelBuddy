@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { Text, StyleSheet, FlatList, View } from 'react-native';
+import { StyleSheet, FlatList, View } from 'react-native';
 
 import { CustomCountryContext } from '../../store/custom-country-context';
 import CountryItem from './CountryGridTile';
@@ -13,12 +13,14 @@ const CountriesList: React.FC<CountriesListProps> = (): ReactElement => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={countries}
-        renderItem={({ item }) => <CountryItem country={item} />}
-        key='customCountries'
-        numColumns={2}
-      />
+      {countries.length > 0 && (
+        <FlatList
+          data={countries}
+          renderItem={({ item }) => <CountryItem country={item} />}
+          key='customCountries'
+          numColumns={2}
+        />
+      )}
       {countries.length === 0 && <InfoText content='No countries added yet!' />}
     </View>
   );
