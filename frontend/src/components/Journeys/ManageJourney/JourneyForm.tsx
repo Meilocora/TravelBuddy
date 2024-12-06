@@ -108,32 +108,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     return;
   }
 
-  // async function deleteJourneyHandler() {
-  //   try {
-  //     const { error, status } = await deleteJourney(editedJourneyId!);
-  //     if (!error && status === 200) {
-  //       journeyCtx.deleteJourney(editedJourneyId!);
-  //       const popupText = 'Journey successfully deleted!';
-  //       navigation.navigate('AllJourneys', { popupText: popupText });
-  //     } else {
-  //       setError(error!);
-  //       return;
-  //     }
-  //   } catch (error) {
-  //     setError('Could not delete journey!');
-  //   }
-  //   setIsDeleting(false);
-  //   return;
-  // }
-
-  // function deleteHandler() {
-  //   setIsDeleting(true);
-  // }
-
-  // function closeModalHandler() {
-  //   setIsDeleting(false);
-  // }
-
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
   }

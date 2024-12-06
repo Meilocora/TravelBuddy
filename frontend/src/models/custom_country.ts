@@ -24,5 +24,4 @@ export interface CustomCountryFormValues {
   visum_regulations: Validable<string | null>;
   best_time_to_visit: Validable<string | null>;
   general_information: Validable<string | null>;
-  // placesToVisit: Validable<PlaceToVisit[]>;
 }

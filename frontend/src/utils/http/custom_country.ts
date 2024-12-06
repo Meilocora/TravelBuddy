@@ -143,3 +143,29 @@ export const updateCountry = async (
     return { status: 500, error: 'Could not update country!' };
   }
 };
+
+export interface DeleteCustomCountryProps {
+  customCountryId?: number;
+  status: number;
+  error?: string;
+}
+
+export const deleteCountry = async (
+  customCountryId: number
+): Promise<DeleteCustomCountryProps> => {
+  try {
+    const response: AxiosResponse<DeleteCustomCountryProps> = await api.delete(
+      `${prefix}/delete-custom-country/${customCountryId}`
+    );
+
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return {
+      status: response.data.status,
+    };
+  } catch (error) {
+    return { status: 500, error: 'Could not delete country!' };
+  }
+};

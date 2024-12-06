@@ -55,6 +55,9 @@ const Input: React.FC<InputProps> = ({
       <TextInput
         style={inputStyles}
         readOnly={!isEditing}
+        autoCorrect={false}
+        autoCapitalize='none'
+        autoComplete='off'
         {...textInputConfig}
         selectionColor='white'
       />

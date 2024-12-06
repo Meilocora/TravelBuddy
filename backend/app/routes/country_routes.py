@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from db import db
 from countryinfo import CountryInfo
 from app.models import CustomCountry, PlaceToVisit
+from app.validation.country_validation import CountryValidation
 from app.routes.route_protection import token_required
 import re
 
@@ -122,72 +123,58 @@ def create_custom_country(current_user):
     
 
     
-# @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
-# @token_required
-# def update_journey(current_user, journeyId):
-#     try:
-#         journey = request.get_json()
-#     except:
-#         return jsonify({'error': 'Unknown error'}, 400)
+@country_bp.route('/update-custom-country/<int:customCountryId>', methods=['POST'])
+@token_required
+def update_country(current_user, customCountryId):
+    try:
+        country = request.get_json()
+    except:
+        return jsonify({'error': 'Unknown error'}, 400)
     
-#     response, isValid = JourneyValidation.validate_journey(journey=journey)
+    response, isValid = CountryValidation.validate_custom_country_update(country=country)
     
-#     if not isValid:
-#         return jsonify({'journeyFormValues': response, 'status': 400})
-    
-#     old_journey = db.get_or_404(Journey, journeyId)
-#     money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
-    
-#     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
-#     majorStages = majorStages_result.scalars().all()
-#     majorStagesIds = [majorStage.id for majorStage in majorStages]
-    
-#     try:
-#         # Update the journey
-#         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
-#             name=journey['name']['value'],
-#             description=journey['description']['value'],
-#             scheduled_start_time=journey['scheduled_start_time']['value'],
-#             scheduled_end_time=journey['scheduled_end_time']['value'],
-#             countries=journey['countries']['value'][0],
-#         ))
-#         db.session.commit()
+    if not isValid:
+        return jsonify({'customCountryFormValues': response, 'status': 400})
         
-#         # Update the costs for the journey
-#         db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
-#             available_money=journey['available_money']['value'],
-#             planned_costs=journey['planned_costs']['value'],
-#             money_exceeded=money_exceeded
-#         ))
-#         db.session.commit()
+    try:
+        # Update the country
+        db.session.execute(db.update(CustomCountry).where(CustomCountry.id == customCountryId).values(
+            visum_regulations=country['visum_regulations']['value'],
+            best_time_to_visit=country['best_time_to_visit']['value'],
+            general_information=country['general_information']['value'],
+        ))
+        db.session.commit()
             
-#         response_journey = {'id': journeyId,
-#                 'name': journey['name']['value'],
-#                 'description': journey['description']['value'],
-#                 'costs': {
-#                     'available_money': journey['available_money']['value'],
-#                     'planned_costs': journey['planned_costs']['value'],
-#                     'money_exceeded': money_exceeded,
-#                 },
-#                 'scheduled_start_time': journey['scheduled_start_time']['value'],
-#                 'scheduled_end_time': journey['scheduled_end_time']['value'],
-#                 'countries': journey['countries']['value'],
-#                 'done': old_journey.done,
-#                 'majorStagesIds': majorStagesIds}
+        country = db.get_or_404(CustomCountry, customCountryId)
+        response_country = {'id': country.id,
+                            'name': country.name,
+                            'code': country.code,
+                            'timezones': country.timezones.split(',') if country.timezones else None,
+                            'currencies': country.currencies.split(',') if country.currencies else None,
+                            'languages': country.languages.split(',') if country.languages else None,
+                            'capital': country.capital,
+                            'population': country.population,
+                            'region': country.region,
+                            'subregion': country.subregion,
+                            'wiki_link': country.wiki_link, 
+                            'visited': country.visited,
+                            'visum_regulations': country.visum_regulations,
+                            'best_time_to_visit': country.best_time_to_visit,
+                            'general_information': country.general_information
+                            }
         
-#         return jsonify({'journey': response_journey,'status': 200})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+        return jsonify({'customCountry': response_country,'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
         
     
     
-# @journey_bp.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
-# @token_required
-# def delete_journey(current_user, journeyId):
-#     try:
-#         # Delete the journey from the database
-#         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
-#         db.session.commit()
-#         return jsonify({'status': 200})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+@country_bp.route('/delete-custom-country/<int:customCountryId>', methods=['DELETE'])
+@token_required
+def delete_custom_country(current_user, customCountryId):
+    try:
+        db.session.execute(db.delete(CustomCountry).where(CustomCountry.id == customCountryId))
+        db.session.commit()
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)

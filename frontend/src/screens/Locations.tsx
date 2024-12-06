@@ -1,13 +1,19 @@
-import { ReactElement, useContext, useEffect } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import CustomCountries from '../components/Locations/CustomCountries';
 import { CustomCountryContext } from '../store/custom-country-context';
 import { fetchCustomCountries } from '../utils/http/custom_country';
+import { RouteProp } from '@react-navigation/native';
+import { BottomTabsParamList } from '../models';
+import Popup from '../components/UI/Popup';
 
-interface LocationsProps {}
+interface LocationsProps {
+  route: RouteProp<BottomTabsParamList, 'Locations'>;
+}
 
-const Locations: React.FC = (): ReactElement => {
+const Locations: React.FC<LocationsProps> = ({ route }): ReactElement => {
+  const [popupText, setPopupText] = useState<string | null>();
   const customCountryCtx = useContext(CustomCountryContext);
 
   useEffect(() => {
@@ -19,8 +25,23 @@ const Locations: React.FC = (): ReactElement => {
     getCustomCountries();
   }, []);
 
+  useEffect(() => {
+    function activatePopup() {
+      if (route.params?.popupText) {
+        setPopupText(route.params?.popupText);
+      }
+    }
+
+    activatePopup();
+  }, [route.params]);
+
+  function handleClosePopup() {
+    setPopupText(null);
+  }
+
   return (
     <View style={styles.container}>
+      {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
       <CustomCountries />
     </View>
   );

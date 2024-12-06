@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import db
 from app.models import Journey, Costs, MajorStage
-from app.journey_validation import JourneyValidation
+from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
 journey_bp = Blueprint('journey', __name__)

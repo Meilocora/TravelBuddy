@@ -15,18 +15,34 @@ import TextLink from '../../UI/TextLink';
 import Button from '../../UI/Button';
 import IconButton from '../../UI/IconButton';
 import InfoPoint from './InfoPoint';
-import { updateCountry } from '../../../utils/http/custom_country';
+import {
+  deleteCountry,
+  DeleteCustomCountryProps,
+  updateCountry,
+  UpdateCustomCountryProps,
+} from '../../../utils/http/custom_country';
+import Modal from '../../UI/Modal';
+import PlacesToggle from '../Places/PlacesToggle';
 
 interface CustomCountryFormProps {
   country: CustomCountry;
   isEditing: boolean;
+  onUpdate: (response: UpdateCustomCountryProps) => void;
+  onDelete: (response: DeleteCustomCountryProps) => void;
+  isShowingPlaces: boolean;
+  handleTogglePlaces: () => void;
 }
 
 const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
   country,
   isEditing,
+  onUpdate,
+  onDelete,
+  isShowingPlaces,
+  handleTogglePlaces,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const languages = getLanguageNames(country.languages);
   const population = formatQuantity(country.population);
@@ -49,7 +65,6 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
     },
   });
 
-  // http handling
   let headerStyle = styles.header;
   if (country.wiki_link) {
     headerStyle = { ...headerStyle, ...styles.underlined };
@@ -75,15 +90,28 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
 
     const { error, status, customCountry, customCountryFormValues } = response!;
 
-    if (!error && customCountry) {
-      // onSubmit({ journey, status });
-    } else if (error) {
-      // onSubmit({ error, status });
+    if ((!error && customCountry) || error) {
+      onUpdate(response);
     } else if (customCountryFormValues) {
       setInputs((prevValues) => customCountryFormValues);
     }
     setIsSubmitting(false);
     return;
+  }
+
+  async function deleteCustomCountryHandler() {
+    const response = await deleteCountry(country.id);
+    onDelete(response);
+    setIsDeleting(false);
+    return;
+  }
+
+  function deleteHandler() {
+    setIsDeleting(true);
+  }
+
+  function closeModalHandler() {
+    setIsDeleting(false);
   }
 
   let buttonLabel = 'Save';
@@ -93,6 +121,14 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
 
   return (
     <ScrollView style={styles.container}>
+      {isDeleting && (
+        <Modal
+          title='Are you sure?'
+          content={`If you delete ${country.name}, all related Places to visit will also be deleted permanently`}
+          onConfirm={deleteCustomCountryHandler}
+          onCancel={closeModalHandler}
+        />
+      )}
       {!country.wiki_link && <Text style={styles.header}>{country.name}</Text>}
       {country.wiki_link && (
         <TextLink link={country.wiki_link} textStyle={headerStyle}>
@@ -203,11 +239,16 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           />
         )}
       </View>
+      {/* <PlacesToVisit /> */}
+      <PlacesToggle
+        isShowingPlaces={isShowingPlaces}
+        handleTogglePlaces={handleTogglePlaces}
+      />
       <View style={styles.buttonsContainer}>
         {!isEditing && (
           <IconButton
             icon={Icons.delete}
-            onPress={() => {}}
+            onPress={deleteHandler}
             size={36}
             color={GlobalStyles.colors.error500}
           />

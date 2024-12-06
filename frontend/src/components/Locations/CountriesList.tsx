@@ -2,7 +2,7 @@ import { ReactElement, useContext } from 'react';
 import { StyleSheet, FlatList, View } from 'react-native';
 
 import { CustomCountryContext } from '../../store/custom-country-context';
-import CountryItem from './CountryGridTile';
+import CountryGridTile from './CountryGridTile';
 import InfoText from '../UI/InfoText';
 
 interface CountriesListProps {}
@@ -16,7 +16,7 @@ const CountriesList: React.FC<CountriesListProps> = (): ReactElement => {
       {countries.length > 0 && (
         <FlatList
           data={countries}
-          renderItem={({ item }) => <CountryItem country={item} />}
+          renderItem={({ item }) => <CountryGridTile country={item} />}
           key='customCountries'
           numColumns={2}
         />

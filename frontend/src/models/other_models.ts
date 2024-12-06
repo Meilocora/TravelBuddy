@@ -5,11 +5,13 @@ export interface Costs {
 }
 
 export interface PlaceToVisit {
+  // countryId: number;
+  id: number;
   name: string;
   description: string;
   visited: boolean;
   favorite: boolean;
-  link: string;
+  link?: string;
 }
 
 export interface Transportation {

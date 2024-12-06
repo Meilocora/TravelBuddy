@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, request, jsonify
 from db import db
 from app.models import User
-from app.auth_validation import AuthValidation
+from app.validation.auth_validation import AuthValidation
 import bcrypt
 from dotenv import load_dotenv
 import os

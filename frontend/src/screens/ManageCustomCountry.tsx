@@ -1,13 +1,24 @@
 import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
-import { Text, View, StyleSheet, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, LayoutAnimation } from 'react-native';
 
-import { Icons, ManageCustomCountryRouteProp, StackParamList } from '../models';
+import {
+  BottomTabsParamList,
+  Icons,
+  ManageCustomCountryRouteProp,
+  StackParamList,
+} from '../models';
 import { CustomCountryContext } from '../store/custom-country-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalStyles } from '../constants/styles';
 import CustomCountryForm from '../components/Locations/ManageLocation/CustomCountryForm';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
 import IconButton from '../components/UI/IconButton';
+import {
+  DeleteCustomCountryProps,
+  UpdateCustomCountryProps,
+} from '../utils/http/custom_country';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import PlacesList from '../components/Locations/Places/PlacesList';
 
 interface ManageCustomCountryProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManageCustomCountry'>;
@@ -20,6 +31,7 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isShowingPlaces, setIsShowingPlaces] = useState(false);
 
   const customCountryCtx = useContext(CustomCountryContext);
   const countryId = route.params.countryId;
@@ -27,7 +39,7 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
   const country = customCountryCtx.customCountries.find(
     (country) => country.id === countryId
   );
-  if (!country) {
+  if (!country && !error) {
     setError('Country not found');
   }
 
@@ -43,7 +55,7 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
         />
       ),
     });
-  }, [navigation, country, isEditing]);
+  }, [navigation, isEditing]);
 
   function handleChangeEdit() {
     // TODO: Improve Animation...
@@ -51,16 +63,57 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
     setIsEditing((prevValue) => !prevValue);
   }
 
-  // Error handling
-  // Ctx handling
-  // Navigate back onConfirm (with poup)
+  function handleUpdateCountry(response: UpdateCustomCountryProps) {
+    const { status, error, customCountry } = response;
+
+    if (error) {
+      setError(error);
+    } else if (status === 200 && customCountry) {
+      customCountryCtx.updateCustomCountry(customCountry);
+      setIsEditing(false);
+    }
+  }
+
+  const secondaryNavigation =
+    useNavigation<NavigationProp<BottomTabsParamList>>();
+
+  function handleDeleteCountry(response: DeleteCustomCountryProps) {
+    const { status, error } = response;
+    if (error) {
+      setError(error);
+    } else if (status === 200) {
+      customCountryCtx.deleteCustomCountry(countryId);
+      const popupText = 'Custom Country successfully deleted!';
+      secondaryNavigation.navigate('Locations', { popupText: popupText });
+    }
+  }
+
+  function handleTogglePlaces() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsShowingPlaces((prevState) => !prevState);
+  }
 
   // TODO: Implement Functionality to add a PlaceToVisit
   return (
-    <View style={styles.root}>
-      {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
-      {country && <CustomCountryForm country={country} isEditing={isEditing} />}
-    </View>
+    <>
+      {isShowingPlaces && <PlacesList onCancel={handleTogglePlaces} />}
+      <View style={styles.root}>
+        {error && (
+          <ErrorOverlay message={error} onPress={() => setError(null)} />
+        )}
+
+        {country && (
+          <CustomCountryForm
+            country={country}
+            isEditing={isEditing}
+            onUpdate={handleUpdateCountry}
+            onDelete={handleDeleteCountry}
+            handleTogglePlaces={handleTogglePlaces}
+            isShowingPlaces={isShowingPlaces}
+          />
+        )}
+      </View>
+    </>
   );
 };
 

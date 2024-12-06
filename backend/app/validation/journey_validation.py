@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.validation import Validation
+from app.validation.validation import Validation
 
 class JourneyValidation(Validation):
   def __init__(self):

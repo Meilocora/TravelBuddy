@@ -26,6 +26,7 @@ const CustomCountries: React.FC<CustomCountriesProps> = (): ReactElement => {
 
   function onAddCountry(addedItem: CustomCountry): void {
     customCountryCtx.addCustomCountry(addedItem);
+    setIsAddCountry(false);
   }
 
   function handleTapOutside(): void {

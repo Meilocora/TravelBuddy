@@ -3,7 +3,7 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
   ManageJourney: { journeyId?: number };
-  Locations: undefined;
+  Locations: undefined | { popupText?: string };
   UserProfile: undefined;
 };
 

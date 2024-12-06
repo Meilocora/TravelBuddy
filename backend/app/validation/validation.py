@@ -18,12 +18,17 @@ class Validation:
   
   
   def validate_string(self, value: str, min_length: int = 1, max_length: int = 250) -> bool | None:    
-    if len(value.strip()) < min_length:
+    if not value and min_length == 0:
+      pass    
+    elif len(value.strip()) < min_length:
       self.error_list.append(f'Min length is {min_length}')
-      
-    if len(value.strip()) > max_length:
-      self.error_list.append(f'Max length is {max_length}')
     
+    try:
+      if len(value.strip()) > max_length:
+        self.error_list.append(f'Max length is {max_length}')
+    except AttributeError:
+      pass
+      
     return self.__return_feedback()
     
     
