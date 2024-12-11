@@ -93,7 +93,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
     setIsShowingPlaces((prevState) => !prevState);
   }
 
-  // TODO: Implement Functionality to add a PlaceToVisit
   return (
     <>
       {isShowingPlaces && <PlacesList onCancel={handleTogglePlaces} />}

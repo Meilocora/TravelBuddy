@@ -1,4 +1,5 @@
-import { PlaceToVisit, Costs, Transportation } from './other_models';
+import { Costs, Transportation } from './other_models';
+import { PlaceToVisit } from './place';
 
 export interface MinorStage {
   id: number;

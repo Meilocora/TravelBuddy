@@ -14,6 +14,7 @@ class User(db.Model):
     # Define relationships to children
     journeys: Mapped[list['Journey']] = relationship('Journey', back_populates='user', cascade='all, delete-orphan')
     custom_countries: Mapped[list['CustomCountry']] = relationship('CustomCountry', back_populates='user', cascade='all, delete-orphan')
+    places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='user', cascade='all, delete-orphan')
 
 class Journey(db.Model):
     __tablename__ = 'journeys'
@@ -226,9 +227,11 @@ class PlaceToVisit(db.Model):
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
     custom_country_id: Mapped[int] = mapped_column(Integer, ForeignKey('custom_countries.id'), nullable=True)
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
 
     # Define the relationships to the parents
+    user: Mapped['User'] = relationship('User', back_populates='places_to_visit')
     custom_country: Mapped['CustomCountry'] = relationship('CustomCountry', back_populates='places_to_visit')
     minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='places_to_visit')

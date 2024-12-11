@@ -12,8 +12,11 @@ const PlacesToggle: React.FC<PlacesToggleProps> = ({
   handleTogglePlaces,
 }): ReactElement => {
   return (
-    <Pressable onPress={handleTogglePlaces} style={styles.container}>
-      <Text style={[styles.text, isShowingPlaces && styles.active]}>
+    <Pressable
+      onPress={handleTogglePlaces}
+      style={[styles.container, isShowingPlaces && styles.activeContainer]}
+    >
+      <Text style={[styles.text, isShowingPlaces && styles.activeText]}>
         Show Places to visit
       </Text>
     </Pressable>
@@ -22,10 +25,19 @@ const PlacesToggle: React.FC<PlacesToggleProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: 175,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginVertical: 10,
+    marginHorizontal: 'auto',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: GlobalStyles.colors.gray50,
+    borderRadius: 25,
+  },
+  activeContainer: {
+    borderColor: GlobalStyles.colors.accent200,
   },
   text: {
     fontSize: 16,
@@ -33,7 +45,7 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.gray50,
     textAlign: 'center',
   },
-  active: {
+  activeText: {
     color: GlobalStyles.colors.accent200,
   },
 });

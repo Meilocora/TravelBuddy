@@ -4,16 +4,6 @@ export interface Costs {
   money_exceeded: boolean;
 }
 
-export interface PlaceToVisit {
-  // countryId: number;
-  id: number;
-  name: string;
-  description: string;
-  visited: boolean;
-  favorite: boolean;
-  link?: string;
-}
-
 export interface Transportation {
   type: TransportationType;
   start_time: string;

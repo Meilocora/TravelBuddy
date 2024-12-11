@@ -8,6 +8,7 @@ interface IconButtonProps {
   icon: Icons;
   size?: number;
   color?: string;
+  containerStyle?: ViewStyle;
   style?: ViewStyle;
   onPress: () => void;
 }
@@ -16,6 +17,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   size = 24,
   color = 'white',
+  containerStyle,
   style,
   onPress,
 }): ReactElement => {
@@ -24,7 +26,12 @@ const IconButton: React.FC<IconButtonProps> = ({
       onPress={onPress}
       style={({ pressed }) => [pressed && styles.pressed, style]}
     >
-      <View style={styles.buttonContainer}>
+      <View
+        style={[
+          styles.buttonContainer,
+          containerStyle ? containerStyle : undefined,
+        ]}
+      >
         <Ionicons name={icon} size={size} color={color} />
       </View>
     </Pressable>

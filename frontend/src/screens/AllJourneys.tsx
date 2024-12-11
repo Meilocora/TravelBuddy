@@ -12,7 +12,6 @@ import { RouteProp } from '@react-navigation/native';
 import Popup from '../components/UI/Popup';
 import InfoText from '../components/UI/InfoText';
 import { AuthContext } from '../store/auth-context';
-import { Buffer } from 'buffer';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;

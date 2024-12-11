@@ -7,8 +7,12 @@ export enum Icons {
   compassOutline = 'compass-outline',
   readerOutline = 'reader-outline',
   heartOutline = 'heart-outline',
+  heartFilled = 'heart',
+  checkmarkOutline = 'checkmark-circle-outline',
+  checkmarkFilled = 'checkmark-circle',
   arrowBack = 'arrow-back-outline',
   edit = 'create-outline',
+  editFilled = 'create',
   delete = 'trash',
   pin = 'pin',
   eyeOff = 'eye-off-outline',
@@ -18,10 +22,12 @@ export enum Icons {
   currency = 'cash-outline',
   capital = 'golf-outline',
   language = 'chatbubbles-outline',
+  location = 'location',
   placesToVisit = 'location-outline',
   search = 'search-outline',
   filter = 'filter-outline',
   menu = 'menu',
+  linkOutline = 'link-outline',
 }
 
 export enum DateFormatMode {

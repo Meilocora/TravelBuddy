@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
@@ -7,8 +7,9 @@ import Animated from 'react-native-reanimated';
 import PlacesListItem from './PlacesListItem';
 import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
-import { ButtonMode, ColorScheme } from '../../../models';
+import { ButtonMode, ColorScheme, StackParamList } from '../../../models';
 import { GlobalStyles } from '../../../constants/styles';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 interface PlacesListProps {
   onCancel: () => void;
@@ -19,20 +20,25 @@ interface PlacesListProps {
 
 const PLACES = [
   {
+    countryId: 1,
     id: 1,
     name: 'Place 1',
     description: 'Description 1',
-    visited: false,
+    visited: true,
     favorite: false,
+    link: 'https://www.google.com',
+    maps_link: 'https://www.google.com/maps',
   },
   {
+    countryId: 1,
     id: 2,
     name: 'Place 2',
     description: 'Description 2',
     visited: false,
-    favorite: false,
+    favorite: true,
   },
   {
+    countryId: 1,
     id: 3,
     name: 'Place 3',
     description: 'Description 3',
@@ -41,8 +47,13 @@ const PLACES = [
   },
 ];
 
-// TODO: Turn into Scrollview
 const PlacesList: React.FC<PlacesListProps> = ({ onCancel }): ReactElement => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
+  function handleAdd() {
+    navigation.navigate('ManagePlaceToVisit', { placeId: null });
+  }
+
   return (
     <BlurView intensity={85} tint='dark' style={styles.blurcontainer}>
       <Animated.View
@@ -50,13 +61,13 @@ const PlacesList: React.FC<PlacesListProps> = ({ onCancel }): ReactElement => {
         exiting={FadeOutDown}
         style={styles.container}
       >
-        <Text style={{ color: 'white' }}>Places to Visit</Text>
-        <View>
+        <Text style={styles.header}>Places to Visit</Text>
+        <ScrollView style={styles.listContainer}>
           {PLACES.length > 0 &&
             PLACES.map((place, index) => (
               <PlacesListItem key={generateRandomString()} place={place} />
             ))}
-        </View>
+        </ScrollView>
         <View style={styles.buttonContainer}>
           <Button
             style={styles.button}
@@ -64,7 +75,14 @@ const PlacesList: React.FC<PlacesListProps> = ({ onCancel }): ReactElement => {
             onPress={onCancel}
             colorScheme={ColorScheme.neutral}
           >
-            Cancel
+            Close
+          </Button>
+          <Button
+            colorScheme={ColorScheme.primary}
+            onPress={handleAdd}
+            style={styles.button}
+          >
+            Add Place
           </Button>
         </View>
       </Animated.View>
@@ -82,15 +100,30 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   container: {
+    maxHeight: '60%',
+    width: '80%',
     marginHorizontal: 'auto',
     marginVertical: 'auto',
+    padding: 24,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '80%',
-    padding: 24,
     backgroundColor: GlobalStyles.colors.gray700,
     borderRadius: 20,
+  },
+  header: {
+    color: GlobalStyles.colors.gray50,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 22,
+  },
+  listContainer: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 20,
+    backgroundColor: GlobalStyles.colors.gray400,
   },
   buttonContainer: {
     flexDirection: 'row',

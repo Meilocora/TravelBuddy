@@ -1,4 +1,5 @@
-import { PlaceToVisit, Validable } from './other_models';
+import { Validable } from './other_models';
+import { PlaceToVisit } from './place';
 
 export interface CustomCountry {
   id: number;

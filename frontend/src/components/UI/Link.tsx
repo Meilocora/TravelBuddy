@@ -7,9 +7,11 @@ import {
   ViewStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Icons } from '../../models';
 
 interface LinkProps {
   link: string;
+  icon?: Icons;
   size?: number;
   color?: string;
   style?: ViewStyle;
@@ -17,6 +19,7 @@ interface LinkProps {
 
 const Link: React.FC<LinkProps> = ({
   link,
+  icon = Icons.linkOutline,
   size = 24,
   color = 'blue',
   style,
@@ -24,7 +27,7 @@ const Link: React.FC<LinkProps> = ({
   return (
     <View style={[styles.container, style]}>
       <TouchableOpacity onPress={() => Linking.openURL(link)}>
-        <Ionicons name='link-outline' size={size} color={color} />
+        <Ionicons name={icon} size={size} color={color} />
       </TouchableOpacity>
     </View>
   );

@@ -19,6 +19,7 @@ export type StackParamList = {
   UserProfile: undefined;
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
+  ManagePlaceToVisit: { placeId: number | null };
 };
 
 export type AuthStackParamList = {
@@ -39,4 +40,9 @@ export type ManageJourneyRouteProp = RouteProp<
 export type ManageCustomCountryRouteProp = RouteProp<
   StackParamList,
   'ManageCustomCountry'
+>;
+
+export type ManagePlaceToVisitRouteProp = RouteProp<
+  StackParamList,
+  'ManagePlaceToVisit'
 >;

@@ -32,5 +32,8 @@ export const GlobalStyles = {
     gray400: '#495057',
     gray500: '#39324a',
     gray700: '#221c30',
+    favorite: '#ff0400',
+    visited: '#7adbf0',
+    edit: '#ffe782',
   },
 };
