@@ -21,9 +21,11 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
 
   function handleVisited() {}
 
-  // TODO: Manage Place Screen
   function handleEdit() {
-    navigation.navigate('ManagePlaceToVisit', { placeId: place.id });
+    navigation.navigate('ManagePlaceToVisit', {
+      placeId: place.id,
+      countryId: place.countryId,
+    });
   }
 
   return (

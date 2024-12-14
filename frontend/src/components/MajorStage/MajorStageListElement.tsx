@@ -20,7 +20,6 @@ import {
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
-import MinorStageContextProvider from '../../store/minorStage-context';
 import DetailArea from '../UI/list/DetailArea';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
@@ -130,33 +129,31 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   // Buttons to delete and edit MajorStage
 
   return (
-    <MinorStageContextProvider>
-      <View style={styles.container}>
-        <ElementTitle>{title}</ElementTitle>
-        <ElementComment content={`${startDate} - ${endDate}`} />
-        <DetailArea elementDetailInfo={elementDetailInfo} />
-        {majorStage.transportation && (
-          <AdditionalInfoBox
-            title='Transportation'
-            info={mainTransportationInfo}
-            additionalInfo={additionalInfo}
-            link={majorStage.transportation?.link}
-          />
-        )}
-        {hasMinorStages && (
-          <Button
-            onPress={handleshowMinorStages}
-            mode={ButtonMode.flat}
-            colorScheme={
-              !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
-            }
-          >
-            {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
-          </Button>
-        )}
-        {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
-      </View>
-    </MinorStageContextProvider>
+    <View style={styles.container}>
+      <ElementTitle>{title}</ElementTitle>
+      <ElementComment content={`${startDate} - ${endDate}`} />
+      <DetailArea elementDetailInfo={elementDetailInfo} />
+      {majorStage.transportation && (
+        <AdditionalInfoBox
+          title='Transportation'
+          info={mainTransportationInfo}
+          additionalInfo={additionalInfo}
+          link={majorStage.transportation?.link}
+        />
+      )}
+      {hasMinorStages && (
+        <Button
+          onPress={handleshowMinorStages}
+          mode={ButtonMode.flat}
+          colorScheme={
+            !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
+          }
+        >
+          {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
+        </Button>
+      )}
+      {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
+    </View>
   );
 };
 

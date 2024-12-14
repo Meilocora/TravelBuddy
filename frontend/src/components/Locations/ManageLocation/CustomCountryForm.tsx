@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import {
@@ -239,7 +239,6 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           />
         )}
       </View>
-      {/* <PlacesToVisit /> */}
       <PlacesToggle
         isShowingPlaces={isShowingPlaces}
         handleTogglePlaces={handleTogglePlaces}

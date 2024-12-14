@@ -12,6 +12,7 @@ export interface PlaceToVisit {
 }
 
 export interface PlaceValues {
+  countryId: number;
   name: string;
   description: string;
   visited: boolean;
@@ -21,6 +22,7 @@ export interface PlaceValues {
 }
 
 export interface PlaceFormValues {
+  countryId: Validable<number>;
   name: Validable<string>;
   description: Validable<string>;
   visited: Validable<boolean>;

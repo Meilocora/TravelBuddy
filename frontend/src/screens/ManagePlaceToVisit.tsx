@@ -5,11 +5,12 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
   ManagePlaceToVisitRouteProp,
+  PlaceToVisit,
   PlaceValues,
   StackParamList,
 } from '../models';
@@ -20,6 +21,12 @@ import PlaceForm from '../components/Locations/Places/PlaceForm';
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
   route: ManagePlaceToVisitRouteProp;
+}
+
+interface ConfirmHandlerProps {
+  error?: string;
+  status: number;
+  place?: PlaceToVisit;
 }
 
 const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
@@ -36,8 +43,16 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
     (place) => place.id === placeId
   );
 
+  let countryId: number | null = null;
+  if (isEditing) {
+    countryId = selectedPlace!.countryId;
+  } else if (route.params.countryId) {
+    countryId = route.params.countryId;
+  }
+
   // Empty, when no default values provided
   const [placeValues, setPlaceValues] = useState<PlaceValues>({
+    countryId: countryId!,
     name: selectedPlace?.name || '',
     description: selectedPlace?.description || '',
     visited: selectedPlace?.visited || false,
@@ -47,55 +62,59 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   });
 
   // TODO: Check if this is necessary
-  useFocusEffect(
-    useCallback(() => {
-      // PlaceValues set, when screen is focused
-      setPlaceValues({
-        name: selectedPlace?.name || '',
-        description: selectedPlace?.description || '',
-        visited: selectedPlace?.visited || false,
-        favorite: selectedPlace?.favorite || false,
-        link: selectedPlace?.link || '',
-        maps_link: selectedPlace?.maps_link || '',
-      });
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // PlaceValues set, when screen is focused
+  //     setPlaceValues({
+  //       countryId: countryId!,
+  //       name: selectedPlace?.name || '',
+  //       description: selectedPlace?.description || '',
+  //       visited: selectedPlace?.visited || false,
+  //       favorite: selectedPlace?.favorite || false,
+  //       link: selectedPlace?.link || '',
+  //       maps_link: selectedPlace?.maps_link || '',
+  //     });
 
-      return () => {
-        // TODO: Check if this is necessary
-        // Clean up function, when screen is unfocused
-        // reset PlaceValues
-        setPlaceValues({
-          name: '',
-          description: '',
-          visited: false,
-          favorite: false,
-          link: '',
-          maps_link: '',
-        });
-      };
-    }, [])
-  );
+  //     return () => {
+  //       // TODO: Check if this is necessary
+  //       // Clean up function, when screen is unfocused
+  //       // reset PlaceValues
+  //       setPlaceValues({
+  //         countryId: countryId!,
+  //         name: '',
+  //         description: '',
+  //         visited: false,
+  //         favorite: false,
+  //         link: '',
+  //         maps_link: '',
+  //       });
+  //     };
+  //   }, [])
+  // );
 
-  // function confirmHandler({ status, error, place }: ConfirmHandlerProps) {
-  //   if (isEditing) {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (place && status === 200) {
-  //       placeCtx.updatePlace(place);
-  //       // const popupText = 'Place successfully updated!';
-  //       // navigation.navigate('AllJourneys', { popupText: popupText });
-  //     }
-  //   } else {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (place && status === 201) {
-  //       placeCtx.addPlace(place);
-  //       // const popupText = 'Journey successfully created!';
-  //       // navigation.navigate('AllJourneys', { popupText: popupText });
-  //     }
-  //   }
-  // }
+  function confirmHandler({ status, error, place }: ConfirmHandlerProps) {
+    if (isEditing) {
+      if (error) {
+        setError(error);
+        return;
+      } else if (place && status === 200) {
+        placeCtx.updatePlace(place);
+        navigation.goBack();
+        // const popupText = 'Place successfully updated!';
+        // navigation.navigate('AllJourneys', { popupText: popupText });
+      }
+    } else {
+      if (error) {
+        setError(error);
+        return;
+      } else if (place && status === 201) {
+        placeCtx.addPlace(place);
+        navigation.goBack();
+        // const popupText = 'Journey successfully created!';
+        // navigation.navigate('AllJourneys', { popupText: popupText });
+      }
+    }
+  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -108,8 +127,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
     <View style={styles.container}>
       <PlaceForm
         onCancel={() => navigation.goBack()}
-        onSubmit={() => {}}
-        submitButtonLabel='Add'
+        onSubmit={confirmHandler}
+        submitButtonLabel={isEditing ? 'Update' : 'Add'}
+        defaultValues={placeValues}
       />
     </View>
   );

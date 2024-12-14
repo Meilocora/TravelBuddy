@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useContext, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { FadeInDown, FadeOutDown } from 'react-native-reanimated';
@@ -10,48 +10,35 @@ import Button from '../../UI/Button';
 import { ButtonMode, ColorScheme, StackParamList } from '../../../models';
 import { GlobalStyles } from '../../../constants/styles';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { PlaceContext } from '../../../store/place-context';
+import InfoText from '../../UI/InfoText';
 
 interface PlacesListProps {
   onCancel: () => void;
+  countryId: number;
 }
 
-// TODO: UseEffect to get Places for this Country
-// TODO: Places Context (must contain all Places of a user => places need user id aswell)
-
-const PLACES = [
-  {
-    countryId: 1,
-    id: 1,
-    name: 'Place 1',
-    description: 'Description 1',
-    visited: true,
-    favorite: false,
-    link: 'https://www.google.com',
-    maps_link: 'https://www.google.com/maps',
-  },
-  {
-    countryId: 1,
-    id: 2,
-    name: 'Place 2',
-    description: 'Description 2',
-    visited: false,
-    favorite: true,
-  },
-  {
-    countryId: 1,
-    id: 3,
-    name: 'Place 3',
-    description: 'Description 3',
-    visited: false,
-    favorite: false,
-  },
-];
-
-const PlacesList: React.FC<PlacesListProps> = ({ onCancel }): ReactElement => {
+const PlacesList: React.FC<PlacesListProps> = ({
+  onCancel,
+  countryId,
+}): ReactElement => {
+  const placesCtx = useContext(PlaceContext);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
+  // Fetch all places to visit for user
+  useEffect(() => {
+    function getPlaces() {
+      placesCtx.getPlacesByCountry(countryId);
+    }
+
+    getPlaces();
+  }, [countryId]);
+
   function handleAdd() {
-    navigation.navigate('ManagePlaceToVisit', { placeId: null });
+    navigation.navigate('ManagePlaceToVisit', {
+      placeId: null,
+      countryId: countryId,
+    });
   }
 
   return (
@@ -62,12 +49,15 @@ const PlacesList: React.FC<PlacesListProps> = ({ onCancel }): ReactElement => {
         style={styles.container}
       >
         <Text style={styles.header}>Places to Visit</Text>
-        <ScrollView style={styles.listContainer}>
-          {PLACES.length > 0 &&
-            PLACES.map((place, index) => (
+        {placesCtx.countryPlaces.length > 0 ? (
+          <ScrollView style={styles.listContainer}>
+            {placesCtx.countryPlaces.map((place, index) => (
               <PlacesListItem key={generateRandomString()} place={place} />
             ))}
-        </ScrollView>
+          </ScrollView>
+        ) : (
+          <InfoText content='No places found...' style={styles.info} />
+        )}
         <View style={styles.buttonContainer}>
           <Button
             style={styles.button}
@@ -125,6 +115,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: GlobalStyles.colors.gray400,
   },
+  info: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -132,15 +126,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 4,
-  },
-
-  first: {
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  last: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
   },
 });
 

@@ -6,14 +6,24 @@ import {
   ButtonMode,
   ColorScheme,
   PlaceFormValues,
+  PlaceToVisit,
   PlaceValues,
 } from '../../../models';
 import Button from '../../UI/Button';
 import { GlobalStyles } from '../../../constants/styles';
+import { Checkbox } from 'react-native-paper';
+import { createPlace, updatePlace } from '../../../utils/http/place_to_visit';
+
+type InputValidationResponse = {
+  place?: PlaceToVisit;
+  placeFormValues?: PlaceFormValues;
+  error?: string;
+  status: number;
+};
 
 interface PlaceFormProps {
   onCancel: () => void;
-  onSubmit: () => void;
+  onSubmit: (response: InputValidationResponse) => void;
   submitButtonLabel: string;
   defaultValues?: PlaceValues;
   isEditing?: boolean;
@@ -30,6 +40,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputs, setInputs] = useState<PlaceFormValues>({
+    countryId: { value: defaultValues!.countryId, isValid: true, errors: [] },
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
     description: {
       value: defaultValues?.description || '',
@@ -58,7 +69,10 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     },
   });
 
-  function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
+  function inputChangedHandler(
+    inputIdentifier: string,
+    enteredValue: string | boolean
+  ): void {
     setInputs((currInputs) => {
       return {
         ...currInputs,
@@ -67,32 +81,34 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     });
   }
 
-  // async function validateInputs(): Promise<void> {
-  //   // Set all errors to empty array to prevent stacking of errors
-  //   setIsSubmitting(true);
-  //   for (const key in inputs) {
-  //     inputs[key as keyof PlaceFormValues].errors = [];
-  //   }
+  async function validateInputs(): Promise<void> {
+    // Set all errors to empty array to prevent stacking of errors
+    setIsSubmitting(true);
+    for (const key in inputs) {
+      inputs[key as keyof PlaceFormValues].errors = [];
+    }
 
-  //   let response: InputValidationResponse;
-  //   if (isEditing) {
-  //     response = await updateJourney(inputs, editJourneyId!);
-  //   } else if (!isEditing) {
-  //     response = await createJourney(inputs);
-  //   }
+    let response: InputValidationResponse;
+    if (isEditing) {
+      response = await updatePlace(inputs, editPlaceId!);
+    } else if (!isEditing) {
+      response = await createPlace(inputs);
+    }
 
-  //   const { error, status, journey, journeyFormValues } = response!;
+    const { error, status, place, placeFormValues } = response!;
 
-  //   if (!error && journey) {
-  //     onSubmit({ journey, status });
-  //   } else if (error) {
-  //     onSubmit({ error, status });
-  //   } else if (journeyFormValues) {
-  //     setInputs((prevValues) => journeyFormValues);
-  //   }
-  //   setIsSubmitting(false);
-  //   return;
-  // }
+    console.log(response!);
+
+    if (!error && place) {
+      onSubmit({ place, status });
+    } else if (error) {
+      onSubmit({ error, status });
+    } else if (placeFormValues) {
+      setInputs((prevValues) => placeFormValues);
+    }
+    setIsSubmitting(false);
+    return;
+  }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
@@ -102,43 +118,74 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     <View style={styles.formContainer}>
       <Text style={styles.header}>Place To Visit</Text>
       <View>
-        <Input
-          label='Name'
-          invalid={!inputs.name.isValid}
-          errors={inputs.name.errors}
-          textInputConfig={{
-            value: inputs.name.value,
-            onChangeText: inputChangedHandler.bind(this, 'name'),
-          }}
-        />
-        <Input
-          label='Description'
-          invalid={!inputs.description.isValid}
-          errors={inputs.description.errors}
-          textInputConfig={{
-            value: inputs.description.value,
-            onChangeText: inputChangedHandler.bind(this, 'description'),
-          }}
-        />
-        {/* TODO: Add Checkbox for visited and favorite */}
-        <Input
-          label='Link'
-          invalid={!inputs.link.isValid}
-          errors={inputs.link.errors}
-          textInputConfig={{
-            value: inputs.link.value,
-            onChangeText: inputChangedHandler.bind(this, 'link'),
-          }}
-        />
-        <Input
-          label='Maps Link'
-          invalid={!inputs.maps_link.isValid}
-          errors={inputs.maps_link.errors}
-          textInputConfig={{
-            value: inputs.maps_link.value,
-            onChangeText: inputChangedHandler.bind(this, 'maps_link'),
-          }}
-        />
+        <View style={styles.formRow}>
+          <Input
+            label='Name'
+            invalid={!inputs.name.isValid}
+            errors={inputs.name.errors}
+            textInputConfig={{
+              value: inputs.name.value,
+              onChangeText: inputChangedHandler.bind(this, 'name'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <Input
+            label='Description'
+            invalid={!inputs.description.isValid}
+            errors={inputs.description.errors}
+            textInputConfig={{
+              value: inputs.description.value,
+              onChangeText: inputChangedHandler.bind(this, 'description'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <Input
+            label='Link'
+            invalid={!inputs.link.isValid}
+            errors={inputs.link.errors}
+            textInputConfig={{
+              value: inputs.link.value,
+              onChangeText: inputChangedHandler.bind(this, 'link'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <Input
+            label='Maps Link'
+            invalid={!inputs.maps_link.isValid}
+            errors={inputs.maps_link.errors}
+            textInputConfig={{
+              value: inputs.maps_link.value,
+              onChangeText: inputChangedHandler.bind(this, 'maps_link'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <View style={styles.checkBoxContainer}>
+            <Text style={styles.checkBoxLabel}>Visited?</Text>
+            <Checkbox
+              status={inputs.visited.value ? 'checked' : 'unchecked'}
+              onPress={() =>
+                inputChangedHandler('visited', !inputs.visited.value)
+              }
+              uncheckedColor={GlobalStyles.colors.gray200}
+              color={GlobalStyles.colors.primary100}
+            />
+          </View>
+          <View style={styles.checkBoxContainer}>
+            <Text style={styles.checkBoxLabel}>Favorite?</Text>
+            <Checkbox
+              status={inputs.favorite.value ? 'checked' : 'unchecked'}
+              onPress={() =>
+                inputChangedHandler('favorite', !inputs.favorite.value)
+              }
+              uncheckedColor={GlobalStyles.colors.gray200}
+              color={GlobalStyles.colors.primary100}
+            />
+          </View>
+        </View>
       </View>
       <View style={styles.buttonsContainer}>
         <Button
@@ -148,7 +195,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
         >
           Cancel
         </Button>
-        <Button onPress={() => {}} colorScheme={ColorScheme.neutral}>
+        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
           {submitButtonLabel}
         </Button>
       </View>
@@ -183,7 +230,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 8,
+    // marginVertical: 2,
+  },
+  checkBoxContainer: {
+    alignItems: 'center',
+    marginHorizontal: 'auto',
+  },
+  checkBoxLabel: {
+    color: GlobalStyles.colors.gray50,
   },
   buttonsContainer: {
     flexDirection: 'row',

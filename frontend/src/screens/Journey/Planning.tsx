@@ -2,7 +2,6 @@ import { ReactElement, useLayoutEffect } from 'react';
 import { View } from 'react-native';
 
 import { PlanningRouteProp, StackParamList } from '../../models';
-import MajorStageContextProvider from '../../store/majorStage-context.';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,9 +22,7 @@ const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
 
   return (
     <View>
-      <MajorStageContextProvider>
-        <MajorStageList journeyId={journeyId} />
-      </MajorStageContextProvider>
+      <MajorStageList journeyId={journeyId} />
     </View>
   );
 };

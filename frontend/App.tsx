@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
@@ -31,12 +32,14 @@ import MajorStageContextProvider from './src/store/majorStage-context.';
 import Overview from './src/screens/Journey/Overview';
 import Map from './src/screens/Journey/Map';
 import AuthContextProvider, { AuthContext } from './src/store/auth-context';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from './src/screens/AuthScreen';
 import CustomCountryContextProvider from './src/store/custom-country-context';
 import ManageCustomCountry from './src/screens/ManageCustomCountry';
 import ManagePlaceToVisit from './src/screens/ManagePlaceToVisit';
+import MinorStageContextProvider from './src/store/minorStage-context';
+import PlaceContextProvider from './src/store/place-context';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -71,141 +74,131 @@ const AuthStack = () => {
 
 const BottomTabsNavigator = () => {
   return (
-    <JourneyContextProvider>
-      <BottomTabs.Navigator
-        screenOptions={({
-          navigation,
-        }: {
-          navigation: BottomTabNavigationProp<BottomTabsParamList>;
-        }) => ({
-          headerTintColor: 'white',
-          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-          headerTitleAlign: 'center',
-          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-          tabBarActiveTintColor: GlobalStyles.colors.accent600,
-          tabBarIconStyle: { color: 'white' },
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              color={tintColor}
-              size={24}
-              icon={Icons.person}
-              onPress={() => {
-                navigation.navigate('UserProfile');
-              }}
+    <BottomTabs.Navigator
+      screenOptions={({
+        navigation,
+      }: {
+        navigation: BottomTabNavigationProp<BottomTabsParamList>;
+      }) => ({
+        headerTintColor: 'white',
+        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        headerTitleAlign: 'center',
+        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        tabBarActiveTintColor: GlobalStyles.colors.accent600,
+        tabBarIconStyle: { color: 'white' },
+        headerRight: ({ tintColor }) => (
+          <IconButton
+            color={tintColor}
+            size={24}
+            icon={Icons.person}
+            onPress={() => {
+              navigation.navigate('UserProfile');
+            }}
+          />
+        ),
+      })}
+    >
+      <BottomTabs.Screen
+        name='AllJourneys'
+        component={AllJourneys}
+        options={{
+          title: 'All Journeys',
+          tabBarLabel: 'Journeys',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={Icons.listCircle} size={size} color={color} />
+          ),
+        }}
+      />
+      <BottomTabs.Screen
+        name='ManageJourney'
+        component={ManageJourney}
+        options={({ route }: { route: ManageJourneyRouteProp }) => ({
+          title: !!route.params?.journeyId ? 'Edit Journey' : 'Add Journey',
+          tabBarLabel: !!route.params?.journeyId ? 'Edit' : 'Add',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name={!!route.params?.journeyId ? Icons.edit : Icons.add}
+              size={size}
+              color={color}
             />
           ),
+          unmountOnBlur: true,
+          presentation: 'modal',
+          animation: 'fade',
         })}
-      >
-        <BottomTabs.Screen
-          name='AllJourneys'
-          component={AllJourneys}
-          options={{
-            title: 'All Journeys',
-            tabBarLabel: 'Journeys',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.listCircle} size={size} color={color} />
-            ),
-          }}
-        />
-        <BottomTabs.Screen
-          name='ManageJourney'
-          component={ManageJourney}
-          options={({ route }: { route: ManageJourneyRouteProp }) => ({
-            title: !!route.params?.journeyId ? 'Edit Journey' : 'Add Journey',
-            tabBarLabel: !!route.params?.journeyId ? 'Edit' : 'Add',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons
-                name={!!route.params?.journeyId ? Icons.edit : Icons.add}
-                size={size}
-                color={color}
-              />
-            ),
-            unmountOnBlur: true,
-            presentation: 'modal',
-            animation: 'fade',
-          })}
-        />
-        <BottomTabs.Screen
-          name='Locations'
-          component={Locations}
-          options={{
-            tabBarLabel: 'Locations',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.pin} size={size} color={color} />
-            ),
-          }}
-        />
-      </BottomTabs.Navigator>
-    </JourneyContextProvider>
+      />
+      <BottomTabs.Screen
+        name='Locations'
+        component={Locations}
+        options={{
+          tabBarLabel: 'Locations',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={Icons.pin} size={size} color={color} />
+          ),
+        }}
+      />
+    </BottomTabs.Navigator>
   );
 };
 
-// TODO: Rework position for ContextProviders
-
 const JourneyBottomTabsNavigator = () => {
   return (
-    <MajorStageContextProvider>
-      <JourneyBottomTabs.Navigator
-        screenOptions={({
-          navigation,
-        }: {
-          navigation: NativeStackNavigationProp<BottomTabsParamList>;
-        }) => ({
-          headerTintColor: 'white',
-          headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
-          headerTitleAlign: 'center',
-          headerLeft: ({ tintColor }) => (
-            <IconButton
-              color={tintColor}
-              size={24}
-              icon={Icons.arrowBack}
-              onPress={() => {
-                navigation.navigate('AllJourneys');
-              }}
-            />
+    <JourneyBottomTabs.Navigator
+      screenOptions={({
+        navigation,
+      }: {
+        navigation: NativeStackNavigationProp<BottomTabsParamList>;
+      }) => ({
+        headerTintColor: 'white',
+        headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+        headerTitleAlign: 'center',
+        headerLeft: ({ tintColor }) => (
+          <IconButton
+            color={tintColor}
+            size={24}
+            icon={Icons.arrowBack}
+            onPress={() => {
+              navigation.navigate('AllJourneys');
+            }}
+          />
+        ),
+        tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+        tabBarInactiveTintColor: GlobalStyles.colors.gray200,
+        tabBarActiveTintColor: 'white',
+        tabBarIconStyle: { color: 'white' },
+      })}
+    >
+      <JourneyBottomTabs.Screen
+        name='Overview'
+        component={Overview}
+        options={{
+          tabBarLabel: 'Overview',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={Icons.readerOutline} size={size} color={color} />
           ),
-          tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
-          tabBarInactiveTintColor: GlobalStyles.colors.gray200,
-          tabBarActiveTintColor: 'white',
-          tabBarIconStyle: { color: 'white' },
-        })}
-      >
-        <JourneyBottomTabs.Screen
-          name='Overview'
-          component={Overview}
-          options={{
-            tabBarLabel: 'Overview',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.readerOutline} size={size} color={color} />
-            ),
-          }}
-        />
-        <JourneyBottomTabs.Screen
-          name='Planning'
-          component={Planning}
-          options={{
-            tabBarLabel: 'Planning',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons
-                name={Icons.calendarOutline}
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <JourneyBottomTabs.Screen
-          name='Map'
-          component={Map}
-          options={{
-            tabBarLabel: 'Map',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={Icons.compassOutline} size={size} color={color} />
-            ),
-          }}
-        />
-      </JourneyBottomTabs.Navigator>
-    </MajorStageContextProvider>
+        }}
+      />
+      <JourneyBottomTabs.Screen
+        name='Planning'
+        component={Planning}
+        options={{
+          tabBarLabel: 'Planning',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={Icons.calendarOutline} size={size} color={color} />
+          ),
+        }}
+      />
+      <JourneyBottomTabs.Screen
+        name='Map'
+        component={Map}
+        options={{
+          tabBarLabel: 'Map',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name={Icons.compassOutline} size={size} color={color} />
+          ),
+        }}
+      />
+    </JourneyBottomTabs.Navigator>
   );
 };
 
@@ -214,53 +207,61 @@ const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
 
   return (
-    <CustomCountryContextProvider>
-      <Stack.Navigator
-        screenOptions={() => ({
-          headerTintColor: 'white',
-          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-          headerTitleAlign: 'center',
-        })}
-      >
-        <>
-          <Stack.Screen
-            name='BottomTabsNavigator'
-            component={BottomTabsNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='UserProfile'
-            component={UserProfile}
-            options={{
-              title: `${authCtx.username}'s Profile`,
-              headerRight: ({ tintColor }) => (
-                <IconButton
-                  color={tintColor}
-                  size={24}
-                  icon={Icons.logout}
-                  onPress={() => {
-                    authCtx.logout();
+    <JourneyContextProvider>
+      <CustomCountryContextProvider>
+        <PlaceContextProvider>
+          <MajorStageContextProvider>
+            <MinorStageContextProvider>
+              <Stack.Navigator
+                screenOptions={() => ({
+                  headerTintColor: 'white',
+                  headerStyle: {
+                    backgroundColor: GlobalStyles.colors.primary500,
+                  },
+                  headerTitleAlign: 'center',
+                })}
+              >
+                <Stack.Screen
+                  name='BottomTabsNavigator'
+                  component={BottomTabsNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='UserProfile'
+                  component={UserProfile}
+                  options={{
+                    title: `${authCtx.username}'s Profile`,
+                    headerRight: ({ tintColor }) => (
+                      <IconButton
+                        color={tintColor}
+                        size={24}
+                        icon={Icons.logout}
+                        onPress={() => {
+                          authCtx.logout();
+                        }}
+                      />
+                    ),
                   }}
                 />
-              ),
-            }}
-          />
-          <Stack.Screen
-            name='JourneyBottomTabsNavigator'
-            component={JourneyBottomTabsNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name='ManageCustomCountry'
-            component={ManageCustomCountry}
-          />
-          <Stack.Screen
-            name='ManagePlaceToVisit'
-            component={ManagePlaceToVisit}
-          />
-        </>
-      </Stack.Navigator>
-    </CustomCountryContextProvider>
+                <Stack.Screen
+                  name='JourneyBottomTabsNavigator'
+                  component={JourneyBottomTabsNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='ManageCustomCountry'
+                  component={ManageCustomCountry}
+                />
+                <Stack.Screen
+                  name='ManagePlaceToVisit'
+                  component={ManagePlaceToVisit}
+                />
+              </Stack.Navigator>
+            </MinorStageContextProvider>
+          </MajorStageContextProvider>
+        </PlaceContextProvider>
+      </CustomCountryContextProvider>
+    </JourneyContextProvider>
   );
 };
 

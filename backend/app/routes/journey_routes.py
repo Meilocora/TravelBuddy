@@ -70,8 +70,6 @@ def create_journey(current_user):
         db.session.add(new_journey)
         db.session.commit()
         
-        print(new_journey)
-        
         
         # Create a new costs for the journey
         costs = Costs(

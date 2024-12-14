@@ -4,15 +4,17 @@ import { PlaceToVisit } from '../models';
 
 interface PlaceContextType {
   placesToVisit: PlaceToVisit[];
+  countryPlaces: PlaceToVisit[];
   setPlacesToVisit: (placesToVisit: PlaceToVisit[]) => void;
   addPlace: (placeToVisit: PlaceToVisit) => void;
   deletePlace: (placesToVisitId: number) => void;
   updatePlace: (placeToVisit: PlaceToVisit) => void;
-  getPlacesByCountry: (countryId: number) => PlaceToVisit[];
+  getPlacesByCountry: (countryId: number) => void;
 }
 
 export const PlaceContext = createContext<PlaceContextType>({
   placesToVisit: [],
+  countryPlaces: [],
   setPlacesToVisit: () => {},
   addPlace: () => {},
   deletePlace: () => {},
@@ -26,6 +28,7 @@ export default function PlaceContextProvider({
   children: React.ReactNode;
 }) {
   const [placesToVisit, setPlacesToVisit] = useState<PlaceToVisit[]>([]);
+  const [countryPlaces, setCountryPlaces] = useState<PlaceToVisit[]>([]);
 
   function addPlace(place: PlaceToVisit) {
     setPlacesToVisit((prevPlaces) => [...prevPlaces, place]);
@@ -46,11 +49,15 @@ export default function PlaceContextProvider({
   }
 
   function getPlacesByCountry(countryId: number) {
-    return placesToVisit.filter((place) => place.countryId === countryId);
+    const foundPlaces = placesToVisit.filter(
+      (place) => place.countryId === countryId
+    );
+    setCountryPlaces(foundPlaces);
   }
 
   const value = {
     placesToVisit,
+    countryPlaces,
     setPlacesToVisit,
     addPlace,
     deletePlace,

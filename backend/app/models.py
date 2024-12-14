@@ -220,11 +220,12 @@ class PlaceToVisit(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    latitude: Mapped[float] = mapped_column(Float, nullable=True)
-    longitude: Mapped[float] = mapped_column(Float, nullable=True)
+    # latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    # longitude: Mapped[float] = mapped_column(Float, nullable=True)
     visited: Mapped[bool] = mapped_column(Boolean, nullable=False)
     favorite: Mapped[bool] = mapped_column(Boolean, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
+    maps_link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
