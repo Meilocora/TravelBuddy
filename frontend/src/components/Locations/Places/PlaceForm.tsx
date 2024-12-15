@@ -1,10 +1,11 @@
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import Input from '../../UI/form/Input';
 import {
   ButtonMode,
   ColorScheme,
+  Icons,
   PlaceFormValues,
   PlaceToVisit,
   PlaceValues,
@@ -12,7 +13,13 @@ import {
 import Button from '../../UI/Button';
 import { GlobalStyles } from '../../../constants/styles';
 import { Checkbox } from 'react-native-paper';
-import { createPlace, updatePlace } from '../../../utils/http/place_to_visit';
+import {
+  createPlace,
+  deletePlace,
+  updatePlace,
+} from '../../../utils/http/place_to_visit';
+import IconButton from '../../UI/IconButton';
+import Modal from '../../UI/Modal';
 
 type InputValidationResponse = {
   place?: PlaceToVisit;
@@ -24,6 +31,7 @@ type InputValidationResponse = {
 interface PlaceFormProps {
   onCancel: () => void;
   onSubmit: (response: InputValidationResponse) => void;
+  onDelete: (response: InputValidationResponse, placeId: number) => void;
   submitButtonLabel: string;
   defaultValues?: PlaceValues;
   isEditing?: boolean;
@@ -33,12 +41,14 @@ interface PlaceFormProps {
 const PlaceForm: React.FC<PlaceFormProps> = ({
   onCancel,
   onSubmit,
+  onDelete,
   submitButtonLabel,
   defaultValues,
   isEditing,
   editPlaceId,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [inputs, setInputs] = useState<PlaceFormValues>({
     countryId: { value: defaultValues!.countryId, isValid: true, errors: [] },
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
@@ -97,8 +107,6 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
 
     const { error, status, place, placeFormValues } = response!;
 
-    console.log(response!);
-
     if (!error && place) {
       onSubmit({ place, status });
     } else if (error) {
@@ -110,96 +118,129 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     return;
   }
 
+  async function deletePlaceHandler() {
+    const response = await deletePlace(editPlaceId!);
+    onDelete(response, editPlaceId!);
+    setIsDeleting(false);
+    return;
+  }
+
+  function deleteHandler() {
+    setIsDeleting(true);
+  }
+
+  function closeModalHandler() {
+    setIsDeleting(false);
+  }
+
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
   }
 
   return (
-    <View style={styles.formContainer}>
-      <Text style={styles.header}>Place To Visit</Text>
-      <View>
-        <View style={styles.formRow}>
-          <Input
-            label='Name'
-            invalid={!inputs.name.isValid}
-            errors={inputs.name.errors}
-            textInputConfig={{
-              value: inputs.name.value,
-              onChangeText: inputChangedHandler.bind(this, 'name'),
-            }}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <Input
-            label='Description'
-            invalid={!inputs.description.isValid}
-            errors={inputs.description.errors}
-            textInputConfig={{
-              value: inputs.description.value,
-              onChangeText: inputChangedHandler.bind(this, 'description'),
-            }}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <Input
-            label='Link'
-            invalid={!inputs.link.isValid}
-            errors={inputs.link.errors}
-            textInputConfig={{
-              value: inputs.link.value,
-              onChangeText: inputChangedHandler.bind(this, 'link'),
-            }}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <Input
-            label='Maps Link'
-            invalid={!inputs.maps_link.isValid}
-            errors={inputs.maps_link.errors}
-            textInputConfig={{
-              value: inputs.maps_link.value,
-              onChangeText: inputChangedHandler.bind(this, 'maps_link'),
-            }}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <View style={styles.checkBoxContainer}>
-            <Text style={styles.checkBoxLabel}>Visited?</Text>
-            <Checkbox
-              status={inputs.visited.value ? 'checked' : 'unchecked'}
-              onPress={() =>
-                inputChangedHandler('visited', !inputs.visited.value)
-              }
-              uncheckedColor={GlobalStyles.colors.gray200}
-              color={GlobalStyles.colors.primary100}
+    <>
+      {isDeleting && (
+        <Modal
+          title='Are you sure?'
+          content={`Do you realy want to  delete ${inputs.name.value}?`}
+          onConfirm={deletePlaceHandler}
+          onCancel={closeModalHandler}
+        />
+      )}
+      <View style={styles.formContainer}>
+        <Text style={styles.header}>Place To Visit</Text>
+        <View>
+          <View style={styles.formRow}>
+            <Input
+              label='Name'
+              invalid={!inputs.name.isValid}
+              errors={inputs.name.errors}
+              textInputConfig={{
+                value: inputs.name.value,
+                onChangeText: inputChangedHandler.bind(this, 'name'),
+              }}
             />
           </View>
-          <View style={styles.checkBoxContainer}>
-            <Text style={styles.checkBoxLabel}>Favorite?</Text>
-            <Checkbox
-              status={inputs.favorite.value ? 'checked' : 'unchecked'}
-              onPress={() =>
-                inputChangedHandler('favorite', !inputs.favorite.value)
-              }
-              uncheckedColor={GlobalStyles.colors.gray200}
-              color={GlobalStyles.colors.primary100}
+          <View style={styles.formRow}>
+            <Input
+              label='Description'
+              invalid={!inputs.description.isValid}
+              errors={inputs.description.errors}
+              textInputConfig={{
+                value: inputs.description.value,
+                onChangeText: inputChangedHandler.bind(this, 'description'),
+              }}
             />
           </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.link.isValid}
+              errors={inputs.link.errors}
+              textInputConfig={{
+                value: inputs.link.value,
+                onChangeText: inputChangedHandler.bind(this, 'link'),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Maps Link'
+              invalid={!inputs.maps_link.isValid}
+              errors={inputs.maps_link.errors}
+              textInputConfig={{
+                value: inputs.maps_link.value,
+                onChangeText: inputChangedHandler.bind(this, 'maps_link'),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <View style={styles.checkBoxContainer}>
+              <Text style={styles.checkBoxLabel}>Visited?</Text>
+              <Checkbox
+                status={inputs.visited.value ? 'checked' : 'unchecked'}
+                onPress={() =>
+                  inputChangedHandler('visited', !inputs.visited.value)
+                }
+                uncheckedColor={GlobalStyles.colors.gray200}
+                color={GlobalStyles.colors.primary100}
+              />
+            </View>
+            <View style={styles.checkBoxContainer}>
+              <Text style={styles.checkBoxLabel}>Favorite?</Text>
+              <Checkbox
+                status={inputs.favorite.value ? 'checked' : 'unchecked'}
+                onPress={() =>
+                  inputChangedHandler('favorite', !inputs.favorite.value)
+                }
+                uncheckedColor={GlobalStyles.colors.gray200}
+                color={GlobalStyles.colors.primary100}
+              />
+            </View>
+          </View>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <Button
+            onPress={onCancel}
+            colorScheme={ColorScheme.neutral}
+            mode={ButtonMode.flat}
+          >
+            Cancel
+          </Button>
+          <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
+            {submitButtonLabel}
+          </Button>
         </View>
       </View>
-      <View style={styles.buttonsContainer}>
-        <Button
-          onPress={onCancel}
-          colorScheme={ColorScheme.neutral}
-          mode={ButtonMode.flat}
-        >
-          Cancel
-        </Button>
-        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
-          {submitButtonLabel}
-        </Button>
+      <View style={styles.deleteContainer}>
+        <IconButton
+          icon={Icons.delete}
+          onPress={deleteHandler}
+          size={62}
+          color={GlobalStyles.colors.error500}
+        />
       </View>
-    </View>
+    </>
   );
 };
 
@@ -230,7 +271,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // marginVertical: 2,
   },
   checkBoxContainer: {
     alignItems: 'center',
@@ -246,6 +286,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     justifyContent: 'space-around',
     alignItems: 'center',
+  },
+  deleteContainer: {
+    marginHorizontal: 'auto',
+    marginTop: 24,
   },
 });
 

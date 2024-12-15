@@ -173,8 +173,12 @@ def update_country(current_user, customCountryId):
 @token_required
 def delete_custom_country(current_user, customCountryId):
     try:
+        countryName = CustomCountry.query.filter_by(id=customCountryId).first().name
+        
+        # TODO: Delete all Places To Visit aswell
+        
         db.session.execute(db.delete(CustomCountry).where(CustomCountry.id == customCountryId))
         db.session.commit()
-        return jsonify({'status': 200})
+        return jsonify({'countryName': countryName, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)

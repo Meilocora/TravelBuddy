@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -6,20 +6,43 @@ import { Icons, PlaceToVisit, StackParamList } from '../../../models';
 import IconButton from '../../UI/IconButton';
 import { GlobalStyles } from '../../../constants/styles';
 import Link from '../../UI/Link';
+import { PlaceContext } from '../../../store/place-context';
+import {
+  deletePlace,
+  toggleFavoritePlace,
+  toggleVisitedPlace,
+} from '../../../utils/http/place_to_visit';
 
 interface PlacesListItemProps {
   place: PlaceToVisit;
+  onToggleFavorite: (placeId: number) => void;
+  onToggleVisited: (placeId: number) => void;
 }
 
 const PlacesListItem: React.FC<PlacesListItemProps> = ({
   place,
+  onToggleFavorite,
+  onToggleVisited,
 }): ReactElement => {
   const [isOpened, setIsOpened] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const placeCtx = useContext(PlaceContext);
 
-  function handleLike() {}
+  async function handleToggleFavorite() {
+    const response = await toggleFavoritePlace(place.id);
+    if (!response.error) {
+      placeCtx.toggleFavorite(place.id);
+      onToggleFavorite(place.id);
+    }
+  }
 
-  function handleVisited() {}
+  async function handleToggleVisited() {
+    const response = await toggleVisitedPlace(place.id);
+    if (!response.error) {
+      placeCtx.toggleVisited(place.id);
+      onToggleVisited(place.id);
+    }
+  }
 
   function handleEdit() {
     navigation.navigate('ManagePlaceToVisit', {
@@ -36,7 +59,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
           <View style={styles.buttonsContainer}>
             <IconButton
               icon={place.favorite ? Icons.heartFilled : Icons.heartOutline}
-              onPress={handleLike}
+              onPress={handleToggleFavorite}
               color={GlobalStyles.colors.favorite}
               containerStyle={styles.button}
             />
@@ -44,7 +67,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
               icon={
                 place.visited ? Icons.checkmarkFilled : Icons.checkmarkOutline
               }
-              onPress={handleVisited}
+              onPress={handleToggleVisited}
               color={GlobalStyles.colors.visited}
               containerStyle={styles.button}
             />

@@ -74,72 +74,89 @@ def create_place(current_user):
         return jsonify({'error': str(e)}, 500)
     
     
-# @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
-# @token_required
-# def update_journey(current_user, journeyId):
-#     try:
-#         journey = request.get_json()
-#     except:
-#         return jsonify({'error': 'Unknown error'}, 400)
+@place_bp.route('/update-place/<int:placeId>', methods=['POST'])
+@token_required
+def update_journey(current_user, placeId):
+    try:
+        place = request.get_json()
+    except:
+        return jsonify({'error': 'Unknown error'}, 400)
     
-#     response, isValid = JourneyValidation.validate_journey(journey=journey)
+    old_place = db.get_or_404(PlaceToVisit, placeId)
     
-#     if not isValid:
-#         return jsonify({'journeyFormValues': response, 'status': 400})
+    response, isValid = PlaceValidation.validate_place(place=place)
     
-#     old_journey = db.get_or_404(Journey, journeyId)
-#     money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
-    
-#     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
-#     majorStages = majorStages_result.scalars().all()
-#     majorStagesIds = [majorStage.id for majorStage in majorStages]
-    
-#     try:
-#         # Update the journey
-#         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
-#             name=journey['name']['value'],
-#             description=journey['description']['value'],
-#             scheduled_start_time=journey['scheduled_start_time']['value'],
-#             scheduled_end_time=journey['scheduled_end_time']['value'],
-#             countries=journey['countries']['value'][0],
-#         ))
-#         db.session.commit()
+    if not isValid:
+        return jsonify({'placeFormValues': response, 'status': 400})
         
-#         # Update the costs for the journey
-#         db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
-#             available_money=journey['available_money']['value'],
-#             planned_costs=journey['planned_costs']['value'],
-#             money_exceeded=money_exceeded
-#         ))
-#         db.session.commit()
-            
-#         response_journey = {'id': journeyId,
-#                 'name': journey['name']['value'],
-#                 'description': journey['description']['value'],
-#                 'costs': {
-#                     'available_money': journey['available_money']['value'],
-#                     'planned_costs': journey['planned_costs']['value'],
-#                     'money_exceeded': money_exceeded,
-#                 },
-#                 'scheduled_start_time': journey['scheduled_start_time']['value'],
-#                 'scheduled_end_time': journey['scheduled_end_time']['value'],
-#                 'countries': journey['countries']['value'],
-#                 'done': old_journey.done,
-#                 'majorStagesIds': majorStagesIds}
+    try:
+        # Update the place
+        db.session.execute(db.update(PlaceToVisit).where(PlaceToVisit.id == placeId).values(
+            name=place['name']['value'],
+            description=place['description']['value'],
+            visited=place['visited']['value'],
+            favorite=place['favorite']['value'],
+            link=place['link']['value'],
+            maps_link=place['maps_link']['value'],
+        ))
+        db.session.commit()
         
-#         return jsonify({'journey': response_journey,'status': 200})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+        response_place = {'id': old_place.id,
+                'countryId': old_place.custom_country_id,
+                'name': place['name']['value'],
+                'description': place['description']['value'],
+                'visited': place['visited']['value'],
+                'favorite': place['favorite']['value'],
+                'link': place['link']['value'],
+                'maps_link': place['maps_link']['value']
+                }
+        
+        
+        return jsonify({'place': response_place,'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
         
     
     
-# @journey_bp.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
-# @token_required
-# def delete_journey(current_user, journeyId):
-#     try:
-#         # Delete the journey from the database
-#         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
-#         db.session.commit()
-#         return jsonify({'status': 200})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+@place_bp.route('/delete-place/<int:placeId>', methods=['DELETE'])
+@token_required
+def delete_place(current_user, placeId):
+    try:
+        # Delete the place from the database
+        db.session.execute(db.delete(PlaceToVisit).where(PlaceToVisit.id == placeId))
+        db.session.commit()
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
+@place_bp.route('/toggle-favorite-place/<int:placeId>', methods=['POST'])
+@token_required
+def toggle_favorite_place(current_user, placeId):
+    try:
+        
+        old_place = db.get_or_404(PlaceToVisit, placeId)
+        
+        # Update the place
+        db.session.execute(db.update(PlaceToVisit).where(PlaceToVisit.id == placeId).values(
+            favorite = not old_place.favorite
+        ))
+        db.session.commit()
+
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
+@place_bp.route('/toggle-visited-place/<int:placeId>', methods=['POST'])
+@token_required
+def toggle_visited_place(current_user, placeId):
+    try:
+        old_place = db.get_or_404(PlaceToVisit, placeId)
+        
+        # Update the place
+        db.session.execute(db.update(PlaceToVisit).where(PlaceToVisit.id == placeId).values(
+            visited = not old_place.visited
+        ))
+        db.session.commit()
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)

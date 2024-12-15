@@ -102,12 +102,12 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
     useNavigation<NavigationProp<BottomTabsParamList>>();
 
   function handleDeleteCountry(response: DeleteCustomCountryProps) {
-    const { status, error } = response;
+    const { countryName, status, error } = response;
     if (error) {
       setError(error);
     } else if (status === 200) {
       customCountryCtx.deleteCustomCountry(countryId);
-      const popupText = 'Custom Country successfully deleted!';
+      const popupText = `"${countryName}" successfully deleted!`;
       secondaryNavigation.navigate('Locations', { popupText: popupText });
     }
   }

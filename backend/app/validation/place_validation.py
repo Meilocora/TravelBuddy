@@ -21,11 +21,11 @@ class PlaceValidation(Validation):
         
         
         if PlaceValidation().validate_string(place['name']['value'], min_length=3, max_length=25):
-            place['name']['errors'].append(f", {PlaceValidation().validate_string(place['name']['value'], 3, 25)}")
+            place['name']['errors'].append(f", {PlaceValidation().validate_string(place['name']['value'], 3, 50)}")
             place['name']['isValid'] = False
             
         if PlaceValidation().validate_string(place['description']['value'], min_length=0, max_length=100):
-            place['description']['errors'].append(f", {PlaceValidation().validate_string(place['description']['value'], 0, 100)}")
+            place['description']['errors'].append(f", {PlaceValidation().validate_string(place['description']['value'], 0, 300)}")
             place['description']['isValid'] = False
             
         if PlaceValidation().validate_string(place['link']['value'], min_length=0, max_length=200):

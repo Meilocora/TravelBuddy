@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useEffect } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { FadeInDown, FadeOutDown } from 'react-native-reanimated';
@@ -7,7 +7,12 @@ import Animated from 'react-native-reanimated';
 import PlacesListItem from './PlacesListItem';
 import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
-import { ButtonMode, ColorScheme, StackParamList } from '../../../models';
+import {
+  ButtonMode,
+  ColorScheme,
+  PlaceToVisit,
+  StackParamList,
+} from '../../../models';
 import { GlobalStyles } from '../../../constants/styles';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PlaceContext } from '../../../store/place-context';
@@ -25,19 +30,46 @@ const PlacesList: React.FC<PlacesListProps> = ({
   const placesCtx = useContext(PlaceContext);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-  // Fetch all places to visit for user
+  const [isFetching, setIsFetching] = useState(true);
+  const [countryPlaces, setCountryPlaces] = useState<PlaceToVisit[]>([]);
+
+  // Fetch all places to visit for this country
   useEffect(() => {
     function getPlaces() {
-      placesCtx.getPlacesByCountry(countryId);
+      const fetchedPlaces = placesCtx.getPlacesByCountry(countryId);
+      setCountryPlaces(fetchedPlaces);
+      setIsFetching(false);
     }
 
     getPlaces();
-  }, [countryId]);
+  }, [countryId, placesCtx.placesToVisit]);
 
   function handleAdd() {
     navigation.navigate('ManagePlaceToVisit', {
       placeId: null,
       countryId: countryId,
+    });
+  }
+
+  function handleToggleFavorite(placeId: number) {
+    setCountryPlaces((prevPlaces) => {
+      return prevPlaces.map((place) => {
+        if (place.id === placeId) {
+          return { ...place, favorite: !place.favorite };
+        }
+        return place;
+      });
+    });
+  }
+
+  function handleToggleVisited(placeId: number) {
+    setCountryPlaces((prevPlaces) => {
+      return prevPlaces.map((place) => {
+        if (place.id === placeId) {
+          return { ...place, visited: !place.visited };
+        }
+        return place;
+      });
     });
   }
 
@@ -49,13 +81,20 @@ const PlacesList: React.FC<PlacesListProps> = ({
         style={styles.container}
       >
         <Text style={styles.header}>Places to Visit</Text>
-        {placesCtx.countryPlaces.length > 0 ? (
+        {countryPlaces.length > 0 && (
           <ScrollView style={styles.listContainer}>
-            {placesCtx.countryPlaces.map((place, index) => (
-              <PlacesListItem key={generateRandomString()} place={place} />
+            {countryPlaces.map((place, index) => (
+              <PlacesListItem
+                key={generateRandomString()}
+                place={place}
+                onToggleFavorite={handleToggleFavorite}
+                onToggleVisited={handleToggleVisited}
+              />
             ))}
           </ScrollView>
-        ) : (
+        )}
+        {/* {countryPlaces.length === 0 && ( */}
+        {!isFetching && countryPlaces.length === 0 && (
           <InfoText content='No places found...' style={styles.info} />
         )}
         <View style={styles.buttonContainer}>

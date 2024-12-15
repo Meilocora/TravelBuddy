@@ -4,19 +4,21 @@ import { PlaceToVisit } from '../models';
 
 interface PlaceContextType {
   placesToVisit: PlaceToVisit[];
-  countryPlaces: PlaceToVisit[];
   setPlacesToVisit: (placesToVisit: PlaceToVisit[]) => void;
   addPlace: (placeToVisit: PlaceToVisit) => void;
+  toggleFavorite: (placeToVisitId: number) => void;
+  toggleVisited: (placeToVisitId: number) => void;
   deletePlace: (placesToVisitId: number) => void;
   updatePlace: (placeToVisit: PlaceToVisit) => void;
-  getPlacesByCountry: (countryId: number) => void;
+  getPlacesByCountry: (countryId: number) => PlaceToVisit[];
 }
 
 export const PlaceContext = createContext<PlaceContextType>({
   placesToVisit: [],
-  countryPlaces: [],
   setPlacesToVisit: () => {},
   addPlace: () => {},
+  toggleFavorite: () => {},
+  toggleVisited: () => {},
   deletePlace: () => {},
   updatePlace: () => {},
   getPlacesByCountry: () => [],
@@ -28,10 +30,25 @@ export default function PlaceContextProvider({
   children: React.ReactNode;
 }) {
   const [placesToVisit, setPlacesToVisit] = useState<PlaceToVisit[]>([]);
-  const [countryPlaces, setCountryPlaces] = useState<PlaceToVisit[]>([]);
 
   function addPlace(place: PlaceToVisit) {
     setPlacesToVisit((prevPlaces) => [...prevPlaces, place]);
+  }
+
+  function toggleFavorite(placeId: number) {
+    setPlacesToVisit((prevPlaces) =>
+      prevPlaces.map((place) =>
+        place.id === placeId ? { ...place, favorite: !place.favorite } : place
+      )
+    );
+  }
+
+  function toggleVisited(placeId: number) {
+    setPlacesToVisit((prevPlaces) =>
+      prevPlaces.map((place) =>
+        place.id === placeId ? { ...place, visited: !place.visited } : place
+      )
+    );
   }
 
   function deletePlace(placesToVisitId: number) {
@@ -52,14 +69,15 @@ export default function PlaceContextProvider({
     const foundPlaces = placesToVisit.filter(
       (place) => place.countryId === countryId
     );
-    setCountryPlaces(foundPlaces);
+    return foundPlaces;
   }
 
   const value = {
     placesToVisit,
-    countryPlaces,
     setPlacesToVisit,
     addPlace,
+    toggleFavorite,
+    toggleVisited,
     deletePlace,
     updatePlace,
     getPlacesByCountry,

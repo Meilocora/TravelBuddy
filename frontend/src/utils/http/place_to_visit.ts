@@ -119,3 +119,43 @@ export const deletePlace = async (
     return { status: 500, error: 'Could not delete place!' };
   }
 };
+
+export const toggleFavoritePlace = async (
+  placeId: number
+): Promise<ManagePlaceProps> => {
+  try {
+    const response: AxiosResponse<ManagePlaceProps> = await api.post(
+      `${prefix}/toggle-favorite-place/${placeId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not change favorite state of place!' };
+  }
+};
+
+export const toggleVisitedPlace = async (
+  placeId: number
+): Promise<ManagePlaceProps> => {
+  try {
+    const response: AxiosResponse<ManagePlaceProps> = await api.post(
+      `${prefix}/toggle-visited-place/${placeId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not change visited state of place!' };
+  }
+};

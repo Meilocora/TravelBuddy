@@ -147,6 +147,7 @@ export const updateCountry = async (
 export interface DeleteCustomCountryProps {
   customCountryId?: number;
   status: number;
+  countryName?: string;
   error?: string;
 }
 
@@ -163,6 +164,7 @@ export const deleteCountry = async (
     }
 
     return {
+      countryName: response.data.countryName,
       status: response.data.status,
     };
   } catch (error) {
