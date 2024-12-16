@@ -288,8 +288,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteContainer: {
+    width: '100%',
     marginHorizontal: 'auto',
     marginTop: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

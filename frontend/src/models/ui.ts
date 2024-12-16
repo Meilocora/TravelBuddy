@@ -28,6 +28,7 @@ export enum Icons {
   filter = 'filter-outline',
   menu = 'menu',
   linkOutline = 'link-outline',
+  close = 'close',
 }
 
 export enum DateFormatMode {

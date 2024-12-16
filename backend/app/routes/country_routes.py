@@ -73,7 +73,7 @@ def get_custom_countries(current_user):
 def create_custom_country(current_user):
     try:
         country_name = request.get_json()['countryName']
-        country_exists = CustomCountry.query.filter_by(name=country_name).first()
+        country_exists = CustomCountry.query.filter_by(name=country_name, user_id=current_user).first()
         if country_exists:
             return jsonify({'error': 'Country already exists', 'status': 400})
         
@@ -175,7 +175,10 @@ def delete_custom_country(current_user, customCountryId):
     try:
         countryName = CustomCountry.query.filter_by(id=customCountryId).first().name
         
-        # TODO: Delete all Places To Visit aswell
+        # Delete all Places To Visit aswell
+        places = PlaceToVisit.query.filter_by(custom_country_id=customCountryId).all()
+        for place in places:
+            db.session.execute(db.delete(PlaceToVisit).where(PlaceToVisit.id == place.id))
         
         db.session.execute(db.delete(CustomCountry).where(CustomCountry.id == customCountryId))
         db.session.commit()

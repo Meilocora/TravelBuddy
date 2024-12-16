@@ -12,6 +12,7 @@ import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
+import CountriesSelection from './CountriesSelection';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -186,7 +187,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             }}
           />
         </View>
-        <Input
+        {/* TODO: Process countries different ... choose from selection, then add bubbles with delete button */}
+        {/* <Input
           label='Countries'
           invalid={!inputs.countries.isValid}
           errors={inputs.countries.errors}
@@ -195,7 +197,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             value: inputs.countries.value.toString(),
             onChangeText: inputChangedHandler.bind(this, 'countries'),
           }}
-        />
+        /> */}
+        <CountriesSelection />
       </View>
       <View style={styles.buttonsContainer}>
         <Button
