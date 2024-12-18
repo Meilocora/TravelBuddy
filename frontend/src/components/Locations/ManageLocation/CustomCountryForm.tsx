@@ -46,6 +46,7 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
 
   const languages = getLanguageNames(country.languages);
   const population = formatQuantity(country.population);
+  // TODO: Add currency exchange rates (API?) and add maincurrency to user
 
   const [inputs, setInputs] = useState<CustomCountryFormValues>({
     visum_regulations: {

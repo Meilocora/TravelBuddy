@@ -1,24 +1,38 @@
 import { ReactElement, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { Icons } from '../../../models';
 import TagCloud from '../../UI/TagCloud';
+import Selection from './Selection';
+import { fetchCustomCountries } from '../../../utils/http/custom_country';
+import { generateRandomString } from '../../../utils';
 
-interface CountriesSelectionProps {}
+interface CountriesSelectionProps {
+  onAddCountry: (countryName: string) => void;
+  onDeleteCountry: (countryName: string) => void;
+}
 
-const CountriesSelection: React.FC<
-  CountriesSelectionProps
-> = (): ReactElement => {
+const CountriesSelection: React.FC<CountriesSelectionProps> = ({
+  onAddCountry,
+  onDeleteCountry,
+}): ReactElement => {
   const [openSelection, setOpenSelection] = useState(false);
   const [countryNames, setCountryNames] = useState<string[]>([]);
 
   function handleAddCountry(countryName: string) {
+    onAddCountry(countryName);
     setCountryNames([...countryNames, countryName]);
   }
 
   function handleDeleteCountry(countryName: string) {
+    onDeleteCountry(countryName);
     setCountryNames(countryNames.filter((name) => name !== countryName));
+  }
+
+  function handleOutsidePress() {
+    setOpenSelection(false);
+    Keyboard.dismiss();
   }
 
   return (
@@ -26,18 +40,38 @@ const CountriesSelection: React.FC<
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Countries</Text>
       </View>
-      <View style={styles.cloudContainer}>
-        <TagCloud
-          text='Germany'
-          onPress={() => handleDeleteCountry('Germany')}
+      {countryNames.length > 0 && (
+        <View style={styles.cloudContainer}>
+          {countryNames.map((name) => (
+            <TagCloud
+              text={name}
+              onPress={() => handleDeleteCountry(name)}
+              key={generateRandomString()}
+            />
+          ))}
+        </View>
+      )}
+      <IconButton
+        icon={Icons.add}
+        onPress={() => setOpenSelection((prevValue) => !prevValue)}
+      />
+      {openSelection && (
+        <Selection
+          chosenCountries={countryNames}
+          onAddHandler={handleAddCountry}
+          onCloseModal={handleOutsidePress}
+          onFetchRequest={fetchCustomCountries}
         />
-      </View>
-      <IconButton icon={Icons.add} onPress={() => setOpenSelection(true)} />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outside: {
+    flex: 1,
+    height: '100%',
+  },
   container: {
     flex: 1,
     marginVertical: 12,

@@ -5,4 +5,7 @@ export interface User {
   password: string;
   journeysIds?: number[];
   countriesIds?: number[];
+  // TODO: currentJourney
+  // TODO: currentCountry
+  // TODO: currency
 }

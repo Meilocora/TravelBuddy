@@ -6,11 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import Animated, {
-  BounceIn,
-  FadeInUp,
-  FadeOutUp,
-} from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 
 import Input from '../form/Input';
 import Button from '../Button';

@@ -73,6 +73,9 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     },
   });
 
+  const defaultCountriesNames = defaultValues?.countries.split(',') || [];
+  let currentCountryNames = defaultValues?.countries.split(',') || [];
+
   function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
     setInputs((currInputs) => {
       return {
@@ -82,16 +85,54 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     });
   }
 
+  function handleAddCountry(countryName: string) {
+    currentCountryNames.push(countryName);
+  }
+
+  function handleDeleteCountry(countryName: string) {
+    currentCountryNames = currentCountryNames.filter(
+      (name) => name !== countryName
+    );
+  }
+
   async function validateInputs(): Promise<void> {
     // Set all errors to empty array to prevent stacking of errors
     setIsSubmitting(true);
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        countries: {
+          value: currentCountryNames.join(','),
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+
     for (const key in inputs) {
       inputs[key as keyof JourneyFormValues].errors = [];
     }
 
     let response: InputValidationResponse;
     if (isEditing) {
-      response = await updateJourney(inputs, editJourneyId!);
+      // TODO: Test when editing a Journey
+      const defaultCountryDeleted = defaultCountriesNames.some(
+        (country) => !currentCountryNames.includes(country)
+      );
+
+      if (defaultCountryDeleted) {
+        const deletedCountries = defaultCountriesNames.filter(
+          (country) => !currentCountryNames.includes(country)
+        );
+        // TODO: Turn into text for Modal
+        console.log(
+          `Major Stages and Minor Stages, that are connected to the following countries will be deleted: ${deletedCountries.join(
+            ', '
+          )}`
+        );
+        return;
+        response = await updateJourney(inputs, editJourneyId!);
+      }
     } else if (!isEditing) {
       response = await createJourney(inputs);
     }
@@ -187,18 +228,10 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             }}
           />
         </View>
-        {/* TODO: Process countries different ... choose from selection, then add bubbles with delete button */}
-        {/* <Input
-          label='Countries'
-          invalid={!inputs.countries.isValid}
-          errors={inputs.countries.errors}
-          textInputConfig={{
-            placeholder: 'Country1, Country2, ...',
-            value: inputs.countries.value.toString(),
-            onChangeText: inputChangedHandler.bind(this, 'countries'),
-          }}
-        /> */}
-        <CountriesSelection />
+        <CountriesSelection
+          onAddCountry={handleAddCountry}
+          onDeleteCountry={handleDeleteCountry}
+        />
       </View>
       <View style={styles.buttonsContainer}>
         <Button
