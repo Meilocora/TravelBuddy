@@ -74,7 +74,10 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   });
 
   const defaultCountriesNames = defaultValues?.countries.split(',') || [];
-  let currentCountryNames = defaultValues?.countries.split(',') || [];
+  // State only exists for easier handling of countryNames
+  const [currentCountryNames, setCurrentCountryNames] = useState<string[]>(
+    defaultCountriesNames
+  );
 
   function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
     setInputs((currInputs) => {
@@ -86,28 +89,44 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   }
 
   function handleAddCountry(countryName: string) {
-    currentCountryNames.push(countryName);
-  }
+    setCurrentCountryNames([...currentCountryNames, countryName]);
 
-  function handleDeleteCountry(countryName: string) {
-    currentCountryNames = currentCountryNames.filter(
-      (name) => name !== countryName
-    );
-  }
+    const updatedCountryNames = [...currentCountryNames, countryName];
 
-  async function validateInputs(): Promise<void> {
-    // Set all errors to empty array to prevent stacking of errors
-    setIsSubmitting(true);
     setInputs((prevValues) => {
       return {
         ...prevValues,
         countries: {
-          value: currentCountryNames.join(','),
+          value: updatedCountryNames.join(','),
           isValid: true,
           errors: [],
         },
       };
     });
+  }
+
+  function handleDeleteCountry(countryName: string) {
+    setCurrentCountryNames(
+      currentCountryNames.filter((name) => name !== countryName)
+    );
+
+    const updatedCountryNames = [...currentCountryNames, countryName];
+
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        countries: {
+          value: updatedCountryNames.join(','),
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+  }
+
+  async function validateInputs(): Promise<void> {
+    // Set all errors to empty array to prevent stacking of errors
+    setIsSubmitting(true);
 
     for (const key in inputs) {
       inputs[key as keyof JourneyFormValues].errors = [];
@@ -134,6 +153,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         response = await updateJourney(inputs, editJourneyId!);
       }
     } else if (!isEditing) {
+      console.log(inputs);
       response = await createJourney(inputs);
     }
 
@@ -231,6 +251,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         <CountriesSelection
           onAddCountry={handleAddCountry}
           onDeleteCountry={handleDeleteCountry}
+          invalid={!inputs.countries.isValid}
         />
       </View>
       <View style={styles.buttonsContainer}>

@@ -1,10 +1,4 @@
-import {
-  ReactElement,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -16,7 +10,6 @@ import {
 } from '../models';
 import { PlaceContext } from '../store/place-context';
 import PlaceForm from '../components/Locations/Places/PlaceForm';
-import { set } from 'zod';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;

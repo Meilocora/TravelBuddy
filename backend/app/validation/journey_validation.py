@@ -14,14 +14,10 @@ class JourneyValidation(Validation):
             if value['value'] == "" or value['value'] == None:
                 journey[key]['errors'].append(f'Input is required')
                 journey[key]['isValid'] = False
-        
-        if len(journey['countries']['value']) == 0:
-            journey['countries']['errors'].append(f'At least one country is required')
-            journey['countries']['isValid'] = False
             
                  
-        if JourneyValidation().validate_string(journey['name']['value'], min_length=3):
-            journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3)}")
+        if JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50):
+            journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3, 50)}")
             journey['name']['isValid'] = False
             
         # TODO: Check if overlaps with another journey

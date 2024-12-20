@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
@@ -11,14 +11,22 @@ import { generateRandomString } from '../../../utils';
 interface CountriesSelectionProps {
   onAddCountry: (countryName: string) => void;
   onDeleteCountry: (countryName: string) => void;
+  invalid: boolean;
 }
 
 const CountriesSelection: React.FC<CountriesSelectionProps> = ({
   onAddCountry,
   onDeleteCountry,
+  invalid,
 }): ReactElement => {
+  const [isInvalid, setIsInvalid] = useState<boolean>(invalid);
   const [openSelection, setOpenSelection] = useState(false);
   const [countryNames, setCountryNames] = useState<string[]>([]);
+
+  // Synchronize state with prop changes
+  useEffect(() => {
+    setIsInvalid(invalid);
+  }, [invalid]);
 
   function handleAddCountry(countryName: string) {
     onAddCountry(countryName);
@@ -35,11 +43,21 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
     Keyboard.dismiss();
   }
 
+  function handlePressAdd() {
+    setIsInvalid(false);
+    setOpenSelection((prevValue) => !prevValue);
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Countries</Text>
       </View>
+      {isInvalid && (
+        <View>
+          <Text style={styles.errorText}>Please select a country</Text>
+        </View>
+      )}
       {countryNames.length > 0 && (
         <View style={styles.cloudContainer}>
           {countryNames.map((name) => (
@@ -51,10 +69,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
           ))}
         </View>
       )}
-      <IconButton
-        icon={Icons.add}
-        onPress={() => setOpenSelection((prevValue) => !prevValue)}
-      />
+      <IconButton icon={Icons.add} onPress={handlePressAdd} />
       {openSelection && (
         <Selection
           chosenCountries={countryNames}
@@ -95,6 +110,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 8,
+  },
+  errorText: {
+    fontSize: 16,
+    color: GlobalStyles.colors.error200,
+    fontStyle: 'italic',
   },
 });
 

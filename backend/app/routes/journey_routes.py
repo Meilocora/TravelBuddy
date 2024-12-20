@@ -53,6 +53,8 @@ def create_journey(current_user):
     
     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
+    print(journey)
+    
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
     
@@ -67,8 +69,12 @@ def create_journey(current_user):
             done=False,
             user_id=current_user
         )
-        db.session.add(new_journey)
-        db.session.commit()
+        
+        print(new_journey)
+         
+    
+        # db.session.add(new_journey)
+        # db.session.commit()
         
         
         # Create a new costs for the journey
@@ -78,6 +84,9 @@ def create_journey(current_user):
             planned_costs=0,
             money_exceeded=False
         )
+        
+        print(costs)
+        return
         db.session.add(costs)
         db.session.commit()
         
