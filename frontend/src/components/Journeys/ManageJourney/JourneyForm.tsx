@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
   ButtonMode,
@@ -13,6 +13,8 @@ import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
 import CountriesSelection from './CountriesSelection';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { formatDate } from '../../../utils';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -174,6 +176,9 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     const submitButtonLabel = 'Submitting...';
   }
 
+  // TODO: Put into seperate component
+  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+
   return (
     <View style={styles.formContainer}>
       <Text style={styles.header}>Your Journey</Text>
@@ -218,21 +223,46 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
+          {/* TODO: Make whole new component with this */}
           {/* TODO: Change format to DD.MM.YYYY */}
-          <Input
-            label='Starts on'
-            invalid={!inputs.scheduled_start_time.isValid}
-            errors={inputs.scheduled_start_time.errors}
-            textInputConfig={{
-              placeholder: 'YYYY-MM-DD',
-              maxLength: 10,
-              value: inputs.scheduled_start_time.value?.toString(),
-              onChangeText: inputChangedHandler.bind(
-                this,
-                'scheduled_start_time'
-              ),
-            }}
-          />
+          <Pressable onPress={() => setOpenStartDatePicker(true)}>
+            <Input
+              label='Starts on'
+              invalid={!inputs.scheduled_start_time.isValid}
+              errors={inputs.scheduled_start_time.errors}
+              textInputConfig={{
+                placeholder: 'Choose Date',
+                readOnly: true,
+                value: inputs.scheduled_start_time.value?.toString(),
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'scheduled_start_time'
+                ),
+              }}
+            />
+          </Pressable>
+          {openStartDatePicker && (
+            <RNDateTimePicker
+              value={new Date(inputs.scheduled_start_time.value!) || new Date()}
+              minimumDate={new Date()}
+              mode='date'
+              display='calendar'
+              onChange={(event, selectedDate) => {
+                const formattedDate = formatDate(new Date(selectedDate!));
+                setInputs((prevValues) => ({
+                  ...prevValues,
+                  scheduled_start_time: {
+                    value: formattedDate,
+                    isValid: true,
+                    errors: [],
+                  },
+                }));
+                setOpenStartDatePicker(false);
+                console.log(inputs.scheduled_start_time.value);
+              }}
+            />
+          )}
+          {/* TODO: End of new component */}
           <Input
             label='Ends on'
             invalid={!inputs.scheduled_end_time.isValid}
