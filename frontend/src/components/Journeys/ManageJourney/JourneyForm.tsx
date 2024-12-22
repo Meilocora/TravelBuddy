@@ -14,7 +14,8 @@ import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
 import CountriesSelection from './CountriesSelection';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { formatDate } from '../../../utils';
+import { formatDate, parseDate } from '../../../utils';
+import DatePicker from '../../UI/form/DatePicker';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -155,7 +156,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         response = await updateJourney(inputs, editJourneyId!);
       }
     } else if (!isEditing) {
-      console.log(inputs);
       response = await createJourney(inputs);
     }
 
@@ -178,6 +178,27 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
 
   // TODO: Put into seperate component
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+  const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
+
+  function handleChangeDate(
+    inputIdentifier: string,
+    selectedDate: Date | undefined
+  ) {
+    if (selectedDate === undefined) {
+      return;
+    }
+    const formattedDate = formatDate(new Date(selectedDate));
+    setInputs((prevValues) => ({
+      ...prevValues,
+      [inputIdentifier]: {
+        value: formattedDate,
+        isValid: true,
+        errors: [],
+      },
+    }));
+    setOpenStartDatePicker(false);
+    setOpenEndDatePicker(false);
+  }
 
   return (
     <View style={styles.formContainer}>
@@ -223,59 +244,35 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
-          {/* TODO: Make whole new component with this */}
-          {/* TODO: Change format to DD.MM.YYYY */}
-          <Pressable onPress={() => setOpenStartDatePicker(true)}>
-            <Input
-              label='Starts on'
-              invalid={!inputs.scheduled_start_time.isValid}
-              errors={inputs.scheduled_start_time.errors}
-              textInputConfig={{
-                placeholder: 'Choose Date',
-                readOnly: true,
-                value: inputs.scheduled_start_time.value?.toString(),
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'scheduled_start_time'
-                ),
-              }}
-            />
-          </Pressable>
-          {openStartDatePicker && (
-            <RNDateTimePicker
-              value={new Date(inputs.scheduled_start_time.value!) || new Date()}
-              minimumDate={new Date()}
-              mode='date'
-              display='calendar'
-              onChange={(event, selectedDate) => {
-                const formattedDate = formatDate(new Date(selectedDate!));
-                setInputs((prevValues) => ({
-                  ...prevValues,
-                  scheduled_start_time: {
-                    value: formattedDate,
-                    isValid: true,
-                    errors: [],
-                  },
-                }));
-                setOpenStartDatePicker(false);
-                console.log(inputs.scheduled_start_time.value);
-              }}
-            />
-          )}
-          {/* TODO: End of new component */}
-          <Input
-            label='Ends on'
+          <DatePicker
+            openDatePicker={openStartDatePicker}
+            setOpenDatePicker={() => setOpenStartDatePicker(true)}
+            handleChange={handleChangeDate}
+            inputIdentifier='scheduled_start_time'
+            invalid={!inputs.scheduled_start_time.isValid}
+            errors={inputs.scheduled_start_time.errors}
+            value={inputs.scheduled_start_time.value?.toString()}
+            label='Starts on'
+            maximumDate={
+              inputs.scheduled_end_time.value
+                ? parseDate(inputs.scheduled_end_time.value)
+                : undefined
+            }
+          />
+          <DatePicker
+            openDatePicker={openEndDatePicker}
+            setOpenDatePicker={() => setOpenEndDatePicker(true)}
+            handleChange={handleChangeDate}
+            inputIdentifier='scheduled_end_time'
             invalid={!inputs.scheduled_end_time.isValid}
             errors={inputs.scheduled_end_time.errors}
-            textInputConfig={{
-              placeholder: 'YYYY-MM-DD',
-              maxLength: 10,
-              value: inputs.scheduled_end_time.value?.toString(),
-              onChangeText: inputChangedHandler.bind(
-                this,
-                'scheduled_end_time'
-              ),
-            }}
+            value={inputs.scheduled_end_time.value?.toString()}
+            label='Ends on'
+            minimumDate={
+              inputs.scheduled_start_time.value
+                ? parseDate(inputs.scheduled_start_time.value)
+                : undefined
+            }
           />
         </View>
         <CountriesSelection

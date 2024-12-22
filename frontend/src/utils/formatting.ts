@@ -28,6 +28,11 @@ export function formatDate(date: Date): string {
   return `${day}.${month}.${year}`;
 }
 
+export function parseDate(dateString: string): Date {
+  const [day, month, year] = dateString.split('.').map(Number);
+  return new Date(year, month - 1, day); // Months are zero-based in JavaScript Date
+}
+
 // TODO: Change to format DD.MM.YYYY
 export function formatDateString(date: string): string {
   const dateObject = new Date(date);
@@ -37,6 +42,7 @@ export function formatDateString(date: string): string {
   return `${year}-${month}-${day}`;
 }
 
+// TODO: Change to format DD.MM.YYYY
 export function formatDateAndTime(date: string, mode?: string): string {
   const dateObject = new Date(date);
   const day = String(dateObject.getDate()).padStart(2, '0');
