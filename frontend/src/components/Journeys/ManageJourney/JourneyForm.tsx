@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   ButtonMode,
@@ -13,7 +13,6 @@ import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
 import CountriesSelection from './CountriesSelection';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 
@@ -42,6 +41,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   editJourneyId,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+  const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
   const [inputs, setInputs] = useState<JourneyFormValues>({
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
     description: {
@@ -137,7 +138,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
 
     let response: InputValidationResponse;
     if (isEditing) {
-      // TODO: Test when editing a Journey
       const defaultCountryDeleted = defaultCountriesNames.some(
         (country) => !currentCountryNames.includes(country)
       );
@@ -175,10 +175,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
   }
-
-  // TODO: Put into seperate component
-  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
-  const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
 
   function handleChangeDate(
     inputIdentifier: string,
@@ -279,6 +275,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           onAddCountry={handleAddCountry}
           onDeleteCountry={handleDeleteCountry}
           invalid={!inputs.countries.isValid}
+          defaultCountryNames={defaultCountriesNames}
         />
       </View>
       <View style={styles.buttonsContainer}>

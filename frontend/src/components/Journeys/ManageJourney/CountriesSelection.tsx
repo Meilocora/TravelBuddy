@@ -12,12 +12,14 @@ interface CountriesSelectionProps {
   onAddCountry: (countryName: string) => void;
   onDeleteCountry: (countryName: string) => void;
   invalid: boolean;
+  defaultCountryNames?: string[];
 }
 
 const CountriesSelection: React.FC<CountriesSelectionProps> = ({
   onAddCountry,
   onDeleteCountry,
   invalid,
+  defaultCountryNames,
 }): ReactElement => {
   const [isInvalid, setIsInvalid] = useState<boolean>(invalid);
   const [openSelection, setOpenSelection] = useState(false);
@@ -26,6 +28,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
   // Synchronize state with prop changes
   useEffect(() => {
     setIsInvalid(invalid);
+    setCountryNames(defaultCountryNames || []);
   }, [invalid]);
 
   function handleAddCountry(countryName: string) {
@@ -38,7 +41,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
     setCountryNames(countryNames.filter((name) => name !== countryName));
   }
 
-  function handleOutsidePress() {
+  function handleCloseModal() {
     setOpenSelection(false);
     Keyboard.dismiss();
   }
@@ -74,7 +77,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
         <Selection
           chosenCountries={countryNames}
           onAddHandler={handleAddCountry}
-          onCloseModal={handleOutsidePress}
+          onCloseModal={handleCloseModal}
           onFetchRequest={fetchCustomCountries}
         />
       )}

@@ -73,6 +73,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   // TODO: Add Major stages z.b. 3/5
   // TODO: Countrylist, mark countries that are visited
   // TODO: Add Countdown till journey starts
+  // TODO: Journey should start automatically, when start date is reached
 
   return (
     <View style={styles.outerContainer}>
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
     overflow: 'hidden',
-    // backgroundColor: GlobalStyles.colors.gray200,
     backgroundColor: 'transparent',
     elevation: 5,
     shadowColor: GlobalStyles.colors.gray500,

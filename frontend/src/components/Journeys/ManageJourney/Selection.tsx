@@ -14,6 +14,8 @@ import InfoText from '../../UI/InfoText';
 import { GlobalStyles } from '../../../constants/styles';
 import ListItem from '../../UI/search/ListItem';
 import { FetchCustomCountryResponseProps } from '../../../utils/http/custom_country';
+import Button from '../../UI/Button';
+import { ButtonMode, ColorScheme } from '../../../models';
 
 interface SelectionProps {
   onFetchRequest: () => Promise<FetchCustomCountryResponseProps>;
@@ -73,6 +75,14 @@ const Selection = ({
             {item}
           </ListItem>
         ))}
+        <Button
+          colorScheme={ColorScheme.neutral}
+          mode={ButtonMode.flat}
+          onPress={onCloseModal}
+          style={styles.button}
+        >
+          Dismiss
+        </Button>
       </ScrollView>
     );
   } else {
@@ -115,6 +125,9 @@ const styles = StyleSheet.create({
   info: {
     marginVertical: 4,
     marginTop: 4,
+  },
+  button: {
+    marginVertical: 8,
   },
 });
 

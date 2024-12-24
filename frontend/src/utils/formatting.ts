@@ -33,13 +33,12 @@ export function parseDate(dateString: string): Date {
   return new Date(year, month - 1, day); // Months are zero-based in JavaScript Date
 }
 
-// TODO: Change to format DD.MM.YYYY
 export function formatDateString(date: string): string {
-  const dateObject = new Date(date);
+  const dateObject = parseDate(date);
   const day = String(dateObject.getDate()).padStart(2, '0');
   const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   const year = dateObject.getFullYear();
-  return `${year}-${month}-${day}`;
+  return `${day}.${month}.${year}`;
 }
 
 // TODO: Change to format DD.MM.YYYY
@@ -64,8 +63,8 @@ export function formatDurationToDays(
   startDate: string,
   endDate: string
 ): number {
-  const startDateObject = new Date(startDate);
-  const endDateObject = new Date(endDate);
+  const startDateObject = parseDate(startDate);
+  const endDateObject = parseDate(endDate);
 
   return (
     (endDateObject.getTime() - startDateObject.getTime()) /
@@ -97,8 +96,8 @@ export function formatCountdown(startDate: string): string {
 
 export function formatProgress(startDate: string, endDate: string): number {
   const today = new Date();
-  const startDateObject = new Date(startDate);
-  const endDateObject = new Date(endDate);
+  const startDateObject = parseDate(startDate);
+  const endDateObject = parseDate(endDate);
 
   if (today < startDateObject) {
     return 0;

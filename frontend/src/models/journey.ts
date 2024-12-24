@@ -10,7 +10,6 @@ export interface Journey {
   majorStagesIds?: number[];
   costs: Costs;
   countries: string;
-  countriesIds: number[];
 }
 
 export interface JourneyValues {

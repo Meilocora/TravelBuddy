@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import Journey, Costs, MajorStage
+from app.models import Journey, Costs, MajorStage, CustomCountry
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
@@ -35,10 +35,11 @@ def get_journeys(current_user):
                 },
                 'scheduled_start_time': journey.scheduled_start_time,
                 'scheduled_end_time': journey.scheduled_end_time,
-                'countries': journey.countries.split(','),
+                'countries': journey.countries.split(', ')[0],
                 'done': journey.done,
                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
             })    
+        
         return jsonify({'journeys': journeys_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
@@ -52,8 +53,6 @@ def create_journey(current_user):
         return jsonify({'error': 'Unknown error'}, 400) 
     
     response, isValid = JourneyValidation.validate_journey(journey=journey)
-    
-    print(journey)
     
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
@@ -69,14 +68,10 @@ def create_journey(current_user):
             done=False,
             user_id=current_user
         )
-        
-        print(new_journey)
          
-    
-        # db.session.add(new_journey)
-        # db.session.commit()
-        
-        
+        db.session.add(new_journey)
+        db.session.commit()
+         
         # Create a new costs for the journey
         costs = Costs(
             journey_id=new_journey.id,
@@ -85,8 +80,6 @@ def create_journey(current_user):
             money_exceeded=False
         )
         
-        print(costs)
-        return
         db.session.add(costs)
         db.session.commit()
         

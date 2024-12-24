@@ -32,6 +32,7 @@ class Validation:
     return self.__return_feedback()
     
     
+    # TODO: Adjust to DD.MM.YYYY
   def validate_date(self, value: str, min_date: str = None) -> bool | None:
     try:
       datetime.strptime(value, '%Y-%m-%d')
@@ -46,7 +47,8 @@ class Validation:
     finally:
       return self.__return_feedback()
         
-        
+      
+       # TODO: Adjust to DD.MM.YYYY  
   def compare_dates(self, start_date: str, end_date: str) -> bool | str:
     try:
       datetime.strptime(start_date, '%Y-%m-%d')

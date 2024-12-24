@@ -7,5 +7,5 @@ export interface User {
   countriesIds?: number[];
   // TODO: currentJourney
   // TODO: currentCountry
-  // TODO: currency
+  // TODO: defaultCurrency
 }
