@@ -10,6 +10,9 @@ interface PlanningProps {
   route: PlanningRouteProp;
 }
 
+// TODO: Change Background Color
+// TODO: Add Button Right Top to add major stages
+
 const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   const { journeyId, journeyName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();

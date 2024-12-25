@@ -52,6 +52,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_end_time
   );
 
+  console.log(progress);
+
   const navigationJourneyBottomTabs =
     useNavigation<NavigationProp<StackParamList>>();
 

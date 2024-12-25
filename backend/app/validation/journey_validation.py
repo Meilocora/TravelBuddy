@@ -19,8 +19,7 @@ class JourneyValidation(Validation):
         if JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50):
             journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3, 50)}")
             journey['name']['isValid'] = False
-            
-        # TODO: Check if overlaps with another journey
+        
             
         # if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
         #     journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
@@ -56,12 +55,9 @@ class JourneyValidation(Validation):
                   journey[key]['errors'].append(f'Input is required')
                   journey[key]['isValid'] = False
             
-            # TODO: Check if a country is deleted, where a major stage is planned
           if len(journey['countries']['value']) == 0:
               journey['countries']['errors'].append(f'At least one country is required')
-              journey['countries']['isValid'] = False
-        
-                
+              journey['countries']['isValid'] = False    
                     
           if JourneyValidation().validate_string(journey['name']['value'], min_length=3):
               journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 10)}")

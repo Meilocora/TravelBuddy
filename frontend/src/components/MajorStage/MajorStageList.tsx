@@ -1,9 +1,10 @@
 import { ReactElement, useEffect, useState, useContext } from 'react';
 import { FlatList, Text } from 'react-native';
 
-import { fetchMajorStagesById } from '../../utils/http/minor_stage';
+import { fetchMajorStagesById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
+import InfoText from '../UI/InfoText';
 
 interface MajorStageListProps {
   journeyId: number;
@@ -33,11 +34,11 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   }, []);
 
   if (isFetching) {
-    return <Text>Loading...</Text>;
+    return <InfoText content='Loading...' />;
   }
 
   if (majorStageCtx.majorStages.length === 0) {
-    return <Text>No major stages found!</Text>;
+    return <InfoText content='No major stages found!' />;
   }
 
   if (error) {

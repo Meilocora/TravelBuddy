@@ -8,7 +8,6 @@ export interface MajorStage {
   scheduled_end_time: string;
   additional_info: string;
   country: string;
-  countryId: number;
   costs: Costs;
   transportation?: Transportation;
   minorStagesIds?: number[];

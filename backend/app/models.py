@@ -70,13 +70,16 @@ class CustomCountry(db.Model):
 
     # Foreign keys to the parent
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
-    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
+    # TODO: Might delete this
+    # major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
     
     # Define the relationship to the parent
     user: Mapped['User'] = relationship('User', back_populates='custom_countries')
-    major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='custom_country')
+    # TPM: Might delete this
+    # major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='custom_country')
     
     # Many-to-Many relationship with Journey
+    # TODO: Might delete this
     journeys: Mapped[list['Journey']] = relationship(
         'Journey',
         secondary='journeys_custom_countries',
@@ -99,9 +102,11 @@ class MajorStage(db.Model):
     scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
     scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
     additional_info: Mapped[str] = mapped_column(String, nullable=True)
+    country: Mapped[str] = mapped_column(String, nullable=False)
 
     # Define relationships to children
-    custom_country: Mapped['CustomCountry'] = relationship('CustomCountry', back_populates='major_stage', uselist=False, cascade='all')
+    # TODO: Might Delete this
+    # custom_country: Mapped['CustomCountry'] = relationship('CustomCountry', back_populates='major_stage', uselist=False, cascade='all')
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
     transportations: Mapped[list['Transportation']] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
     minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')

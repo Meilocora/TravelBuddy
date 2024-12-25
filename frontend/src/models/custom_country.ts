@@ -17,7 +17,6 @@ export interface CustomCountry {
   visum_regulations?: string;
   best_time_to_visit?: string;
   general_information?: string;
-  // JourneyIds?: number[];
   placesToVisit?: PlaceToVisit[];
 }
 

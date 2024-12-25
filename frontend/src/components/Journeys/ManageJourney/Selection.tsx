@@ -1,13 +1,12 @@
-import { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import {
-  FlatList,
   LayoutAnimation,
   Pressable,
   ScrollView,
   StyleSheet,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import { generateRandomString } from '../../../utils';
 import InfoText from '../../UI/InfoText';
@@ -15,7 +14,7 @@ import { GlobalStyles } from '../../../constants/styles';
 import ListItem from '../../UI/search/ListItem';
 import { FetchCustomCountryResponseProps } from '../../../utils/http/custom_country';
 import Button from '../../UI/Button';
-import { ButtonMode, ColorScheme } from '../../../models';
+import { BottomTabsParamList, ButtonMode, ColorScheme } from '../../../models';
 
 interface SelectionProps {
   onFetchRequest: () => Promise<FetchCustomCountryResponseProps>;
@@ -30,6 +29,7 @@ const Selection = ({
   onCloseModal,
   chosenCountries,
 }: SelectionProps): ReactElement => {
+  const navigation = useNavigation<NavigationProp<BottomTabsParamList>>();
   const [fetchedData, setFetchedData] = useState<string[]>([]);
 
   // Fetch data
@@ -62,6 +62,10 @@ const Selection = ({
     onAddHandler(item);
   }
 
+  function handlePressAdd() {
+    navigation.navigate('Locations');
+  }
+
   let content: ReactElement | null = null;
 
   if (fetchedData.length > 0) {
@@ -86,8 +90,18 @@ const Selection = ({
       </ScrollView>
     );
   } else {
-    // TODO: Add info and link to add custom countries
-    content = <InfoText content='No items found' style={styles.info} />;
+    content = (
+      <>
+        <InfoText content='No items found' style={styles.info} />
+        <Button
+          colorScheme={ColorScheme.accent}
+          onPress={handlePressAdd}
+          mode={ButtonMode.flat}
+        >
+          Add Country
+        </Button>
+      </>
+    );
   }
 
   return (

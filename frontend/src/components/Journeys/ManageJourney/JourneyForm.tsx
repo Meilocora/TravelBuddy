@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -15,6 +15,7 @@ import { createJourney, updateJourney } from '../../../utils/http';
 import CountriesSelection from './CountriesSelection';
 import { formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
+import Modal from '../../UI/Modal';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -43,6 +44,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
+  const [deletedCountries, setDeletedCountries] = useState<string[]>([]);
   const [inputs, setInputs] = useState<JourneyFormValues>({
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
     description: {
@@ -77,7 +79,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     },
   });
 
-  const defaultCountriesNames = defaultValues?.countries.split(',') || [];
+  const defaultCountriesNames = defaultValues?.countries.split(', ') || [];
   // State only exists for easier handling of countryNames
   const [currentCountryNames, setCurrentCountryNames] = useState<string[]>(
     defaultCountriesNames
@@ -101,7 +103,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       return {
         ...prevValues,
         countries: {
-          value: updatedCountryNames.join(','),
+          value: updatedCountryNames.join(', '),
           isValid: true,
           errors: [],
         },
@@ -114,13 +116,15 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       currentCountryNames.filter((name) => name !== countryName)
     );
 
-    const updatedCountryNames = [...currentCountryNames, countryName];
+    const updatedCountryNames = [...currentCountryNames];
 
     setInputs((prevValues) => {
       return {
         ...prevValues,
         countries: {
-          value: updatedCountryNames.join(','),
+          value: currentCountryNames
+            .filter((name) => name !== countryName)
+            .join(', '),
           isValid: true,
           errors: [],
         },
@@ -128,10 +132,17 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     });
   }
 
-  async function validateInputs(): Promise<void> {
-    // Set all errors to empty array to prevent stacking of errors
+  useEffect(() => {
+    // Perform any actions that need to happen after the state has been updated
+    console.log('Countries updated:', inputs.countries.value);
+  }, [inputs.countries.value]);
+
+  async function validateInputs(
+    updateConfirmed: boolean = false
+  ): Promise<void> {
     setIsSubmitting(true);
 
+    // Set all errors to empty array to prevent stacking of errors
     for (const key in inputs) {
       inputs[key as keyof JourneyFormValues].errors = [];
     }
@@ -142,19 +153,15 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         (country) => !currentCountryNames.includes(country)
       );
 
-      if (defaultCountryDeleted) {
-        const deletedCountries = defaultCountriesNames.filter(
-          (country) => !currentCountryNames.includes(country)
-        );
-        // TODO: Turn into text for Modal
-        console.log(
-          `Major Stages and Minor Stages, that are connected to the following countries will be deleted: ${deletedCountries.join(
-            ', '
-          )}`
+      if (!updateConfirmed && defaultCountryDeleted) {
+        setDeletedCountries(
+          defaultCountriesNames.filter(
+            (country) => !currentCountryNames.includes(country)
+          )
         );
         return;
-        response = await updateJourney(inputs, editJourneyId!);
       }
+      response = await updateJourney(inputs, editJourneyId!);
     } else if (!isEditing) {
       response = await createJourney(inputs);
     }
@@ -196,8 +203,22 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     setOpenEndDatePicker(false);
   }
 
+  function closeModalHandler() {
+    setDeletedCountries([]);
+  }
+
   return (
     <View style={styles.formContainer}>
+      {deletedCountries.length > 0 && (
+        <Modal
+          title='Are you sure?'
+          content={`Major Stages and Minor Stages, that are connected to the following countries will be deleted: ${deletedCountries.join(
+            ', '
+          )}`}
+          onConfirm={validateInputs.bind(this, true)}
+          onCancel={closeModalHandler}
+        />
+      )}
       <Text style={styles.header}>Your Journey</Text>
       <View>
         <Input
@@ -286,7 +307,10 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         >
           Cancel
         </Button>
-        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
+        <Button
+          onPress={validateInputs.bind(this, undefined)}
+          colorScheme={ColorScheme.neutral}
+        >
           {submitButtonLabel}
         </Button>
       </View>

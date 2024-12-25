@@ -35,7 +35,7 @@ def get_journeys(current_user):
                 },
                 'scheduled_start_time': journey.scheduled_start_time,
                 'scheduled_end_time': journey.scheduled_end_time,
-                'countries': journey.countries.split(', ')[0],
+                'countries': journey.countries,
                 'done': journey.done,
                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
             })    
@@ -54,8 +54,12 @@ def create_journey(current_user):
     
     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
+    # TODO: Check if overlaps with another journey
+    
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
+    
+    
     
     try:
         # Create a new journey
@@ -93,7 +97,7 @@ def create_journey(current_user):
                 },
                 'scheduled_start_time': new_journey.scheduled_start_time,
                 'scheduled_end_time': new_journey.scheduled_end_time,
-                'countries': new_journey.countries.split(','),
+                'countries': new_journey.countries.split(', '),
                 'done': new_journey.done,
                 'majorStagesIds': []}
         
@@ -111,10 +115,15 @@ def update_journey(current_user, journeyId):
     
     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
+    # TODO: Check if overlaps with another journey
+    # TODO: Check if affects major stages (then don't allow)
+    
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
     
+    
     old_journey = db.get_or_404(Journey, journeyId)
+    
     money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
     
     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
@@ -122,13 +131,23 @@ def update_journey(current_user, journeyId):
     majorStagesIds = [majorStage.id for majorStage in majorStages]
     
     try:
+        # Delete major stages that are not in the new journey, if former countries are not in the new countries
+        current_countries = set(journey['countries']['value'].split(', '))
+        former_countries = set(old_journey.countries.split(', '))
+    
+        if not former_countries.issubset(current_countries):
+            missing_countries = former_countries - current_countries
+            for delete_country in missing_countries:
+                db.session.execute(db.delete(MajorStage).where(MajorStage.country == delete_country))
+                db.session.commit()
+            
         # Update the journey
         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
             name=journey['name']['value'],
             description=journey['description']['value'],
             scheduled_start_time=journey['scheduled_start_time']['value'],
             scheduled_end_time=journey['scheduled_end_time']['value'],
-            countries=journey['countries']['value'][0],
+            countries=journey['countries']['value'],
         ))
         db.session.commit()
         
@@ -164,6 +183,10 @@ def update_journey(current_user, journeyId):
 @token_required
 def delete_journey(current_user, journeyId):
     try:
+        
+        # TODO: Check if its the current journey in user, then delete there aswell
+        
+        
         # Delete the journey from the database
         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
         db.session.commit()

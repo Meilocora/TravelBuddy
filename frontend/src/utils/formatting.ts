@@ -105,7 +105,7 @@ export function formatProgress(startDate: string, endDate: string): number {
     return 1;
   } else {
     const totalDuration = formatDurationToDays(startDate, endDate);
-    const daysPassed = formatDurationToDays(startDate, today.toISOString());
+    const daysPassed = formatDurationToDays(startDate, formatDate(today));
 
     return daysPassed / totalDuration;
   }

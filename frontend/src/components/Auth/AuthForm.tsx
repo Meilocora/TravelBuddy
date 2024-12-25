@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -41,7 +41,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onSwitchMode,
   onAuthenticate,
 }): ReactElement => {
-  const navigation = useNavigation<NavigationProp<StackParamList>>();
+  // const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const [hidePassword, setHidePassword] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);

@@ -98,7 +98,6 @@ def create_custom_country(current_user):
                 best_time_to_visit = None,
                 general_information = None,
                 user_id = current_user,
-                major_stage_id = None
             )
             
             db.session.add(new_country)
