@@ -20,7 +20,6 @@ interface Content {
   }[];
 }
 
-// TODO: Make this 100% generic
 const MainContent: React.FC<MainContentProps> = ({
   minorStage,
   contentState,

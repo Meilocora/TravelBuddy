@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import MainGradient from './src/components/UI/LinearGradients/MainGradient';
 
 import AllJourneys from './src/screens/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
@@ -41,6 +42,7 @@ import ManagePlaceToVisit from './src/screens/ManagePlaceToVisit';
 import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
+import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -51,155 +53,158 @@ const JourneyBottomTabs =
 const navTheme = DefaultTheme;
 navTheme.colors.background = 'transparent';
 
-// TODOS:
-// 1. Add Login and Registration Screens - DONE
-// 2. Add Authentication Context - DONE
-// 3. Add AuthStack and AuthenticatedStack - DONE
-// 4. Add Backend Authentication - DONE
-// 5. Add Backend for country Information - DONE
-// 6. Add Creating a country by choosing from dropdown, and the filling out form - DONE
-// 7. Add Creating PlacesToVisit for the CustomCountry
-// 8. Adjust http requests for Journey, MajorStage and MinorStage (choose country for Journey from dropdown)
-
 const AuthStack = () => {
   return (
-    <Auth.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Auth.Screen name='AuthScreen' component={AuthScreen} />
-    </Auth.Navigator>
+    <>
+      <MainGradient />
+      <Auth.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Auth.Screen name='AuthScreen' component={AuthScreen} />
+      </Auth.Navigator>
+    </>
   );
 };
 
 const BottomTabsNavigator = () => {
   return (
-    <BottomTabs.Navigator
-      screenOptions={({
-        navigation,
-      }: {
-        navigation: BottomTabNavigationProp<BottomTabsParamList>;
-      }) => ({
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-        headerTitleAlign: 'center',
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-        tabBarActiveTintColor: GlobalStyles.colors.accent600,
-        tabBarIconStyle: { color: 'white' },
-        headerRight: ({ tintColor }) => (
-          <IconButton
-            color={tintColor}
-            size={24}
-            icon={Icons.person}
-            onPress={() => {
-              navigation.navigate('UserProfile');
-            }}
-          />
-        ),
-      })}
-    >
-      <BottomTabs.Screen
-        name='AllJourneys'
-        component={AllJourneys}
-        options={{
-          title: 'All Journeys',
-          tabBarLabel: 'Journeys',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.listCircle} size={size} color={color} />
-          ),
-        }}
-      />
-      <BottomTabs.Screen
-        name='ManageJourney'
-        component={ManageJourney}
-        options={({ route }: { route: ManageJourneyRouteProp }) => ({
-          title: !!route.params?.journeyId ? 'Edit Journey' : 'Add Journey',
-          tabBarLabel: !!route.params?.journeyId ? 'Edit' : 'Add',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name={!!route.params?.journeyId ? Icons.edit : Icons.add}
-              size={size}
-              color={color}
+    <>
+      <MainGradient />
+      <BottomTabs.Navigator
+        screenOptions={({
+          navigation,
+        }: {
+          navigation: BottomTabNavigationProp<BottomTabsParamList>;
+        }) => ({
+          headerTintColor: 'white',
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTitleAlign: 'center',
+          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          tabBarActiveTintColor: GlobalStyles.colors.accent600,
+          tabBarIconStyle: { color: 'white' },
+          headerRight: ({ tintColor }) => (
+            <IconButton
+              color={tintColor}
+              size={24}
+              icon={Icons.person}
+              onPress={() => {
+                navigation.navigate('UserProfile');
+              }}
             />
           ),
-          unmountOnBlur: true,
-          presentation: 'modal',
-          animation: 'fade',
         })}
-      />
-      <BottomTabs.Screen
-        name='Locations'
-        component={Locations}
-        options={{
-          tabBarLabel: 'Locations',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.pin} size={size} color={color} />
-          ),
-        }}
-      />
-    </BottomTabs.Navigator>
+      >
+        <BottomTabs.Screen
+          name='AllJourneys'
+          component={AllJourneys}
+          options={{
+            title: 'All Journeys',
+            tabBarLabel: 'Journeys',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.listCircle} size={size} color={color} />
+            ),
+          }}
+        />
+        <BottomTabs.Screen
+          name='ManageJourney'
+          component={ManageJourney}
+          options={({ route }: { route: ManageJourneyRouteProp }) => ({
+            title: !!route.params?.journeyId ? 'Edit Journey' : 'Add Journey',
+            tabBarLabel: !!route.params?.journeyId ? 'Edit' : 'Add',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons
+                name={!!route.params?.journeyId ? Icons.edit : Icons.add}
+                size={size}
+                color={color}
+              />
+            ),
+            unmountOnBlur: true,
+            presentation: 'modal',
+            animation: 'fade',
+          })}
+        />
+        <BottomTabs.Screen
+          name='Locations'
+          component={Locations}
+          options={{
+            tabBarLabel: 'Locations',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.pin} size={size} color={color} />
+            ),
+          }}
+        />
+      </BottomTabs.Navigator>
+    </>
   );
 };
 
 const JourneyBottomTabsNavigator = () => {
   return (
-    <JourneyBottomTabs.Navigator
-      screenOptions={({
-        navigation,
-      }: {
-        navigation: NativeStackNavigationProp<BottomTabsParamList>;
-      }) => ({
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
-        headerTitleAlign: 'center',
-        headerLeft: ({ tintColor }) => (
-          <IconButton
-            color={tintColor}
-            size={24}
-            icon={Icons.arrowBack}
-            onPress={() => {
-              navigation.navigate('AllJourneys');
-            }}
-          />
-        ),
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
-        tabBarInactiveTintColor: GlobalStyles.colors.gray200,
-        tabBarActiveTintColor: 'white',
-        tabBarIconStyle: { color: 'white' },
-      })}
-    >
-      <JourneyBottomTabs.Screen
-        name='Overview'
-        component={Overview}
-        options={{
-          tabBarLabel: 'Overview',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.readerOutline} size={size} color={color} />
+    <>
+      <SecondaryGradient />
+      <JourneyBottomTabs.Navigator
+        screenOptions={({
+          navigation,
+        }: {
+          navigation: NativeStackNavigationProp<BottomTabsParamList>;
+        }) => ({
+          headerTintColor: 'white',
+          headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+          headerTitleAlign: 'center',
+          headerLeft: ({ tintColor }) => (
+            <IconButton
+              color={tintColor}
+              size={24}
+              icon={Icons.arrowBack}
+              onPress={() => {
+                navigation.navigate('AllJourneys');
+              }}
+            />
           ),
-        }}
-      />
-      <JourneyBottomTabs.Screen
-        name='Planning'
-        component={Planning}
-        options={{
-          tabBarLabel: 'Planning',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.calendarOutline} size={size} color={color} />
-          ),
-        }}
-      />
-      <JourneyBottomTabs.Screen
-        name='Map'
-        component={Map}
-        options={{
-          tabBarLabel: 'Map',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={Icons.compassOutline} size={size} color={color} />
-          ),
-        }}
-      />
-    </JourneyBottomTabs.Navigator>
+          tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+          tabBarInactiveTintColor: GlobalStyles.colors.gray200,
+          tabBarActiveTintColor: 'white',
+          tabBarIconStyle: { color: 'white' },
+        })}
+      >
+        <JourneyBottomTabs.Screen
+          name='Overview'
+          component={Overview}
+          options={{
+            tabBarLabel: 'Overview',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.readerOutline} size={size} color={color} />
+            ),
+          }}
+        />
+        <JourneyBottomTabs.Screen
+          name='Planning'
+          component={Planning}
+          options={{
+            tabBarLabel: 'Planning',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons
+                name={Icons.calendarOutline}
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <JourneyBottomTabs.Screen
+          name='Map'
+          component={Map}
+          options={{
+            tabBarLabel: 'Map',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={Icons.compassOutline} size={size} color={color} />
+            ),
+          }}
+        />
+      </JourneyBottomTabs.Navigator>
+    </>
   );
 };
 
@@ -260,6 +265,11 @@ const AuthenticatedStack = () => {
                 <Stack.Screen
                   name='ManageMajorStage'
                   component={ManageMajorStage}
+                  options={() => ({
+                    headerStyle: {
+                      backgroundColor: GlobalStyles.colors.accent700,
+                    },
+                  })}
                 />
               </Stack.Navigator>
             </MinorStageContextProvider>
@@ -303,18 +313,6 @@ const Root = () => {
 export default function App() {
   return (
     <>
-      <LinearGradient
-        style={{
-          height: '100%',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-        colors={['#042f01', '#02461a', '#006f21']}
-        locations={[0.1, 0.85, 1]}
-      />
       <StatusBar style='inverted' />
       <AuthContextProvider>
         <Root />

@@ -36,15 +36,13 @@ def get_custom_countries(current_user):
         custom_countries = CustomCountry.query.filter_by(user_id=current_user).order_by(CustomCountry.name).all()
         response_custom_countries = []
         
-        places_to_visit = []
-        for custom_country in custom_countries:       
+        for custom_country in custom_countries:    
+            places_to_visit = []   
             placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
             if placesToVisit: 
                 places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
                 places_to_visit += places
             
-        
-        for custom_country in custom_countries:
             response_custom_countries.append({'id': custom_country.id,
                                               'name': custom_country.name,
                                               'code': custom_country.code,

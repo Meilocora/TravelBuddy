@@ -10,6 +10,7 @@ import {
 } from '../models';
 import { PlaceContext } from '../store/place-context';
 import PlaceForm from '../components/Locations/Places/PlaceForm';
+import MainGradient from '../components/UI/LinearGradients/MainGradient';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -93,6 +94,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
 
   return (
     <View style={styles.container}>
+      <MainGradient />
       <PlaceForm
         onCancel={() => navigation.goBack()}
         onSubmit={confirmHandler}

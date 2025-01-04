@@ -13,6 +13,7 @@ interface PlanningProps {
 }
 
 // TODO: Change Background Color
+// TODO: Description of Journey missing
 
 const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   const { journeyId, journeyName } = route.params;

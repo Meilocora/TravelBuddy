@@ -95,7 +95,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     additionalInfo = [
       {
         title: 'Departure: ',
-        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`, // TODO: lat + lng for place and quick-link to google maps
+        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`, // TODO: lat + lng for place and quick-link to google maps?
       },
       {
         title: 'Arrival: ',

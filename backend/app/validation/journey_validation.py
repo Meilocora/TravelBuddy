@@ -17,8 +17,9 @@ class JourneyValidation(Validation):
                 journey[key]['isValid'] = False
             
                  
-        if JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50):
-            journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3, 50)}")
+        name_val = JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50)
+        if name_val:
+            journey['name']['errors'].append(f", {name_val}")
             journey['name']['isValid'] = False
             
         
@@ -34,20 +35,24 @@ class JourneyValidation(Validation):
                 journey['scheduled_end_time']['isValid'] = False
                 
             
-        if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
-            journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
+        start_val = JourneyValidation().validate_date(journey['scheduled_start_time']['value'])
+        if start_val:
+            journey['scheduled_start_time']['errors'].append(f", {start_val}")
             journey['scheduled_start_time']['isValid'] = False
         
-        if JourneyValidation().validate_date(journey['scheduled_end_time']['value']):
-            journey['scheduled_end_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_end_time']['value'])}")
+        end_val = JourneyValidation().validate_date(journey['scheduled_end_time']['value'])
+        if end_val:
+            journey['scheduled_end_time']['errors'].append(f", {end_val}")
             journey['scheduled_end_time']['isValid'] = False
             
-        if JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value']):
-            journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])}")
+        start_end_val = JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])
+        if start_end_val:
+            journey['scheduled_start_time']['errors'].append(f", {start_end_val}")
             journey['scheduled_start_time']['isValid'] = False
             
-        if JourneyValidation().validate_amount(journey['available_money']['value']):
-            journey['available_money']['errors'].append(f", {JourneyValidation().validate_amount(journey['available_money']['value'])}")
+        money_val = JourneyValidation().validate_amount(journey['available_money']['value'])
+        if money_val:
+            journey['available_money']['errors'].append(f", {money_val}")
             journey['available_money']['isValid'] = False
             
             
@@ -71,25 +76,30 @@ class JourneyValidation(Validation):
           if len(journey['countries']['value']) == 0:
               journey['countries']['errors'].append(f'At least one country is required')
               journey['countries']['isValid'] = False    
-                    
-          if JourneyValidation().validate_string(journey['name']['value'], min_length=3):
-              journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 10)}")
+              
+          name_val = JourneyValidation().validate_string(journey['name']['value'], min_length=3) 
+          if name_val:
+              journey['name']['errors'].append(f", {name_val}")
               journey['name']['isValid'] = False
                
-          if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
-              journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
+          start_val = JourneyValidation().validate_date(journey['scheduled_start_time']['value'])
+          if start_val:
+              journey['scheduled_start_time']['errors'].append(f", {start_val}")
               journey['scheduled_start_time']['isValid'] = False
             
-          if JourneyValidation().validate_date(journey['scheduled_end_time']['value']):
-              journey['scheduled_end_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_end_time']['value'])}")
+          end_val = JourneyValidation().validate_date(journey['scheduled_end_time']['value'])
+          if end_val:
+              journey['scheduled_end_time']['errors'].append(f", {end_val}")
               journey['scheduled_end_time']['isValid'] = False
                 
-          if JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value']):
-              journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])}")
+          start_end_val = JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])
+          if start_end_val:
+              journey['scheduled_start_time']['errors'].append(f", {start_end_val}")
               journey['scheduled_start_time']['isValid'] = False
                 
-          if JourneyValidation().validate_amount(journey['available_money']['value']):
-              journey['available_money']['errors'].append(f", {JourneyValidation().validate_amount(journey['available_money']['value'])}")
+          money_val = JourneyValidation().validate_amount(journey['available_money']['value'])
+          if money_val:
+              journey['available_money']['errors'].append(f", {money_val}")
               journey['available_money']['isValid'] = False
                 
                 

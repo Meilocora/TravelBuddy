@@ -59,7 +59,6 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
           )}
           <GridInfoLine
             icon={Icons.placesToVisit}
-            // TODO: Fix this
             value={country.placesToVisit?.length.toString() || '0'}
           />
         </View>

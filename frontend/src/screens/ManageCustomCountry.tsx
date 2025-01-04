@@ -27,6 +27,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PlacesList from '../components/Locations/Places/PlacesList';
 import { PlaceContext } from '../store/place-context';
 import { fetchPlaces } from '../utils/http/place_to_visit';
+import MainGradient from '../components/UI/LinearGradients/MainGradient';
 
 interface ManageCustomCountryProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManageCustomCountry'>;
@@ -119,6 +120,7 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
 
   return (
     <>
+      <MainGradient />
       {isShowingPlaces && (
         <PlacesList onCancel={handleTogglePlaces} countryId={countryId} />
       )}
