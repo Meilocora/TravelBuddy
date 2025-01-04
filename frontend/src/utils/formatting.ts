@@ -1,3 +1,4 @@
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { DateFormatMode } from '../models';
 
 export function formatAmount(amount: number): string {
@@ -94,7 +95,7 @@ export function formatCountdown(startDate: string): string {
   return `${days}d ${hours}h ${minutes}m`;
 }
 
-export function formatProgress(startDate: string, endDate: string): number {
+export function formatProgress(startDate: string, endDate: string): Float {
   const today = new Date();
   const startDateObject = parseDate(startDate);
   const endDateObject = parseDate(endDate);
@@ -107,7 +108,7 @@ export function formatProgress(startDate: string, endDate: string): number {
     const totalDuration = formatDurationToDays(startDate, endDate);
     const daysPassed = formatDurationToDays(startDate, formatDate(today));
 
-    return daysPassed / totalDuration;
+    return parseFloat((daysPassed / totalDuration).toFixed(2));
   }
 }
 

@@ -20,6 +20,7 @@ export type StackParamList = {
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
   ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
+  ManageMajorStage: { majorStageId: number | null };
 };
 
 export type AuthStackParamList = {

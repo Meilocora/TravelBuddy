@@ -1,4 +1,5 @@
 from datetime import datetime
+from db import db
 from app.validation.validation import Validation
 
 class JourneyValidation(Validation):
@@ -7,7 +8,7 @@ class JourneyValidation(Validation):
     
   
   @staticmethod
-  def validate_journey(journey):
+  def validate_journey(journey, existing_journeys):
         errors = False
       
         for key, value in journey.items():
@@ -19,19 +20,31 @@ class JourneyValidation(Validation):
         if JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50):
             journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 3, 50)}")
             journey['name']['isValid'] = False
-        
             
-        # if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
-        #     journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
-        #     journey['scheduled_start_time']['isValid'] = False
         
-        # if JourneyValidation().validate_date(journey['scheduled_end_time']['value']):
-        #     journey['scheduled_end_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_end_time']['value'])}")
-        #     journey['scheduled_end_time']['isValid'] = False
+        for existing_journey in existing_journeys:
+            start_val = JourneyValidation().check_for_overlap(journey['scheduled_start_time']['value'], existing_journey.scheduled_start_time, existing_journey.scheduled_end_time, existing_journey.name, mode='start')
+            if start_val:   
+                journey['scheduled_start_time']['errors'].append(f", {start_val}")             
+                journey['scheduled_start_time']['isValid'] = False
+                
+            end_val = JourneyValidation().check_for_overlap(journey['scheduled_end_time']['value'], existing_journey.scheduled_start_time, existing_journey.scheduled_end_time, existing_journey.name, mode='end')
+            if end_val:
+                journey['scheduled_end_time']['errors'].append(f", {end_val}")
+                journey['scheduled_end_time']['isValid'] = False
+                
             
-        # if JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value']):
-        #     journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])}")
-        #     journey['scheduled_start_time']['isValid'] = False
+        if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
+            journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
+            journey['scheduled_start_time']['isValid'] = False
+        
+        if JourneyValidation().validate_date(journey['scheduled_end_time']['value']):
+            journey['scheduled_end_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_end_time']['value'])}")
+            journey['scheduled_end_time']['isValid'] = False
+            
+        if JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value']):
+            journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])}")
+            journey['scheduled_start_time']['isValid'] = False
             
         if JourneyValidation().validate_amount(journey['available_money']['value']):
             journey['available_money']['errors'].append(f", {JourneyValidation().validate_amount(journey['available_money']['value'])}")
@@ -63,12 +76,10 @@ class JourneyValidation(Validation):
               journey['name']['errors'].append(f", {JourneyValidation().validate_string(journey['name']['value'], 10)}")
               journey['name']['isValid'] = False
                
-               # TODO: Check if new start date is after start date of first major stage 
           if JourneyValidation().validate_date(journey['scheduled_start_time']['value']):
               journey['scheduled_start_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_start_time']['value'])}")
               journey['scheduled_start_time']['isValid'] = False
             
-            # TODO: Check if new end date is before end date of last major stage
           if JourneyValidation().validate_date(journey['scheduled_end_time']['value']):
               journey['scheduled_end_time']['errors'].append(f", {JourneyValidation().validate_date(journey['scheduled_end_time']['value'])}")
               journey['scheduled_end_time']['isValid'] = False

@@ -52,8 +52,6 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_end_time
   );
 
-  console.log(progress);
-
   const navigationJourneyBottomTabs =
     useNavigation<NavigationProp<StackParamList>>();
 
@@ -103,7 +101,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
             />
             <Text style={styles.countriesList}>{journey.countries!}</Text>
           </View>
-          <CustomProgressBar progress={progress} />
+          {/* <CustomProgressBar progress={progress} /> */}
         </Pressable>
       </LinearGradient>
     </View>

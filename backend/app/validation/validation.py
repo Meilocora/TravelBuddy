@@ -13,8 +13,6 @@ class Validation:
       return self.error_list[0]
     elif len(self.error_list) > 1:
       return ', '.join(self.error_list)
-      # print(self.error_list)
-      # return self.error_list
   
   
   def validate_string(self, value: str, min_length: int = 1, max_length: int = 250) -> bool | None:    
@@ -32,34 +30,50 @@ class Validation:
     return self.__return_feedback()
     
     
-    # TODO: Adjust to DD.MM.YYYY
   def validate_date(self, value: str, min_date: str = None) -> bool | None:
     try:
-      datetime.strptime(value, '%Y-%m-%d')
+      datetime.strptime(value, '%d.%m.%Y')
     except (TypeError , ValueError):
-      self.error_list.append('Required format: YYYY-MM-DD')
+      self.error_list.append('Required format: DD.MM.YYYY')
     else:
       if not min_date:
         min_date = self.current_date_string
         
-      if datetime.strptime(value, '%Y-%m-%d') < datetime.strptime(min_date, '%Y-%m-%d'):
+      if datetime.strptime(value, '%d.%m.%Y') < datetime.strptime(min_date, '%d.%m.%Y'):
         self.error_list.append('Date cannot be earlier than the current date')
     finally:
       return self.__return_feedback()
         
       
-       # TODO: Adjust to DD.MM.YYYY  
   def compare_dates(self, start_date: str, end_date: str) -> bool | str:
     try:
-      datetime.strptime(start_date, '%Y-%m-%d')
-      datetime.strptime(end_date, '%Y-%m-%d')
+      datetime.strptime(start_date, '%d.%m.%Y')
+      datetime.strptime(end_date, '%d.%m.%Y')
     except (TypeError , ValueError):
       return self.__return_feedback()
     else:
-      if datetime.strptime(start_date, '%Y-%m-%d') > datetime.strptime(end_date, '%Y-%m-%d'):
+      if datetime.strptime(start_date, '%d.%m.%Y') > datetime.strptime(end_date, '%d.%m.%Y'):
         self.error_list.append('Start date cannot be later than end date')
       
       return self.__return_feedback()
+    
+    
+  def check_for_overlap(self, new_date: str, existing_start_date: str, existing_end_date: str, overlap_journey_name: str, mode: str) -> bool:
+    try:
+      new_date = datetime.strptime(new_date, '%d.%m.%Y')
+      existing_start_date = datetime.strptime(existing_start_date, '%d.%m.%Y')
+      existing_end_date = datetime.strptime(existing_end_date, '%d.%m.%Y')
+    except (TypeError , ValueError):
+      print(new_date)
+      self.error_list.append('Error with overlap check occured')
+    else:
+      if new_date > existing_start_date and new_date < existing_end_date:
+        if mode == 'start':
+          self.error_list.append(f'Overlaps with "{overlap_journey_name}"')
+        elif mode == 'end':
+          self.error_list.append(f'Overlaps with "{overlap_journey_name}"')
+        
+    return self.__return_feedback()
     
     
   def validate_amount(self, amount: int):
@@ -76,6 +90,7 @@ class Validation:
         self.error_list.append("Invalid Email")
     
     return self.__return_feedback()
+  
   
   def validate_password(self, password:str, min_length:int = 6, max_length:int = 20):
     print(password)

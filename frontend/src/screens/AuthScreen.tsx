@@ -1,5 +1,5 @@
-import { ReactElement, useContext, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { ReactElement, useContext, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { AuthContext } from '../store/auth-context';
 import MainHeader from '../components/UI/MainHeader';
@@ -48,14 +48,14 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
           onPress={() => setError(null)}
         />
       )}
-      <View style={styles.root}>
+      <ScrollView style={styles.root}>
         <MainHeader title='Travelbuddy' />
         <AuthForm
           onAuthenticate={authHandler}
           isLogin={isLogin}
           onSwitchMode={switchAuthModeHandler}
         />
-      </View>
+      </ScrollView>
     </>
   );
 };

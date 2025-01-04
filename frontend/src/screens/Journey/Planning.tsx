@@ -1,25 +1,38 @@
 import { ReactElement, useLayoutEffect } from 'react';
 import { View } from 'react-native';
 
-import { PlanningRouteProp, StackParamList } from '../../models';
+import { Icons, PlanningRouteProp, StackParamList } from '../../models';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import IconButton from '../../components/UI/IconButton';
 
 interface PlanningProps {
   route: PlanningRouteProp;
+  navigation: NativeStackNavigationProp<StackParamList, 'ManageMajorStage'>;
 }
 
 // TODO: Change Background Color
-// TODO: Add Button Right Top to add major stages
 
 const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   const { journeyId, journeyName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
+  function handleAddMajorStage() {
+    navigation.navigate('ManageMajorStage', { majorStageId: null });
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: journeyName,
+      headerRight: () => (
+        <IconButton
+          icon={Icons.add}
+          onPress={handleAddMajorStage}
+          color={'white'}
+          size={32}
+        />
+      ),
     });
   }, [navigation, journeyName]);
 

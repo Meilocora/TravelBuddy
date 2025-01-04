@@ -11,7 +11,7 @@ journey_bp = Blueprint('journey', __name__)
 def get_journeys(current_user):
     try:
         # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey))
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user))
         journeys = result.scalars().all()
         
         # Fetch costs and major_stages for each journey
@@ -49,16 +49,15 @@ def get_journeys(current_user):
 def create_journey(current_user):
     try:
         journey = request.get_json()
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user))
+        existing_journeys = result.scalars().all()
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
-    response, isValid = JourneyValidation.validate_journey(journey=journey)
-    
-    # TODO: Check if overlaps with another journey
+    response, isValid = JourneyValidation.validate_journey(journey, existing_journeys)
     
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
-    
     
     
     try:
@@ -110,12 +109,14 @@ def create_journey(current_user):
 def update_journey(current_user, journeyId):
     try:
         journey = request.get_json()
+        result = db.session.execute(db.select(Journey).filter(Journey.id != journeyId, Journey.user_id==current_user))
+        existing_journeys = result.scalars().all()
     except:
         return jsonify({'error': 'Unknown error'}, 400)
     
-    response, isValid = JourneyValidation.validate_journey(journey=journey)
     
-    # TODO: Check if overlaps with another journey
+    response, isValid = JourneyValidation.validate_journey(journey, existing_journeys)
+    
     # TODO: Check if affects major stages (then don't allow)
     
     if not isValid:
@@ -185,7 +186,6 @@ def delete_journey(current_user, journeyId):
     try:
         
         # TODO: Check if its the current journey in user, then delete there aswell
-        
         
         # Delete the journey from the database
         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))

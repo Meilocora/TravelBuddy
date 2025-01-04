@@ -40,6 +40,7 @@ import ManageCustomCountry from './src/screens/ManageCustomCountry';
 import ManagePlaceToVisit from './src/screens/ManagePlaceToVisit';
 import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
+import ManageMajorStage from './src/screens/ManageMajorStage';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -255,6 +256,10 @@ const AuthenticatedStack = () => {
                 <Stack.Screen
                   name='ManagePlaceToVisit'
                   component={ManagePlaceToVisit}
+                />
+                <Stack.Screen
+                  name='ManageMajorStage'
+                  component={ManageMajorStage}
                 />
               </Stack.Navigator>
             </MinorStageContextProvider>
