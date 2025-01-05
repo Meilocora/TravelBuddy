@@ -1,6 +1,6 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import JourneysList from '../components/Journeys/JourneysList';
 import { fetchJourneys } from '../utils/http';
@@ -96,13 +96,17 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }
 
   return (
-    <>
+    <View style={styles.root}>
       {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
       {content}
-    </>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});
 
 export default AllJourneys;

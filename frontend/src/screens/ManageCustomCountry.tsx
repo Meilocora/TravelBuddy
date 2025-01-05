@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { View, StyleSheet, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, LayoutAnimation, ViewBase } from 'react-native';
 
 import {
   BottomTabsParamList,
@@ -147,11 +147,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 10,
-    marginVertical: 20,
-    marginHorizontal: 20,
-    backgroundColor: 'rgba(169, 169, 169, 0.2)',
-    borderRadius: 10,
   },
 });
 

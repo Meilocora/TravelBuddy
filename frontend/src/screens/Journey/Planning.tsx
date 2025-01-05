@@ -1,5 +1,5 @@
 import { ReactElement, useLayoutEffect } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { Icons, PlanningRouteProp, StackParamList } from '../../models';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
@@ -38,10 +38,16 @@ const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   }, [navigation, journeyName]);
 
   return (
-    <View>
+    <View style={styles.root}>
       <MajorStageList journeyId={journeyId} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});
 
 export default Planning;

@@ -11,20 +11,18 @@ interface UserProfileProps {
 
 const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   return (
-    <>
+    <View style={styles.root}>
       <MainGradient />
-      <View style={styles.root}>
+      <View>
         <InfoText content='User Profile' />
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

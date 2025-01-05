@@ -43,6 +43,7 @@ import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
+import { StyleSheet } from 'react-native';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -81,9 +82,19 @@ const BottomTabsNavigator = () => {
           headerTintColor: 'white',
           headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
           headerTitleAlign: 'center',
-          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          tabBarStyle: {
+            backgroundColor: GlobalStyles.colors.primary500,
+            borderTopWidth: 1,
+            borderTopColor: GlobalStyles.colors.accent600,
+            height: 55,
+            paddingTop: 5,
+          },
           tabBarActiveTintColor: GlobalStyles.colors.accent600,
           tabBarIconStyle: { color: 'white' },
+          tabBarLabelStyle: {
+            fontSize: 14,
+            marginBottom: 5,
+          },
           headerRight: ({ tintColor }) => (
             <IconButton
               color={tintColor}
@@ -163,10 +174,20 @@ const JourneyBottomTabsNavigator = () => {
               }}
             />
           ),
-          tabBarStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+          tabBarStyle: {
+            backgroundColor: GlobalStyles.colors.accent700,
+            borderTopWidth: 1,
+            borderTopColor: 'white',
+            height: 55,
+            paddingTop: 5,
+          },
           tabBarInactiveTintColor: GlobalStyles.colors.gray200,
           tabBarActiveTintColor: 'white',
           tabBarIconStyle: { color: 'white' },
+          tabBarLabelStyle: {
+            fontSize: 14,
+            marginBottom: 5,
+          },
         })}
       >
         <JourneyBottomTabs.Screen
@@ -225,6 +246,7 @@ const AuthenticatedStack = () => {
                     backgroundColor: GlobalStyles.colors.primary500,
                   },
                   headerTitleAlign: 'center',
+                  headerShadowVisible: false,
                 })}
               >
                 <Stack.Screen

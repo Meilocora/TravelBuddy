@@ -93,7 +93,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.root}>
       <MainGradient />
       <PlaceForm
         onCancel={() => navigation.goBack()}
@@ -109,7 +109,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
   },
 });

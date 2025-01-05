@@ -40,7 +40,7 @@ const Locations: React.FC<LocationsProps> = ({ route }): ReactElement => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.root}>
       {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
       <CustomCountries />
     </View>
@@ -48,7 +48,7 @@ const Locations: React.FC<LocationsProps> = ({ route }): ReactElement => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
   },
 });

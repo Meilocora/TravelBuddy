@@ -5,21 +5,25 @@ import SecondaryGradient from '../components/UI/LinearGradients/SecondaryGradien
 interface ManageMajorStageProps {}
 
 const ManageMajorStage: React.FC<ManageMajorStageProps> = (): ReactElement => {
+  // TODO: Implement Manage Major Stage
+  // 1. Logic for Managing (Add or Update)
+  // 2. Form for Managing Major Stage
+  // 3. HTTP Requests
+  // 4. Backend Integration
+
   return (
-    <>
+    <View style={styles.root}>
       <SecondaryGradient />
-      <View style={styles.root}>
+      <View>
         <Text>Manage Major Stage</Text>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

@@ -149,7 +149,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.root}>
       {isDeleting && (
         <Modal
           title='Are you sure?'
@@ -184,6 +184,9 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 };
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   btnContainer: {
     alignItems: 'center',
     marginTop: 18,

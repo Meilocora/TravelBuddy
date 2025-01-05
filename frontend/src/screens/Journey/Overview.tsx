@@ -1,14 +1,20 @@
 import { ReactElement } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 
 interface OverviewProps {}
 
 const Overview: React.FC<OverviewProps> = (): ReactElement => {
   return (
-    <View>
+    <View style={styles.root}>
       <Text>Overview</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});
 
 export default Overview;

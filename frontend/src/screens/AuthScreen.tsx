@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { AuthContext } from '../store/auth-context';
 import MainHeader from '../components/UI/MainHeader';
@@ -40,7 +40,7 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
   }
 
   return (
-    <>
+    <View style={styles.root}>
       {error && (
         <ErrorOverlay
           title='Authentication failed!'
@@ -48,7 +48,7 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
           onPress={() => setError(null)}
         />
       )}
-      <ScrollView style={styles.root}>
+      <ScrollView>
         <MainHeader title='Travelbuddy' />
         <AuthForm
           onAuthenticate={authHandler}
@@ -56,7 +56,7 @@ const AuthScreen: React.FC<AuthScreenProps> = (): ReactElement => {
           onSwitchMode={switchAuthModeHandler}
         />
       </ScrollView>
-    </>
+    </View>
   );
 };
 
