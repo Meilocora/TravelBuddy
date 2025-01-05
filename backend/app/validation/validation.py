@@ -67,7 +67,7 @@ class Validation:
       print(new_date)
       self.error_list.append('Error with overlap check occured')
     else:
-      if new_date > existing_start_date and new_date < existing_end_date:
+      if new_date >= existing_start_date and new_date <= existing_end_date:
         if mode == 'start':
           self.error_list.append(f'Overlaps with "{overlap_journey_name}"')
         elif mode == 'end':

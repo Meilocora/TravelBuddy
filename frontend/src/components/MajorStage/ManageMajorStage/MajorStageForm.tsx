@@ -4,61 +4,54 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   ButtonMode,
   ColorScheme,
-  JourneyFormValues,
-  JourneyValues,
-  Journey,
+  MajorStage,
+  MajorStageFormValues,
+  MajorStageValues,
 } from '../../../models';
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
-import CountriesSelection from './CountriesSelection';
+import CountriesSelection from './CountrySelector';
 import { formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
+import { Checkbox } from 'react-native-paper';
 
 type InputValidationResponse = {
-  journey?: Journey;
-  journeyFormValues?: JourneyFormValues;
+  majorStage?: MajorStage;
+  majorStageFormValues?: MajorStageFormValues;
   error?: string;
   status: number;
 };
 
-interface JourneyFormProps {
+interface MajorStageFormProps {
   onCancel: () => void;
   onSubmit: (response: InputValidationResponse) => void;
   submitButtonLabel: string;
-  defaultValues?: JourneyValues;
+  defaultValues?: MajorStageValues;
   isEditing?: boolean;
-  editJourneyId?: number;
+  editMajorStageId?: number;
 }
 
-const JourneyForm: React.FC<JourneyFormProps> = ({
+const MajorStageForm: React.FC<MajorStageFormProps> = ({
   onCancel,
   onSubmit,
   submitButtonLabel,
   defaultValues,
   isEditing,
-  editJourneyId,
+  editMajorStageId,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
-  const [deletedCountries, setDeletedCountries] = useState<string[]>([]);
-  const [inputs, setInputs] = useState<JourneyFormValues>({
-    name: { value: defaultValues?.name || '', isValid: true, errors: [] },
-    description: {
-      value: defaultValues?.description || '',
-      isValid: true,
-      errors: [],
-    },
-    available_money: {
-      value: defaultValues?.available_money || 0,
-      isValid: true,
-      errors: [],
-    },
-    planned_costs: {
-      value: defaultValues?.planned_costs || 0,
+
+  // Don't let user change country of major stage
+  // const [deletedCountries, setDeletedCountries] = useState<string[]>([]);
+  const [inputs, setInputs] = useState<MajorStageFormValues>({
+    title: { value: defaultValues?.title || '', isValid: true, errors: [] },
+    done: {
+      value: defaultValues?.done || false,
       isValid: true,
       errors: [],
     },
@@ -72,18 +65,35 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       isValid: true,
       errors: [],
     },
-    countries: {
-      value: defaultValues?.countries || '',
+    additional_info: {
+      value: defaultValues?.additional_info || '',
+      isValid: true,
+      errors: [],
+    },
+    available_money: {
+      value: defaultValues?.available_money || 0,
+      isValid: true,
+      errors: [],
+    },
+    planned_costs: {
+      value: defaultValues?.planned_costs || 0,
+      isValid: true,
+      errors: [],
+    },
+
+    country: {
+      value: defaultValues?.country || '',
       isValid: true,
       errors: [],
     },
   });
 
-  const defaultCountriesNames = defaultValues?.countries.split(', ') || [];
-  // State only exists for easier handling of countryNames
-  const [currentCountryNames, setCurrentCountryNames] = useState<string[]>(
-    defaultCountriesNames
-  );
+  // TODO: Mechanism to choose one country for major stage
+  // const defaultCountriesNames = defaultValues?.countries.split(', ') || [];
+  // // State only exists for easier handling of countryNames
+  // const [currentCountryNames, setCurrentCountryNames] = useState<string[]>(
+  //   defaultCountriesNames
+  // );
 
   function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
     setInputs((currInputs) => {
@@ -94,85 +104,85 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     });
   }
 
-  function handleAddCountry(countryName: string) {
-    setCurrentCountryNames([...currentCountryNames, countryName]);
+  // function handleAddCountry(countryName: string) {
+  //   setCurrentCountryNames([...currentCountryNames, countryName]);
 
-    const updatedCountryNames = [...currentCountryNames, countryName];
+  //   const updatedCountryNames = [...currentCountryNames, countryName];
 
-    setInputs((prevValues) => {
-      return {
-        ...prevValues,
-        countries: {
-          value: updatedCountryNames.join(', '),
-          isValid: true,
-          errors: [],
-        },
-      };
-    });
-  }
+  //   setInputs((prevValues) => {
+  //     return {
+  //       ...prevValues,
+  //       countries: {
+  //         value: updatedCountryNames.join(', '),
+  //         isValid: true,
+  //         errors: [],
+  //       },
+  //     };
+  //   });
+  // }
 
-  function handleDeleteCountry(countryName: string) {
-    setCurrentCountryNames(
-      currentCountryNames.filter((name) => name !== countryName)
-    );
+  // function handleDeleteCountry(countryName: string) {
+  //   setCurrentCountryNames(
+  //     currentCountryNames.filter((name) => name !== countryName)
+  //   );
 
-    const updatedCountryNames = [...currentCountryNames];
+  //   const updatedCountryNames = [...currentCountryNames];
 
-    setInputs((prevValues) => {
-      return {
-        ...prevValues,
-        countries: {
-          value: currentCountryNames
-            .filter((name) => name !== countryName)
-            .join(', '),
-          isValid: true,
-          errors: [],
-        },
-      };
-    });
-  }
+  //   setInputs((prevValues) => {
+  //     return {
+  //       ...prevValues,
+  //       countries: {
+  //         value: currentCountryNames
+  //           .filter((name) => name !== countryName)
+  //           .join(', '),
+  //         isValid: true,
+  //         errors: [],
+  //       },
+  //     };
+  //   });
+  // }
 
-  async function validateInputs(
-    updateConfirmed: boolean = false
-  ): Promise<void> {
-    setIsSubmitting(true);
+  // async function validateInputs(
+  //   updateConfirmed: boolean = false
+  // ): Promise<void> {
+  //   setIsSubmitting(true);
 
-    // Set all errors to empty array to prevent stacking of errors
-    for (const key in inputs) {
-      inputs[key as keyof JourneyFormValues].errors = [];
-    }
+  //   // Set all errors to empty array to prevent stacking of errors
+  //   for (const key in inputs) {
+  //     inputs[key as keyof MajorStageFormValues].errors = [];
+  //   }
 
-    let response: InputValidationResponse;
-    if (isEditing) {
-      const defaultCountryDeleted = defaultCountriesNames.some(
-        (country) => !currentCountryNames.includes(country)
-      );
+  //   let response: InputValidationResponse;
+  //   if (isEditing) {
+  //     const defaultCountryDeleted = defaultCountriesNames.some(
+  //       (country) => !currentCountryNames.includes(country)
+  //     );
 
-      if (!updateConfirmed && defaultCountryDeleted) {
-        setDeletedCountries(
-          defaultCountriesNames.filter(
-            (country) => !currentCountryNames.includes(country)
-          )
-        );
-        return;
-      }
-      response = await updateJourney(inputs, editJourneyId!);
-    } else if (!isEditing) {
-      response = await createJourney(inputs);
-    }
+  //     if (!updateConfirmed && defaultCountryDeleted) {
+  //       setDeletedCountries(
+  //         defaultCountriesNames.filter(
+  //           (country) => !currentCountryNames.includes(country)
+  //         )
+  //       );
+  //       return;
+  //     }
+  //     response = await updateJourney(inputs, editJourneyId!);
+  //   } else if (!isEditing) {
+  //     response = await createJourney(inputs);
+  //   }
 
-    const { error, status, journey, journeyFormValues } = response!;
+  //   const { error, status, journey, journeyFormValues } = response!;
 
-    if (!error && journey) {
-      onSubmit({ journey, status });
-    } else if (error) {
-      onSubmit({ error, status });
-    } else if (journeyFormValues) {
-      setInputs((prevValues) => journeyFormValues);
-    }
-    setIsSubmitting(false);
-    return;
-  }
+  //   if (!error && journey) {
+  //     onSubmit({ journey, status });
+  //   } else if (error) {
+  //     onSubmit({ error, status });
+  //   } else if (journeyFormValues) {
+  //     setInputs((prevValues) => journeyFormValues);
+  //   }
+  //   setIsSubmitting(false);
+  // return;
+  // }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
@@ -198,41 +208,31 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
     setOpenEndDatePicker(false);
   }
 
-  function closeModalHandler() {
-    setDeletedCountries([]);
-  }
+  // function closeModalHandler() {
+  //   setDeletedCountries([]);
+  // }
 
   return (
     <View style={styles.formContainer}>
-      {deletedCountries.length > 0 && (
-        <Modal
-          title='Are you sure?'
-          content={`Major Stages and Minor Stages, that are connected to the following countries will be deleted: ${deletedCountries.join(
-            ', '
-          )}`}
-          onConfirm={validateInputs.bind(this, true)}
-          onCancel={closeModalHandler}
-        />
-      )}
-      <Text style={styles.header}>Your Journey</Text>
+      <Text style={styles.header}>Your Major Stage</Text>
       <View>
         <Input
-          label='Name'
-          invalid={!inputs.name.isValid}
-          errors={inputs.name.errors}
+          label='Title'
+          invalid={!inputs.title.isValid}
+          errors={inputs.title.errors}
           textInputConfig={{
-            value: inputs.name.value,
-            onChangeText: inputChangedHandler.bind(this, 'name'),
+            value: inputs.title.value,
+            onChangeText: inputChangedHandler.bind(this, 'title'),
           }}
         />
         <Input
-          label='Description'
-          invalid={!inputs.description.isValid}
-          errors={inputs.description.errors}
+          label='Additional Information'
+          invalid={!inputs.additional_info.isValid}
+          errors={inputs.additional_info.errors}
           textInputConfig={{
             multiline: true,
-            value: inputs.description.value,
-            onChangeText: inputChangedHandler.bind(this, 'description'),
+            value: inputs.additional_info.value,
+            onChangeText: inputChangedHandler.bind(this, 'additional_info'),
           }}
         />
         <View style={styles.formRow}>
@@ -244,6 +244,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
               placeholder: inputs.planned_costs.value.toString(),
             }}
           />
+
+          {/* TODO: Maximum = sum of all major Stages of Journey - Journey money */}
           <Input
             label='Available Money'
             invalid={!inputs.available_money.isValid}
@@ -256,6 +258,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
+          {/* TODO: journey dates as boundaries for the datepicker! */}
           <DatePicker
             openDatePicker={openStartDatePicker}
             setOpenDatePicker={() => setOpenStartDatePicker(true)}
@@ -287,12 +290,24 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             }
           />
         </View>
-        <CountriesSelection
+        <View style={styles.formRow}>
+          <View style={styles.checkBoxContainer}>
+            <Text style={styles.checkBoxLabel}>Done?</Text>
+            <Checkbox
+              status={inputs.done.value ? 'checked' : 'unchecked'}
+              // onPress={() => inputChangedHandler('visited', !inputs.done.value)}
+              onPress={() => {}}
+              uncheckedColor={GlobalStyles.colors.gray200}
+              color={GlobalStyles.colors.primary100}
+            />
+          </View>
+        </View>
+        {/* <CountriesSelection
           onAddCountry={handleAddCountry}
           onDeleteCountry={handleDeleteCountry}
           invalid={!inputs.countries.isValid}
           defaultCountryNames={defaultCountriesNames}
-        />
+        /> */}
       </View>
       <View style={styles.buttonsContainer}>
         <Button
@@ -303,7 +318,8 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           Cancel
         </Button>
         <Button
-          onPress={validateInputs.bind(this, undefined)}
+          // onPress={validateInputs.bind(this, undefined)}
+          onPress={() => {}}
           colorScheme={ColorScheme.neutral}
         >
           {submitButtonLabel}
@@ -342,6 +358,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
   },
+  checkBoxContainer: {
+    alignItems: 'center',
+    marginHorizontal: 'auto',
+  },
+  checkBoxLabel: {
+    color: GlobalStyles.colors.gray50,
+  },
   buttonsContainer: {
     flexDirection: 'row',
     width: '50%',
@@ -352,4 +375,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default JourneyForm;
+export default MajorStageForm;

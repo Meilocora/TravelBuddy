@@ -20,7 +20,7 @@ export type StackParamList = {
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
   ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
-  ManageMajorStage: { majorStageId: number | null };
+  ManageMajorStage: { majorStageId?: number };
 };
 
 export type AuthStackParamList = {
@@ -46,4 +46,9 @@ export type ManageCustomCountryRouteProp = RouteProp<
 export type ManagePlaceToVisitRouteProp = RouteProp<
   StackParamList,
   'ManagePlaceToVisit'
+>;
+
+export type ManageMajorStageRouteProp = RouteProp<
+  StackParamList,
+  'ManageMajorStage'
 >;

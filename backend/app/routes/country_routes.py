@@ -64,6 +64,49 @@ def get_custom_countries(current_user):
         return jsonify({'customCountries': response_custom_countries, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e), 'status': 500})
+    
+
+@country_bp.route('/get-custom-countries-by-journey\<int:journeyId>', methods=['GET'])
+@token_required
+def get_custom_countries_by_journey(current_user):
+    
+    # TODO: Check link table for countryIds
+    # TODO: Query for all found countryIds, then return countries
+    
+    # TODO: What happens with Journey, when custom country is deleted?
+    
+    try:
+        custom_countries = CustomCountry.query.filter_by(user_id=current_user).order_by(CustomCountry.name).all()
+        response_custom_countries = []
+        
+        for custom_country in custom_countries:    
+            places_to_visit = []   
+            placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
+            if placesToVisit: 
+                places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
+                places_to_visit += places
+            
+            response_custom_countries.append({'id': custom_country.id,
+                                              'name': custom_country.name,
+                                              'code': custom_country.code,
+                                              'timezones': custom_country.timezones.split(',') if custom_country.timezones else None, 
+                                              'currencies': custom_country.currencies.split(',') if custom_country.currencies else None,
+                                              'languages': custom_country.languages.split(',') if custom_country.languages else None,
+                                              'capital': custom_country.capital,
+                                              'population': custom_country.population,
+                                              'region': custom_country.region,
+                                              'subregion': custom_country.subregion,
+                                              'wiki_link': custom_country.wiki_link, 
+                                              'visited': custom_country.visited,
+                                              'visum_regulations': custom_country.visum_regulations,
+                                                'best_time_to_visit': custom_country.best_time_to_visit,
+                                                'general_information': custom_country.general_information,
+                                                'placesToVisit': places_to_visit
+                                              })
+        
+        return jsonify({'customCountries': response_custom_countries, 'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 500})
 
 
 @country_bp.route('/create-custom-country', methods=['POST'])
@@ -171,6 +214,10 @@ def update_country(current_user, customCountryId):
 def delete_custom_country(current_user, customCountryId):
     try:
         countryName = CustomCountry.query.filter_by(id=customCountryId).first().name
+        
+        # TODO: Check if link table contains linked journey, if so return error message, teeling user to delete all linkes journeys and majorStages beforehand
+        
+        
         
         # Delete all Places To Visit aswell
         places = PlaceToVisit.query.filter_by(custom_country_id=customCountryId).all()

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import Journey, Costs, MajorStage, CustomCountry
+from app.models import Journey, Costs, MajorStage, CustomCountry, JourneysCustomCountriesLink
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
@@ -51,6 +51,7 @@ def create_journey(current_user):
         journey = request.get_json()
         result = db.session.execute(db.select(Journey).filter_by(user_id=current_user))
         existing_journeys = result.scalars().all()
+         
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
@@ -86,6 +87,21 @@ def create_journey(current_user):
         db.session.add(costs)
         db.session.commit()
         
+        # Add connection between journey and custom countries to the link table
+        added_countries = journey['countries']['value'].split(', ')
+        for country in added_countries:
+            result = db.session.execute(db.select(CustomCountry).filter_by(name=country, user_id=current_user))
+            custom_country = result.scalars().first()
+            
+            if custom_country:
+                new_link = JourneysCustomCountriesLink(
+                    journey_id=new_journey.id,
+                    custom_country_id=custom_country.id
+                )
+                db.session.add(new_link)
+                db.session.commit()
+        
+        # build response journey object for the frontend
         response_journey = {'id': new_journey.id,
                 'name': new_journey.name,
                 'description': new_journey.description,
@@ -141,6 +157,12 @@ def update_journey(current_user, journeyId):
             for delete_country in missing_countries:
                 db.session.execute(db.delete(MajorStage).where(MajorStage.country == delete_country))
                 db.session.commit()
+                
+                # Delete the connected entries from the link table
+                result = db.session.execute(db.select(CustomCountry).filter_by(name=delete_country, user_id=current_user))
+                delete_country_result = result.scalars().first()
+                db.session.execute(db.delete(JourneysCustomCountriesLink).where(JourneysCustomCountriesLink.custom_country_id == delete_country_result.id))
+                db.session.commit()
             
         # Update the journey
         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
@@ -186,6 +208,17 @@ def delete_journey(current_user, journeyId):
     try:
         
         # TODO: Check if its the current journey in user, then delete there aswell
+        
+        # Delete connected entries in the link table
+        journey = db.get_or_404(Journey, journeyId)
+        countries = journey.countries.split(', ')
+        for country in countries:
+            result = db.session.execute(db.select(CustomCountry).filter_by(name=country, user_id=current_user))
+            custom_country = result.scalars().first()
+            
+            if custom_country:
+                db.session.execute(db.delete(JourneysCustomCountriesLink).where(JourneysCustomCountriesLink.journey_id == journeyId))
+                db.session.commit()
         
         # Delete the journey from the database
         db.session.execute(db.delete(Journey).where(Journey.id == journeyId))

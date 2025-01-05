@@ -46,6 +46,8 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     (journey) => journey.id === editedJourneyId
   );
 
+  // TODO: Bug, that leads to error, when editing a fresh journey (countrynames are not split with ',')
+
   // Empty, when no default values provided
   const [journeyValues, setJourneyValues] = useState<JourneyValues>({
     name: selectedJourney?.name || '',

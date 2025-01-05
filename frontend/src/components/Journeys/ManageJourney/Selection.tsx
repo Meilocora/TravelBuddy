@@ -17,7 +17,9 @@ import Button from '../../UI/Button';
 import { BottomTabsParamList, ButtonMode, ColorScheme } from '../../../models';
 
 interface SelectionProps {
-  onFetchRequest: () => Promise<FetchCustomCountryResponseProps>;
+  onFetchRequest: (
+    journeyId?: number
+  ) => Promise<FetchCustomCountryResponseProps>;
   onAddHandler: (addedItem: string) => void;
   onCloseModal: () => void;
   chosenCountries: string[];
@@ -97,6 +99,7 @@ const Selection = ({
           colorScheme={ColorScheme.accent}
           onPress={handlePressAdd}
           mode={ButtonMode.flat}
+          style={styles.button}
         >
           Add Country
         </Button>
@@ -142,6 +145,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 8,
+    marginHorizontal: 'auto',
+    maxWidth: '40%',
   },
 });
 

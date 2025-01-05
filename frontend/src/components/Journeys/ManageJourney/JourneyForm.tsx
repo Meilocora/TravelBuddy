@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -203,7 +203,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
   }
 
   return (
-    <View style={styles.formContainer}>
+    <>
       {deletedCountries.length > 0 && (
         <Modal
           title='Are you sure?'
@@ -214,102 +214,104 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           onCancel={closeModalHandler}
         />
       )}
-      <Text style={styles.header}>Your Journey</Text>
-      <View>
-        <Input
-          label='Name'
-          invalid={!inputs.name.isValid}
-          errors={inputs.name.errors}
-          textInputConfig={{
-            value: inputs.name.value,
-            onChangeText: inputChangedHandler.bind(this, 'name'),
-          }}
-        />
-        <Input
-          label='Description'
-          invalid={!inputs.description.isValid}
-          errors={inputs.description.errors}
-          textInputConfig={{
-            multiline: true,
-            value: inputs.description.value,
-            onChangeText: inputChangedHandler.bind(this, 'description'),
-          }}
-        />
-        <View style={styles.formRow}>
+      <View style={styles.formContainer}>
+        <Text style={styles.header}>Your Journey</Text>
+        <View>
           <Input
-            label='Planned Costs'
-            invalid={!inputs.planned_costs.isValid}
+            label='Name'
+            invalid={!inputs.name.isValid}
+            errors={inputs.name.errors}
             textInputConfig={{
-              readOnly: true,
-              placeholder: inputs.planned_costs.value.toString(),
+              value: inputs.name.value,
+              onChangeText: inputChangedHandler.bind(this, 'name'),
             }}
           />
           <Input
-            label='Available Money'
-            invalid={!inputs.available_money.isValid}
-            errors={inputs.available_money.errors}
+            label='Description'
+            invalid={!inputs.description.isValid}
+            errors={inputs.description.errors}
             textInputConfig={{
-              keyboardType: 'decimal-pad',
-              value: inputs.available_money.value.toString(),
-              onChangeText: inputChangedHandler.bind(this, 'available_money'),
+              multiline: true,
+              value: inputs.description.value,
+              onChangeText: inputChangedHandler.bind(this, 'description'),
             }}
           />
-        </View>
-        <View style={styles.formRow}>
-          <DatePicker
-            openDatePicker={openStartDatePicker}
-            setOpenDatePicker={() => setOpenStartDatePicker(true)}
-            handleChange={handleChangeDate}
-            inputIdentifier='scheduled_start_time'
-            invalid={!inputs.scheduled_start_time.isValid}
-            errors={inputs.scheduled_start_time.errors}
-            value={inputs.scheduled_start_time.value?.toString()}
-            label='Starts on'
-            maximumDate={
-              inputs.scheduled_end_time.value
-                ? parseDate(inputs.scheduled_end_time.value)
-                : undefined
-            }
+          <View style={styles.formRow}>
+            <Input
+              label='Planned Costs'
+              invalid={!inputs.planned_costs.isValid}
+              textInputConfig={{
+                readOnly: true,
+                placeholder: inputs.planned_costs.value.toString(),
+              }}
+            />
+            <Input
+              label='Available Money'
+              invalid={!inputs.available_money.isValid}
+              errors={inputs.available_money.errors}
+              textInputConfig={{
+                keyboardType: 'decimal-pad',
+                value: inputs.available_money.value.toString(),
+                onChangeText: inputChangedHandler.bind(this, 'available_money'),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <DatePicker
+              openDatePicker={openStartDatePicker}
+              setOpenDatePicker={() => setOpenStartDatePicker(true)}
+              handleChange={handleChangeDate}
+              inputIdentifier='scheduled_start_time'
+              invalid={!inputs.scheduled_start_time.isValid}
+              errors={inputs.scheduled_start_time.errors}
+              value={inputs.scheduled_start_time.value?.toString()}
+              label='Starts on'
+              maximumDate={
+                inputs.scheduled_end_time.value
+                  ? parseDate(inputs.scheduled_end_time.value)
+                  : undefined
+              }
+            />
+            <DatePicker
+              openDatePicker={openEndDatePicker}
+              setOpenDatePicker={() => setOpenEndDatePicker(true)}
+              handleChange={handleChangeDate}
+              inputIdentifier='scheduled_end_time'
+              invalid={!inputs.scheduled_end_time.isValid}
+              errors={inputs.scheduled_end_time.errors}
+              value={inputs.scheduled_end_time.value?.toString()}
+              label='Ends on'
+              minimumDate={
+                inputs.scheduled_start_time.value
+                  ? parseDate(inputs.scheduled_start_time.value)
+                  : undefined
+              }
+            />
+          </View>
+          <CountriesSelection
+            onAddCountry={handleAddCountry}
+            onDeleteCountry={handleDeleteCountry}
+            invalid={!inputs.countries.isValid}
+            defaultCountryNames={defaultCountriesNames}
           />
-          <DatePicker
-            openDatePicker={openEndDatePicker}
-            setOpenDatePicker={() => setOpenEndDatePicker(true)}
-            handleChange={handleChangeDate}
-            inputIdentifier='scheduled_end_time'
-            invalid={!inputs.scheduled_end_time.isValid}
-            errors={inputs.scheduled_end_time.errors}
-            value={inputs.scheduled_end_time.value?.toString()}
-            label='Ends on'
-            minimumDate={
-              inputs.scheduled_start_time.value
-                ? parseDate(inputs.scheduled_start_time.value)
-                : undefined
-            }
-          />
         </View>
-        <CountriesSelection
-          onAddCountry={handleAddCountry}
-          onDeleteCountry={handleDeleteCountry}
-          invalid={!inputs.countries.isValid}
-          defaultCountryNames={defaultCountriesNames}
-        />
+        <View style={styles.buttonsContainer}>
+          <Button
+            onPress={onCancel}
+            colorScheme={ColorScheme.neutral}
+            mode={ButtonMode.flat}
+          >
+            Cancel
+          </Button>
+          <Button
+            onPress={validateInputs.bind(this, undefined)}
+            colorScheme={ColorScheme.neutral}
+          >
+            {submitButtonLabel}
+          </Button>
+        </View>
       </View>
-      <View style={styles.buttonsContainer}>
-        <Button
-          onPress={onCancel}
-          colorScheme={ColorScheme.neutral}
-          mode={ButtonMode.flat}
-        >
-          Cancel
-        </Button>
-        <Button
-          onPress={validateInputs.bind(this, undefined)}
-          colorScheme={ColorScheme.neutral}
-        >
-          {submitButtonLabel}
-        </Button>
-      </View>
-    </View>
+    </>
   );
 };
 

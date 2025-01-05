@@ -1,21 +1,20 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, Text, View } from 'react-native';
+
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { Icons } from '../../../models';
-import TagCloud from '../../UI/TagCloud';
-import Selection from './Selection';
-import { fetchCustomCountries } from '../../../utils/http/custom_country';
-import { generateRandomString } from '../../../utils';
+import { fetchJourneysCustomCountries } from '../../../utils/http/custom_country';
+import Selection from '../../Journeys/ManageJourney/Selection';
 
-interface CountriesSelectionProps {
+interface CountrySelectorProps {
   onAddCountry: (countryName: string) => void;
   onDeleteCountry: (countryName: string) => void;
   invalid: boolean;
   defaultCountryNames?: string[];
 }
 
-const CountriesSelection: React.FC<CountriesSelectionProps> = ({
+const CountrySelector: React.FC<CountrySelectorProps> = ({
   onAddCountry,
   onDeleteCountry,
   invalid,
@@ -63,13 +62,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
       )}
       {countryNames.length > 0 && (
         <View style={styles.cloudContainer}>
-          {countryNames.map((name) => (
-            <TagCloud
-              text={name}
-              onPress={() => handleDeleteCountry(name)}
-              key={generateRandomString()}
-            />
-          ))}
+          {/* TODO: Show selected country here */}
         </View>
       )}
       <IconButton icon={Icons.add} onPress={handlePressAdd} />
@@ -78,7 +71,7 @@ const CountriesSelection: React.FC<CountriesSelectionProps> = ({
           chosenCountries={countryNames}
           onAddHandler={handleAddCountry}
           onCloseModal={handleCloseModal}
-          onFetchRequest={fetchCustomCountries}
+          onFetchRequest={fetchJourneysCustomCountries}
         />
       )}
     </View>
@@ -121,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CountriesSelection;
+export default CountrySelector;

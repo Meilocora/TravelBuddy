@@ -75,7 +75,7 @@ class CustomCountry(db.Model):
     
     # Define the relationship to the parent
     user: Mapped['User'] = relationship('User', back_populates='custom_countries')
-    # TPM: Might delete this
+    # TODO: Might delete this
     # major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='custom_country')
     
     # Many-to-Many relationship with Journey
@@ -87,10 +87,17 @@ class CustomCountry(db.Model):
     )
 
 # join table for many-to-many relationship between journeys and custom_countries
-journeys_custom_countries = db.Table('journeys_custom_countries',
-    db.Column('journey_id', db.Integer, db.ForeignKey('journeys.id'), primary_key=True),
-    db.Column('custom_country_id', db.Integer, db.ForeignKey('custom_countries.id'), primary_key=True)
-)
+class JourneysCustomCountriesLink(db.Model):
+    __tablename__ = 'journeys_custom_countries'
+    __table_args__ = {'extend_existing': True}
+
+    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id'), primary_key=True)
+    custom_country_id: Mapped[int] = mapped_column(Integer, ForeignKey('custom_countries.id'), primary_key=True)
+
+# journeys_custom_countries = db.Table('journeys_custom_countries',
+#     db.Column('journey_id', db.Integer, db.ForeignKey('journeys.id'), primary_key=True),
+#     db.Column('custom_country_id', db.Integer, db.ForeignKey('custom_countries.id'), primary_key=True)
+# )
 
 class MajorStage(db.Model):
     __tablename__ = 'major_stages'
