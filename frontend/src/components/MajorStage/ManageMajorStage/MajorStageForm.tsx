@@ -17,6 +17,7 @@ import { formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
 import { Checkbox } from 'react-native-paper';
+import CountrySelector from './CountrySelector';
 
 type InputValidationResponse = {
   majorStage?: MajorStage;
@@ -32,6 +33,7 @@ interface MajorStageFormProps {
   defaultValues?: MajorStageValues;
   isEditing?: boolean;
   editMajorStageId?: number;
+  journeyId: number;
 }
 
 const MajorStageForm: React.FC<MajorStageFormProps> = ({
@@ -41,13 +43,13 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   defaultValues,
   isEditing,
   editMajorStageId,
+  journeyId,
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
 
-  // Don't let user change country of major stage
-  // const [deletedCountries, setDeletedCountries] = useState<string[]>([]);
+  // TODO: Make sure to handle country changes in the backend
   const [inputs, setInputs] = useState<MajorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
     done: {
@@ -80,7 +82,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-
     country: {
       value: defaultValues?.country || '',
       isValid: true,
@@ -88,14 +89,12 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     },
   });
 
-  // TODO: Mechanism to choose one country for major stage
-  // const defaultCountriesNames = defaultValues?.countries.split(', ') || [];
-  // // State only exists for easier handling of countryNames
-  // const [currentCountryNames, setCurrentCountryNames] = useState<string[]>(
-  //   defaultCountriesNames
-  // );
+  const defaultCountryName = defaultValues?.country || '';
 
-  function inputChangedHandler(inputIdentifier: string, enteredValue: string) {
+  function inputChangedHandler(
+    inputIdentifier: string,
+    enteredValue: string | boolean
+  ) {
     setInputs((currInputs) => {
       return {
         ...currInputs,
@@ -104,43 +103,18 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     });
   }
 
-  // function handleAddCountry(countryName: string) {
-  //   setCurrentCountryNames([...currentCountryNames, countryName]);
-
-  //   const updatedCountryNames = [...currentCountryNames, countryName];
-
-  //   setInputs((prevValues) => {
-  //     return {
-  //       ...prevValues,
-  //       countries: {
-  //         value: updatedCountryNames.join(', '),
-  //         isValid: true,
-  //         errors: [],
-  //       },
-  //     };
-  //   });
-  // }
-
-  // function handleDeleteCountry(countryName: string) {
-  //   setCurrentCountryNames(
-  //     currentCountryNames.filter((name) => name !== countryName)
-  //   );
-
-  //   const updatedCountryNames = [...currentCountryNames];
-
-  //   setInputs((prevValues) => {
-  //     return {
-  //       ...prevValues,
-  //       countries: {
-  //         value: currentCountryNames
-  //           .filter((name) => name !== countryName)
-  //           .join(', '),
-  //         isValid: true,
-  //         errors: [],
-  //       },
-  //     };
-  //   });
-  // }
+  function handleChangeCountry(countryName: string) {
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        country: {
+          value: countryName,
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+  }
 
   // async function validateInputs(
   //   updateConfirmed: boolean = false
@@ -208,33 +182,33 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     setOpenEndDatePicker(false);
   }
 
-  // function closeModalHandler() {
-  //   setDeletedCountries([]);
-  // }
-
   return (
     <View style={styles.formContainer}>
       <Text style={styles.header}>Your Major Stage</Text>
       <View>
-        <Input
-          label='Title'
-          invalid={!inputs.title.isValid}
-          errors={inputs.title.errors}
-          textInputConfig={{
-            value: inputs.title.value,
-            onChangeText: inputChangedHandler.bind(this, 'title'),
-          }}
-        />
-        <Input
-          label='Additional Information'
-          invalid={!inputs.additional_info.isValid}
-          errors={inputs.additional_info.errors}
-          textInputConfig={{
-            multiline: true,
-            value: inputs.additional_info.value,
-            onChangeText: inputChangedHandler.bind(this, 'additional_info'),
-          }}
-        />
+        <View style={styles.formRow}>
+          <Input
+            label='Title'
+            invalid={!inputs.title.isValid}
+            errors={inputs.title.errors}
+            textInputConfig={{
+              value: inputs.title.value,
+              onChangeText: inputChangedHandler.bind(this, 'title'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <Input
+            label='Additional Information'
+            invalid={!inputs.additional_info.isValid}
+            errors={inputs.additional_info.errors}
+            textInputConfig={{
+              multiline: true,
+              value: inputs.additional_info.value,
+              onChangeText: inputChangedHandler.bind(this, 'additional_info'),
+            }}
+          />
+        </View>
         <View style={styles.formRow}>
           <Input
             label='Planned Costs'
@@ -291,23 +265,23 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
+          <CountrySelector
+            onChangeCountry={handleChangeCountry}
+            errors={inputs.country.errors}
+            invalid={false}
+            journeyId={journeyId}
+            defaultCountryName={inputs.country.value}
+          />
           <View style={styles.checkBoxContainer}>
-            <Text style={styles.checkBoxLabel}>Done?</Text>
+            <Text style={styles.checkBoxLabel}>Stage done?</Text>
             <Checkbox
               status={inputs.done.value ? 'checked' : 'unchecked'}
-              // onPress={() => inputChangedHandler('visited', !inputs.done.value)}
-              onPress={() => {}}
+              onPress={() => inputChangedHandler('done', !inputs.done.value)}
               uncheckedColor={GlobalStyles.colors.gray200}
               color={GlobalStyles.colors.primary100}
             />
           </View>
         </View>
-        {/* <CountriesSelection
-          onAddCountry={handleAddCountry}
-          onDeleteCountry={handleDeleteCountry}
-          invalid={!inputs.countries.isValid}
-          defaultCountryNames={defaultCountriesNames}
-        /> */}
       </View>
       <View style={styles.buttonsContainer}>
         <Button
@@ -357,6 +331,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 8,
+    marginHorizontal: 12,
   },
   checkBoxContainer: {
     alignItems: 'center',

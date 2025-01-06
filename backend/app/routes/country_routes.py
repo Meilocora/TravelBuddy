@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import db
 from countryinfo import CountryInfo
-from app.models import CustomCountry, PlaceToVisit
+from app.models import CustomCountry, Journey, PlaceToVisit, JourneysCustomCountriesLink
 from app.validation.country_validation import CountryValidation
 from app.routes.route_protection import token_required
 import re
@@ -66,17 +66,19 @@ def get_custom_countries(current_user):
         return jsonify({'error': str(e), 'status': 500})
     
 
-@country_bp.route('/get-custom-countries-by-journey\<int:journeyId>', methods=['GET'])
+@country_bp.route('/get-custom-countries-by-journey/<int:journeyId>', methods=['GET'])
 @token_required
-def get_custom_countries_by_journey(current_user):
-    
-    # TODO: Check link table for countryIds
-    # TODO: Query for all found countryIds, then return countries
-    
-    # TODO: What happens with Journey, when custom country is deleted?
-    
-    try:
-        custom_countries = CustomCountry.query.filter_by(user_id=current_user).order_by(CustomCountry.name).all()
+def get_custom_countries_by_journey(current_user, journeyId):
+    try:        
+        result = db.session.execute(db.select(JourneysCustomCountriesLink).filter_by(journey_id=journeyId))
+        link_result = result.scalars().all()
+        countryIds = [link.custom_country_id for link in link_result]
+        custom_countries = []
+        
+        for countryId in countryIds:
+            custom_country = CustomCountry.query.filter_by(id=countryId).order_by(CustomCountry.name).first()
+            custom_countries.append(custom_country)
+        
         response_custom_countries = []
         
         for custom_country in custom_countries:    
@@ -215,9 +217,13 @@ def delete_custom_country(current_user, customCountryId):
     try:
         countryName = CustomCountry.query.filter_by(id=customCountryId).first().name
         
-        # TODO: Check if link table contains linked journey, if so return error message, teeling user to delete all linkes journeys and majorStages beforehand
-        
-        
+        # Check if country is linked to a Journey
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user))
+        journeys = result.scalars().all()
+        for journey in journeys:
+            countries = journey.countries.split(',')
+            if countryName in countries:
+                return jsonify({'error': f'Country is linked to a "{journey.name}". Please delete the Journey first.', 'status': 400})
         
         # Delete all Places To Visit aswell
         places = PlaceToVisit.query.filter_by(custom_country_id=customCountryId).all()

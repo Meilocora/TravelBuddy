@@ -20,7 +20,10 @@ const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleAddMajorStage() {
-    navigation.navigate('ManageMajorStage', { majorStageId: null });
+    navigation.navigate('ManageMajorStage', {
+      majorStageId: undefined,
+      journeyId: journeyId,
+    });
   }
 
   useLayoutEffect(() => {

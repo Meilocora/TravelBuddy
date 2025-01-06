@@ -60,6 +60,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
 
   const majorStageCtx = useContext(MajorStageContext);
   const editedMajorStageId = route.params?.majorStageId;
+  const journeyId = route.params.journeyId;
   let isEditing = !!editedMajorStageId;
 
   const selectedMajorStage = majorStageCtx.majorStages.find(
@@ -202,6 +203,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
           defaultValues={isEditing ? majorStageValues : undefined}
           isEditing={isEditing}
           editMajorStageId={editedMajorStageId}
+          journeyId={journeyId}
         />
         {isEditing && (
           <View style={styles.btnContainer}>

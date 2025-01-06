@@ -11,7 +11,7 @@ journey_bp = Blueprint('journey', __name__)
 def get_journeys(current_user):
     try:
         # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user))
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(Journey.scheduled_start_time))
         journeys = result.scalars().all()
         
         # Fetch costs and major_stages for each journey
@@ -43,6 +43,7 @@ def get_journeys(current_user):
         return jsonify({'journeys': journeys_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    
     
 @journey_bp.route('/create-journey', methods=['POST'])
 @token_required

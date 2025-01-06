@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from app.routes.route_protection import token_required
 from db import db
-from app.models import Costs, MajorStage, Transportation, MinorStage
+from app.models import Costs, MajorStage, Transportation, MinorStage, Journey
+from app.validation.major_stage_validation import MajorStageValidation
 
 major_stage_bp = Blueprint('major_stage', __name__)
 
@@ -55,51 +56,57 @@ def get_major_stages(journeyId):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
-#     @journey_bp.route('/create-journey', methods=['POST'])
-# @token_required
-# def create_journey(current_user):
-#     try:
-#         journey = request.get_json()
-#     except:
-#         return jsonify({'error': 'Unknown error'}, 400) 
-    
-#     response, isValid = JourneyValidation.validate_journey(journey=journey)
-    
-#     # TODO: Check if overlaps with another Major Stage
-      # TODO: Check if is inside Journey 
-      # TODO: Costs can't be higher than planned money of journey
-    
-#     if not isValid:
-#         return jsonify({'journeyFormValues': response, 'status': 400})
-    
-    
-    
-#     try:
-#         # Create a new journey
-#         new_journey = Journey(
-#             name=journey['name']['value'],
-#             description=journey['description']['value'],
-#             scheduled_start_time=journey['scheduled_start_time']['value'],
-#             scheduled_end_time=journey['scheduled_end_time']['value'],
-#             countries=journey['countries']['value'],
-#             done=False,
-#             user_id=current_user
-#         )
-         
-#         db.session.add(new_journey)
-#         db.session.commit()
-         
-#         # Create a new costs for the journey
-#         costs = Costs(
-#             journey_id=new_journey.id,
-#             available_money=journey['available_money']['value'],
-#             planned_costs=0,
-#             money_exceeded=False
-#         )
+
+@major_stage_bp.route('/create-major-stage/<int:journeyId>', methods=['POST'])
+@token_required
+def create_major_stage(current_user, journeyId):
+    try:
+        major_stage = request.get_json()
+        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
+        existing_major_stages = result.scalars().all()
         
-#         db.session.add(costs)
-#         db.session.commit()
+        journey = db.session.execute(db.select(Journey).filter_by(id=journeyId, user_id=current_user)).scalars().first()
+         
+    except:
+        return jsonify({'error': 'Unknown error'}, 400) 
+    
+    response, isValid = MajorStageValidation.validate_major_stage(major_stage, existing_major_stages, journey)
+    
+    if not isValid:
+        return jsonify({'journeyFormValues': response, 'status': 400})
+    
+    
+    try:
+        # Create a new major stage
+        new_major_stage = MajorStage(
+            title=major_stage['title']['value'],
+            done=False,
+            scheduled_start_time=major_stage['scheduled_start_time']['value'],
+            scheduled_end_time=major_stage['scheduled_end_time']['value'],
+            additional_info=major_stage['additional_info']['value'],
+            country=major_stage['country']['value'],
+            journey_id=journeyId
+        )
+         
+        db.session.add(new_major_stage)
+        db.session.commit()
+         
+        # Create a new costs for the major stage
+        costs = Costs(
+            major_stage_id=new_major_stage.id,
+            available_money=major_stage['available_money']['value'],
+            planned_costs=0,
+            money_exceeded=False
+        )
         
+        db.session.add(costs)
+        db.session.commit()
+
+        # TODO: Also recalculate planned money for journey and change money_exceeded if needed
+        # TODO: Journey must be refetched from database to get the new planned money
+        
+        
+        # build response major stage object for the frontend
 #         response_journey = {'id': new_journey.id,
 #                 'name': new_journey.name,
 #                 'description': new_journey.description,
@@ -115,23 +122,23 @@ def get_major_stages(journeyId):
 #                 'majorStagesIds': []}
         
 #         return jsonify({'journey': response_journey,'status': 201})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
     
 # @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
 # @token_required
 # def update_journey(current_user, journeyId):
 #     try:
 #         journey = request.get_json()
+#         result = db.session.execute(db.select(Journey).filter(Journey.id != journeyId, Journey.user_id==current_user))
+#         existing_journeys = result.scalars().all()
 #     except:
 #         return jsonify({'error': 'Unknown error'}, 400)
     
-#     response, isValid = JourneyValidation.validate_journey(journey=journey)
     
-#     # TODO: Check if overlaps with another major Stage
-      # TODO: Check if is still inside Journey
-#     # TODO: Check if change of dates affects minor stages (then don't allow)
-      # TODO: Check if costs still in budget of Journey
+#     response, isValid = JourneyValidation.validate_journey(journey, existing_journeys)
+    
+#     # TODO: Check if affects major stages (then don't allow)
     
 #     if not isValid:
 #         return jsonify({'journeyFormValues': response, 'status': 400})
@@ -154,6 +161,12 @@ def get_major_stages(journeyId):
 #             missing_countries = former_countries - current_countries
 #             for delete_country in missing_countries:
 #                 db.session.execute(db.delete(MajorStage).where(MajorStage.country == delete_country))
+#                 db.session.commit()
+                
+#                 # Delete the connected entries from the link table
+#                 result = db.session.execute(db.select(CustomCountry).filter_by(name=delete_country, user_id=current_user))
+#                 delete_country_result = result.scalars().first()
+#                 db.session.execute(db.delete(JourneysCustomCountriesLink).where(JourneysCustomCountriesLink.custom_country_id == delete_country_result.id))
 #                 db.session.commit()
             
 #         # Update the journey
@@ -191,7 +204,6 @@ def get_major_stages(journeyId):
 #         return jsonify({'journey': response_journey,'status': 200})
 #     except Exception as e:
 #         return jsonify({'error': str(e)}, 500)
-        
     
     
 @major_stage_bp.route('/delete-major-stage/<int:majorStageId>', methods=['DELETE'])
