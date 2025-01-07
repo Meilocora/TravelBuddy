@@ -37,6 +37,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           label={label}
           invalid={invalid}
           errors={errors}
+          mandatory
           textInputConfig={{
             placeholder: 'Choose Date',
             readOnly: true,

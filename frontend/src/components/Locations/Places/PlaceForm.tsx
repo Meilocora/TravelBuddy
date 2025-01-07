@@ -155,6 +155,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
               label='Name'
               invalid={!inputs.name.isValid}
               errors={inputs.name.errors}
+              mandatory
               textInputConfig={{
                 value: inputs.name.value,
                 onChangeText: inputChangedHandler.bind(this, 'name'),
@@ -166,6 +167,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
               label='Description'
               invalid={!inputs.description.isValid}
               errors={inputs.description.errors}
+              mandatory
               textInputConfig={{
                 value: inputs.description.value,
                 onChangeText: inputChangedHandler.bind(this, 'description'),

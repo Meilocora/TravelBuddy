@@ -65,3 +65,7 @@ def get_minor_stages(majorStageId):
         return jsonify({'minorStages': minor_stages_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    
+    
+
+# TODO: Add feature to enter additional spent money + title (new database table, that is child to minor stage)

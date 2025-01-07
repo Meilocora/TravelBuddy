@@ -10,7 +10,6 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import MainGradient from './src/components/UI/LinearGradients/MainGradient';
 
 import AllJourneys from './src/screens/AllJourneys';
@@ -43,7 +42,9 @@ import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
-import { StyleSheet } from 'react-native';
+
+// TODO: Change "planned money" to "spent money" and "available money" to "budget" everywhere
+// TODO: Use object destructuring for all props in http requests + forms and managing screens
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

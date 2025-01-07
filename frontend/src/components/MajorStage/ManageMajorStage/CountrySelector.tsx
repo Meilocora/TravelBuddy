@@ -108,6 +108,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
             <Input
               label='Country'
               errors={errors}
+              mandatory
               textInputConfig={{
                 value: countryName,
                 readOnly: true,
@@ -151,9 +152,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   blurView: {
-    // TODO: Might Rework this , so it works for alle devices
-    marginHorizontal: -24,
-    marginVertical: -100,
+    // TODO: Rework this , so it works for alle devices
+    marginHorizontal: -36,
+    marginVertical: -600,
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
     overflow: 'hidden',

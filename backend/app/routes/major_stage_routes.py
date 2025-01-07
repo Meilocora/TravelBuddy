@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from app.routes.route_protection import token_required
 from db import db
+from app.routes.route_protection import token_required
 from app.models import Costs, MajorStage, Transportation, MinorStage, Journey
 from app.validation.major_stage_validation import MajorStageValidation
 
@@ -51,7 +51,6 @@ def get_major_stages(journeyId):
                 'minorStagesIds': [minorStage.id for minorStage in minorStages]
             })
         
-        # return jsonify({'error': 'This is an error!', 'status': 500})
         return jsonify({'majorStages': major_stages_list, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
@@ -73,7 +72,7 @@ def create_major_stage(current_user, journeyId):
     response, isValid = MajorStageValidation.validate_major_stage(major_stage, existing_major_stages, journey)
     
     if not isValid:
-        return jsonify({'journeyFormValues': response, 'status': 400})
+        return jsonify({'majorStageFormValues': response, 'status': 400})
     
     
     try:
@@ -101,27 +100,23 @@ def create_major_stage(current_user, journeyId):
         
         db.session.add(costs)
         db.session.commit()
-
-        # TODO: Also recalculate planned money for journey and change money_exceeded if needed
-        # TODO: Journey must be refetched from database to get the new planned money
-        
         
         # build response major stage object for the frontend
-#         response_journey = {'id': new_journey.id,
-#                 'name': new_journey.name,
-#                 'description': new_journey.description,
-#                 'costs': {
-#                     'available_money': costs.available_money,
-#                     'planned_costs': costs.planned_costs,
-#                     'money_exceeded': costs.money_exceeded,
-#                 },
-#                 'scheduled_start_time': new_journey.scheduled_start_time,
-#                 'scheduled_end_time': new_journey.scheduled_end_time,
-#                 'countries': new_journey.countries.split(', '),
-#                 'done': new_journey.done,
-#                 'majorStagesIds': []}
+        response_major_stage = {'id': new_major_stage.id,
+                                'title': new_major_stage.title,
+                                'done': new_major_stage.done,
+                                'scheduled_start_time': new_major_stage.scheduled_start_time,
+                                'scheduled_end_time': new_major_stage.scheduled_end_time,
+                                'additional_info': new_major_stage.additional_info,
+                                'country': new_major_stage.country,
+                                'costs': {
+                                    'available_money': costs.available_money,
+                                    'planned_costs': costs.planned_costs,
+                                    'money_exceeded': costs.money_exceeded
+                                },  
+                                'minorStagesIds': []}
         
-#         return jsonify({'journey': response_journey,'status': 201})
+        return jsonify({'majorStage': response_major_stage,'status': 201})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     

@@ -221,6 +221,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             label='Name'
             invalid={!inputs.name.isValid}
             errors={inputs.name.errors}
+            mandatory
             textInputConfig={{
               value: inputs.name.value,
               onChangeText: inputChangedHandler.bind(this, 'name'),
@@ -230,6 +231,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             label='Description'
             invalid={!inputs.description.isValid}
             errors={inputs.description.errors}
+            mandatory
             textInputConfig={{
               multiline: true,
               value: inputs.description.value,

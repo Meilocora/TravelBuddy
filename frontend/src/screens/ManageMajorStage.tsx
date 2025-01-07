@@ -46,11 +46,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   route,
   navigation,
 }): ReactElement => {
-  // TODO: Implement Manage Major Stage
-  // 1. Logic for Managing (Add or Update)
-  // 2. Form for Managing Major Stage
-  // 3. HTTP Requests
-  // 4. Backend Integration
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 

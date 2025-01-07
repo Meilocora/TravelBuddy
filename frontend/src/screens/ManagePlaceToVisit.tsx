@@ -11,6 +11,7 @@ import {
 import { PlaceContext } from '../store/place-context';
 import PlaceForm from '../components/Locations/Places/PlaceForm';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
+import { CustomCountryContext } from '../store/custom-country-context';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -32,6 +33,8 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   const placeCtx = useContext(PlaceContext);
   const placeId = route.params?.placeId;
   let isEditing = !!placeId;
+
+  const customCountryCtx = useContext(CustomCountryContext);
 
   const selectedPlace = placeCtx.placesToVisit.find(
     (place) => place.id === placeId
@@ -62,6 +65,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         return;
       } else if (place && status === 200) {
         placeCtx.updatePlace(place);
+        customCountryCtx.refetchCustomCountries();
         navigation.goBack();
       }
     } else {
@@ -70,6 +74,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         return;
       } else if (place && status === 201) {
         placeCtx.addPlace(place);
+        customCountryCtx.refetchCustomCountries();
         navigation.goBack();
       }
     }
@@ -81,6 +86,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
       return;
     } else if (response.status === 200) {
       placeCtx.deletePlace(placeId);
+      customCountryCtx.refetchCustomCountries();
       navigation.goBack();
     }
   }

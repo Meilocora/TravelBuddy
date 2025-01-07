@@ -1,6 +1,9 @@
 from datetime import datetime
+import locale
 from db import db
 from app.validation.validation import Validation
+
+locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 class MajorStageValidation(Validation):
   def __init__(self):
@@ -58,12 +61,14 @@ class MajorStageValidation(Validation):
             majorStage['available_money']['errors'].append(f", {money_val}")
             majorStage['available_money']['isValid'] = False
             
-        planned_journey_money = majorStage['available_money']['value']
+        available_major_stages_money = majorStage['available_money']['value']
         available_journey_money = journey['available_money']['value']
         for existing_major_stage in existing_major_stages:
-            planned_journey_money += existing_major_stage.available_money
-        if planned_journey_money > available_journey_money:
-            majorStage['available_money']['errors'].append(f", Exceeds total available money of journey")
+            available_major_stages_money += existing_major_stage.available_money
+        if available_major_stages_money > available_journey_money:
+            max_available_money = available_major_stages_money - majorStage['available_money']['value']
+            max_available_money_str = locale.currency(max_available_money, grouping=True)
+            majorStage['available_money']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
             majorStage['available_money']['isValid'] = False
         
             

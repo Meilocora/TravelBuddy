@@ -113,7 +113,7 @@ def create_journey(current_user):
                 },
                 'scheduled_start_time': new_journey.scheduled_start_time,
                 'scheduled_end_time': new_journey.scheduled_end_time,
-                'countries': new_journey.countries.split(', '),
+                'countries': new_journey.countries,
                 'done': new_journey.done,
                 'majorStagesIds': []}
         

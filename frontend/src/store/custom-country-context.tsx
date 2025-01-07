@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 
 import { CustomCountry } from '../models';
+import { fetchCustomCountries } from '../utils/http/custom_country';
 
 interface CustomCountryContextType {
   customCountries: CustomCountry[];
@@ -8,6 +9,7 @@ interface CustomCountryContextType {
   addCustomCountry: (customCountry: CustomCountry) => void;
   deleteCustomCountry: (customCountryId: number) => void;
   updateCustomCountry: (customCountry: CustomCountry) => void;
+  refetchCustomCountries: () => Promise<void>;
 }
 
 export const CustomCountryContext = createContext<CustomCountryContextType>({
@@ -16,6 +18,7 @@ export const CustomCountryContext = createContext<CustomCountryContextType>({
   addCustomCountry: () => {},
   deleteCustomCountry: () => {},
   updateCustomCountry: () => {},
+  refetchCustomCountries: async () => {},
 });
 
 export default function CustomCountryContextProvider({
@@ -24,6 +27,13 @@ export default function CustomCountryContextProvider({
   children: React.ReactNode;
 }) {
   const [customCountries, setCustomCountries] = useState<CustomCountry[]>([]);
+
+  async function refetchCustomCountries(): Promise<void> {
+    const response = await fetchCustomCountries();
+    if (response.data) {
+      setCustomCountries(response.data);
+    }
+  }
 
   function addCustomCountry(customCountry: CustomCountry) {
     setCustomCountries((prevCustomCountries) => [
@@ -56,6 +66,7 @@ export default function CustomCountryContextProvider({
     addCustomCountry,
     deleteCustomCountry,
     updateCustomCountry,
+    refetchCustomCountries,
   };
 
   return (

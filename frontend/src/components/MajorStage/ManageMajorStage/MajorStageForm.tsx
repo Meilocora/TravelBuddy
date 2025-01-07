@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -11,13 +11,13 @@ import {
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
-import { createJourney, updateJourney } from '../../../utils/http';
-import CountriesSelection from './CountrySelector';
-import { formatDate, parseDate } from '../../../utils';
+import { formatAmount, formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
 import { Checkbox } from 'react-native-paper';
 import CountrySelector from './CountrySelector';
+import { JourneyContext } from '../../../store/journey-context';
+import { MajorStageContext } from '../../../store/majorStage-context.';
 
 type InputValidationResponse = {
   majorStage?: MajorStage;
@@ -45,11 +45,25 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   editMajorStageId,
   journeyId,
 }): ReactElement => {
+  const journeyCtx = useContext(JourneyContext);
+  const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
+  const minStartDate = journey!.scheduled_start_time;
+  const maxEndDate = journey!.scheduled_end_time;
+  let maxAvailableMoney = journey!.costs.available_money;
+
+  const majorStagesIds = journey?.majorStagesIds;
+  const majorStageCtx = useContext(MajorStageContext);
+  majorStagesIds?.forEach((id) => {
+    maxAvailableMoney -=
+      majorStageCtx.majorStages.find((ms) => ms.id === id)?.costs
+        .planned_costs || 0;
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
 
-  // TODO: Make sure to handle country changes in the backend
+  // TODO: Make sure to handle country changes in the backend (UPDATE)
   const [inputs, setInputs] = useState<MajorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
     done: {
@@ -191,6 +205,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             label='Title'
             invalid={!inputs.title.isValid}
             errors={inputs.title.errors}
+            mandatory
             textInputConfig={{
               value: inputs.title.value,
               onChangeText: inputChangedHandler.bind(this, 'title'),
@@ -218,21 +233,23 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
               placeholder: inputs.planned_costs.value.toString(),
             }}
           />
-
-          {/* TODO: Maximum = sum of all major Stages of Journey - Journey money */}
           <Input
             label='Available Money'
             invalid={!inputs.available_money.isValid}
             errors={inputs.available_money.errors}
+            mandatory
             textInputConfig={{
               keyboardType: 'decimal-pad',
-              value: inputs.available_money.value.toString(),
+              value:
+                inputs.available_money.value !== 0
+                  ? inputs.available_money.value.toString()
+                  : '',
               onChangeText: inputChangedHandler.bind(this, 'available_money'),
+              placeholder: `Max: ${formatAmount(maxAvailableMoney)}`,
             }}
           />
         </View>
         <View style={styles.formRow}>
-          {/* TODO: journey dates as boundaries for the datepicker! */}
           <DatePicker
             openDatePicker={openStartDatePicker}
             setOpenDatePicker={() => setOpenStartDatePicker(true)}
@@ -242,10 +259,11 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             errors={inputs.scheduled_start_time.errors}
             value={inputs.scheduled_start_time.value?.toString()}
             label='Starts on'
+            minimumDate={parseDate(minStartDate)}
             maximumDate={
               inputs.scheduled_end_time.value
                 ? parseDate(inputs.scheduled_end_time.value)
-                : undefined
+                : parseDate(maxEndDate)
             }
           />
           <DatePicker
@@ -260,8 +278,9 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             minimumDate={
               inputs.scheduled_start_time.value
                 ? parseDate(inputs.scheduled_start_time.value)
-                : undefined
+                : parseDate(minStartDate)
             }
+            maximumDate={parseDate(maxEndDate)}
           />
         </View>
         <View style={styles.formRow}>

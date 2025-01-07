@@ -30,7 +30,8 @@ class Journey(db.Model):
 
     # Define relationships to children
     major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', back_populates='journey', cascade='all, delete-orphan')
-    costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete-orphan')
+    # TODO: Automatic deletion, when Journey is delete does not work!
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete')
     
     # Foreign keys to the parent
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
@@ -157,9 +158,9 @@ class Costs(db.Model):
     money_exceeded: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Foreign keys to the parents
-    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id'), nullable=True)
-    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
-    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id', ondelete='CASCADE'), nullable=True,)
+    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id', ondelete='CASCADE'), nullable=True)
+    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
     # Define the relationships to the parents
     journey: Mapped['Journey'] = relationship('Journey', back_populates='costs')

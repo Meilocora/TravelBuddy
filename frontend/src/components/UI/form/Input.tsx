@@ -20,6 +20,7 @@ interface InputProps {
   invalid?: boolean;
   errors?: string[];
   isEditing?: boolean;
+  mandatory?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({
   invalid = false,
   errors,
   isEditing = true,
+  mandatory = false,
 }): ReactElement => {
   const inputStyles: StyleProp<TextStyle>[] = [styles.input];
 
@@ -51,6 +53,7 @@ const Input: React.FC<InputProps> = ({
     <Animated.View style={[styles.inputContainer, style]}>
       <Text style={[styles.label, invalid && styles.invalidLabel]}>
         {label}
+        {mandatory && ' *'}
       </Text>
       <TextInput
         style={inputStyles}
