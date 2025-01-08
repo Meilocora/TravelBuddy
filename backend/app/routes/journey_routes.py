@@ -222,7 +222,7 @@ def delete_journey(current_user, journeyId):
                 db.session.commit()
         
         # Delete the journey from the database
-        db.session.execute(db.delete(Journey).where(Journey.id == journeyId))
+        db.session.delete(journey)
         db.session.commit()
         return jsonify({'status': 200})
     except Exception as e:

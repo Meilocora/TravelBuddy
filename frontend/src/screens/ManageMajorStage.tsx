@@ -49,10 +49,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  // TODO: Problem, that needs a placeId and countryId
-  // const secondaryNavigation =
-  //   useNavigation<NavigationProp<JourneyBottomTabsParamsList>>();
-
   const majorStageCtx = useContext(MajorStageContext);
   const editedMajorStageId = route.params?.majorStageId;
   const journeyId = route.params.journeyId;

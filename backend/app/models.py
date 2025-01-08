@@ -30,11 +30,10 @@ class Journey(db.Model):
 
     # Define relationships to children
     major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', back_populates='journey', cascade='all, delete-orphan')
-    # TODO: Automatic deletion, when Journey is delete does not work!
-    costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete')
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='journey', uselist=False, cascade='all, delete-orphan')
     
     # Foreign keys to the parent
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     
     # Define the relationship to the parent
     user: Mapped['User'] = relationship('User', back_populates='journeys')
@@ -70,17 +69,12 @@ class CustomCountry(db.Model):
     places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='custom_country', cascade='all, delete-orphan')
 
     # Foreign keys to the parent
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
-    # TODO: Might delete this
-    # major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     
     # Define the relationship to the parent
     user: Mapped['User'] = relationship('User', back_populates='custom_countries')
-    # TODO: Might delete this
-    # major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='custom_country')
     
     # Many-to-Many relationship with Journey
-    # TODO: Might delete this
     journeys: Mapped[list['Journey']] = relationship(
         'Journey',
         secondary='journeys_custom_countries',
@@ -95,10 +89,6 @@ class JourneysCustomCountriesLink(db.Model):
     journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id'), primary_key=True)
     custom_country_id: Mapped[int] = mapped_column(Integer, ForeignKey('custom_countries.id'), primary_key=True)
 
-# journeys_custom_countries = db.Table('journeys_custom_countries',
-#     db.Column('journey_id', db.Integer, db.ForeignKey('journeys.id'), primary_key=True),
-#     db.Column('custom_country_id', db.Integer, db.ForeignKey('custom_countries.id'), primary_key=True)
-# )
 
 class MajorStage(db.Model):
     __tablename__ = 'major_stages'
@@ -113,14 +103,12 @@ class MajorStage(db.Model):
     country: Mapped[str] = mapped_column(String, nullable=False)
 
     # Define relationships to children
-    # TODO: Might Delete this
-    # custom_country: Mapped['CustomCountry'] = relationship('CustomCountry', back_populates='major_stage', uselist=False, cascade='all')
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
     transportations: Mapped[list['Transportation']] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
     minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')
 
     # Foreign keys to the parent
-    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id'), nullable=False)
+    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id', ondelete='CASCADE'), nullable=False)
 
     # Define the relationship to the parent
     journey: Mapped['Journey'] = relationship('Journey', back_populates='major_stages')
@@ -143,7 +131,7 @@ class MinorStage(db.Model):
     places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='minor_stage', cascade='all, delete-orphan')
 
     # Foreign keys to the parent
-    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=False)
+    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id', ondelete='CASCADE'), nullable=False)
 
     # Define the relationship to the parent
     major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='minor_stages')
@@ -158,7 +146,7 @@ class Costs(db.Model):
     money_exceeded: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Foreign keys to the parents
-    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id', ondelete='CASCADE'), nullable=True,)
+    journey_id: Mapped[int] = mapped_column(Integer, ForeignKey('journeys.id', ondelete='CASCADE'), nullable=True)
     major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id', ondelete='CASCADE'), nullable=True)
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
@@ -181,8 +169,8 @@ class Transportation(db.Model):
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
-    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id'), nullable=True)
-    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+    major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id', ondelete='CASCADE'), nullable=True)
+    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
     # Define the relationships to the parents
     major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='transportations')
@@ -203,7 +191,7 @@ class Accommodation(db.Model):
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
-    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
     # Define the relationships to the parents
     minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='accommodations')
@@ -221,7 +209,7 @@ class Activity(db.Model):
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
-    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
     # Define the relationships to the parents
     minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='activities')
@@ -241,9 +229,9 @@ class PlaceToVisit(db.Model):
     maps_link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
-    custom_country_id: Mapped[int] = mapped_column(Integer, ForeignKey('custom_countries.id'), nullable=True)
-    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id'), nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    custom_country_id: Mapped[int] = mapped_column(Integer, ForeignKey('custom_countries.id', ondelete='CASCADE'), nullable=True)
+    minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
 
     # Define the relationships to the parents
     user: Mapped['User'] = relationship('User', back_populates='places_to_visit')

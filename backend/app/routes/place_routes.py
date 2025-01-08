@@ -117,18 +117,6 @@ def update_journey(current_user, placeId):
         return jsonify({'error': str(e)}, 500)
         
     
-    
-@place_bp.route('/delete-place/<int:placeId>', methods=['DELETE'])
-@token_required
-def delete_place(current_user, placeId):
-    try:
-        # Delete the place from the database
-        db.session.execute(db.delete(PlaceToVisit).where(PlaceToVisit.id == placeId))
-        db.session.commit()
-        return jsonify({'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
-    
 @place_bp.route('/toggle-favorite-place/<int:placeId>', methods=['POST'])
 @token_required
 def toggle_favorite_place(current_user, placeId):
@@ -146,6 +134,7 @@ def toggle_favorite_place(current_user, placeId):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+    
 @place_bp.route('/toggle-visited-place/<int:placeId>', methods=['POST'])
 @token_required
 def toggle_visited_place(current_user, placeId):
@@ -156,6 +145,19 @@ def toggle_visited_place(current_user, placeId):
         db.session.execute(db.update(PlaceToVisit).where(PlaceToVisit.id == placeId).values(
             visited = not old_place.visited
         ))
+        db.session.commit()
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+
+    
+@place_bp.route('/delete-place/<int:placeId>', methods=['DELETE'])
+@token_required
+def delete_place(current_user, placeId):
+    try:
+        # Delete the place from the database
+        place_to_visit = db.get_or_404(PlaceToVisit, placeId)
+        db.session.delete(place_to_visit)
         db.session.commit()
         return jsonify({'status': 200})
     except Exception as e:

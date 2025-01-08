@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Keyboard,
   LayoutAnimation,
   StyleSheet,
   View,
@@ -69,6 +70,7 @@ const SearchElement = <T, U>({
         setFetchedData([]);
       }
       setIsLoading(false);
+      Keyboard.dismiss();
     }
 
     fetchData();

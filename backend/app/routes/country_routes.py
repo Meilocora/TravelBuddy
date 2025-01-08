@@ -228,9 +228,11 @@ def delete_custom_country(current_user, customCountryId):
         # Delete all Places To Visit aswell
         places = PlaceToVisit.query.filter_by(custom_country_id=customCountryId).all()
         for place in places:
-            db.session.execute(db.delete(PlaceToVisit).where(PlaceToVisit.id == place.id))
+            place_to_delete = db.get_or_404(PlaceToVisit, place.id)
+            db.session.delete(place_to_delete)
         
-        db.session.execute(db.delete(CustomCountry).where(CustomCountry.id == customCountryId))
+        custom_country = db.get_or_404(CustomCountry, customCountryId)
+        db.session.delete(custom_country)
         db.session.commit()
         return jsonify({'countryName': countryName, 'status': 200})
     except Exception as e:
