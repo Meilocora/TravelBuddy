@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   NavigationProp,
@@ -30,6 +30,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { GlobalStyles } from '../constants/styles';
 import IconButton from '../components/UI/IconButton';
 import MajorStageForm from '../components/MajorStage/ManageMajorStage/MajorStageForm';
+import { deleteMajorStage } from '../utils/http';
 
 interface ManageMajorStageProps {
   route: ManageMajorStageRouteProp;
@@ -121,19 +122,20 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   );
 
   async function deleteMajorStageHandler() {
-    // try {
-    // const { error, status } = await deleteJourney(editedJourneyId!);
-    // if (!error && status === 200) {
-    // journeyCtx.deleteJourney(editedJourneyId!);
-    // const popupText = 'Journey successfully deleted!';
-    // navigation.navigate('AllJourneys', { popupText: popupText });
-    // } else {
-    // setError(error!);
-    // return;
-    // }
-    // } catch (error) {
-    // setError('Could not delete journey!');
-    // }
+    try {
+      const { error, status } = await deleteMajorStage(editedMajorStageId!);
+      if (!error && status === 200) {
+        majorStageCtx.deleteMajorStage(editedMajorStageId!);
+        // const popupText = 'Major Stage successfully deleted!';
+        // navigation.navigate('AllJourneys', { popupText: popupText });
+        navigation.goBack();
+      } else {
+        setError(error!);
+        return;
+      }
+    } catch (error) {
+      setError('Could not delete major stage!');
+    }
     setIsDeleting(false);
     return;
   }
@@ -180,7 +182,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       {isDeleting && (
         <Modal
           title='Are you sure?'
-          content={`If you delete ${majorStageValues.title}, all related Major and Minor Stages will also be deleted permanently`}
+          content={`If you delete ${majorStageValues.title}, all related Minor Stages will also be deleted permanently`}
           onConfirm={deleteMajorStageHandler}
           onCancel={closeModalHandler}
         />

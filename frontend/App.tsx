@@ -45,6 +45,7 @@ import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGrad
 
 // TODO: Change "planned money" to "spent money" and "available money" to "budget" everywhere
 // TODO: Use object destructuring for all props in http requests + forms and managing screens
+// TODO: Implement frontend validation to Forms for max and min length of an entry
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

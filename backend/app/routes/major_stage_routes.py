@@ -205,7 +205,6 @@ def create_major_stage(current_user, journeyId):
 @token_required
 def delete_major_stage(current_user, majorStageId):
     try:        
-#         # TODO: Check for minor stages to delete aswell (or will delete cause of database structure?) 
         major_stage = db.get_or_404(MajorStage, majorStageId)
         db.session.delete(major_stage)
         db.session.commit()

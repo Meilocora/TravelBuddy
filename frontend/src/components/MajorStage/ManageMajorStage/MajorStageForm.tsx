@@ -18,6 +18,7 @@ import { Checkbox } from 'react-native-paper';
 import CountrySelector from './CountrySelector';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
+import { createMajorStage } from '../../../utils/http';
 
 type InputValidationResponse = {
   majorStage?: MajorStage;
@@ -130,47 +131,33 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     });
   }
 
-  // async function validateInputs(
-  //   updateConfirmed: boolean = false
-  // ): Promise<void> {
-  //   setIsSubmitting(true);
+  async function validateInputs(): Promise<void> {
+    setIsSubmitting(true);
 
-  //   // Set all errors to empty array to prevent stacking of errors
-  //   for (const key in inputs) {
-  //     inputs[key as keyof MajorStageFormValues].errors = [];
-  //   }
+    // Set all errors to empty array to prevent stacking of errors
+    for (const key in inputs) {
+      inputs[key as keyof MajorStageFormValues].errors = [];
+    }
 
-  //   let response: InputValidationResponse;
-  //   if (isEditing) {
-  //     const defaultCountryDeleted = defaultCountriesNames.some(
-  //       (country) => !currentCountryNames.includes(country)
-  //     );
+    let response: InputValidationResponse;
+    if (isEditing) {
+      // response = await updateJourney(inputs, editJourneyId!);
+    } else if (!isEditing) {
+      response = await createMajorStage(journeyId, inputs);
+    }
 
-  //     if (!updateConfirmed && defaultCountryDeleted) {
-  //       setDeletedCountries(
-  //         defaultCountriesNames.filter(
-  //           (country) => !currentCountryNames.includes(country)
-  //         )
-  //       );
-  //       return;
-  //     }
-  //     response = await updateJourney(inputs, editJourneyId!);
-  //   } else if (!isEditing) {
-  //     response = await createJourney(inputs);
-  //   }
+    const { error, status, majorStage, majorStageFormValues } = response!;
 
-  //   const { error, status, journey, journeyFormValues } = response!;
-
-  //   if (!error && journey) {
-  //     onSubmit({ journey, status });
-  //   } else if (error) {
-  //     onSubmit({ error, status });
-  //   } else if (journeyFormValues) {
-  //     setInputs((prevValues) => journeyFormValues);
-  //   }
-  //   setIsSubmitting(false);
-  // return;
-  // }
+    if (!error && journey) {
+      onSubmit({ majorStage, status });
+    } else if (error) {
+      onSubmit({ error, status });
+    } else if (majorStageFormValues) {
+      setInputs((prevValues) => majorStageFormValues);
+    }
+    setIsSubmitting(false);
+    return;
+  }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
@@ -291,15 +278,17 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             journeyId={journeyId}
             defaultCountryName={inputs.country.value}
           />
-          <View style={styles.checkBoxContainer}>
-            <Text style={styles.checkBoxLabel}>Stage done?</Text>
-            <Checkbox
-              status={inputs.done.value ? 'checked' : 'unchecked'}
-              onPress={() => inputChangedHandler('done', !inputs.done.value)}
-              uncheckedColor={GlobalStyles.colors.gray200}
-              color={GlobalStyles.colors.primary100}
-            />
-          </View>
+          {isEditing && (
+            <View style={styles.checkBoxContainer}>
+              <Text style={styles.checkBoxLabel}>Stage done?</Text>
+              <Checkbox
+                status={inputs.done.value ? 'checked' : 'unchecked'}
+                onPress={() => inputChangedHandler('done', !inputs.done.value)}
+                uncheckedColor={GlobalStyles.colors.gray200}
+                color={GlobalStyles.colors.primary100}
+              />
+            </View>
+          )}
         </View>
       </View>
       <View style={styles.buttonsContainer}>
@@ -310,11 +299,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
         >
           Cancel
         </Button>
-        <Button
-          // onPress={validateInputs.bind(this, undefined)}
-          onPress={() => {}}
-          colorScheme={ColorScheme.neutral}
-        >
+        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
           {submitButtonLabel}
         </Button>
       </View>
