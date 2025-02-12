@@ -135,14 +135,15 @@ class MinorStage(db.Model):
 
     # Define the relationship to the parent
     major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='minor_stages')
+    
 
 class Costs(db.Model):
     __tablename__ = 'costs'
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    available_money: Mapped[int] = mapped_column(Integer, nullable=False)
-    planned_costs: Mapped[int] = mapped_column(Integer, nullable=False)
+    budget: Mapped[int] = mapped_column(Integer, nullable=False)
+    spent_money: Mapped[int] = mapped_column(Integer, nullable=False)
     money_exceeded: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Foreign keys to the parents
@@ -154,6 +155,26 @@ class Costs(db.Model):
     journey: Mapped['Journey'] = relationship('Journey', back_populates='costs')
     major_stage: Mapped['MajorStage'] = relationship('MajorStage', back_populates='costs')
     minor_stage: Mapped['MinorStage'] = relationship('MinorStage', back_populates='costs')
+    
+    # Define relationships to children
+    spendings: Mapped[list['Spendings']] = relationship('Spendings', back_populates='costs', cascade='all, delete-orphan')
+    
+
+class Spendings(db.Model):
+    __tablename__ = 'spendings'
+    __table_args__ = {'extend_existing': True}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    date: Mapped[str] = mapped_column(String, nullable=False)
+    category: Mapped[str] = mapped_column(String, nullable=False)
+
+    # Foreign keys to the parents
+    costs_id: Mapped[int] = mapped_column(Integer, ForeignKey('costs.id', ondelete='CASCADE'), nullable=True)
+
+    # Define the relationships to the parents
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='spendings')
 
 class Transportation(db.Model):
     __tablename__ = 'transportations'

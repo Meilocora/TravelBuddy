@@ -50,14 +50,14 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
   const minStartDate = journey!.scheduled_start_time;
   const maxEndDate = journey!.scheduled_end_time;
-  let maxAvailableMoney = journey!.costs.available_money;
+  let maxAvailableMoney = journey!.costs.budget;
 
   const majorStagesIds = journey?.majorStagesIds;
   const majorStageCtx = useContext(MajorStageContext);
   majorStagesIds?.forEach((id) => {
     maxAvailableMoney -=
-      majorStageCtx.majorStages.find((ms) => ms.id === id)?.costs
-        .planned_costs || 0;
+      majorStageCtx.majorStages.find((ms) => ms.id === id)?.costs.spent_money ||
+      0;
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,13 +87,13 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    available_money: {
-      value: defaultValues?.available_money || 0,
+    budget: {
+      value: defaultValues?.budget || 0,
       isValid: true,
       errors: [],
     },
-    planned_costs: {
-      value: defaultValues?.planned_costs || 0,
+    spent_money: {
+      value: defaultValues?.spent_money || 0,
       isValid: true,
       errors: [],
     },
@@ -213,25 +213,23 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
         </View>
         <View style={styles.formRow}>
           <Input
-            label='Planned Costs'
-            invalid={!inputs.planned_costs.isValid}
+            label='Spent Money'
+            invalid={!inputs.spent_money.isValid}
             textInputConfig={{
               readOnly: true,
-              placeholder: inputs.planned_costs.value.toString(),
+              placeholder: inputs.spent_money.value.toString(),
             }}
           />
           <Input
-            label='Available Money'
-            invalid={!inputs.available_money.isValid}
-            errors={inputs.available_money.errors}
+            label='Budget'
+            invalid={!inputs.budget.isValid}
+            errors={inputs.budget.errors}
             mandatory
             textInputConfig={{
               keyboardType: 'decimal-pad',
               value:
-                inputs.available_money.value !== 0
-                  ? inputs.available_money.value.toString()
-                  : '',
-              onChangeText: inputChangedHandler.bind(this, 'available_money'),
+                inputs.budget.value !== 0 ? inputs.budget.value.toString() : '',
+              onChangeText: inputChangedHandler.bind(this, 'budget'),
               placeholder: `Max: ${formatAmount(maxAvailableMoney)}`,
             }}
           />

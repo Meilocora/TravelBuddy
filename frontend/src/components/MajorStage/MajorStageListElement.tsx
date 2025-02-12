@@ -41,8 +41,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const hasMinorStages =
     majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
   // useReducer to get rid of alle that code
-  const moneyAvailable = formatAmount(majorStage.costs.available_money);
-  const moneyPlanned = formatAmount(majorStage.costs.planned_costs);
+  const moneyAvailable = formatAmount(majorStage.costs.budget);
+  const moneyPlanned = formatAmount(majorStage.costs.spent_money);
   const startDate = formatDateString(majorStage.scheduled_start_time);
   const endDate = formatDateString(majorStage.scheduled_end_time);
   const durationInDays = formatDurationToDays(

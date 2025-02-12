@@ -56,20 +56,20 @@ class MajorStageValidation(Validation):
             majorStage['scheduled_start_time']['errors'].append(f", {start_end_val}")
             majorStage['scheduled_start_time']['isValid'] = False
             
-        money_val = MajorStageValidation().validate_amount(majorStage['available_money']['value'])
+        money_val = MajorStageValidation().validate_amount(majorStage['budget']['value'])
         if money_val:
-            majorStage['available_money']['errors'].append(f", {money_val}")
-            majorStage['available_money']['isValid'] = False
+            majorStage['budget']['errors'].append(f", {money_val}")
+            majorStage['budget']['isValid'] = False
             
-        available_major_stages_money = majorStage['available_money']['value']
-        available_journey_money = journey['available_money']['value']
+        available_major_stages_money = majorStage['budget']['value']
+        available_journey_money = journey['budget']['value']
         for existing_major_stage in existing_major_stages:
-            available_major_stages_money += existing_major_stage.available_money
+            available_major_stages_money += existing_major_stage.budget
         if available_major_stages_money > available_journey_money:
-            max_available_money = available_major_stages_money - majorStage['available_money']['value']
+            max_available_money = available_major_stages_money - majorStage['budget']['value']
             max_available_money_str = locale.currency(max_available_money, grouping=True)
-            majorStage['available_money']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
-            majorStage['available_money']['isValid'] = False
+            majorStage['budget']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
+            majorStage['budget']['isValid'] = False
         
             
         for key, value in majorStage.items():

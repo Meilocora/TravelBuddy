@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
-from app.models import Costs, MajorStage, Transportation, MinorStage, Journey
+from app.models import Costs, Spendings, MajorStage, Transportation, MinorStage, Journey
 from app.validation.major_stage_validation import MajorStageValidation
 
 major_stage_bp = Blueprint('major_stage', __name__)
@@ -19,6 +19,7 @@ def get_major_stages(journeyId):
         for majorStage in majorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
             costs = costs_result.scalars().first()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
             
             transportation_result = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStage.id))
             transportation = transportation_result.scalars().first()
@@ -44,9 +45,10 @@ def get_major_stages(journeyId):
                 'scheduled_start_time': majorStage.scheduled_start_time,
                 'scheduled_end_time': majorStage.scheduled_end_time,
                 'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
+                    'budget': costs.budget,
+                    'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
+                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
                 },
                 'minorStagesIds': [minorStage.id for minorStage in minorStages]
             })
@@ -93,8 +95,8 @@ def create_major_stage(current_user, journeyId):
         # Create a new costs for the major stage
         costs = Costs(
             major_stage_id=new_major_stage.id,
-            available_money=major_stage['available_money']['value'],
-            planned_costs=0,
+            budget=major_stage['budget']['value'],
+            spent_money=0,
             money_exceeded=False
         )
         
@@ -110,8 +112,8 @@ def create_major_stage(current_user, journeyId):
                                 'additional_info': new_major_stage.additional_info,
                                 'country': new_major_stage.country,
                                 'costs': {
-                                    'available_money': costs.available_money,
-                                    'planned_costs': costs.planned_costs,
+                                    'budget': costs.budget,
+                                    'spent_money': costs.spent_money,
                                     'money_exceeded': costs.money_exceeded
                                 },  
                                 'minorStagesIds': []}

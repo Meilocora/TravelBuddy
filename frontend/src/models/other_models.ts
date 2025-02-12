@@ -1,7 +1,25 @@
 export interface Costs {
-  available_money: number;
-  planned_costs: number;
+  budget: number;
+  spent_money: number;
   money_exceeded: boolean;
+  spendings: Spendings[] | null;
+}
+
+export interface Spendings {
+  name: string;
+  amount: number;
+  date: string;
+  category: SpendingsCategory;
+}
+
+export enum SpendingsCategory {
+  transportation,
+  acommodation,
+  activities,
+  dine_out,
+  basic_needs,
+  souvenirs,
+  other,
 }
 
 export interface Transportation {

@@ -50,10 +50,10 @@ class JourneyValidation(Validation):
             journey['scheduled_start_time']['errors'].append(f", {start_end_val}")
             journey['scheduled_start_time']['isValid'] = False
             
-        money_val = JourneyValidation().validate_amount(journey['available_money']['value'])
+        money_val = JourneyValidation().validate_amount(journey['budget']['value'])
         if money_val:
-            journey['available_money']['errors'].append(f", {money_val}")
-            journey['available_money']['isValid'] = False
+            journey['budget']['errors'].append(f", {money_val}")
+            journey['budget']['isValid'] = False
             
             
         for key, value in journey.items():
@@ -97,10 +97,10 @@ class JourneyValidation(Validation):
               journey['scheduled_start_time']['errors'].append(f", {start_end_val}")
               journey['scheduled_start_time']['isValid'] = False
                 
-          money_val = JourneyValidation().validate_amount(journey['available_money']['value'])
+          money_val = JourneyValidation().validate_amount(journey['budget']['value'])
           if money_val:
-              journey['available_money']['errors'].append(f", {money_val}")
-              journey['available_money']['isValid'] = False
+              journey['budget']['errors'].append(f", {money_val}")
+              journey['budget']['isValid'] = False
                 
                 
           for key, value in journey.items():

@@ -52,13 +52,13 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
       isValid: true,
       errors: [],
     },
-    available_money: {
-      value: defaultValues?.available_money || 0,
+    budget: {
+      value: defaultValues?.budget || 0,
       isValid: true,
       errors: [],
     },
-    planned_costs: {
-      value: defaultValues?.planned_costs || 0,
+    spent_money: {
+      value: defaultValues?.spent_money || 0,
       isValid: true,
       errors: [],
     },
@@ -240,21 +240,21 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
           <View style={styles.formRow}>
             <Input
-              label='Planned Costs'
-              invalid={!inputs.planned_costs.isValid}
+              label='Spent Money'
+              invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
-                placeholder: inputs.planned_costs.value.toString(),
+                placeholder: inputs.spent_money.value.toString(),
               }}
             />
             <Input
-              label='Available Money'
-              invalid={!inputs.available_money.isValid}
-              errors={inputs.available_money.errors}
+              label='Budget'
+              invalid={!inputs.budget.isValid}
+              errors={inputs.budget.errors}
               textInputConfig={{
                 keyboardType: 'decimal-pad',
-                value: inputs.available_money.value.toString(),
-                onChangeText: inputChangedHandler.bind(this, 'available_money'),
+                value: inputs.budget.value.toString(),
+                onChangeText: inputChangedHandler.bind(this, 'budget'),
               }}
             />
           </View>

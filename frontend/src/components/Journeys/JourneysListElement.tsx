@@ -24,8 +24,8 @@ interface JourneyListElementProps {
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
 }): ReactElement => {
-  const moneyAvailable = formatAmount(journey.costs.available_money);
-  const moneyPlanned = formatAmount(journey.costs.planned_costs);
+  const moneyAvailable = formatAmount(journey.costs.budget);
+  const moneyPlanned = formatAmount(journey.costs.spent_money);
   const startDate = formatDateString(journey.scheduled_start_time);
   const endDate = formatDateString(journey.scheduled_end_time);
   const durationInDays = formatDurationToDays(

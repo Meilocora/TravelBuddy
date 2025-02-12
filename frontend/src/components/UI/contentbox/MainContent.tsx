@@ -30,9 +30,9 @@ const MainContent: React.FC<MainContentProps> = ({
       contents: [
         {
           subtitle: '',
-          data: `${formatAmount(
-            minorStage.costs.planned_costs
-          )} / ${formatAmount(minorStage.costs.available_money)}`,
+          data: `${formatAmount(minorStage.costs.spent_money)} / ${formatAmount(
+            minorStage.costs.budget
+          )}`,
         },
       ],
     },

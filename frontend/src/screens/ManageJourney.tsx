@@ -56,8 +56,8 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     scheduled_end_time: selectedJourney?.scheduled_end_time
       ? formatDateString(selectedJourney.scheduled_end_time)
       : null,
-    available_money: selectedJourney?.costs.available_money || 0,
-    planned_costs: selectedJourney?.costs.planned_costs || 0,
+    budget: selectedJourney?.costs.budget || 0,
+    spent_money: selectedJourney?.costs.spent_money || 0,
     countries: selectedJourney?.countries || '',
   });
 
@@ -73,8 +73,8 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         scheduled_end_time: selectedJourney?.scheduled_end_time
           ? formatDateString(selectedJourney.scheduled_end_time)
           : null,
-        available_money: selectedJourney?.costs.available_money || 0,
-        planned_costs: selectedJourney?.costs.planned_costs || 0,
+        budget: selectedJourney?.costs.budget || 0,
+        spent_money: selectedJourney?.costs.spent_money || 0,
         countries: selectedJourney?.countries || '',
       });
 
@@ -86,8 +86,8 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           description: '',
           scheduled_start_time: null,
           scheduled_end_time: null,
-          available_money: 0,
-          planned_costs: 0,
+          budget: 0,
+          spent_money: 0,
           countries: '',
         });
         // reset journeyId in navigation params for BottomTab

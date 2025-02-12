@@ -44,6 +44,10 @@ import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
 
 // TODO: Change "planned money" to "spent money" and "available money" to "budget" everywhere
+// TODO: Add Categories to Costs for better analysis later on
+
+// ManageMajorStages, MajorStageForm, major_stage_routes, major_stage
+
 // TODO: Use object destructuring for all props in http requests + forms and managing screens
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 

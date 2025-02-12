@@ -43,6 +43,8 @@ interface ConfirmHandlerProps {
   majorStage?: MajorStage;
 }
 
+// TODO: Weird Error, when going back from ManageMajorStage (when Adding)
+
 const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   route,
   navigation,
@@ -79,8 +81,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       ? formatDateString(selectedMajorStage.scheduled_end_time)
       : null,
     additional_info: selectedMajorStage?.additional_info || '',
-    available_money: selectedMajorStage?.costs.available_money || 0,
-    planned_costs: selectedMajorStage?.costs.planned_costs || 0,
+    budget: selectedMajorStage?.costs.budget || 0,
+    spent_money: selectedMajorStage?.costs.spent_money || 0,
     country: selectedMajorStage?.country || '',
   });
 
@@ -97,8 +99,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
           ? formatDateString(selectedMajorStage.scheduled_end_time)
           : null,
         additional_info: selectedMajorStage?.additional_info || '',
-        available_money: selectedMajorStage?.costs.available_money || 0,
-        planned_costs: selectedMajorStage?.costs.planned_costs || 0,
+        budget: selectedMajorStage?.costs.budget || 0,
+        spent_money: selectedMajorStage?.costs.spent_money || 0,
         country: selectedMajorStage?.country || '',
       });
 
@@ -111,8 +113,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
           scheduled_start_time: null,
           scheduled_end_time: null,
           additional_info: '',
-          available_money: 0,
-          planned_costs: 0,
+          budget: 0,
+          spent_money: 0,
           country: '',
         });
         // reset majorStageId in navigation params for BottomTab

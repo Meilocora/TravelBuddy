@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from db import db
-from app.models import Costs, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
+from app.models import Costs, Spendings, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
 
 minor_stage_bp = Blueprint('minor_stage', __name__)
 
@@ -16,6 +16,7 @@ def get_minor_stages(majorStageId):
         for minorStage in minorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(minor_stage_id=minorStage.id))
             costs = costs_result.scalars().first()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
             
             transportation_result = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minorStage.id))
             transportation = transportation_result.scalars().first()
@@ -37,9 +38,10 @@ def get_minor_stages(majorStageId):
                 'scheduled_end_time': minorStage.scheduled_end_time,
                 'done': minorStage.done,
                 'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
+                    'budget': costs.budget,
+                    'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
+                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
                 },
                 'transportation': {
                     'type': transportation.type,

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import Journey, Costs, MajorStage, CustomCountry, JourneysCustomCountriesLink
+from app.models import Journey, Costs, Spendings, MajorStage, CustomCountry, JourneysCustomCountriesLink
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
@@ -19,6 +19,7 @@ def get_journeys(current_user):
         for journey in journeys:
             costs_result = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id))
             costs = costs_result.scalars().first()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
             
             majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journey.id))
             majorStages = majorStages_result.scalars().all()
@@ -29,9 +30,10 @@ def get_journeys(current_user):
                 'name': journey.name,
                 'description': journey.description,
                 'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
+                    'budget': costs.budget,
+                    'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
+                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
                 },
                 'scheduled_start_time': journey.scheduled_start_time,
                 'scheduled_end_time': journey.scheduled_end_time,
@@ -80,8 +82,8 @@ def create_journey(current_user):
         # Create a new costs for the journey
         costs = Costs(
             journey_id=new_journey.id,
-            available_money=journey['available_money']['value'],
-            planned_costs=0,
+            budget=journey['budget']['value'],
+            spent_money=0,
             money_exceeded=False
         )
         
@@ -107,8 +109,8 @@ def create_journey(current_user):
                 'name': new_journey.name,
                 'description': new_journey.description,
                 'costs': {
-                    'available_money': costs.available_money,
-                    'planned_costs': costs.planned_costs,
+                    'budget': costs.budget,
+                    'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
                 },
                 'scheduled_start_time': new_journey.scheduled_start_time,
@@ -142,7 +144,7 @@ def update_journey(current_user, journeyId):
     
     old_journey = db.get_or_404(Journey, journeyId)
     
-    money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
+    money_exceeded = int(response['budget']['value']) < int(response['spent_money']['value'])
     
     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
     majorStages = majorStages_result.scalars().all()
@@ -177,8 +179,8 @@ def update_journey(current_user, journeyId):
         
         # Update the costs for the journey
         db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
-            available_money=journey['available_money']['value'],
-            planned_costs=journey['planned_costs']['value'],
+            budget=journey['budget']['value'],
+            spent_money=journey['spent_money']['value'],
             money_exceeded=money_exceeded
         ))
         db.session.commit()
@@ -187,9 +189,10 @@ def update_journey(current_user, journeyId):
                 'name': journey['name']['value'],
                 'description': journey['description']['value'],
                 'costs': {
-                    'available_money': journey['available_money']['value'],
-                    'planned_costs': journey['planned_costs']['value'],
+                    'budget': journey['budget']['value'],
+                    'spent_money': journey['spent_money']['value'],
                     'money_exceeded': money_exceeded,
+                    # TODO: Add spendings?
                 },
                 'scheduled_start_time': journey['scheduled_start_time']['value'],
                 'scheduled_end_time': journey['scheduled_end_time']['value'],

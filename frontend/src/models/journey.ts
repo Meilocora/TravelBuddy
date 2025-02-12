@@ -15,8 +15,8 @@ export interface Journey {
 export interface JourneyValues {
   name: string;
   description: string;
-  available_money: number;
-  planned_costs: number;
+  budget: number;
+  spent_money: number;
   scheduled_start_time: string | null;
   scheduled_end_time: string | null;
   countries: string;
@@ -25,8 +25,8 @@ export interface JourneyValues {
 export interface JourneyFormValues {
   name: Validable<string>;
   description: Validable<string>;
-  available_money: Validable<number>;
-  planned_costs: Validable<number>;
+  budget: Validable<number>;
+  spent_money: Validable<number>;
   scheduled_start_time: Validable<string | null>;
   scheduled_end_time: Validable<string | null>;
   countries: Validable<string>;
