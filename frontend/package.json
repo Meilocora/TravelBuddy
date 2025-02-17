@@ -18,7 +18,7 @@
     "axios": "^1.7.7",
     "buffer": "^6.0.3",
     "dotenv": "^16.4.5",
-    "expo": "^52.0.33",
+    "expo": "^52.0.35",
     "expo-blur": "^14.0.3",
     "expo-linear-gradient": "^14.0.2",
     "expo-status-bar": "^2.0.1",

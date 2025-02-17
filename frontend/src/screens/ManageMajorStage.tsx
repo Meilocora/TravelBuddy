@@ -9,6 +9,7 @@ import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   NavigationProp,
+  RouteProp,
   useFocusEffect,
   useNavigation,
 } from '@react-navigation/native';
@@ -16,11 +17,10 @@ import {
 import SecondaryGradient from '../components/UI/LinearGradients/SecondaryGradient';
 import {
   MajorStage,
-  StackParamList,
-  ManageMajorStageRouteProp,
   MajorStageValues,
   JourneyBottomTabsParamsList,
   Icons,
+  MajorStageStackParamList,
 } from '../models';
 import { MajorStageContext } from '../store/majorStage-context.';
 import { formatDateString } from '../utils';
@@ -31,10 +31,14 @@ import { GlobalStyles } from '../constants/styles';
 import IconButton from '../components/UI/IconButton';
 import MajorStageForm from '../components/MajorStage/ManageMajorStage/MajorStageForm';
 import { deleteMajorStage } from '../utils/http';
+import { JourneyContext } from '../store/journey-context';
 
 interface ManageMajorStageProps {
-  route: ManageMajorStageRouteProp;
-  navigation: NativeStackNavigationProp<StackParamList, 'ManageMajorStage'>;
+  navigation: NativeStackNavigationProp<
+    MajorStageStackParamList,
+    'ManageMajorStage'
+  >;
+  route: RouteProp<MajorStageStackParamList, 'ManageMajorStage'>;
 }
 
 interface ConfirmHandlerProps {
@@ -43,14 +47,16 @@ interface ConfirmHandlerProps {
   majorStage?: MajorStage;
 }
 
-// TODO: Weird Error, when going back from ManageMajorStage (when Adding)
-
 const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   route,
   navigation,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const journeyCtx = useContext(JourneyContext);
+  const planningNavigation =
+    useNavigation<NavigationProp<JourneyBottomTabsParamsList>>();
 
   const majorStageCtx = useContext(MajorStageContext);
   const editedMajorStageId = route.params?.majorStageId;
@@ -67,6 +73,16 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       title: isEditing
         ? `Manage ${selectedMajorStage?.title}`
         : 'Add Major Stage',
+      headerLeft: ({ tintColor }) => (
+        <IconButton
+          color={tintColor}
+          size={24}
+          icon={Icons.arrowBack}
+          onPress={() => {
+            planningNavigation.navigate('Planning', { journeyId: journeyId });
+          }}
+        />
+      ),
     });
   }, [navigation]);
 

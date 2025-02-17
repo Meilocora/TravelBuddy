@@ -7,10 +7,15 @@ export type BottomTabsParamList = {
   UserProfile: undefined;
 };
 
+export type MajorStageStackParamList = {
+  ManageMajorStage: { majorStageId: number | undefined; journeyId: number };
+};
+
 export type JourneyBottomTabsParamsList = {
-  Planning: { journeyId: number; journeyName: string };
+  Planning: { journeyId?: number; journeyName?: string };
   Overview: undefined;
   Map: undefined;
+  MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;
 };
 
 export type StackParamList = {
@@ -20,7 +25,6 @@ export type StackParamList = {
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
   ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
-  ManageMajorStage: { majorStageId?: number; journeyId: number };
 };
 
 export type AuthStackParamList = {
@@ -46,9 +50,4 @@ export type ManageCustomCountryRouteProp = RouteProp<
 export type ManagePlaceToVisitRouteProp = RouteProp<
   StackParamList,
   'ManagePlaceToVisit'
->;
-
-export type ManageMajorStageRouteProp = RouteProp<
-  StackParamList,
-  'ManageMajorStage'
 >;

@@ -23,6 +23,7 @@ import {
   StackParamList,
   ManageJourneyRouteProp,
   AuthStackParamList,
+  MajorStageStackParamList,
 } from './src/models';
 import ManageJourney from './src/screens/ManageJourney';
 import Locations from './src/screens/Locations';
@@ -43,12 +44,8 @@ import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
 
-// TODO: Change "planned money" to "spent money" and "available money" to "budget" everywhere
-// TODO: Add Categories to Costs for better analysis later on
-
 // ManageMajorStages, MajorStageForm, major_stage_routes, major_stage
 
-// TODO: Use object destructuring for all props in http requests + forms and managing screens
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -56,6 +53,9 @@ const Auth = createNativeStackNavigator<AuthStackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 const JourneyBottomTabs =
   createBottomTabNavigator<JourneyBottomTabsParamsList>();
+const MajorStageStack = createNativeStackNavigator<MajorStageStackParamList>();
+
+// TODO: Add Stack for MajorStage
 
 const navTheme = DefaultTheme;
 navTheme.colors.background = 'transparent';
@@ -230,8 +230,38 @@ const JourneyBottomTabsNavigator = () => {
             ),
           }}
         />
+        <JourneyBottomTabs.Screen
+          name='MajorStageStackNavigator'
+          component={MajorStageStackNavigator}
+          options={{
+            tabBarButton: () => null,
+            headerShown: false,
+          }}
+        />
       </JourneyBottomTabs.Navigator>
     </>
+  );
+};
+
+const MajorStageStackNavigator = () => {
+  return (
+    <MajorStageStack.Navigator
+      screenOptions={({
+        navigation,
+      }: {
+        navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList>;
+      }) => ({
+        headerTintColor: 'white',
+        headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
+        headerTitleAlign: 'center',
+        headerShadowVisible: false,
+      })}
+    >
+      <MajorStageStack.Screen
+        name='ManageMajorStage'
+        component={ManageMajorStage}
+      />
+    </MajorStageStack.Navigator>
   );
 };
 
@@ -289,15 +319,6 @@ const AuthenticatedStack = () => {
                 <Stack.Screen
                   name='ManagePlaceToVisit'
                   component={ManagePlaceToVisit}
-                />
-                <Stack.Screen
-                  name='ManageMajorStage'
-                  component={ManageMajorStage}
-                  options={() => ({
-                    headerStyle: {
-                      backgroundColor: GlobalStyles.colors.accent700,
-                    },
-                  })}
                 />
               </Stack.Navigator>
             </MinorStageContextProvider>

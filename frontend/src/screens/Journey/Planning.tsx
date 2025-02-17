@@ -1,28 +1,31 @@
 import { ReactElement, useLayoutEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Icons, PlanningRouteProp, StackParamList } from '../../models';
+import { Icons, JourneyBottomTabsParamsList } from '../../models';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../../components/UI/IconButton';
 
 interface PlanningProps {
-  route: PlanningRouteProp;
-  navigation: NativeStackNavigationProp<StackParamList, 'ManageMajorStage'>;
+  navigation: NativeStackNavigationProp<
+    JourneyBottomTabsParamsList,
+    'Planning'
+  >;
+  route: RouteProp<JourneyBottomTabsParamsList, 'Planning'>;
 }
 
-// TODO: Change Background Color
 // TODO: Description of Journey missing
-
-const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
-  const { journeyId, journeyName } = route.params;
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+const Planning: React.FC<PlanningProps> = ({
+  route,
+  navigation,
+}): ReactElement => {
+  let { journeyId, journeyName } = route.params;
 
   function handleAddMajorStage() {
-    navigation.navigate('ManageMajorStage', {
-      majorStageId: undefined,
-      journeyId: journeyId,
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'ManageMajorStage',
+      params: { majorStageId: undefined, journeyId: journeyId! },
     });
   }
 
@@ -42,7 +45,7 @@ const Planning: React.FC<PlanningProps> = ({ route }): ReactElement => {
 
   return (
     <View style={styles.root}>
-      <MajorStageList journeyId={journeyId} />
+      <MajorStageList journeyId={journeyId!} />
     </View>
   );
 };
