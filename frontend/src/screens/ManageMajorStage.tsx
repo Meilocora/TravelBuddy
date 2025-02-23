@@ -1,18 +1,15 @@
 import React, {
   ReactElement,
-  useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {
-  NavigationProp,
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import SecondaryGradient from '../components/UI/LinearGradients/SecondaryGradient';
 import {
@@ -26,12 +23,10 @@ import { MajorStageContext } from '../store/majorStage-context.';
 import { formatDateString } from '../utils';
 import Modal from '../components/UI/Modal';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { GlobalStyles } from '../constants/styles';
 import IconButton from '../components/UI/IconButton';
 import MajorStageForm from '../components/MajorStage/ManageMajorStage/MajorStageForm';
 import { deleteMajorStage } from '../utils/http';
-import { JourneyContext } from '../store/journey-context';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<
@@ -54,9 +49,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const journeyCtx = useContext(JourneyContext);
   const planningNavigation =
-    useNavigation<NavigationProp<JourneyBottomTabsParamsList>>();
+    useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
 
   const majorStageCtx = useContext(MajorStageContext);
   const editedMajorStageId = route.params?.majorStageId;
@@ -102,42 +96,23 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     country: selectedMajorStage?.country || '',
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      // MajorStageValues set, when screen is focused
-      setMajorStageValues({
-        title: selectedMajorStage?.title || '',
-        done: selectedMajorStage?.done || false,
-        scheduled_start_time: selectedMajorStage?.scheduled_start_time
-          ? formatDateString(selectedMajorStage.scheduled_start_time)
-          : null,
-        scheduled_end_time: selectedMajorStage?.scheduled_end_time
-          ? formatDateString(selectedMajorStage.scheduled_end_time)
-          : null,
-        additional_info: selectedMajorStage?.additional_info || '',
-        budget: selectedMajorStage?.costs.budget || 0,
-        spent_money: selectedMajorStage?.costs.spent_money || 0,
-        country: selectedMajorStage?.country || '',
-      });
-
-      return () => {
-        // Clean up function, when screen is unfocused
-        // reset MajorStageValues
-        setMajorStageValues({
-          title: '',
-          done: false,
-          scheduled_start_time: null,
-          scheduled_end_time: null,
-          additional_info: '',
-          budget: 0,
-          spent_money: 0,
-          country: '',
-        });
-        // reset majorStageId in navigation params for BottomTab
-        navigation.setParams({ majorStageId: undefined });
-      };
-    }, [])
-  );
+  // Redefine majorStageValues, when selectedMajorStage changes
+  useEffect(() => {
+    setMajorStageValues({
+      title: selectedMajorStage?.title || '',
+      done: selectedMajorStage?.done || false,
+      scheduled_start_time: selectedMajorStage?.scheduled_start_time
+        ? formatDateString(selectedMajorStage.scheduled_start_time)
+        : null,
+      scheduled_end_time: selectedMajorStage?.scheduled_end_time
+        ? formatDateString(selectedMajorStage.scheduled_end_time)
+        : null,
+      additional_info: selectedMajorStage?.additional_info || '',
+      budget: selectedMajorStage?.costs.budget || 0,
+      spent_money: selectedMajorStage?.costs.spent_money || 0,
+      country: selectedMajorStage?.country || '',
+    });
+  }, [selectedMajorStage]);
 
   async function deleteMajorStageHandler() {
     try {
@@ -146,7 +121,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         majorStageCtx.deleteMajorStage(editedMajorStageId!);
         // const popupText = 'Major Stage successfully deleted!';
         // navigation.navigate('AllJourneys', { popupText: popupText });
-        navigation.goBack();
+        planningNavigation.navigate('Planning', { journeyId: journeyId });
       } else {
         setError(error!);
         return;
@@ -167,7 +142,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   }
 
   function cancelHandler() {
-    navigation.goBack();
+    planningNavigation.navigate('Planning', { journeyId: journeyId });
   }
 
   function confirmHandler({ status, error, majorStage }: ConfirmHandlerProps) {
@@ -179,7 +154,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         majorStageCtx.updateMajorStage(majorStage);
         const popupText = 'Major Stage successfully updated!';
         // navigation.navigate('AllJourneys', { popupText: popupText });
-        navigation.goBack();
+        planningNavigation.navigate('Planning', { journeyId: journeyId });
       }
     } else {
       if (error) {
@@ -188,8 +163,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       } else if (majorStage && status === 201) {
         majorStageCtx.addMajorStage(majorStage);
         const popupText = 'Major Stage successfully created!';
-        // navigation.navigate('AllJourneys', { popupText: popupText });
-        navigation.goBack();
+        planningNavigation.navigate('Planning', { journeyId: journeyId });
       }
     }
   }

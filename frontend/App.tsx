@@ -44,8 +44,6 @@ import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
 
-// ManageMajorStages, MajorStageForm, major_stage_routes, major_stage
-
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -54,8 +52,6 @@ const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 const JourneyBottomTabs =
   createBottomTabNavigator<JourneyBottomTabsParamsList>();
 const MajorStageStack = createNativeStackNavigator<MajorStageStackParamList>();
-
-// TODO: Add Stack for MajorStage
 
 const navTheme = DefaultTheme;
 navTheme.colors.background = 'transparent';

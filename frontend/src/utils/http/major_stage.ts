@@ -78,12 +78,13 @@ export const createMajorStage = async (
 };
 
 export const updateMajorStage = async (
+  journeyId: number,
   majorStageFormValues: MajorStageFormValues,
   majorStageId: number
 ): Promise<ManageMajorStageProps> => {
   try {
     const response: AxiosResponse<ManageMajorStageProps> = await api.post(
-      `${prefix}/update-major-stage/${majorStageId}`,
+      `${prefix}/update-major-stage/${journeyId}/${majorStageId}`,
       majorStageFormValues
     );
 

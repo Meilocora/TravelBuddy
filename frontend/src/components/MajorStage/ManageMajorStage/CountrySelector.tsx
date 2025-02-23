@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import {
   Dimensions,
   Keyboard,
@@ -18,6 +18,7 @@ import Input from '../../UI/form/Input';
 import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
 import { BlurView } from 'expo-blur';
+import { JourneyContext } from '../../../store/journey-context';
 
 interface CountrySelectorProps {
   onChangeCountry: (countryName: string) => void;
@@ -38,6 +39,11 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
   const [openSelection, setOpenSelection] = useState(false);
   const [countryName, setCountryName] = useState<string>('');
   const [fetchedData, setFetchedData] = useState<string[]>([]);
+
+  const journeyCtx = useContext(JourneyContext);
+  // const chosenCountries = journeyCtx.journeys.find(
+  //   (journey) => journey.id === journeyId
+  // )?.countries;
 
   // Synchronize state with prop changes
   // TODO: This really needed? => try with editing a country
@@ -61,7 +67,11 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
     async function fetchData() {
       const { data } = await fetchJourneysCustomCountries(journeyId);
       if (data) {
-        const names = data.map((item) => item.name);
+        let names = data.map((item) => item.name);
+        // TODO: Find a better solution ... maybe show user the already chosen countries via extra button or change design of them or sort differently?
+        // if (chosenCountries) {
+        //   names = names.filter((item) => !chosenCountries.includes(item));
+        // }
         LayoutAnimation.linear();
         setFetchedData(names);
       }

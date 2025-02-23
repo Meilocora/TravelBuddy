@@ -8,11 +8,11 @@ export type BottomTabsParamList = {
 };
 
 export type MajorStageStackParamList = {
-  ManageMajorStage: { majorStageId: number | undefined; journeyId: number };
+  ManageMajorStage: { majorStageId?: number; journeyId: number };
 };
 
 export type JourneyBottomTabsParamsList = {
-  Planning: { journeyId?: number; journeyName?: string };
+  Planning: { journeyId: number; journeyName?: string };
   Overview: undefined;
   Map: undefined;
   MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;

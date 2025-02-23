@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { ReactElement } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { BottomTabsParamList, Icons, Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
@@ -15,7 +16,6 @@ import { StackParamList } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import DetailArea from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -110,10 +110,10 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
 
 const styles = StyleSheet.create({
   outerContainer: {
+    flex: 1,
     borderColor: GlobalStyles.colors.primary400,
     borderWidth: 2,
     borderRadius: 20,
-    flex: 1,
     marginVertical: 8,
     marginHorizontal: 32,
     overflow: 'hidden',

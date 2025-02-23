@@ -9,6 +9,13 @@ interface UserProfileProps {
   route: UserProfileRouteProp;
 }
 
+// Countries Visited
+// Journeys completed / planned
+// MajorStages completed / planned
+// MinorStages completed / planned
+// Total costs / budget => money spent by category
+// Total time spent travelling
+
 const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   return (
     <View style={styles.root}>

@@ -1,5 +1,11 @@
 import { ReactElement, useLayoutEffect, useState } from 'react';
-import { StyleSheet, View, Text, LayoutAnimation } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  LayoutAnimation,
+  Pressable,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -7,7 +13,9 @@ import {
   ColorScheme,
   DateFormatMode,
   Icons,
+  JourneyBottomTabsParamsList,
   MajorStage,
+  MajorStageStackParamList,
   StackParamList,
 } from '../../models';
 import {
@@ -26,17 +34,22 @@ import ElementComment from '../UI/list/ElementComment';
 import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
 import MinorStageList from '../MinorStage/MinorStageList';
 import Button from '../UI/Button';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface MajorStageListElementProps {
+  journeyId: number;
   majorStage: MajorStage;
   index: number;
 }
 
 const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
+  journeyId,
   majorStage,
   index,
 }): ReactElement => {
   const [showMinorStages, setShowMinorStages] = useState(false);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
 
   const hasMinorStages =
     majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
@@ -46,8 +59,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const startDate = formatDateString(majorStage.scheduled_start_time);
   const endDate = formatDateString(majorStage.scheduled_end_time);
   const durationInDays = formatDurationToDays(
-    majorStage.scheduled_end_time,
-    majorStage.scheduled_start_time
+    majorStage.scheduled_start_time,
+    majorStage.scheduled_end_time
   );
 
   const title = `#${index + 1} ${majorStage.title}`;
@@ -108,17 +121,25 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     ];
   }
 
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  function handleOnPress() {
+    // TODO: This nessesary?
+  }
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: ({}) => (
-        <IconButton icon={Icons.add} size={30} onPress={() => {}} />
-      ),
+  function handleEdit() {
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'ManageMajorStage',
+      params: {
+        journeyId: journeyId,
+        majorStageId: majorStage.id,
+      },
     });
-  }, [navigation]);
+  }
 
-  const handleshowMinorStages = () => {
+  function handleAddTransportation() {}
+
+  function handleAddMinorStage() {}
+
+  const handleShowMinorStages = () => {
     LayoutAnimation.configureNext({
       duration: 500,
       update: { type: 'spring', springDamping: 0.6 },
@@ -126,54 +147,101 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     setShowMinorStages((prevState) => !prevState);
   };
 
-  // Buttons to delete and edit MajorStage
+  // TODO: Buttons to delete and edit MajorStage
+  // TODO: add Transportation
+  // TODO: Edit Transportation
+  // TODO: add MinorStage
 
   return (
-    <View style={styles.container}>
-      <ElementTitle>{title}</ElementTitle>
-      <ElementComment content={`${startDate} - ${endDate}`} />
-      <DetailArea elementDetailInfo={elementDetailInfo} />
-      {majorStage.transportation && (
-        <AdditionalInfoBox
-          title='Transportation'
-          info={mainTransportationInfo}
-          additionalInfo={additionalInfo}
-          link={majorStage.transportation?.link}
-        />
-      )}
-      {hasMinorStages && (
-        <Button
-          onPress={handleshowMinorStages}
-          mode={ButtonMode.flat}
-          colorScheme={
-            !showMinorStages ? ColorScheme.accent : ColorScheme.complementary
-          }
+    <View style={styles.outerContainer}>
+      <LinearGradient
+        colors={['#f1dfcf', '#b8a671']}
+        style={{ height: '100%' }}
+      >
+        <Pressable
+          style={({ pressed }) => pressed && styles.pressed}
+          android_ripple={{ color: GlobalStyles.colors.accent100 }}
+          onPress={handleOnPress}
         >
-          {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
-        </Button>
-      )}
-      {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
+          <View style={styles.innerContainer}>
+            <View style={styles.headerContainer}>
+              <ElementTitle>{title}</ElementTitle>
+              <IconButton
+                icon={Icons.edit}
+                color={GlobalStyles.colors.accent800}
+                onPress={handleEdit}
+              />
+            </View>
+            <ElementComment content={`${startDate} - ${endDate}`} />
+            <DetailArea elementDetailInfo={elementDetailInfo} />
+            {majorStage.transportation && (
+              <AdditionalInfoBox
+                title='Transportation'
+                info={mainTransportationInfo}
+                additionalInfo={additionalInfo}
+                link={majorStage.transportation?.link}
+              />
+            )}
+            {!majorStage.transportation && (
+              <Button
+                onPress={handleAddTransportation}
+                mode={ButtonMode.flat}
+                colorScheme={ColorScheme.accent}
+              >
+                Add Transportation
+              </Button>
+            )}
+            {hasMinorStages && (
+              <Button
+                onPress={handleShowMinorStages}
+                mode={ButtonMode.flat}
+                colorScheme={
+                  !showMinorStages
+                    ? ColorScheme.accent
+                    : ColorScheme.complementary
+                }
+              >
+                {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
+              </Button>
+            )}
+            {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
+          </View>
+        </Pressable>
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    marginVertical: 10,
-    marginHorizontal: 20,
-    backgroundColor: GlobalStyles.colors.accent50,
+    borderColor: GlobalStyles.colors.accent800,
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: GlobalStyles.colors.accent800,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
     elevation: 5,
     shadowColor: GlobalStyles.colors.gray500,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+  },
+  pressed: {
+    opacity: 0.5,
+  },
+  innerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  headerContainer: {
+    flex: 1,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
 });
 

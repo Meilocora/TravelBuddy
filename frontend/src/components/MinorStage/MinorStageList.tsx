@@ -42,6 +42,8 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
     return <Text>{error}</Text>;
   }
 
+  // TODO: Integrate Add Minor Stage Button
+
   return (
     <FlatList
       style={styles.container}

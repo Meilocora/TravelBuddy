@@ -112,7 +112,7 @@ const accentStyles = StyleSheet.create({
     backgroundColor: GlobalStyles.colors.accent500,
   },
   flatText: {
-    color: GlobalStyles.colors.accent500,
+    color: GlobalStyles.colors.accent800,
   },
   pressed: {
     backgroundColor: GlobalStyles.colors.accent100,

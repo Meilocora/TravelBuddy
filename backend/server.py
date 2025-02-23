@@ -27,8 +27,8 @@ db.init_app(app)
 
 # Register Blueprints
 app.register_blueprint(journey_bp, url_prefix='/journey')
-app.register_blueprint(major_stage_bp, url_prefix='/major-stage')
-app.register_blueprint(minor_stage_bp, url_prefix='/minor-stage')
+app.register_blueprint(major_stage_bp, url_prefix='/major_stage')
+app.register_blueprint(minor_stage_bp, url_prefix='/minor_stage')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(country_bp, url_prefix='/country')
 app.register_blueprint(place_bp, url_prefix='/place-to-visit')

@@ -49,7 +49,11 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
     <FlatList
       data={majorStageCtx.majorStages}
       renderItem={({ item, index }) => (
-        <MajorStageListElement majorStage={item} index={index} />
+        <MajorStageListElement
+          journeyId={journeyId}
+          majorStage={item}
+          index={index}
+        />
       )}
     />
   );

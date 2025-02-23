@@ -15,7 +15,9 @@ interface PlanningProps {
   route: RouteProp<JourneyBottomTabsParamsList, 'Planning'>;
 }
 
-// TODO: Description of Journey missing
+// TODO: Add Description of Journey + Journey stats
+// TODO: Tell user when there are gaps between major stages
+// TODO: Hide stages, that are already over (and make visible by button)
 const Planning: React.FC<PlanningProps> = ({
   route,
   navigation,
@@ -25,7 +27,7 @@ const Planning: React.FC<PlanningProps> = ({
   function handleAddMajorStage() {
     navigation.navigate('MajorStageStackNavigator', {
       screen: 'ManageMajorStage',
-      params: { majorStageId: undefined, journeyId: journeyId! },
+      params: { journeyId: journeyId },
     });
   }
 
