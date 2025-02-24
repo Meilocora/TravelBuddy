@@ -138,13 +138,10 @@ class MajorStageValidation(Validation):
         for existing_major_stage_cost in existing_major_stages_costs:
             available_major_stages_money += existing_major_stage_cost.budget
         if available_major_stages_money > available_journey_money:
-            max_available_money = available_major_stages_money - majorStage['budget']['value']
+            max_available_money = available_journey_money - available_major_stages_money + int(majorStage['budget']['value'])
             max_available_money_str = locale.currency(max_available_money, grouping=True)
             majorStage['budget']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
             majorStage['budget']['isValid'] = False
-            
-        # TODO: Check if country is changed, then delet all minor_stages
-        
             
         for key, value in majorStage.items():
             if 'errors' in value and value['errors']:

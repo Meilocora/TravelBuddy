@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
-from app.models import Costs, Spendings, MajorStage, Transportation, MinorStage, Journey
+from app.models import Costs, Spendings, MajorStage, Transportation, MinorStage
 from app.validation.major_stage_validation import MajorStageValidation
 
 major_stage_bp = Blueprint('major_stage', __name__)
@@ -131,6 +131,7 @@ def create_major_stage(current_user, journeyId):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+    
 @major_stage_bp.route('/update-major-stage/<int:journeyId>/<int:majorStageId>', methods=['POST'])
 @token_required
 def update_major_stage(current_user, journeyId, majorStageId):
@@ -152,72 +153,76 @@ def update_major_stage(current_user, journeyId, majorStageId):
     
     response, isValid = MajorStageValidation.validate_major_stage_update(major_stage, old_major_stage, existing_major_stages, existing_major_stages_costs, journey_costs)
     
-#     # TODO: Check if affects major stages (then don't allow)
+    if not isValid:
+        return jsonify({'majorStageFormValues': response, 'status': 400})
     
-#     if not isValid:
-#         return jsonify({'journeyFormValues': response, 'status': 400})
+    # Delete Minor Stages if Country is changed
+    if response['country']['value'] != old_major_stage.country:
+        if old_major_stage.minor_stages:
+            for minor_stage in old_major_stage.minor_stages:
+                db.session.delete(minor_stage)
+            db.session.commit()
     
+    money_exceeded = int(response['budget']['value']) < int(response['spent_money']['value'])
     
-#     old_journey = db.get_or_404(Journey, journeyId)
+    minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId))
+    minorStages = minorStages_result.scalars().all()
+    minorStagesIds = [minorStage.id for minorStage in minorStages]
     
-#     money_exceeded = int(response['available_money']['value']) < int(response['planned_costs']['value'])
-    
-#     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
-#     majorStages = majorStages_result.scalars().all()
-#     majorStagesIds = [majorStage.id for majorStage in majorStages]
-    
-#     try:
-#         # Delete major stages that are not in the new journey, if former countries are not in the new countries
-#         current_countries = set(journey['countries']['value'].split(', '))
-#         former_countries = set(old_journey.countries.split(', '))
-    
-#         if not former_countries.issubset(current_countries):
-#             missing_countries = former_countries - current_countries
-#             for delete_country in missing_countries:
-#                 db.session.execute(db.delete(MajorStage).where(MajorStage.country == delete_country))
-#                 db.session.commit()
-                
-#                 # Delete the connected entries from the link table
-#                 result = db.session.execute(db.select(CustomCountry).filter_by(name=delete_country, user_id=current_user))
-#                 delete_country_result = result.scalars().first()
-#                 db.session.execute(db.delete(JourneysCustomCountriesLink).where(JourneysCustomCountriesLink.custom_country_id == delete_country_result.id))
-#                 db.session.commit()
-            
-#         # Update the journey
-#         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
-#             name=journey['name']['value'],
-#             description=journey['description']['value'],
-#             scheduled_start_time=journey['scheduled_start_time']['value'],
-#             scheduled_end_time=journey['scheduled_end_time']['value'],
-#             countries=journey['countries']['value'],
-#         ))
-#         db.session.commit()
+    try:    
+        # Update the major_stage
+        db.session.execute(db.update(MajorStage).where(MajorStage.id == majorStageId).values(
+            title=major_stage['title']['value'],
+            done=major_stage['done']['value'],
+            scheduled_start_time=major_stage['scheduled_start_time']['value'],
+            scheduled_end_time=major_stage['scheduled_end_time']['value'],
+            additional_info=major_stage['additional_info']['value'],
+            country=major_stage['country']['value']
+        ))
+        db.session.commit()
         
-#         # Update the costs for the journey
-#         db.session.execute(db.update(Costs).where(Costs.journey_id == journeyId).values(
-#             available_money=journey['available_money']['value'],
-#             planned_costs=journey['planned_costs']['value'],
-#             money_exceeded=money_exceeded
-#         ))
-#         db.session.commit()
-            
-#         response_journey = {'id': journeyId,
-#                 'name': journey['name']['value'],
-#                 'description': journey['description']['value'],
-#                 'costs': {
-#                     'available_money': journey['available_money']['value'],
-#                     'planned_costs': journey['planned_costs']['value'],
-#                     'money_exceeded': money_exceeded,
-#                 },
-#                 'scheduled_start_time': journey['scheduled_start_time']['value'],
-#                 'scheduled_end_time': journey['scheduled_end_time']['value'],
-#                 'countries': journey['countries']['value'],
-#                 'done': old_journey.done,
-#                 'majorStagesIds': majorStagesIds}
+        # Update the costs for the major stage
+        db.session.execute(db.update(Costs).where(Costs.major_stage_id == majorStageId).values(
+            budget=major_stage['budget']['value'],
+            spent_money=major_stage['spent_money']['value'],
+            money_exceeded=money_exceeded
+        ))
+        db.session.commit()
         
-#         return jsonify({'journey': response_journey,'status': 200})
-#     except Exception as e:
-#         return jsonify({'error': str(e)}, 500)
+        major_stage_spendings = db.session.execute(db.select(Spendings).join(Costs).filter(Costs.major_stage_id == majorStageId)).scalars().all()
+        transportation = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStageId)).scalars().first()
+            
+        response_major_stage = {'id': majorStageId,
+                                'title': major_stage['title']['value'],
+                                'done': major_stage['done']['value'],
+                                'scheduled_start_time': major_stage['scheduled_start_time']['value'],
+                                'scheduled_end_time': major_stage['scheduled_end_time']['value'],
+                                'additional_info': major_stage['additional_info']['value'],
+                                'country': major_stage['country']['value'],
+                                'costs': {
+                                    'budget': major_stage['budget']['value'],
+                                    'spent_money': major_stage['spent_money']['value'],
+                                    'money_exceeded': money_exceeded
+                                },
+                                'minorStagesIds': minorStagesIds}
+        
+        if major_stage_spendings:
+            response_major_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in major_stage_spendings]
+        
+        if transportation is not None:
+            response_major_stage['transportation'] = {
+                'type': transportation.type,
+                'start_time': transportation.start_time,
+                'arrival_time': transportation.arrival_time,
+                'place_of_departure': transportation.place_of_departure,
+                'place_of_arrival': transportation.place_of_arrival,
+                'transportation_costs': transportation.transportation_costs,
+                'link': transportation.link,
+            }
+        
+        return jsonify({'majorStage': response_major_stage,'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
     
     
 @major_stage_bp.route('/delete-major-stage/<int:majorStageId>', methods=['DELETE'])

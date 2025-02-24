@@ -198,11 +198,13 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
 
     const { error, status, majorStage, majorStageFormValues } = response!;
 
-    if (!error && journey) {
+    if (!error && majorStage) {
       onSubmit({ majorStage, status });
     } else if (error) {
       onSubmit({ error, status });
     } else if (majorStageFormValues) {
+      // console.log(majorStageFormValues);
+      // TODO:
       setInputs((prevValues) => majorStageFormValues);
     }
     setIsSubmitting(false);

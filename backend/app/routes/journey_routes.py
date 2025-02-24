@@ -184,6 +184,8 @@ def update_journey(current_user, journeyId):
             money_exceeded=money_exceeded
         ))
         db.session.commit()
+        
+        journey_spendings = db.session.execute(db.select(Spendings).join(Costs).filter(Costs.journey_id == journeyId)).scalars().all()
             
         response_journey = {'id': journeyId,
                 'name': journey['name']['value'],
@@ -192,13 +194,15 @@ def update_journey(current_user, journeyId):
                     'budget': journey['budget']['value'],
                     'spent_money': journey['spent_money']['value'],
                     'money_exceeded': money_exceeded,
-                    # TODO: Add spendings?
                 },
                 'scheduled_start_time': journey['scheduled_start_time']['value'],
                 'scheduled_end_time': journey['scheduled_end_time']['value'],
                 'countries': journey['countries']['value'],
                 'done': old_journey.done,
                 'majorStagesIds': majorStagesIds}
+        
+        if journey_spendings:
+            response_journey['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in journey_spendings]
         
         return jsonify({'journey': response_journey,'status': 200})
     except Exception as e:
