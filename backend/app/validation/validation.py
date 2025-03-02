@@ -64,7 +64,6 @@ class Validation:
       existing_start_date = datetime.strptime(existing_start_date, '%d.%m.%Y')
       existing_end_date = datetime.strptime(existing_end_date, '%d.%m.%Y')
     except (TypeError , ValueError):
-      print(new_date)
       self.error_list.append('Error with overlap check occured')
     else:
       if new_date >= existing_start_date and new_date <= existing_end_date:
@@ -93,7 +92,6 @@ class Validation:
   
   
   def validate_password(self, password:str, min_length:int = 6, max_length:int = 20):
-    print(password)
     if len(password) < min_length:
       self.error_list.append(f'Min length is {min_length}')
       

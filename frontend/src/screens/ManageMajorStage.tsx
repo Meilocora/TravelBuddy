@@ -119,9 +119,11 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       const { error, status } = await deleteMajorStage(editedMajorStageId!);
       if (!error && status === 200) {
         majorStageCtx.deleteMajorStage(editedMajorStageId!);
-        // const popupText = 'Major Stage successfully deleted!';
-        // navigation.navigate('AllJourneys', { popupText: popupText });
-        planningNavigation.navigate('Planning', { journeyId: journeyId });
+        const popupText = `Major Stage successfully deleted!`;
+        planningNavigation.navigate('Planning', {
+          journeyId: journeyId,
+          popupText: popupText,
+        });
       } else {
         setError(error!);
         return;
@@ -152,9 +154,11 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 200) {
         majorStageCtx.updateMajorStage(majorStage);
-        const popupText = 'Major Stage successfully updated!';
-        // navigation.navigate('AllJourneys', { popupText: popupText });
-        planningNavigation.navigate('Planning', { journeyId: journeyId });
+        const popupText = `Major Stage "${majorStage.title}" successfully updated!`;
+        planningNavigation.navigate('Planning', {
+          journeyId: journeyId,
+          popupText: popupText,
+        });
       }
     } else {
       if (error) {
@@ -162,8 +166,11 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 201) {
         majorStageCtx.addMajorStage(majorStage);
-        const popupText = 'Major Stage successfully created!';
-        planningNavigation.navigate('Planning', { journeyId: journeyId });
+        const popupText = `Major Stage "${majorStage.title}" successfully created!`;
+        planningNavigation.navigate('Planning', {
+          journeyId: journeyId,
+          popupText: popupText,
+        });
       }
     }
   }

@@ -45,6 +45,7 @@ import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
 
 // TODO: Implement frontend validation to Forms for max and min length of an entry
+// TODO: When not authenticated while being logged in, the user should receive a new authCode immediately
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

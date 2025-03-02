@@ -1,23 +1,37 @@
 import { ReactElement } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import { GlobalStyles } from '../../../constants/styles';
 
 interface ListItemProps {
   children: string;
   onPress: (choosenItem: string) => void;
+  containerStyles?: ViewStyle;
+  textStyles?: TextStyle;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
   children,
   onPress,
+  containerStyles,
+  textStyles,
 }): ReactElement => {
   return (
     <Pressable
       onPress={onPress.bind(null, children)}
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.container,
+        containerStyles && containerStyles,
+        pressed && styles.pressed,
+      ]}
       android_ripple={{ color: GlobalStyles.colors.gray100 }}
     >
-      <Text style={styles.text}>{children}</Text>
+      <Text style={[styles.text, textStyles && textStyles]}>{children}</Text>
     </Pressable>
   );
 };

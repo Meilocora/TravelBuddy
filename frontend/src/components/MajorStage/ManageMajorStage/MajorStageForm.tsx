@@ -65,8 +65,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   const [changeCountry, setChangeCountry] = useState(false);
   const [updateConfirmed, setUpdateConfirmed] = useState(false);
 
-  // TODO: Make sure to handle country changes in the backend (UPDATE)
-
   const [inputs, setInputs] = useState<MajorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
     done: {
@@ -203,8 +201,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (majorStageFormValues) {
-      // console.log(majorStageFormValues);
-      // TODO:
       setInputs((prevValues) => majorStageFormValues);
     }
     setIsSubmitting(false);
@@ -250,7 +246,8 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
       {changeCountry && (
         <Modal
           title='Are you sure?'
-          content={`When you change the country, all Minor Stages that are connected to ${inputs.title.value} will be deleted:`}
+          content={`When you change the country, all Minor Stages that are connected to ${inputs.title.value} will be deleted.`}
+          confirmText='Change'
           onConfirm={confirmModalHandler}
           onCancel={closeModalHandler}
         />

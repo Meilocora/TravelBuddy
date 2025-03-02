@@ -166,6 +166,20 @@ def update_journey(current_user, journeyId):
                 delete_country_result = result.scalars().first()
                 db.session.execute(db.delete(JourneysCustomCountriesLink).where(JourneysCustomCountriesLink.custom_country_id == delete_country_result.id))
                 db.session.commit()
+        
+        # Add new countries to the link table
+        added_countries = current_countries - former_countries
+        for country in added_countries:
+            result = db.session.execute(db.select(CustomCountry).filter_by(name=country, user_id=current_user))
+            custom_country = result.scalars().first()
+            
+            if custom_country:
+                new_link = JourneysCustomCountriesLink(
+                    journey_id=journeyId,
+                    custom_country_id=custom_country.id
+                )
+                db.session.add(new_link)
+                db.session.commit()
             
         # Update the journey
         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(

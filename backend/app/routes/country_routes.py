@@ -73,6 +73,7 @@ def get_custom_countries_by_journey(current_user, journeyId):
         result = db.session.execute(db.select(JourneysCustomCountriesLink).filter_by(journey_id=journeyId))
         link_result = result.scalars().all()
         countryIds = [link.custom_country_id for link in link_result]
+        
         custom_countries = []
         
         for countryId in countryIds:

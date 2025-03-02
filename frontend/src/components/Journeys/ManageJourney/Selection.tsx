@@ -98,10 +98,10 @@ const Selection = ({
         <Button
           colorScheme={ColorScheme.accent}
           onPress={handlePressAdd}
-          mode={ButtonMode.flat}
+          // mode={ButtonMode.flat}
           style={styles.button}
         >
-          Add Country
+          Add Country!
         </Button>
       </>
     );

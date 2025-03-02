@@ -135,7 +135,13 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     });
   }
 
-  function handleAddTransportation() {}
+  function handleAddTransportation() {
+    // TODO: ManageTransportation -Screen
+    // TODO: Add Screen in App and in navigation
+    // TODO: Navigate to the screen with majorStageId
+    // TODO: Implement backend for adding, updating and deleting transportation
+    // TODO: Frontendimplementation via existing majorStageCtx
+  }
 
   function handleAddMinorStage() {}
 
@@ -147,7 +153,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     setShowMinorStages((prevState) => !prevState);
   };
 
-  // TODO: Buttons to delete and edit MajorStage
   // TODO: add Transportation
   // TODO: Edit Transportation
   // TODO: add MinorStage

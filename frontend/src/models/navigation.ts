@@ -12,7 +12,7 @@ export type MajorStageStackParamList = {
 };
 
 export type JourneyBottomTabsParamsList = {
-  Planning: { journeyId: number; journeyName?: string };
+  Planning: { journeyId: number; journeyName?: string; popupText?: string };
   Overview: undefined;
   Map: undefined;
   MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;

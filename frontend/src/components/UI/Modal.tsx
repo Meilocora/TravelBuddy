@@ -10,6 +10,7 @@ import Button from './Button';
 interface ModalProps {
   title: string;
   content: string;
+  confirmText?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
 }
@@ -17,6 +18,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({
   title,
   content,
+  confirmText = 'Delete',
   onConfirm,
   onCancel,
 }): ReactElement => {
@@ -44,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({
               colorScheme={ColorScheme.error}
               style={styles.button}
             >
-              Delete
+              [confirmText]
             </Button>
           )}
         </View>

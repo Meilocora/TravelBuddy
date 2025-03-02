@@ -19,6 +19,7 @@ import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
 import { BlurView } from 'expo-blur';
 import { JourneyContext } from '../../../store/journey-context';
+import { MajorStageContext } from '../../../store/majorStage-context.';
 
 interface CountrySelectorProps {
   onChangeCountry: (countryName: string) => void;
@@ -39,21 +40,22 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
   const [openSelection, setOpenSelection] = useState(false);
   const [countryName, setCountryName] = useState<string>('');
   const [fetchedData, setFetchedData] = useState<string[]>([]);
+  const [chosenCountries, setChosenCountries] = useState<string[]>([]);
 
   const journeyCtx = useContext(JourneyContext);
-  // const chosenCountries = journeyCtx.journeys.find(
-  //   (journey) => journey.id === journeyId
-  // )?.countries;
+  const majorStageCtx = useContext(MajorStageContext);
 
-  // Synchronize state with prop changes
-  // TODO: This really needed? => try with editing a country
+  const journey = journeyCtx.journeys.find(
+    (journey) => journey.id === journeyId
+  );
+
   useEffect(() => {
-    setIsInvalid(invalid);
-    setCountryName(defaultCountryName || '');
-  }, [invalid]);
+    setCountryName(defaultCountryName);
+  }, [defaultCountryName]);
+
+  console.log(countryName);
 
   function handleOpenModal() {
-    // setIsInvalid(false);
     setOpenSelection(true);
   }
 
@@ -68,19 +70,47 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
       const { data } = await fetchJourneysCustomCountries(journeyId);
       if (data) {
         let names = data.map((item) => item.name);
-        // TODO: Find a better solution ... maybe show user the already chosen countries via extra button or change design of them or sort differently?
-        // if (chosenCountries) {
-        //   names = names.filter((item) => !chosenCountries.includes(item));
-        // }
+
+        let countriesList: string[] = [];
+        journey!.majorStagesIds!.forEach((id) => {
+          countriesList.push(
+            majorStageCtx.majorStages.find((majorStage) => majorStage.id === id)
+              ?.country!
+          );
+        });
+        setChosenCountries(countriesList);
+
+        if (countriesList) {
+          names = names.filter((item) => !countriesList.includes(item));
+        }
+
         LayoutAnimation.linear();
         setFetchedData(names);
       }
     }
 
     fetchData();
-  }, []);
+  }, [journeyId]);
 
   function handlePressListElement(item: string) {
+    const prevCountry = countryName;
+
+    setChosenCountries((prevValues) => {
+      const reducedCountries = prevValues.filter(
+        (element) => element !== prevCountry
+      );
+      return [...reducedCountries, item];
+    });
+
+    setFetchedData((prevValues) => {
+      const reducedCountries = prevValues.filter((element) => element !== item);
+      if (prevCountry) {
+        return [...reducedCountries, prevCountry];
+      } else {
+        return [...reducedCountries];
+      }
+    });
+
     setCountryName(item);
     onChangeCountry(item);
     setOpenSelection(false);
@@ -92,23 +122,39 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
         <BlurView style={styles.blurView} intensity={100} tint='dark'>
           <View style={styles.listContainer}>
             <ScrollView style={styles.list}>
-              {fetchedData.map((item) => (
-                <ListItem
-                  key={generateRandomString()}
-                  onPress={handlePressListElement.bind(item)}
-                >
-                  {item}
-                </ListItem>
-              ))}
-              <Button
-                colorScheme={ColorScheme.neutral}
-                mode={ButtonMode.flat}
-                onPress={handleCloseModal}
-                style={styles.button}
-              >
-                Dismiss
-              </Button>
+              {fetchedData.length > 0 &&
+                fetchedData.map((item) => (
+                  <ListItem
+                    key={generateRandomString()}
+                    onPress={handlePressListElement.bind(item)}
+                  >
+                    {item}
+                  </ListItem>
+                ))}
+              {chosenCountries.length > 0 && (
+                <View>
+                  <Text style={styles.separatorText}>Journeys countries</Text>
+                  {chosenCountries.map((item) => (
+                    <ListItem
+                      key={generateRandomString()}
+                      onPress={handlePressListElement.bind(item)}
+                      containerStyles={styles.chosenListElement}
+                      textStyles={styles.chosenText}
+                    >
+                      {item}
+                    </ListItem>
+                  ))}
+                </View>
+              )}
             </ScrollView>
+            <Button
+              colorScheme={ColorScheme.neutral}
+              mode={ButtonMode.flat}
+              onPress={handleCloseModal}
+              style={styles.button}
+            >
+              Dismiss
+            </Button>
           </View>
         </BlurView>
       )}
@@ -174,17 +220,36 @@ const styles = StyleSheet.create({
   listContainer: {
     marginVertical: 'auto',
     marginHorizontal: 'auto',
-  },
-  list: {
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
     paddingHorizontal: 25,
-    width: '60%',
+    minWidth: '60%',
     maxHeight: 300,
     backgroundColor: GlobalStyles.colors.gray700,
     borderRadius: 20,
   },
+  list: {
+    paddingHorizontal: 5,
+    borderColor: GlobalStyles.colors.gray200,
+    borderWidth: 0.5,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  separatorText: {
+    color: GlobalStyles.colors.gray100,
+    fontStyle: 'italic',
+    marginTop: 20,
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  chosenListElement: {
+    backgroundColor: GlobalStyles.colors.gray300,
+    borderWidth: 0,
+  },
+  chosenText: {
+    color: GlobalStyles.colors.gray700,
+  },
   button: {
-    marginVertical: 8,
     marginHorizontal: 'auto',
   },
 });

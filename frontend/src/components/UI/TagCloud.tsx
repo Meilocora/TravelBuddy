@@ -26,6 +26,7 @@ const TagCloud: React.FC<TagCloudProps> = ({ text, onPress }): ReactElement => {
 
 const styles = StyleSheet.create({
   container: {
+    marginVertical: 2,
     marginHorizontal: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,

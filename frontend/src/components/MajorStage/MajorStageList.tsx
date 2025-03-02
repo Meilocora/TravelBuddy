@@ -1,10 +1,17 @@
-import { ReactElement, useEffect, useState, useContext } from 'react';
+import {
+  ReactElement,
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import { FlatList, Text } from 'react-native';
 
 import { fetchMajorStagesById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
 import InfoText from '../UI/InfoText';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface MajorStageListProps {
   journeyId: number;
@@ -18,20 +25,22 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
 
   const majorStageCtx = useContext(MajorStageContext);
 
-  useEffect(() => {
-    async function getMajorStages(journeyId: number) {
-      setIsFetching(true);
-      const response = await fetchMajorStagesById(journeyId);
-      if (!response.error) {
-        majorStageCtx.setMajorStages(response.majorStages || []);
-      } else {
-        setError(response.error);
-      }
-      setIsFetching(false);
+  const getMajorStages = useCallback(async (journeyId: number) => {
+    setIsFetching(true);
+    const response = await fetchMajorStagesById(journeyId);
+    if (!response.error) {
+      majorStageCtx.setMajorStages(response.majorStages || []);
+    } else {
+      setError(response.error);
     }
-
-    getMajorStages(journeyId);
+    setIsFetching(false);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getMajorStages(journeyId);
+    }, [journeyId, getMajorStages])
+  );
 
   if (isFetching) {
     return <InfoText content='Loading...' />;
@@ -42,7 +51,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   }
 
   if (error) {
-    return <Text>{error}</Text>;
+    return <InfoText content={error} />;
   }
 
   return (

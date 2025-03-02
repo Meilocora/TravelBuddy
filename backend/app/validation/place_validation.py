@@ -12,9 +12,6 @@ class PlaceValidation(Validation):
         for key, value in place.items():
             if key != 'link' and key != 'maps_link':
                 
-                print(value)
-                
-                
                 if value['value'] == "" or value['value'] == None:
                     place[key]['errors'].append(f'Input is required')
                     place[key]['isValid'] = False
