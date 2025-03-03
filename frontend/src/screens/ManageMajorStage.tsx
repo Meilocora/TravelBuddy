@@ -61,6 +61,22 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     (majorStage) => majorStage.id === editedMajorStageId
   );
 
+  // Empty, when no default values provided
+  const [majorStageValues, setMajorStageValues] = useState<MajorStageValues>({
+    title: selectedMajorStage?.title || '',
+    done: selectedMajorStage?.done || false,
+    scheduled_start_time: selectedMajorStage?.scheduled_start_time
+      ? formatDateString(selectedMajorStage.scheduled_start_time)
+      : null,
+    scheduled_end_time: selectedMajorStage?.scheduled_end_time
+      ? formatDateString(selectedMajorStage.scheduled_end_time)
+      : null,
+    additional_info: selectedMajorStage?.additional_info || '',
+    budget: selectedMajorStage?.costs.budget || 0,
+    spent_money: selectedMajorStage?.costs.spent_money || 0,
+    country: selectedMajorStage?.country || '',
+  });
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'center',
@@ -79,22 +95,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       ),
     });
   }, [navigation]);
-
-  // Empty, when no default values provided
-  const [majorStageValues, setMajorStageValues] = useState<MajorStageValues>({
-    title: selectedMajorStage?.title || '',
-    done: selectedMajorStage?.done || false,
-    scheduled_start_time: selectedMajorStage?.scheduled_start_time
-      ? formatDateString(selectedMajorStage.scheduled_start_time)
-      : null,
-    scheduled_end_time: selectedMajorStage?.scheduled_end_time
-      ? formatDateString(selectedMajorStage.scheduled_end_time)
-      : null,
-    additional_info: selectedMajorStage?.additional_info || '',
-    budget: selectedMajorStage?.costs.budget || 0,
-    spent_money: selectedMajorStage?.costs.spent_money || 0,
-    country: selectedMajorStage?.country || '',
-  });
 
   // Redefine majorStageValues, when selectedMajorStage changes
   useEffect(() => {
@@ -177,7 +177,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
 
   return (
     <View style={styles.root}>
-      <SecondaryGradient />
       {isDeleting && (
         <Modal
           title='Are you sure?'

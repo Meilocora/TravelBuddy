@@ -53,8 +53,6 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
     setCountryName(defaultCountryName);
   }, [defaultCountryName]);
 
-  console.log(countryName);
-
   function handleOpenModal() {
     setOpenSelection(true);
   }

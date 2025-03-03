@@ -43,6 +43,8 @@ import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
+import ManageTransportation from './src/screens/ManageTransportation';
+import ManageMinorStage from './src/screens/ManageMinorStage';
 
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: When not authenticated while being logged in, the user should receive a new authCode immediately
@@ -257,6 +259,14 @@ const MajorStageStackNavigator = () => {
       <MajorStageStack.Screen
         name='ManageMajorStage'
         component={ManageMajorStage}
+      />
+      <MajorStageStack.Screen
+        name='ManageMinorStage'
+        component={ManageMinorStage}
+      />
+      <MajorStageStack.Screen
+        name='ManageTransportation'
+        component={ManageTransportation}
       />
     </MajorStageStack.Navigator>
   );

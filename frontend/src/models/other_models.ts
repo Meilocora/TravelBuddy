@@ -32,6 +32,16 @@ export interface Transportation {
   link: string;
 }
 
+export interface TransportationValues {
+  type: Validable<TransportationType>;
+  start_time: Validable<string | null>;
+  arrival_time: Validable<string | null>;
+  place_of_departure: Validable<string | undefined>;
+  place_of_arrival: Validable<string | undefined>;
+  transportation_costs: Validable<number | undefined>;
+  link: Validable<string | undefined>;
+}
+
 export enum TransportationType {
   plane,
   bus,

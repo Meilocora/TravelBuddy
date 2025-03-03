@@ -50,6 +50,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const [showMinorStages, setShowMinorStages] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
+  // const transportNavigation =
+  //   useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
   const hasMinorStages =
     majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
@@ -136,14 +138,27 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   }
 
   function handleAddTransportation() {
-    // TODO: ManageTransportation -Screen
-    // TODO: Add Screen in App and in navigation
-    // TODO: Navigate to the screen with majorStageId
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'ManageTransportation',
+      params: {
+        journeyId: journeyId,
+        majorStageId: majorStage.id,
+      },
+    });
+
+    // TODO: Create ManageTransportation Form
     // TODO: Implement backend for adding, updating and deleting transportation
     // TODO: Frontendimplementation via existing majorStageCtx
   }
 
-  function handleAddMinorStage() {}
+  function handleAddMinorStage() {
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'ManageMinorStage',
+      params: {
+        majorStageId: majorStage.id,
+      },
+    });
+  }
 
   const handleShowMinorStages = () => {
     LayoutAnimation.configureNext({
@@ -153,9 +168,9 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     setShowMinorStages((prevState) => !prevState);
   };
 
-  // TODO: add Transportation
   // TODO: Edit Transportation
   // TODO: add MinorStage
+  // TODO: Edit MinorStage
 
   return (
     <View style={styles.outerContainer}>

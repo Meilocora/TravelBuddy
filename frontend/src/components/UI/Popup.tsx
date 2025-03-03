@@ -9,6 +9,8 @@ interface PopupProps {
   duration?: number;
 }
 
+// TODO: Create different colorSchemes analog to the button component
+
 const Popup: React.FC<PopupProps> = ({
   content,
   onClose,

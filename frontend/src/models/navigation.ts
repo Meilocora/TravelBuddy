@@ -9,6 +9,13 @@ export type BottomTabsParamList = {
 
 export type MajorStageStackParamList = {
   ManageMajorStage: { majorStageId?: number; journeyId: number };
+  ManageMinorStage: { majorStageId: number; minorStageId?: number };
+  ManageTransportation: {
+    journeyId?: number;
+    majorStageId?: number;
+    minorStageId?: number;
+    transportationId?: number;
+  };
 };
 
 export type JourneyBottomTabsParamsList = {

@@ -41,8 +41,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onSwitchMode,
   onAuthenticate,
 }): ReactElement => {
-  // const navigation = useNavigation<NavigationProp<StackParamList>>();
-
   const [hidePassword, setHidePassword] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [credentials, setCredentials] = useState<AuthFormValues>({
