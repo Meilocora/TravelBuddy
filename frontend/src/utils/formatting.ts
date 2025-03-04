@@ -1,5 +1,4 @@
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { DateFormatMode } from '../models';
 
 export function formatAmount(amount: number): string {
   return new Intl.NumberFormat('de-DE', {
@@ -29,6 +28,7 @@ export function formatDate(date: Date): string {
   return `${day}.${month}.${year}`;
 }
 
+// TODO: Is this needed somewhere?
 export function parseDate(dateString: string): Date {
   const [day, month, year] = dateString.split('.').map(Number);
   return new Date(year, month - 1, day); // Months are zero-based in JavaScript Date
@@ -42,22 +42,22 @@ export function formatDateString(date: string): string {
   return `${day}.${month}.${year}`;
 }
 
-// TODO: Change to format DD.MM.YYYY
-export function formatDateAndTime(date: string, mode?: string): string {
+export function formatDateAndTime(date: string): string {
   const dateObject = new Date(date);
   const day = String(dateObject.getDate()).padStart(2, '0');
   const year = dateObject.getFullYear();
   const hours = String(dateObject.getHours()).padStart(2, '0');
   const minutes = String(dateObject.getMinutes()).padStart(2, '0');
-  if (mode === DateFormatMode.shortened) {
-    const month = String(
-      dateObject.toLocaleString('en-US', { month: 'short' }).slice(0, 3)
-    ); // Months are zero-based
-    return `${day}.${month} - ${hours}:${minutes}`;
-  }
-
   const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
   return `${day}.${month}.${year} - ${hours}:${minutes}`;
+}
+
+// TODO: Is this needed somewhere?
+export function parseDateAndTime(dateString: string): Date {
+  const [datestring, time] = dateString.split(/\s/);
+  const [day, month, year] = datestring.split('.').map(Number);
+  const [hours, minutes] = time.split(':').map(Number);
+  return new Date(year, month, day, hours, minutes);
 }
 
 export function formatDurationToDays(

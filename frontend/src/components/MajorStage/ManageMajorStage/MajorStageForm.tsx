@@ -253,7 +253,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
         />
       )}
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Your Major Stage</Text>
+        {/* <Text style={styles.header}>Your Major Stage</Text> */}
         <View>
           <View style={styles.formRow}>
             <Input

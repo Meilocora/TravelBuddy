@@ -23,6 +23,7 @@ export enum SpendingsCategory {
 }
 
 export interface Transportation {
+  id: number;
   type: TransportationType;
   start_time: string;
   arrival_time: string;
@@ -33,12 +34,22 @@ export interface Transportation {
 }
 
 export interface TransportationValues {
+  type: TransportationType;
+  start_time: string;
+  arrival_time: string;
+  place_of_departure: string;
+  place_of_arrival: string;
+  transportation_costs: number;
+  link: string;
+}
+
+export interface TransportationFormValues {
   type: Validable<TransportationType>;
   start_time: Validable<string | null>;
   arrival_time: Validable<string | null>;
   place_of_departure: Validable<string | undefined>;
   place_of_arrival: Validable<string | undefined>;
-  transportation_costs: Validable<number | undefined>;
+  transportation_costs: Validable<number>;
   link: Validable<string | undefined>;
 }
 
@@ -48,6 +59,7 @@ export enum TransportationType {
   train,
   ferry,
   other,
+  map,
 }
 
 export interface Validable<T> {

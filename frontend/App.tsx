@@ -46,6 +46,7 @@ import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGrad
 import ManageTransportation from './src/screens/ManageTransportation';
 import ManageMinorStage from './src/screens/ManageMinorStage';
 
+// TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: When not authenticated while being logged in, the user should receive a new authCode immediately
 

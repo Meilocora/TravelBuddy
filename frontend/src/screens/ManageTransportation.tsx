@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
-import { Text } from 'react-native';
+import { Text, StyleSheet, View } from 'react-native';
 import {
   Icons,
   JourneyBottomTabsParamsList,
@@ -11,6 +11,8 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { MajorStageContext } from '../store/majorStage-context.';
 import IconButton from '../components/UI/IconButton';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import TransportationForm from '../components/Transportation/TransportationForm';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -117,7 +119,32 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   //   }
   // }
 
-  return <Text>Manage Transportation</Text>;
+  return (
+    <View style={styles.root}>
+      <Animated.ScrollView entering={FadeInDown}>
+        <TransportationForm
+          onCancel={cancelHandler}
+          onSubmit={() => {}}
+          submitButtonLabel={isEditing ? 'Update' : 'Add'}
+          defaultValues={isEditing ? selectedTransportation : undefined}
+          isEditing={isEditing}
+          journeyId={journeyId!}
+          majorStageId={majorStageId!}
+          minorStageId={minorStageId || undefined}
+        />
+      </Animated.ScrollView>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  btnContainer: {
+    alignItems: 'center',
+    marginTop: 18,
+  },
+});
 
 export default ManageTransportation;

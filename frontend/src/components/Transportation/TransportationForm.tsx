@@ -1,21 +1,26 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Checkbox } from 'react-native-paper';
+
 import {
   ButtonMode,
   ColorScheme,
   Transportation,
+  TransportationFormValues,
+  TransportationType,
   TransportationValues,
 } from '../../models';
 import Input from '../UI/form/Input';
 import DatePicker from '../UI/form/DatePicker';
-import { parseDate } from '../../utils';
+import { formatDate, parseDate } from '../../utils';
 import Button from '../UI/Button';
 import { GlobalStyles } from '../../constants/styles';
+import { MajorStageContext } from '../../store/majorStage-context.';
+import DateTimePicker from '../UI/form/DateTimePicker';
 
 type InputValidationResponse = {
   transportation?: Transportation;
-  transportationFormValues?: TransportationValues;
+  transportationFormValues?: TransportationFormValues;
   error?: string;
   status: number;
 };
@@ -26,8 +31,9 @@ interface TransportationFormProps {
   submitButtonLabel: string;
   defaultValues?: TransportationValues;
   isEditing?: boolean;
-  editTransportation?: number;
   journeyId: number;
+  majorStageId: number;
+  minorStageId?: number;
 }
 
 const TransportationForm: React.FC<TransportationFormProps> = ({
@@ -36,122 +42,120 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   submitButtonLabel,
   defaultValues,
   isEditing,
-  editTransportation,
   journeyId,
+  majorStageId,
+  minorStageId,
 }): ReactElement => {
+  const majorStageCtx = useContext(MajorStageContext);
+  const majorStage = majorStageCtx.majorStages.find(
+    (ms) => ms.id === majorStageId
+  );
   // const journeyCtx = useContext(JourneyContext);
   // const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
   // const minStartDate = journey!.scheduled_start_time;
   // const maxEndDate = journey!.scheduled_end_time;
 
-  // let maxAvailableMoney = journey!.costs.budget;
   // const majorStagesIds = journey?.majorStagesIds;
   // const majorStageCtx = useContext(MajorStageContext);
-  // majorStagesIds?.forEach((id) => {
-  //   maxAvailableMoney -=
-  //     majorStageCtx.majorStages.find((ms) => ms.id === id)?.costs.budget || 0;
-  // });
 
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
-  // const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
-  // const [changeCountry, setChangeCountry] = useState(false);
-  // const [updateConfirmed, setUpdateConfirmed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
+  const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
 
-  // const [inputs, setInputs] = useState<MajorStageFormValues>({
-  //   title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-  //   done: {
-  //     value: defaultValues?.done || false,
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   scheduled_start_time: {
-  //     value: defaultValues?.scheduled_start_time || null,
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   scheduled_end_time: {
-  //     value: defaultValues?.scheduled_end_time || null,
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   additional_info: {
-  //     value: defaultValues?.additional_info || '',
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   budget: {
-  //     value: defaultValues?.budget || 0,
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   spent_money: {
-  //     value: defaultValues?.spent_money || 0,
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  //   country: {
-  //     value: defaultValues?.country || '',
-  //     isValid: true,
-  //     errors: [],
-  //   },
-  // });
+  const [inputs, setInputs] = useState<TransportationFormValues>({
+    type: {
+      value: defaultValues?.type || TransportationType.bus,
+      isValid: true,
+      errors: [],
+    },
+    start_time: {
+      value: defaultValues?.start_time || null,
+      isValid: true,
+      errors: [],
+    },
+    arrival_time: {
+      value: defaultValues?.arrival_time || null,
+      isValid: true,
+      errors: [],
+    },
+    place_of_departure: {
+      value: defaultValues?.place_of_departure || '',
+      isValid: true,
+      errors: [],
+    },
+    place_of_arrival: {
+      value: defaultValues?.place_of_arrival || '',
+      isValid: true,
+      errors: [],
+    },
+    transportation_costs: {
+      value: defaultValues?.transportation_costs || 0,
+      isValid: true,
+      errors: [],
+    },
+    link: {
+      value: defaultValues?.link || '',
+      isValid: true,
+      errors: [],
+    },
+  });
 
   // Redefine inputs, when defaultValues change
-  // useEffect(() => {
-  //   setInputs({
-  //     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-  //     done: {
-  //       value: defaultValues?.done || false,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     scheduled_start_time: {
-  //       value: defaultValues?.scheduled_start_time || null,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     scheduled_end_time: {
-  //       value: defaultValues?.scheduled_end_time || null,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     additional_info: {
-  //       value: defaultValues?.additional_info || '',
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     budget: {
-  //       value: defaultValues?.budget || 0,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     spent_money: {
-  //       value: defaultValues?.spent_money || 0,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //     country: {
-  //       value: defaultValues?.country || '',
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //   });
-  // }, [defaultValues]);
+  useEffect(() => {
+    setInputs({
+      type: {
+        value: defaultValues?.type || TransportationType.bus,
+        isValid: true,
+        errors: [],
+      },
+      start_time: {
+        value: defaultValues?.start_time || null,
+        isValid: true,
+        errors: [],
+      },
+      arrival_time: {
+        value: defaultValues?.arrival_time || null,
+        isValid: true,
+        errors: [],
+      },
+      place_of_departure: {
+        value: defaultValues?.place_of_departure || '',
+        isValid: true,
+        errors: [],
+      },
+      place_of_arrival: {
+        value: defaultValues?.place_of_arrival || '',
+        isValid: true,
+        errors: [],
+      },
+      transportation_costs: {
+        value: defaultValues?.transportation_costs || 0,
+        isValid: true,
+        errors: [],
+      },
+      link: {
+        value: defaultValues?.link || '',
+        isValid: true,
+        errors: [],
+      },
+    });
+  }, [defaultValues]);
 
-  // function inputChangedHandler(
-  //   inputIdentifier: string,
-  //   enteredValue: string | boolean
-  // ) {
-  //   setInputs((currInputs) => {
-  //     return {
-  //       ...currInputs,
-  //       [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
-  //     };
-  //   });
-  // }
+  function inputChangedHandler(
+    inputIdentifier: string,
+    enteredValue: string | boolean
+  ) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
 
   function validateInputs() {}
+
+  // TODO: Add costs to majorStage.spent_money and journey.spent_money
 
   // async function validateInputs(): Promise<void> {
   //   setIsSubmitting(true);
@@ -189,38 +193,32 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   //   return;
   // }
 
-  // if (isSubmitting) {
-  //   const submitButtonLabel = 'Submitting...';
-  // }
+  if (isSubmitting) {
+    const submitButtonLabel = 'Submitting...';
+  }
 
-  // function handleChangeDate(
-  //   inputIdentifier: string,
-  //   selectedDate: Date | undefined
-  // ) {
-  //   if (selectedDate === undefined) {
-  //     return;
-  //   }
-  //   const formattedDate = formatDate(new Date(selectedDate));
-  //   setInputs((prevValues) => ({
-  //     ...prevValues,
-  //     [inputIdentifier]: {
-  //       value: formattedDate,
-  //       isValid: true,
-  //       errors: [],
-  //     },
-  //   }));
-  //   setOpenStartDatePicker(false);
-  //   setOpenEndDatePicker(false);
-  // }
+  function handleChangeDate(inputIdentifier: string, selectedDate: string) {
+    setInputs((prevValues) => ({
+      ...prevValues,
+      [inputIdentifier]: {
+        value: selectedDate,
+        isValid: true,
+        errors: [],
+      },
+    }));
+    setOpenStartDatePicker(false);
+    setOpenEndDatePicker(false);
+  }
 
   return (
     <>
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Your Major Stage</Text>
+        <Text style={styles.header}>Destination: "{majorStage!.country}"</Text>
         <View>
           <View style={styles.formRow}>
+            {/* TODO: Selection for Type */}
             {/* <Input
-              label='Title'
+              label='Type'
               invalid={!inputs.title.isValid}
               errors={inputs.title.errors}
               mandatory
@@ -229,77 +227,97 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                 onChangeText: inputChangedHandler.bind(this, 'title'),
               }}
             /> */}
-          </View>
-          <View style={styles.formRow}>
-            {/* <Input
-              label='Additional Information'
-              invalid={!inputs.additional_info.isValid}
-              errors={inputs.additional_info.errors}
-              textInputConfig={{
-                multiline: true,
-                value: inputs.additional_info.value,
-                onChangeText: inputChangedHandler.bind(this, 'additional_info'),
-              }}
-            /> */}
-          </View>
-          <View style={styles.formRow}>
-            {/* <Input
-              label='Spent Money'
-              invalid={!inputs.spent_money.isValid}
-              textInputConfig={{
-                readOnly: true,
-                placeholder: inputs.spent_money.value.toString(),
-              }}
-            />
             <Input
-              label='Budget'
-              invalid={!inputs.budget.isValid}
-              errors={inputs.budget.errors}
-              mandatory
+              label='Costs'
+              invalid={!inputs.transportation_costs.isValid}
+              errors={inputs.transportation_costs.errors}
               textInputConfig={{
                 keyboardType: 'decimal-pad',
                 value:
-                  inputs.budget.value !== 0
-                    ? inputs.budget.value.toString()
+                  inputs.transportation_costs.value !== 0
+                    ? inputs.transportation_costs.value.toString()
                     : '',
-                onChangeText: inputChangedHandler.bind(this, 'budget'),
-                placeholder: `Max: ${formatAmount(maxAvailableMoney)}`,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'transportation_costs'
+                ),
               }}
-            /> */}
+            />
           </View>
           <View style={styles.formRow}>
-            {/* <DatePicker
+            {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
+            <Input
+              label='Place of departure'
+              invalid={!inputs.place_of_departure.isValid}
+              errors={inputs.place_of_departure.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.place_of_departure.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'place_of_departure'
+                ),
+              }}
+            />
+            {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
+            <Input
+              label='Place of arrival'
+              invalid={!inputs.place_of_arrival.isValid}
+              errors={inputs.place_of_arrival.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.place_of_arrival.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'place_of_arrival'
+                ),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <DateTimePicker
               openDatePicker={openStartDatePicker}
               setOpenDatePicker={() => setOpenStartDatePicker(true)}
               handleChange={handleChangeDate}
-              inputIdentifier='scheduled_start_time'
-              invalid={!inputs.scheduled_start_time.isValid}
-              errors={inputs.scheduled_start_time.errors}
-              value={inputs.scheduled_start_time.value?.toString()}
-              label='Starts on'
-              minimumDate={parseDate(minStartDate)}
-              maximumDate={
-                inputs.scheduled_end_time.value
-                  ? parseDate(inputs.scheduled_end_time.value)
-                  : parseDate(maxEndDate)
-              }
-            /> */}
-            {/* <DatePicker
+              inputIdentifier='start_time'
+              invalid={!inputs.start_time.isValid}
+              errors={inputs.start_time.errors}
+              value={inputs.start_time.value?.toString()}
+              label='Departure'
+              // minimumDate={parseDate(minStartDate)}
+              // maximumDate={
+              // inputs.scheduled_end_time.value
+              // ? parseDate(inputs.scheduled_end_time.value)
+              // : parseDate(maxEndDate)
+              // }
+            />
+            <DateTimePicker
               openDatePicker={openEndDatePicker}
               setOpenDatePicker={() => setOpenEndDatePicker(true)}
               handleChange={handleChangeDate}
-              inputIdentifier='scheduled_end_time'
-              invalid={!inputs.scheduled_end_time.isValid}
-              errors={inputs.scheduled_end_time.errors}
-              value={inputs.scheduled_end_time.value?.toString()}
-              label='Ends on'
-              minimumDate={
-                inputs.scheduled_start_time.value
-                  ? parseDate(inputs.scheduled_start_time.value)
-                  : parseDate(minStartDate)
-              }
-              maximumDate={parseDate(maxEndDate)}
-            /> */}
+              inputIdentifier='arrival_time'
+              invalid={!inputs.arrival_time.isValid}
+              errors={inputs.arrival_time.errors}
+              value={inputs.arrival_time.value?.toString()}
+              label='Arrival'
+              // minimumDate={parseDate(minStartDate)}
+              // maximumDate={
+              // inputs.scheduled_end_time.value
+              // ? parseDate(inputs.scheduled_end_time.value)
+              // : parseDate(maxEndDate)
+              // }
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.link.isValid}
+              errors={inputs.link.errors}
+              textInputConfig={{
+                value: inputs.link.value,
+                onChangeText: inputChangedHandler.bind(this, 'link'),
+              }}
+            />
           </View>
         </View>
         <View style={styles.buttonsContainer}>
@@ -348,13 +366,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
     marginHorizontal: 12,
-  },
-  checkBoxContainer: {
-    alignItems: 'center',
-    marginHorizontal: 'auto',
-  },
-  checkBoxLabel: {
-    color: GlobalStyles.colors.gray50,
   },
   buttonsContainer: {
     flexDirection: 'row',

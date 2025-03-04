@@ -11,7 +11,6 @@ import { useNavigation } from '@react-navigation/native';
 import {
   ButtonMode,
   ColorScheme,
-  DateFormatMode,
   Icons,
   JourneyBottomTabsParamsList,
   MajorStage,
@@ -91,12 +90,10 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 
   if (majorStage.transportation) {
     const transportStartDate = formatDateAndTime(
-      majorStage.transportation.start_time,
-      DateFormatMode.shortened
+      majorStage.transportation.start_time
     );
     const transportEndDate = formatDateAndTime(
-      majorStage.transportation!.arrival_time,
-      DateFormatMode.shortened
+      majorStage.transportation!.arrival_time
     );
     const transportCosts = formatAmount(
       majorStage.transportation.transportation_costs

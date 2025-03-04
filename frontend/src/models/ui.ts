@@ -31,10 +31,6 @@ export enum Icons {
   close = 'close',
 }
 
-export enum DateFormatMode {
-  shortened = 'shortened',
-}
-
 export enum ButtonMode {
   default = 'default',
   flat = 'flat',

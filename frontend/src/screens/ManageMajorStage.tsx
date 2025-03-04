@@ -11,7 +11,6 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import SecondaryGradient from '../components/UI/LinearGradients/SecondaryGradient';
 import {
   MajorStage,
   MajorStageValues,
@@ -81,7 +80,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     navigation.setOptions({
       headerTitleAlign: 'center',
       title: isEditing
-        ? `Manage ${selectedMajorStage?.title}`
+        ? `Manage "${selectedMajorStage?.title}"`
         : 'Add Major Stage',
       headerLeft: ({ tintColor }) => (
         <IconButton
@@ -94,7 +93,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, isEditing]);
 
   // Redefine majorStageValues, when selectedMajorStage changes
   useEffect(() => {
