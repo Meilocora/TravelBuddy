@@ -1,7 +1,5 @@
-import { BlurView } from 'expo-blur';
 import React, { ReactElement, useEffect, useState } from 'react';
 import {
-  Dimensions,
   Keyboard,
   Pressable,
   ScrollView,
@@ -15,6 +13,7 @@ import Button from '../UI/Button';
 import { ButtonMode, ColorScheme, TransportationType } from '../../models';
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface TransportTypeSelectorProps {
   onChangeTransportType: (transportType: string) => void;
@@ -52,10 +51,17 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
     onChangeTransportType(item);
   }
 
+  function handlePressOutside() {
+    setOpenSelection(false);
+  }
+
   return (
     <>
       {openSelection && (
-        <View style={styles.selectionContainer}>
+        <OutsidePressHandler
+          onOutsidePress={handlePressOutside}
+          style={styles.selectionContainer}
+        >
           <View style={styles.listContainer}>
             <ScrollView style={styles.list}>
               {Object.values(TransportationType).map((item: string) => (
@@ -80,7 +86,7 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
               Dismiss
             </Button>
           </View>
-        </View>
+        </OutsidePressHandler>
       )}
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -108,9 +114,8 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
 };
 
 const styles = StyleSheet.create({
-  outside: {
+  outerContainer: {
     flex: 1,
-    height: '100%',
   },
   container: {
     flex: 1,
@@ -136,6 +141,7 @@ const styles = StyleSheet.create({
     top: '100%',
     width: '50%',
     maxHeight: 200,
+    zIndex: 1,
   },
   listContainer: {
     marginHorizontal: 10,

@@ -235,3 +235,4 @@ def delete_major_stage(current_user, majorStageId):
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    

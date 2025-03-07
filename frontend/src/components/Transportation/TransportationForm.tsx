@@ -53,7 +53,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   );
   // const journeyCtx = useContext(JourneyContext);
   // const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
-  // const minStartDate = journey!.scheduled_start_time;
+
+  const minStartDate = parseDate(majorStage!.scheduled_start_time);
+  minStartDate.setDate(minStartDate.getDate() - 1);
+  const maxStartDate = parseDate(majorStage!.scheduled_start_time);
+  maxStartDate.setDate(maxStartDate.getDate() + 1);
+
   // const maxEndDate = journey!.scheduled_end_time;
 
   // const majorStagesIds = journey?.majorStagesIds;
@@ -156,8 +161,6 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 
   function validateInputs() {}
 
-  // TODO: Add costs to majorStage.spent_money and journey.spent_money
-
   // async function validateInputs(): Promise<void> {
   //   setIsSubmitting(true);
 
@@ -210,12 +213,6 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     setOpenStartDatePicker(false);
     setOpenEndDatePicker(false);
   }
-
-  // TODO: When exiting DateTimePicker by clicking somehwere else, it just reopens when going to another screen
-  // TODO: Exit TransportTypeSelector by clicking somewhere else
-  // TODO: Add Min and Max Date to DateTimePicker
-  // TODO: Add HTTP Requests
-  // TODO: Add Backend Validation
 
   return (
     <View style={styles.formContainer}>
@@ -275,19 +272,17 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         <View style={styles.formRow}>
           <DateTimePicker
             openDatePicker={openStartDatePicker}
-            setOpenDatePicker={() => setOpenStartDatePicker(true)}
+            setOpenDatePicker={() =>
+              setOpenStartDatePicker((prevValue) => !prevValue)
+            }
             handleChange={handleChangeDate}
             inputIdentifier='start_time'
             invalid={!inputs.start_time.isValid}
             errors={inputs.start_time.errors}
             value={inputs.start_time.value?.toString()}
             label='Departure'
-            // minimumDate={parseDate(minStartDate)}
-            // maximumDate={
-            // inputs.scheduled_end_time.value
-            // ? parseDate(inputs.scheduled_end_time.value)
-            // : parseDate(maxEndDate)
-            // }
+            minimumDate={minStartDate}
+            maximumDate={maxStartDate}
           />
           <DateTimePicker
             openDatePicker={openEndDatePicker}
@@ -298,12 +293,8 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
             errors={inputs.arrival_time.errors}
             value={inputs.arrival_time.value?.toString()}
             label='Arrival'
-            // minimumDate={parseDate(minStartDate)}
-            // maximumDate={
-            // inputs.scheduled_end_time.value
-            // ? parseDate(inputs.scheduled_end_time.value)
-            // : parseDate(maxEndDate)
-            // }
+            minimumDate={minStartDate}
+            maximumDate={maxStartDate}
           />
         </View>
         <View style={styles.formRow}>

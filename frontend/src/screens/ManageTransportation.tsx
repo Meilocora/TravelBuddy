@@ -119,27 +119,23 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   //   }
   // }
 
-  function tapHandler() {
-    console.log('Tapped');
-  }
-
   return (
-    // <Pressable onPress={tapHandler}>
-    <View style={styles.root}>
-      <Animated.ScrollView entering={FadeInDown}>
-        <TransportationForm
-          onCancel={cancelHandler}
-          onSubmit={() => {}}
-          submitButtonLabel={isEditing ? 'Update' : 'Add'}
-          defaultValues={isEditing ? selectedTransportation : undefined}
-          isEditing={isEditing}
-          journeyId={journeyId!}
-          majorStageId={majorStageId!}
-          minorStageId={minorStageId || undefined}
-        />
-      </Animated.ScrollView>
-    </View>
-    // </Pressable>
+    <>
+      <View style={styles.root}>
+        <Animated.ScrollView entering={FadeInDown}>
+          <TransportationForm
+            onCancel={cancelHandler}
+            onSubmit={() => {}}
+            submitButtonLabel={isEditing ? 'Update' : 'Add'}
+            defaultValues={isEditing ? selectedTransportation : undefined}
+            isEditing={isEditing}
+            journeyId={journeyId!}
+            majorStageId={majorStageId!}
+            minorStageId={minorStageId || undefined}
+          />
+        </Animated.ScrollView>
+      </View>
+    </>
   );
 };
 

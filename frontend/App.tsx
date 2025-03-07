@@ -10,8 +10,9 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import MainGradient from './src/components/UI/LinearGradients/MainGradient';
+import { EventProvider } from 'react-native-outside-press';
 
+import MainGradient from './src/components/UI/LinearGradients/MainGradient';
 import AllJourneys from './src/screens/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
 import { GlobalStyles } from './src/constants/styles';
@@ -369,11 +370,11 @@ const Root = () => {
 
 export default function App() {
   return (
-    <>
+    <EventProvider>
       <StatusBar style='inverted' />
       <AuthContextProvider>
         <Root />
       </AuthContextProvider>
-    </>
+    </EventProvider>
   );
 }

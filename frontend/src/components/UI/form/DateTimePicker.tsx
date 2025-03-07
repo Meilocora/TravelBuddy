@@ -4,6 +4,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import Input from './Input';
 import { formatDate, parseDate, parseDateAndTime } from '../../../utils';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface PickerValues {
   inputIdentifier: string;
@@ -38,11 +39,10 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
   const [openTimePicker, setOpenTimePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
 
-  console.log(openDatePicker);
-  console.log(openTimePicker);
-
   function handleChooseDate({ inputIdentifier, selectedDate }: PickerValues) {
     if (selectedDate === undefined) {
+      setOpenDatePicker();
+      setOpenTimePicker(false);
       return;
     }
     setFormattedDate(formatDate(new Date(selectedDate)));
@@ -51,6 +51,7 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
 
   function handleChooseTime({ inputIdentifier, selectedDate }: PickerValues) {
     if (selectedDate === undefined) {
+      setOpenTimePicker(false);
       return;
     }
     const formattedTime = selectedDate?.toLocaleTimeString([], {
@@ -61,6 +62,11 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
     setOpenTimePicker(false);
     const responseDate = `${formattedDate} ${formattedTime}`;
     handleChange(inputIdentifier, responseDate);
+  }
+
+  function handlePressOutside() {
+    setOpenDatePicker();
+    setOpenTimePicker(false);
   }
 
   return (
@@ -79,36 +85,42 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
         />
       </Pressable>
       {openDatePicker && !openTimePicker && (
-        <RNDateTimePicker
-          value={value ? parseDateAndTime(value) : new Date()}
-          minimumDate={minimumDate || new Date()}
-          maximumDate={maximumDate || undefined}
-          mode='date'
-          display='calendar'
-          onChange={(event, selectedDate) => {
-            if (event.type === 'dismissed') {
-              return;
-            } else {
-              handleChooseDate({ inputIdentifier, selectedDate });
-            }
-          }}
-        />
+        <OutsidePressHandler onOutsidePress={handlePressOutside}>
+          <RNDateTimePicker
+            value={value ? parseDate(value) : new Date()}
+            minimumDate={minimumDate || new Date()}
+            maximumDate={maximumDate || undefined}
+            mode='date'
+            display='calendar'
+            onTouchCancel={handlePressOutside}
+            onChange={(event, selectedDate) => {
+              if (event.type === 'dismissed') {
+                return;
+              } else {
+                handleChooseDate({ inputIdentifier, selectedDate });
+              }
+            }}
+          />
+        </OutsidePressHandler>
       )}
       {openDatePicker && openTimePicker && (
-        <RNDateTimePicker
-          value={value ? parseDateAndTime(value) : new Date()}
-          minimumDate={minimumDate || new Date()}
-          maximumDate={maximumDate || undefined}
-          mode='time'
-          display='spinner'
-          onChange={(event, selectedDate) => {
-            if (event.type === 'dismissed') {
-              return;
-            } else {
-              handleChooseTime({ inputIdentifier, selectedDate });
-            }
-          }}
-        />
+        <OutsidePressHandler onOutsidePress={handlePressOutside}>
+          <RNDateTimePicker
+            value={value ? parseDateAndTime(value) : new Date()}
+            minimumDate={minimumDate || new Date()}
+            maximumDate={maximumDate || undefined}
+            mode='time'
+            display='spinner'
+            onTouchCancel={handlePressOutside}
+            onChange={(event, selectedDate) => {
+              if (event.type === 'dismissed') {
+                return;
+              } else {
+                handleChooseTime({ inputIdentifier, selectedDate });
+              }
+            }}
+          />
+        </OutsidePressHandler>
       )}
     </>
   );
