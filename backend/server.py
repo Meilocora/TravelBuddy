@@ -14,6 +14,7 @@ from app.routes.minor_stage_routes import minor_stage_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.country_routes import country_bp
 from app.routes.place_routes import place_bp
+from app.routes.transportation import transportation_bp
 
 # Load environment variables from .env file
 load_dotenv()
@@ -32,6 +33,7 @@ app.register_blueprint(minor_stage_bp, url_prefix='/minor_stage')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(country_bp, url_prefix='/country')
 app.register_blueprint(place_bp, url_prefix='/place-to-visit')
+app.register_blueprint(transportation_bp, url_prefix='/transportation')
 
 
 with app.app_context():
