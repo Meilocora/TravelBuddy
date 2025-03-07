@@ -1,9 +1,8 @@
 import { BlurView } from 'expo-blur';
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import {
   Dimensions,
   Keyboard,
-  LayoutAnimation,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,14 +17,14 @@ import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
 
 interface TransportTypeSelectorProps {
-  onChangeCountry: (countryName: string) => void;
+  onChangeTransportType: (transportType: string) => void;
   invalid: boolean;
   defaultType: string;
   errors: string[];
 }
 
 const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
-  onChangeCountry,
+  onChangeTransportType,
   invalid,
   defaultType,
   errors,
@@ -34,9 +33,9 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
   const [openSelection, setOpenSelection] = useState(false);
   const [transportType, setTransportType] = useState<string>('');
 
-  // useEffect(() => {
-  //   setCountryName(defaultCountryName);
-  // }, [defaultCountryName]);
+  useEffect(() => {
+    setTransportType(defaultType);
+  }, [defaultType]);
 
   function handleOpenModal() {
     setOpenSelection(true);
@@ -48,33 +47,29 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
   }
 
   function handlePressListElement(item: string) {
-    // const prevCountry = countryName;
-
-    // setChosenCountries((prevValues) => {
-    //   const reducedCountries = prevValues.filter(
-    //     (element) => element !== prevCountry
-    //   );
-    //   return [...reducedCountries, item];
-    // });
-
-    // setCountryName(item);
+    setTransportType(item);
     setOpenSelection(false);
+    onChangeTransportType(item);
   }
 
   return (
     <>
       {openSelection && (
-        <BlurView style={styles.blurView} intensity={100} tint='dark'>
+        <View style={styles.selectionContainer}>
           <View style={styles.listContainer}>
             <ScrollView style={styles.list}>
-              {/* {TransportationType.map((item: string) => (
+              {Object.values(TransportationType).map((item: string) => (
                 <ListItem
                   key={generateRandomString()}
                   onPress={handlePressListElement.bind(item)}
+                  containerStyles={
+                    item === transportType ? styles.chosenType : {}
+                  }
+                  textStyles={item === transportType ? styles.chosenText : {}}
                 >
                   {item}
                 </ListItem>
-              ))} */}
+              ))}
             </ScrollView>
             <Button
               colorScheme={ColorScheme.neutral}
@@ -85,7 +80,7 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
               Dismiss
             </Button>
           </View>
-        </BlurView>
+        </View>
       )}
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -136,47 +131,34 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.error200,
     fontStyle: 'italic',
   },
-  blurView: {
-    // TODO: Rework this , so it works for alle devices
-    marginHorizontal: -36,
-    marginVertical: -600,
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-    overflow: 'hidden',
-    zIndex: 1,
-    ...StyleSheet.absoluteFillObject,
+  selectionContainer: {
+    position: 'absolute',
+    top: '100%',
+    width: '50%',
+    maxHeight: 200,
   },
   listContainer: {
-    marginVertical: 'auto',
-    marginHorizontal: 'auto',
-    paddingTop: 20,
-    paddingBottom: 10,
-    paddingHorizontal: 25,
-    minWidth: '60%',
-    maxHeight: 300,
+    marginHorizontal: 10,
     backgroundColor: GlobalStyles.colors.gray700,
-    borderRadius: 20,
+    borderColor: GlobalStyles.colors.gray100,
+    borderWidth: 1,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    zIndex: 1,
   },
   list: {
     paddingHorizontal: 5,
-    borderColor: GlobalStyles.colors.gray200,
-    borderWidth: 0.5,
+    borderBottomWidth: 1,
+    borderBottomColor: GlobalStyles.colors.gray100,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
-  separatorText: {
-    color: GlobalStyles.colors.gray100,
-    fontStyle: 'italic',
-    marginTop: 20,
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  chosenListElement: {
-    backgroundColor: GlobalStyles.colors.gray300,
-    borderWidth: 0,
+  chosenType: {
+    backgroundColor: GlobalStyles.colors.accent200,
   },
   chosenText: {
-    color: GlobalStyles.colors.gray700,
+    color: GlobalStyles.colors.gray50,
+    fontWeight: 'bold',
   },
   button: {
     marginHorizontal: 'auto',

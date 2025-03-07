@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Pressable } from 'react-native';
 import {
   Icons,
   JourneyBottomTabsParamsList,
@@ -119,7 +119,12 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   //   }
   // }
 
+  function tapHandler() {
+    console.log('Tapped');
+  }
+
   return (
+    // <Pressable onPress={tapHandler}>
     <View style={styles.root}>
       <Animated.ScrollView entering={FadeInDown}>
         <TransportationForm
@@ -134,6 +139,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
         />
       </Animated.ScrollView>
     </View>
+    // </Pressable>
   );
 };
 

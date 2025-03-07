@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 
 import {
@@ -17,6 +17,7 @@ import Button from '../UI/Button';
 import { GlobalStyles } from '../../constants/styles';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import DateTimePicker from '../UI/form/DateTimePicker';
+import TransportTypeSelector from './TransportTypeSelector';
 
 type InputValidationResponse = {
   transportation?: Transportation;
@@ -64,7 +65,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 
   const [inputs, setInputs] = useState<TransportationFormValues>({
     type: {
-      value: defaultValues?.type || TransportationType.bus,
+      value: defaultValues?.type || '',
       isValid: true,
       errors: [],
     },
@@ -104,7 +105,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   useEffect(() => {
     setInputs({
       type: {
-        value: defaultValues?.type || TransportationType.bus,
+        value: defaultValues?.type || '',
         isValid: true,
         errors: [],
       },
@@ -210,130 +211,126 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     setOpenEndDatePicker(false);
   }
 
+  // TODO: When exiting DateTimePicker by clicking somehwere else, it just reopens when going to another screen
+  // TODO: Exit TransportTypeSelector by clicking somewhere else
+  // TODO: Add Min and Max Date to DateTimePicker
+  // TODO: Add HTTP Requests
+  // TODO: Add Backend Validation
+
   return (
-    <>
-      <View style={styles.formContainer}>
-        <Text style={styles.header}>Destination: "{majorStage!.country}"</Text>
-        <View>
-          <View style={styles.formRow}>
-            {/* TODO: Selection for Type */}
-            {/* <Input
-              label='Type'
-              invalid={!inputs.title.isValid}
-              errors={inputs.title.errors}
-              mandatory
-              textInputConfig={{
-                value: inputs.title.value,
-                onChangeText: inputChangedHandler.bind(this, 'title'),
-              }}
-            /> */}
-            <Input
-              label='Costs'
-              invalid={!inputs.transportation_costs.isValid}
-              errors={inputs.transportation_costs.errors}
-              textInputConfig={{
-                keyboardType: 'decimal-pad',
-                value:
-                  inputs.transportation_costs.value !== 0
-                    ? inputs.transportation_costs.value.toString()
-                    : '',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'transportation_costs'
-                ),
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
-            <Input
-              label='Place of departure'
-              invalid={!inputs.place_of_departure.isValid}
-              errors={inputs.place_of_departure.errors}
-              mandatory
-              textInputConfig={{
-                value: inputs.place_of_departure.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'place_of_departure'
-                ),
-              }}
-            />
-            {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
-            <Input
-              label='Place of arrival'
-              invalid={!inputs.place_of_arrival.isValid}
-              errors={inputs.place_of_arrival.errors}
-              mandatory
-              textInputConfig={{
-                value: inputs.place_of_arrival.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'place_of_arrival'
-                ),
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <DateTimePicker
-              openDatePicker={openStartDatePicker}
-              setOpenDatePicker={() => setOpenStartDatePicker(true)}
-              handleChange={handleChangeDate}
-              inputIdentifier='start_time'
-              invalid={!inputs.start_time.isValid}
-              errors={inputs.start_time.errors}
-              value={inputs.start_time.value?.toString()}
-              label='Departure'
-              // minimumDate={parseDate(minStartDate)}
-              // maximumDate={
-              // inputs.scheduled_end_time.value
-              // ? parseDate(inputs.scheduled_end_time.value)
-              // : parseDate(maxEndDate)
-              // }
-            />
-            <DateTimePicker
-              openDatePicker={openEndDatePicker}
-              setOpenDatePicker={() => setOpenEndDatePicker(true)}
-              handleChange={handleChangeDate}
-              inputIdentifier='arrival_time'
-              invalid={!inputs.arrival_time.isValid}
-              errors={inputs.arrival_time.errors}
-              value={inputs.arrival_time.value?.toString()}
-              label='Arrival'
-              // minimumDate={parseDate(minStartDate)}
-              // maximumDate={
-              // inputs.scheduled_end_time.value
-              // ? parseDate(inputs.scheduled_end_time.value)
-              // : parseDate(maxEndDate)
-              // }
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.link.isValid}
-              errors={inputs.link.errors}
-              textInputConfig={{
-                value: inputs.link.value,
-                onChangeText: inputChangedHandler.bind(this, 'link'),
-              }}
-            />
-          </View>
+    <View style={styles.formContainer}>
+      <Text style={styles.header}>Destination: "{majorStage!.country}"</Text>
+      <View>
+        <View style={styles.formRow}>
+          <TransportTypeSelector
+            onChangeTransportType={inputChangedHandler.bind(this, 'type')}
+            defaultType={inputs.type.value}
+            invalid={!inputs.type.isValid}
+            errors={inputs.type.errors}
+          />
+          <Input
+            label='Costs'
+            invalid={!inputs.transportation_costs.isValid}
+            errors={inputs.transportation_costs.errors}
+            textInputConfig={{
+              keyboardType: 'decimal-pad',
+              value:
+                inputs.transportation_costs.value !== 0
+                  ? inputs.transportation_costs.value.toString()
+                  : '',
+              onChangeText: inputChangedHandler.bind(
+                this,
+                'transportation_costs'
+              ),
+            }}
+          />
         </View>
-        <View style={styles.buttonsContainer}>
-          <Button
-            onPress={onCancel}
-            colorScheme={ColorScheme.neutral}
-            mode={ButtonMode.flat}
-          >
-            Cancel
-          </Button>
-          <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
-            {submitButtonLabel}
-          </Button>
+        <View style={styles.formRow}>
+          {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
+          <Input
+            label='Place of departure'
+            invalid={!inputs.place_of_departure.isValid}
+            errors={inputs.place_of_departure.errors}
+            mandatory
+            textInputConfig={{
+              value: inputs.place_of_departure.value,
+              onChangeText: inputChangedHandler.bind(
+                this,
+                'place_of_departure'
+              ),
+            }}
+          />
+          {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
+          <Input
+            label='Place of arrival'
+            invalid={!inputs.place_of_arrival.isValid}
+            errors={inputs.place_of_arrival.errors}
+            mandatory
+            textInputConfig={{
+              value: inputs.place_of_arrival.value,
+              onChangeText: inputChangedHandler.bind(this, 'place_of_arrival'),
+            }}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <DateTimePicker
+            openDatePicker={openStartDatePicker}
+            setOpenDatePicker={() => setOpenStartDatePicker(true)}
+            handleChange={handleChangeDate}
+            inputIdentifier='start_time'
+            invalid={!inputs.start_time.isValid}
+            errors={inputs.start_time.errors}
+            value={inputs.start_time.value?.toString()}
+            label='Departure'
+            // minimumDate={parseDate(minStartDate)}
+            // maximumDate={
+            // inputs.scheduled_end_time.value
+            // ? parseDate(inputs.scheduled_end_time.value)
+            // : parseDate(maxEndDate)
+            // }
+          />
+          <DateTimePicker
+            openDatePicker={openEndDatePicker}
+            setOpenDatePicker={() => setOpenEndDatePicker(true)}
+            handleChange={handleChangeDate}
+            inputIdentifier='arrival_time'
+            invalid={!inputs.arrival_time.isValid}
+            errors={inputs.arrival_time.errors}
+            value={inputs.arrival_time.value?.toString()}
+            label='Arrival'
+            // minimumDate={parseDate(minStartDate)}
+            // maximumDate={
+            // inputs.scheduled_end_time.value
+            // ? parseDate(inputs.scheduled_end_time.value)
+            // : parseDate(maxEndDate)
+            // }
+          />
+        </View>
+        <View style={styles.formRow}>
+          <Input
+            label='Link'
+            invalid={!inputs.link.isValid}
+            errors={inputs.link.errors}
+            textInputConfig={{
+              value: inputs.link.value,
+              onChangeText: inputChangedHandler.bind(this, 'link'),
+            }}
+          />
         </View>
       </View>
-    </>
+      <View style={styles.buttonsContainer}>
+        <Button
+          onPress={onCancel}
+          colorScheme={ColorScheme.neutral}
+          mode={ButtonMode.flat}
+        >
+          Cancel
+        </Button>
+        <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
+          {submitButtonLabel}
+        </Button>
+      </View>
+    </View>
   );
 };
 
@@ -341,7 +338,7 @@ const styles = StyleSheet.create({
   formContainer: {
     opacity: 0.75,
     marginHorizontal: 16,
-    marginVertical: 8,
+    marginTop: '15%',
     paddingHorizontal: 8,
     paddingVertical: 16,
     borderWidth: 2,

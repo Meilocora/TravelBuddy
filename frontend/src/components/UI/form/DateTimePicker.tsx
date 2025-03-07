@@ -38,6 +38,9 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
   const [openTimePicker, setOpenTimePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
 
+  console.log(openDatePicker);
+  console.log(openTimePicker);
+
   function handleChooseDate({ inputIdentifier, selectedDate }: PickerValues) {
     if (selectedDate === undefined) {
       return;
