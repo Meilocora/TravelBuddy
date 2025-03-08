@@ -14,7 +14,7 @@ from app.routes.minor_stage_routes import minor_stage_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.country_routes import country_bp
 from app.routes.place_routes import place_bp
-from app.routes.transportation import transportation_bp
+from app.routes.transportation_routes import transportation_bp
 
 # Load environment variables from .env file
 load_dotenv()

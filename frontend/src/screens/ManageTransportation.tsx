@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
-import { Text, StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   Icons,
   JourneyBottomTabsParamsList,
@@ -13,6 +13,8 @@ import IconButton from '../components/UI/IconButton';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import TransportationForm from '../components/Transportation/TransportationForm';
+import { MinorStageContext } from '../store/minorStage-context';
+import { JourneyContext } from '../store/journey-context';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -26,6 +28,7 @@ interface ConfirmHandlerProps {
   error?: string;
   status: number;
   transportation?: Transportation;
+  mode?: 'major' | 'minor';
 }
 
 const ManageTransportation: React.FC<ManageTransportationProps> = ({
@@ -37,15 +40,23 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
 
-  // TODO: Maybe better refetch MajorStage, when change is made here?
+  const journeyCtx = useContext(JourneyContext);
+  const minorStageCtx = useContext(MinorStageContext);
   const majorStageCtx = useContext(MajorStageContext);
   const { journeyId, majorStageId, minorStageId, transportationId } =
     route.params;
   let isEditing = !!transportationId;
 
-  const selectedTransportation = majorStageCtx.majorStages.find(
-    (majorStage) => majorStage.id === majorStageId
-  )!.transportation;
+  let selectedTransportation: Transportation | undefined;
+  if (minorStageId) {
+    selectedTransportation = minorStageCtx.minorStages.find(
+      (minorStage) => minorStage.id === minorStageId
+    )!.transportation;
+  } else if (majorStageId) {
+    selectedTransportation = majorStageCtx.majorStages.find(
+      (majorStage) => majorStage.id === majorStageId
+    )!.transportation;
+  }
 
   const [transportationValues, setTransportationValues] = useState();
 
@@ -91,33 +102,47 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     planningNavigation.navigate('Planning', { journeyId: journeyId! });
   }
 
-  // function confirmHandler({ status, error, majorStage }: ConfirmHandlerProps) {
-  //   if (isEditing) {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (majorStage && status === 200) {
-  //       majorStageCtx.updateMajorStage(majorStage);
-  //       const popupText = `Major Stage "${majorStage.title}" successfully updated!`;
-  //       planningNavigation.navigate('Planning', {
-  //         journeyId: journeyId,
-  //         popupText: popupText,
-  //       });
-  //     }
-  //   } else {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (majorStage && status === 201) {
-  //       majorStageCtx.addMajorStage(majorStage);
-  //       const popupText = `Major Stage "${majorStage.title}" successfully created!`;
-  //       planningNavigation.navigate('Planning', {
-  //         journeyId: journeyId,
-  //         popupText: popupText,
-  //       });
-  //     }
-  //   }
-  // }
+  async function confirmHandler({
+    status,
+    error,
+    transportation,
+    mode,
+  }: ConfirmHandlerProps) {
+    if (error) {
+      setError(error);
+      return;
+    } else if (
+      (transportation && status === 200) ||
+      (transportation && status === 201)
+    ) {
+      if (mode === 'major') {
+        console.log('In here');
+        await majorStageCtx.refetchMajorStages(journeyId!);
+        await journeyCtx.refetchJourneys();
+        const majorStageTitle = majorStageCtx.majorStages.find(
+          (majorStage) => majorStage.id === majorStageId
+        )!.title;
+
+        console.log('Here');
+
+        const popupText = `"${majorStageTitle}" successfully updated!`;
+        planningNavigation.navigate('Planning', {
+          journeyId: journeyId!,
+          popupText: popupText,
+        });
+
+        console.log('Major stage updated');
+      } else if (mode === 'minor') {
+        await minorStageCtx.refetchMinorStages(majorStageId!);
+        await journeyCtx.refetchJourneys();
+        // const popupText = `"${majorStage.title}" successfully updated!`;
+        // planningNavigation.navigate('Planning', {
+        // journeyId: journeyId,
+        // popupText: popupText,
+        // });
+      }
+    }
+  }
 
   return (
     <>
@@ -125,7 +150,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
         <Animated.ScrollView entering={FadeInDown}>
           <TransportationForm
             onCancel={cancelHandler}
-            onSubmit={() => {}}
+            onSubmit={confirmHandler}
             submitButtonLabel={isEditing ? 'Update' : 'Add'}
             defaultValues={isEditing ? selectedTransportation : undefined}
             isEditing={isEditing}

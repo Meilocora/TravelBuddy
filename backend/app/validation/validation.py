@@ -30,6 +30,21 @@ class Validation:
     return self.__return_feedback()
     
     
+  def validate_date_time(self, value: str, min_date_time: str = None) -> bool | None:
+    try:
+      datetime.strptime(value, '%d.%m.%Y %H:%M')
+    except (TypeError , ValueError):
+      self.error_list.append('Required format: DD.MM.YYYY HH:MM')
+    else:
+      if not min_date_time:
+        min_date_time = self.current_date_string
+        
+      if datetime.strptime(value, '%d.%m.%Y %H:%M') < datetime.strptime(min_date_time, '%d.%m.%Y %H:%M'):
+        self.error_list.append("Can't be earlier than now")
+    finally:
+      return self.__return_feedback()
+    
+  
   def validate_date(self, value: str, min_date: str = None) -> bool | None:
     try:
       datetime.strptime(value, '%d.%m.%Y')
@@ -40,10 +55,22 @@ class Validation:
         min_date = self.current_date_string
         
       if datetime.strptime(value, '%d.%m.%Y') < datetime.strptime(min_date, '%d.%m.%Y'):
-        self.error_list.append('Date cannot be earlier than the current date')
+        self.error_list.append("Can't be earlier than now")
     finally:
       return self.__return_feedback()
-        
+  
+  
+  def compare_date_times(self, start_date_time: str, end_date_time: str) -> bool | str:      
+      try:
+        datetime.strptime(start_date_time, '%d.%m.%Y %H:%M')
+        datetime.strptime(end_date_time, '%d.%m.%Y %H:%M')
+      except (TypeError , ValueError):
+        return self.__return_feedback()
+      else:
+        if datetime.strptime(start_date_time, '%d.%m.%Y %H:%M') > datetime.strptime(end_date_time, '%d.%m.%Y %H:%M'):
+          self.error_list.append("Can't be later than end date")
+          
+        return self.__return_feedback()
       
   def compare_dates(self, start_date: str, end_date: str) -> bool | str:
     try:
@@ -53,7 +80,7 @@ class Validation:
       return self.__return_feedback()
     else:
       if datetime.strptime(start_date, '%d.%m.%Y') > datetime.strptime(end_date, '%d.%m.%Y'):
-        self.error_list.append('Start date cannot be later than end date')
+        self.error_list.append("Can't be later than end date")
       
       return self.__return_feedback()
     
@@ -109,5 +136,27 @@ class Validation:
       
     if(not re.match(r"(.*?[!\?\(\)\[\]@#$%^&*])", password)):
       self.error_list.append("Must contain one special character")
+    
+    return self.__return_feedback()
+  
+  
+  def validate_hyperlink(self, hyperlink:str):
+    regex = r'(http|https)://[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,}(\/\S*)?'
+    if(not re.fullmatch(regex, hyperlink)):
+        self.error_list.append("Invalid Hyperlink")
+    
+    return self.__return_feedback()
+  
+  
+  def validate_spendings_category(self, category:str):
+    if category not in ['Transportation', 'Acommodation', 'Activities', 'Dine out', 'Basic needs', 'Souvenirs', 'Other']:
+      self.error_list.append('Invalid category')
+    
+    return self.__return_feedback()
+  
+  
+  def validate_transportation_type(self, type:str):
+    if type not in ['Bus', 'Car', 'Ferry', 'Plane', 'Train', 'Other']:
+      self.error_list.append('Invalid transportation type')      
     
     return self.__return_feedback()

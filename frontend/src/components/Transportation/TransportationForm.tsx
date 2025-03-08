@@ -1,29 +1,31 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { Checkbox } from 'react-native-paper';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   ButtonMode,
   ColorScheme,
   Transportation,
   TransportationFormValues,
-  TransportationType,
   TransportationValues,
 } from '../../models';
 import Input from '../UI/form/Input';
-import DatePicker from '../UI/form/DatePicker';
-import { formatDate, parseDate } from '../../utils';
+import { parseDate } from '../../utils';
 import Button from '../UI/Button';
 import { GlobalStyles } from '../../constants/styles';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import DateTimePicker from '../UI/form/DateTimePicker';
 import TransportTypeSelector from './TransportTypeSelector';
+import {
+  createTransportation,
+  updateTransportation,
+} from '../../utils/http/transportation';
 
 type InputValidationResponse = {
   transportation?: Transportation;
   transportationFormValues?: TransportationFormValues;
   error?: string;
   status: number;
+  mode?: 'major' | 'minor';
 };
 
 interface TransportationFormProps {
@@ -51,18 +53,11 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   const majorStage = majorStageCtx.majorStages.find(
     (ms) => ms.id === majorStageId
   );
-  // const journeyCtx = useContext(JourneyContext);
-  // const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
 
   const minStartDate = parseDate(majorStage!.scheduled_start_time);
   minStartDate.setDate(minStartDate.getDate() - 1);
   const maxStartDate = parseDate(majorStage!.scheduled_start_time);
   maxStartDate.setDate(maxStartDate.getDate() + 1);
-
-  // const maxEndDate = journey!.scheduled_end_time;
-
-  // const majorStagesIds = journey?.majorStagesIds;
-  // const majorStageCtx = useContext(MajorStageContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
@@ -159,43 +154,38 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     });
   }
 
-  function validateInputs() {}
+  async function validateInputs(): Promise<void> {
+    setIsSubmitting(true);
 
-  // async function validateInputs(): Promise<void> {
-  //   setIsSubmitting(true);
+    // Set all errors to empty array to prevent stacking of errors
+    for (const key in inputs) {
+      inputs[key as keyof TransportationFormValues].errors = [];
+    }
 
-  //   // Set all errors to empty array to prevent stacking of errors
-  //   for (const key in inputs) {
-  //     inputs[key as keyof MajorStageFormValues].errors = [];
-  //   }
+    let response: InputValidationResponse;
+    if (isEditing) {
+      response = await updateTransportation(inputs, majorStageId, minorStageId);
+    } else if (!isEditing) {
+      response = await createTransportation(inputs, majorStageId, minorStageId);
+    }
 
-  //   let response: InputValidationResponse;
-  //   if (isEditing) {
-  //     const former_country = majorStageCtx.majorStages.find(
-  //       (ms) => ms.id === editMajorStageId
-  //     )?.country;
+    const { error, status, transportation, transportationFormValues } =
+      response!;
 
-  //     if (!updateConfirmed && inputs.country.value !== former_country) {
-  //       setChangeCountry(true);
-  //       return;
-  //     }
-  //     response = await updateMajorStage(journeyId, inputs, editMajorStageId!);
-  //   } else if (!isEditing) {
-  //     response = await createMajorStage(journeyId, inputs);
-  //   }
-
-  //   const { error, status, majorStage, majorStageFormValues } = response!;
-
-  //   if (!error && majorStage) {
-  //     onSubmit({ majorStage, status });
-  //   } else if (error) {
-  //     onSubmit({ error, status });
-  //   } else if (majorStageFormValues) {
-  //     setInputs((prevValues) => majorStageFormValues);
-  //   }
-  //   setIsSubmitting(false);
-  //   return;
-  // }
+    if (!error && transportation) {
+      onSubmit({
+        transportation,
+        status,
+        mode: minorStageId ? 'minor' : 'major',
+      });
+    } else if (error) {
+      onSubmit({ error, status, mode: minorStageId ? 'minor' : 'major' });
+    } else if (transportationFormValues) {
+      setInputs((prevValues) => transportationFormValues);
+    }
+    setIsSubmitting(false);
+    return;
+  }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';

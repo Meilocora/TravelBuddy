@@ -153,7 +153,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 200) {
         majorStageCtx.updateMajorStage(majorStage);
-        const popupText = `Major Stage "${majorStage.title}" successfully updated!`;
+        const popupText = `"${majorStage.title}" successfully updated!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
           popupText: popupText,
@@ -165,7 +165,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 201) {
         majorStageCtx.addMajorStage(majorStage);
-        const popupText = `Major Stage "${majorStage.title}" successfully created!`;
+        const popupText = `"${majorStage.title}" successfully created!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
           popupText: popupText,

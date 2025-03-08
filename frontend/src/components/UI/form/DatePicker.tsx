@@ -4,6 +4,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import Input from './Input';
 import { parseDate } from '../../../utils';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface DatePickerProps {
   openDatePicker: boolean;
@@ -30,6 +31,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
   minimumDate,
   maximumDate,
 }) => {
+  function handlePressOutside() {
+    setOpenDatePicker();
+  }
+
   return (
     <>
       <Pressable onPress={setOpenDatePicker}>
@@ -46,20 +51,22 @@ const DatePicker: React.FC<DatePickerProps> = ({
         />
       </Pressable>
       {openDatePicker && (
-        <RNDateTimePicker
-          value={value ? parseDate(value) : new Date()}
-          minimumDate={minimumDate || new Date()}
-          maximumDate={maximumDate || undefined}
-          mode='date'
-          display='calendar'
-          onChange={(event, selectedDate) => {
-            if (event.type === 'dismissed') {
-              return;
-            } else {
-              handleChange(inputIdentifier, selectedDate!);
-            }
-          }}
-        />
+        <OutsidePressHandler onOutsidePress={handlePressOutside}>
+          <RNDateTimePicker
+            value={value ? parseDate(value) : new Date()}
+            minimumDate={minimumDate || new Date()}
+            maximumDate={maximumDate || undefined}
+            mode='date'
+            display='calendar'
+            onChange={(event, selectedDate) => {
+              if (event.type === 'dismissed') {
+                return;
+              } else {
+                handleChange(inputIdentifier, selectedDate!);
+              }
+            }}
+          />
+        </OutsidePressHandler>
       )}
     </>
   );

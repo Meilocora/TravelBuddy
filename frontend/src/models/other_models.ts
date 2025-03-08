@@ -13,13 +13,13 @@ export interface Spendings {
 }
 
 export enum SpendingsCategory {
-  transportation,
-  acommodation,
-  activities,
-  dine_out,
-  basic_needs,
-  souvenirs,
-  other,
+  transportation = 'Transportation',
+  acommodation = 'Acommodation',
+  activities = 'Activities',
+  dine_out = 'Dine out',
+  basic_needs = 'Basic needs',
+  souvenirs = 'Souvenirs',
+  other = 'Other',
 }
 
 export interface Transportation {

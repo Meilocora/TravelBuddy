@@ -261,7 +261,9 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           <View style={styles.formRow}>
             <DatePicker
               openDatePicker={openStartDatePicker}
-              setOpenDatePicker={() => setOpenStartDatePicker(true)}
+              setOpenDatePicker={() =>
+                setOpenStartDatePicker((prevValue) => !prevValue)
+              }
               handleChange={handleChangeDate}
               inputIdentifier='scheduled_start_time'
               invalid={!inputs.scheduled_start_time.isValid}
@@ -276,7 +278,9 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             />
             <DatePicker
               openDatePicker={openEndDatePicker}
-              setOpenDatePicker={() => setOpenEndDatePicker(true)}
+              setOpenDatePicker={() =>
+                setOpenEndDatePicker((prevValue) => !prevValue)
+              }
               handleChange={handleChangeDate}
               inputIdentifier='scheduled_end_time'
               invalid={!inputs.scheduled_end_time.isValid}

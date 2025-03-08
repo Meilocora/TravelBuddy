@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 
 import { Journey } from '../models';
+import { fetchJourneys } from '../utils/http';
 
 interface JourneyContextType {
   journeys: Journey[];
@@ -8,6 +9,7 @@ interface JourneyContextType {
   addJourney: (journey: Journey) => void;
   deleteJourney: (journeyId: number) => void;
   updateJourney: (journey: Journey) => void;
+  refetchJourneys: () => Promise<void>;
 }
 
 export const JourneyContext = createContext<JourneyContextType>({
@@ -16,6 +18,7 @@ export const JourneyContext = createContext<JourneyContextType>({
   addJourney: () => {},
   deleteJourney: () => {},
   updateJourney: () => {},
+  refetchJourneys: async () => {},
 });
 
 export default function JourneyContextProvider({
@@ -43,12 +46,20 @@ export default function JourneyContextProvider({
     );
   }
 
+  async function refetchJourneys(): Promise<void> {
+    const response = await fetchJourneys();
+    if (response.journeys) {
+      setJourneys(response.journeys);
+    }
+  }
+
   const value = {
     journeys,
     setJourneys,
     addJourney,
     deleteJourney,
     updateJourney,
+    refetchJourneys,
   };
 
   return (

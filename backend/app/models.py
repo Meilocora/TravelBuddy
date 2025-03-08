@@ -175,6 +175,9 @@ class Spendings(db.Model):
 
     # Define the relationships to the parents
     costs: Mapped['Costs'] = relationship('Costs', back_populates='spendings')
+    
+
+
 
 class Transportation(db.Model):
     __tablename__ = 'transportations'

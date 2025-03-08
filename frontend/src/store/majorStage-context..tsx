@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 
-import { MajorStage } from '../models';
+import { MajorStage, Transportation } from '../models';
+import { fetchMajorStagesById } from '../utils/http';
 
 interface MajorStageContextType {
   majorStages: MajorStage[];
@@ -8,6 +9,7 @@ interface MajorStageContextType {
   addMajorStage: (majorStage: MajorStage) => void;
   deleteMajorStage: (majorStageId: number) => void;
   updateMajorStage: (majorStage: MajorStage) => void;
+  refetchMajorStages: (journeyId: number) => Promise<void>;
 }
 
 export const MajorStageContext = createContext<MajorStageContextType>({
@@ -16,6 +18,7 @@ export const MajorStageContext = createContext<MajorStageContextType>({
   addMajorStage: () => {},
   deleteMajorStage: () => {},
   updateMajorStage: () => {},
+  refetchMajorStages: async () => {},
 });
 
 export default function MajorStageContextProvider({
@@ -43,12 +46,20 @@ export default function MajorStageContextProvider({
     );
   }
 
+  async function refetchMajorStages(journeyId: number): Promise<void> {
+    const response = await fetchMajorStagesById(journeyId);
+    if (response.majorStages) {
+      setMajorStages(response.majorStages);
+    }
+  }
+
   const value = {
     majorStages,
     setMajorStages,
     addMajorStage,
     deleteMajorStage,
     updateMajorStage,
+    refetchMajorStages,
   };
 
   return (

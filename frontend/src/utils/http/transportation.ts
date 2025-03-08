@@ -13,7 +13,7 @@ interface ManageTransportProps {
   error?: string;
 }
 
-export const createMajorStage = async (
+export const createTransportation = async (
   transportationFormValues: TransportationFormValues,
   majorStageId?: number,
   minorStageId?: number

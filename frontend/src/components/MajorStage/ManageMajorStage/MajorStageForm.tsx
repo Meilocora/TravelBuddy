@@ -307,7 +307,9 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
           <View style={styles.formRow}>
             <DatePicker
               openDatePicker={openStartDatePicker}
-              setOpenDatePicker={() => setOpenStartDatePicker(true)}
+              setOpenDatePicker={() =>
+                setOpenStartDatePicker((prevValue) => !prevValue)
+              }
               handleChange={handleChangeDate}
               inputIdentifier='scheduled_start_time'
               invalid={!inputs.scheduled_start_time.isValid}
@@ -323,7 +325,9 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             />
             <DatePicker
               openDatePicker={openEndDatePicker}
-              setOpenDatePicker={() => setOpenEndDatePicker(true)}
+              setOpenDatePicker={() =>
+                setOpenEndDatePicker((prevValue) => !prevValue)
+              }
               handleChange={handleChangeDate}
               inputIdentifier='scheduled_end_time'
               invalid={!inputs.scheduled_end_time.isValid}

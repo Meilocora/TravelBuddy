@@ -42,17 +42,16 @@ export function formatDateString(date: string): string {
   return `${day}.${month}.${year}`;
 }
 
-export function formatDateAndTime(date: string): string {
-  const dateObject = new Date(date);
+export function formatDateTimeString(date: string): string {
+  const dateObject = parseDateAndTime(date);
   const day = String(dateObject.getDate()).padStart(2, '0');
   const year = dateObject.getFullYear();
   const hours = String(dateObject.getHours()).padStart(2, '0');
   const minutes = String(dateObject.getMinutes()).padStart(2, '0');
   const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  return `${day}.${month}.${year} - ${hours}:${minutes}`;
+  return `${day}.${month}.${year} (${hours}:${minutes})`;
 }
 
-// TODO: Is this needed somewhere?
 export function parseDateAndTime(dateString: string): Date {
   const [datestring, time] = dateString.split(/\s/);
   const [day, month, year] = datestring.split('.').map(Number);
@@ -75,7 +74,7 @@ export function formatDurationToDays(
 
 export function formatCountdown(startDate: string): string {
   const today = new Date();
-  const startDateObject = new Date(startDate);
+  const startDateObject = parseDateAndTime(startDate);
   const timeDifference = startDateObject.getTime() - today.getTime();
 
   if (timeDifference < 0) {

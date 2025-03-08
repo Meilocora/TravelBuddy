@@ -28,13 +28,6 @@ export default function CustomCountryContextProvider({
 }) {
   const [customCountries, setCustomCountries] = useState<CustomCountry[]>([]);
 
-  async function refetchCustomCountries(): Promise<void> {
-    const response = await fetchCustomCountries();
-    if (response.data) {
-      setCustomCountries(response.data);
-    }
-  }
-
   function addCustomCountry(customCountry: CustomCountry) {
     setCustomCountries((prevCustomCountries) => [
       ...prevCustomCountries,
@@ -58,6 +51,13 @@ export default function CustomCountryContextProvider({
           : customCountry
       )
     );
+  }
+
+  async function refetchCustomCountries(): Promise<void> {
+    const response = await fetchCustomCountries();
+    if (response.data) {
+      setCustomCountries(response.data);
+    }
   }
 
   const value = {

@@ -1,11 +1,5 @@
-import { ReactElement, useLayoutEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  LayoutAnimation,
-  Pressable,
-} from 'react-native';
+import { ReactElement, useState } from 'react';
+import { StyleSheet, View, LayoutAnimation, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -14,15 +8,13 @@ import {
   Icons,
   JourneyBottomTabsParamsList,
   MajorStage,
-  MajorStageStackParamList,
-  StackParamList,
 } from '../../models';
 import {
   formatAmount,
   formatCountdown,
   formatDateString,
-  formatDateAndTime,
   formatDurationToDays,
+  formatDateTimeString,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -49,8 +41,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const [showMinorStages, setShowMinorStages] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
-  // const transportNavigation =
-  //   useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
   const hasMinorStages =
     majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
@@ -89,10 +79,10 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   let additionalInfo: { title: string; value: string }[] = [];
 
   if (majorStage.transportation) {
-    const transportStartDate = formatDateAndTime(
+    const transportStartDate = formatDateTimeString(
       majorStage.transportation.start_time
     );
-    const transportEndDate = formatDateAndTime(
+    const transportEndDate = formatDateTimeString(
       majorStage.transportation!.arrival_time
     );
     const transportCosts = formatAmount(
@@ -142,10 +132,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
         majorStageId: majorStage.id,
       },
     });
-
-    // TODO: Create ManageTransportation Form
-    // TODO: Implement backend for adding, updating and deleting transportation
-    // TODO: Frontendimplementation via existing majorStageCtx
   }
 
   function handleAddMinorStage() {
@@ -165,6 +151,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     setShowMinorStages((prevState) => !prevState);
   };
 
+  // TODO: Add Additional Infos somewhere (mabye, when tapping? + only then show transportation + minors  stages)
   // TODO: Edit Transportation
   // TODO: add MinorStage
   // TODO: Edit MinorStage

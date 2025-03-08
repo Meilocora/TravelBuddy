@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 
-import { MinorStage } from '../models';
+import { MinorStage, Transportation } from '../models';
+import { fetchMinorStagesById } from '../utils';
 
 interface MinorStageContextType {
   minorStages: MinorStage[];
@@ -8,6 +9,7 @@ interface MinorStageContextType {
   addMinorStage: (minorStage: MinorStage) => void;
   deleteMinorStage: (minorStageId: number) => void;
   updateMinorStage: (minorStages: MinorStage) => void;
+  refetchMinorStages: (majorStageId: number) => Promise<void>;
 }
 
 export const MinorStageContext = createContext<MinorStageContextType>({
@@ -16,6 +18,7 @@ export const MinorStageContext = createContext<MinorStageContextType>({
   addMinorStage: () => {},
   deleteMinorStage: () => {},
   updateMinorStage: () => {},
+  refetchMinorStages: async () => {},
 });
 
 export default function MinorStageContextProvider({
@@ -43,12 +46,20 @@ export default function MinorStageContextProvider({
     );
   }
 
+  async function refetchMinorStages(majorStageId: number): Promise<void> {
+    const response = await fetchMinorStagesById(majorStageId);
+    if (response.minorStages) {
+      setMinorStages(response.minorStages);
+    }
+  }
+
   const value = {
     minorStages,
     setMinorStages,
     addMinorStage,
     deleteMinorStage,
     updateMinorStage,
+    refetchMinorStages,
   };
 
   return (

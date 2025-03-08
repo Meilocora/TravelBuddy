@@ -11,6 +11,9 @@ import {
 import ElementTitle from '../list/ElementTitle';
 import AdditionalInfoPoints from './AdditionalInfoPoints';
 import { GlobalStyles } from '../../../constants/styles';
+import Button from '../Button';
+import { ButtonMode, ColorScheme, Icons } from '../../../models';
+import IconButton from '../IconButton';
 
 interface AdditionalInfoBoxProps {
   title: string;
@@ -57,6 +60,22 @@ const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
           link={link}
         />
       </Pressable>
+      {openInfoBox && (
+        // <Button
+        //   onPress={() => {}}
+        //   mode={ButtonMode.flat}
+        //   colorScheme={ColorScheme.accent}
+        //   style={styles.button}
+        // >
+        //   Edit
+        // </Button>
+        <IconButton
+          icon={Icons.edit}
+          color={GlobalStyles.colors.accent800}
+          onPress={() => {}}
+          style={styles.button}
+        />
+      )}
     </View>
   );
 };
@@ -68,10 +87,10 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     width: '90%',
-    marginTop: 10,
+    marginVertical: 10,
     borderWidth: 1,
     borderColor: GlobalStyles.colors.accent700,
-    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     overflow: 'hidden',
     backgroundColor: GlobalStyles.colors.accent100,
@@ -82,6 +101,11 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.5,
+  },
+  button: {
+    // maxWidth: '20%',
+    width: 'auto',
+    marginHorizontal: 'auto',
   },
 });
 

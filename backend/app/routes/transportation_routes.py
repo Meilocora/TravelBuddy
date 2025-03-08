@@ -1,8 +1,9 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
 from app.models import Costs, Spendings, Journey, MajorStage, Transportation, MinorStage
-from app.validation.major_stage_validation import MajorStageValidation
+from app.validation.transportation_validation import TransportationValidation
 
 transportation_bp = Blueprint('transportation', __name__)
 
@@ -13,68 +14,71 @@ def create_major_stage_transportation(current_user, majorStageId):
         transportation = request.get_json()
         major_stage = db.get_or_404(MajorStage, majorStageId)
         journey = db.get_or_404(Journey, major_stage.journey_id)
-        
-          # TODO: Add costs to majorStage.spent_money and journey.spent_money
-        
-        # result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
-        # existing_major_stages = result.scalars().all()
-        
-        # existing_major_stages_costs = []
-        # for stage in existing_major_stages:
-        #     existing_major_stages_costs.append(db.session.execute(db.select(Costs).filter_by(major_stage_id=stage.id)).scalars().first())
-        
-        # journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journeyId)).scalars().first()
+        major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
+        journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
          
-    # except:
-        # return jsonify({'error': 'Unknown error'}, 400) 
+    except:
+        return jsonify({'error': 'Unknown error'}, 400) 
     
-    # response, isValid = MajorStageValidation.validate_major_stage(major_stage, existing_major_stages, existing_major_stages_costs, journey_costs)
+    response, isValid = TransportationValidation.validate_transportation(transportation)
     
-    # if not isValid:
-    #     return jsonify({'majorStageFormValues': response, 'status': 400})
+    if not isValid:
+        return jsonify({'transportationFormValues': response, 'status': 400})
     
-    # try:
-        # # Create a new major stage
-        # new_major_stage = MajorStage(
-        #     title=major_stage['title']['value'],
-        #     done=False,
-        #     scheduled_start_time=major_stage['scheduled_start_time']['value'],
-        #     scheduled_end_time=major_stage['scheduled_end_time']['value'],
-        #     additional_info=major_stage['additional_info']['value'],
-        #     country=major_stage['country']['value'],
-        #     journey_id=journeyId
-        # )
-        # db.session.add(new_major_stage)
-        # db.session.commit()
-         
-        # # Create a new costs for the major stage
-        # costs = Costs(
-        #     major_stage_id=new_major_stage.id,
-        #     budget=major_stage['budget']['value'],
-        #     spent_money=0,
-        #     money_exceeded=False
-        # )
-        # db.session.add(costs)
-        # db.session.commit()
+    # Update costs of Journey and Major Stage, if transportation_costs are provided
+    if transportation['transportation_costs']['value'] != '':
+        journey_costs.spent_money += int(transportation['transportation_costs']['value'])
+        journey_costs.money_exceeded = journey_costs.spent_money > journey_costs.budget
+        major_stage_costs.spent_money += int(transportation['transportation_costs']['value'])
+        major_stage_costs.money_exceeded = major_stage_costs.spent_money > major_stage_costs.budget
         
-        # # build response major stage object for the frontend
-        # response_major_stage = {'id': new_major_stage.id,
-        #                         'title': new_major_stage.title,
-        #                         'done': new_major_stage.done,
-        #                         'scheduled_start_time': new_major_stage.scheduled_start_time,
-        #                         'scheduled_end_time': new_major_stage.scheduled_end_time,
-        #                         'additional_info': new_major_stage.additional_info,
-        #                         'country': new_major_stage.country,
-        #                         'costs': {
-        #                             'budget': costs.budget,
-        #                             'spent_money': costs.spent_money,
-        #                             'money_exceeded': costs.money_exceeded
-        #                         },  
-        #                         'minorStagesIds': []}
+        try:
+            db.session.commit()
+        except Exception as e:
+            return jsonify({'error': str(e)}, 500)
         
-        # return jsonify({'majorStage': response_major_stage,'status': 201})
-    # except Exception as e:
-        # return jsonify({'error': str(e)}, 500)
+        # Add spending for major_stage_costs if transportation_costs are provided
+        try:
+            new_spendings = Spendings(
+                costs_id=major_stage_costs.id,
+                name='Transportation to ' + transportation['place_of_arrival']['value'],
+                amount=int(transportation['transportation_costs']['value']),
+                date=datetime.now().strftime('%d.%m.%Y'),
+                category='Transportation'
+            )
+            db.session.add(new_spendings)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({'error': str(e)}, 500)
+    
+    try:
+        # Create a new transportation
+        new_transportation = Transportation(
+            type=transportation['type']['value'],
+            start_time=transportation['start_time']['value'],
+            arrival_time=transportation['arrival_time']['value'],
+            place_of_departure=transportation['place_of_departure']['value'],
+            place_of_arrival=transportation['place_of_arrival']['value'],
+            transportation_costs=transportation['transportation_costs']['value'],
+            link=transportation['link']['value'],
+            major_stage_id=majorStageId
+        )
+        db.session.add(new_transportation)
+        db.session.commit()
+        
+        # build response transportation object for the frontend
+        response_transportation = {'id': new_transportation.id,
+                                    'type': new_transportation.type,
+                                    'start_time': new_transportation.start_time,
+                                    'arrival_time': new_transportation.arrival_time,
+                                    'place_of_departure': new_transportation.place_of_departure,
+                                    'place_of_arrival': new_transportation.place_of_arrival,
+                                    'transportation_costs': new_transportation.transportation_costs,
+                                    'link': new_transportation.link}
+        
+        return jsonify({'transportation': response_transportation, 'status': 201})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
     
     
 # @major_stage_bp.route('/update-major-stage/<int:journeyId>/<int:majorStageId>', methods=['POST'])
