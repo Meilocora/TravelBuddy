@@ -31,6 +31,7 @@ import { GlobalStyles } from '../constants/styles';
 import IconButton from '../components/UI/IconButton';
 import MajorStageForm from '../components/MajorStage/ManageMajorStage/MajorStageForm';
 import { deleteMajorStage } from '../utils/http';
+import { JourneyContext } from '../store/journey-context';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<
@@ -56,6 +57,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
 
+  const journeyCtx = useContext(JourneyContext);
   const majorStageCtx = useContext(MajorStageContext);
   const editedMajorStageId = route.params?.majorStageId;
   const journeyId = route.params.journeyId;
@@ -123,6 +125,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       const { error, status } = await deleteMajorStage(editedMajorStageId!);
       if (!error && status === 200) {
         majorStageCtx.deleteMajorStage(editedMajorStageId!);
+        await journeyCtx.refetchJourneys();
         const popupText = `Major Stage successfully deleted!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
@@ -150,7 +153,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       spent_money: 0,
       country: '',
     });
-    console.log('MajorStageValues reset');
   }
 
   function deleteHandler() {

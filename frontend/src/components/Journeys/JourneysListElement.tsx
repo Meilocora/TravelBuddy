@@ -68,7 +68,6 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     navigationBottomTabs.navigate('ManageJourney', { journeyId: journey.id });
   }
 
-  // TODO: Highlight, when money exceeded
   // TODO: Add Major stages z.b. 3/5
   // TODO: Countrylist, mark countries that are visited
   // TODO: Add Countdown till journey starts

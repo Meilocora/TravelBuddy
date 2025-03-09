@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
+from app.routes.util import calculate_journey_costs
 from db import db
 from app.routes.route_protection import token_required
-from app.models import Costs, Spendings, MajorStage, Transportation, MinorStage
+from app.models import Costs, Journey, Spendings, MajorStage, Transportation, MinorStage
 from app.validation.major_stage_validation import MajorStageValidation
 
 major_stage_bp = Blueprint('major_stage', __name__)
@@ -229,10 +230,15 @@ def update_major_stage(current_user, journeyId, majorStageId):
 @major_stage_bp.route('/delete-major-stage/<int:majorStageId>', methods=['DELETE'])
 @token_required
 def delete_major_stage(current_user, majorStageId):
+    journey = db.session.execute(db.select(Journey).join(MajorStage).filter(MajorStage.id == majorStageId)).scalars().first()
+    journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
     try:        
         major_stage = db.get_or_404(MajorStage, majorStageId)
         db.session.delete(major_stage)
         db.session.commit()
+        
+        calculate_journey_costs(journey_costs)
+        
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)

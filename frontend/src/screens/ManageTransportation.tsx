@@ -15,7 +15,6 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import TransportationForm from '../components/Transportation/TransportationForm';
 import { MinorStageContext } from '../store/minorStage-context';
 import { JourneyContext } from '../store/journey-context';
-import Modal from '../components/UI/Modal';
 import { deleteTransportation } from '../utils/http';
 import { GlobalStyles } from '../constants/styles';
 
@@ -64,8 +63,6 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       (majorStage) => majorStage.id === majorStageId
     )!.transportation;
   }
-
-  const [transportationValues, setTransportationValues] = useState();
 
   useLayoutEffect(() => {
     planningNavigation.setOptions({

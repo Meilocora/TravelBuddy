@@ -62,16 +62,15 @@ class MajorStageValidation(Validation):
             majorStage['budget']['errors'].append(f", {money_val}")
             majorStage['budget']['isValid'] = False
             
-        available_major_stages_money = int(majorStage['budget']['value'])
-        available_journey_money = journey_costs.budget
-        for existing_major_stage_cost in existing_major_stages_costs:
-            available_major_stages_money += existing_major_stage_cost.budget
-        if available_major_stages_money > available_journey_money:
-            max_available_money = available_major_stages_money - majorStage['budget']['value']
+        major_stages_budget = int(majorStage['budget']['value'])
+        journey_budget = journey_costs.budget
+        for existing_major_stage_costs in existing_major_stages_costs:
+            major_stages_budget += existing_major_stage_costs.budget
+        if major_stages_budget > journey_budget:
+            max_available_money = journey_budget - major_stages_budget + int(majorStage['budget']['value'])
             max_available_money_str = locale.currency(max_available_money, grouping=True)
             majorStage['budget']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
             majorStage['budget']['isValid'] = False
-        
             
         for key, value in majorStage.items():
             if 'errors' in value and value['errors']:
@@ -133,12 +132,12 @@ class MajorStageValidation(Validation):
             majorStage['budget']['errors'].append(f", {money_val}")
             majorStage['budget']['isValid'] = False
             
-        available_major_stages_money = int(majorStage['budget']['value'])
-        available_journey_money = journey_costs.budget
-        for existing_major_stage_cost in existing_major_stages_costs:
-            available_major_stages_money += existing_major_stage_cost.budget
-        if available_major_stages_money > available_journey_money:
-            max_available_money = available_journey_money - available_major_stages_money + int(majorStage['budget']['value'])
+        major_stages_budget = int(majorStage['budget']['value'])
+        journey_budget = journey_costs.budget
+        for existing_major_stage_costs in existing_major_stages_costs:
+            major_stages_budget += existing_major_stage_costs.budget
+        if major_stages_budget > journey_budget:
+            max_available_money = journey_budget - major_stages_budget + int(majorStage['budget']['value'])
             max_available_money_str = locale.currency(max_available_money, grouping=True)
             majorStage['budget']['errors'].append(f", Max available amount for journey: {max_available_money_str}")
             majorStage['budget']['isValid'] = False

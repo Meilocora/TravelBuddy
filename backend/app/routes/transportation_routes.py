@@ -1,10 +1,9 @@
-from datetime import datetime
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
 from app.models import Costs, Spendings, Journey, MajorStage, Transportation, MinorStage
 from app.validation.transportation_validation import TransportationValidation
-from app.routes.util import calculate_minor_stage_costs, calculate_major_stage_costs, calculate_journey_costs
+from app.routes.util import calculate_journey_costs
 
 transportation_bp = Blueprint('transportation', __name__)
 
@@ -15,7 +14,6 @@ def create_major_stage_transportation(current_user, majorStageId):
         transportation = request.get_json()
         major_stage = db.get_or_404(MajorStage, majorStageId)
         journey = db.get_or_404(Journey, major_stage.journey_id)
-        major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
         journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
          
     except:
@@ -25,24 +23,6 @@ def create_major_stage_transportation(current_user, majorStageId):
     
     if not isValid:
         return jsonify({'transportationFormValues': response, 'status': 400})
-    
-    # Update costs of Journey and Major Stage, if transportation_costs are provided
-    if transportation['transportation_costs']['value'] != '':
-        # Add spending for major_stage_costs if transportation_costs are provided
-        try:
-            new_spendings = Spendings(
-                costs_id=major_stage_costs.id,
-                name='Transportation to ' + transportation['place_of_arrival']['value'],
-                amount=int(transportation['transportation_costs']['value']),
-                date=datetime.now().strftime('%d.%m.%Y'),
-                category='Transportation'
-            )
-            db.session.add(new_spendings)
-            db.session.commit()
-        except Exception as e:
-            return jsonify({'error': str(e)}, 500)
-        
-        calculate_journey_costs(journey_costs)
     
     try:
         # Create a new transportation
@@ -58,6 +38,8 @@ def create_major_stage_transportation(current_user, majorStageId):
         )
         db.session.add(new_transportation)
         db.session.commit()
+        
+        calculate_journey_costs(journey_costs)
         
         # build response transportation object for the frontend
         response_transportation = {'id': new_transportation.id,
@@ -82,7 +64,6 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
         old_transportation = db.get_or_404(Transportation, transportationId)
         major_stage = db.get_or_404(MajorStage, majorStageId)
         journey = db.get_or_404(Journey, major_stage.journey_id)
-        major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
         journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
          
     except:
@@ -92,34 +73,6 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
     
     if not isValid:
         return jsonify({'transportationFormValues': response, 'status': 400})
-    
-    # Update costs of Journey and Major Stage, if transportation_costs are provided
-    if new_transportation['transportation_costs']['value'] != '':
-        # Update or create spendings, depending on whether the transportation already exists and if the transportation_costs are provided and have changed
-        old_spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=major_stage_costs.id, name='Transportation to ' + old_transportation.place_of_arrival)).scalars().first()
-        
-        if not old_spendings:
-            try:
-                new_spendings = Spendings(
-                    costs_id=major_stage_costs.id,
-                    name='Transportation to ' + new_transportation['place_of_arrival']['value'],
-                    amount=int(new_transportation['transportation_costs']['value']),
-                    date=datetime.now().strftime('%d.%m.%Y'),
-                    category='Transportation'
-                )
-                db.session.add(new_spendings)
-                db.session.commit()
-            except Exception as e:
-                return jsonify({'error': str(e)}, 500)
-        else:
-            old_spendings.amount = int(new_transportation['transportation_costs']['value'])
-            old_spendings.date = datetime.now().strftime('%d.%m.%Y')
-            try:
-                db.session.commit()
-            except Exception as e:
-                return jsonify({'error': str(e)}, 500)
-            
-        calculate_journey_costs(journey_costs)
     
     try:
         # Update old transportation
@@ -131,6 +84,8 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
         old_transportation.transportation_costs = new_transportation['transportation_costs']['value']
         old_transportation.link = new_transportation['link']['value']
         db.session.commit()
+        
+        calculate_journey_costs(journey_costs)
         
         # build response transportation object for the frontend
         response_transportation = {'id': old_transportation.id,
@@ -150,16 +105,14 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
 @transportation_bp.route('/delete-major-stage-transportation/<int:majorStageId>', methods=['DELETE'])
 @token_required
 def delete_major_stage_transportation(current_user, majorStageId):
-    major_stage = db.get_or_404(MajorStage, majorStageId)
-    major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
-    transport_spending = db.session.execute(db.select(Spendings).filter_by(costs_id=major_stage_costs.id, category='Transportation')).scalars().first()
-
+    journey = db.session.execute(db.select(Journey).join(MajorStage).filter(MajorStage.id == majorStageId)).scalars().first()
+    journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
     try:        
-        db.session.delete(transport_spending)
-        db.session.commit()
-        
         db.session.execute(db.delete(Transportation).where(Transportation.major_stage_id == majorStageId))
         db.session.commit()    
+        
+        calculate_journey_costs(journey_costs)
+        
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)

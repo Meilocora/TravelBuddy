@@ -279,6 +279,8 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
             minimumDate={minStartDate}
             maximumDate={maxStartDate}
           />
+        </View>
+        <View style={styles.formRow}>
           <DateTimePicker
             openDatePicker={openEndDatePicker}
             setOpenDatePicker={() => setOpenEndDatePicker(true)}

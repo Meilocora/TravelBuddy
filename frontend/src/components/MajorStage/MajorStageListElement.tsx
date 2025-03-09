@@ -163,9 +163,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   };
 
   // TODO: Add Additional Infos somewhere (mabye, when tapping? + only then show transportation + minors  stages)
-  // TODO: Edit Transportation
-  // TODO: add MinorStage
-  // TODO: Edit MinorStage
+  // TODO: Highlight, when budget is exceeded
+  // TODO: Add/ Edit/ Delete MinorStage => Maybe do it same as with MajorStage
 
   return (
     <View style={styles.outerContainer}>

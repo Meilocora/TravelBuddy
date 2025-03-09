@@ -1,4 +1,10 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
   Dimensions,
   Keyboard,
@@ -20,6 +26,7 @@ import Button from '../../UI/Button';
 import { BlurView } from 'expo-blur';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface CountrySelectorProps {
   onChangeCountry: (countryName: string) => void;
@@ -49,10 +56,6 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
     (journey) => journey.id === journeyId
   );
 
-  useEffect(() => {
-    setCountryName(defaultCountryName);
-  }, [defaultCountryName]);
-
   function handleOpenModal() {
     setOpenSelection(true);
   }
@@ -62,33 +65,45 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
     Keyboard.dismiss();
   }
 
-  // Fetch data
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await fetchJourneysCustomCountries(journeyId);
-      if (data) {
-        let names = data.map((item) => item.name);
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch data when the screen comes into focus
+      async function fetchData() {
+        const { data } = await fetchJourneysCustomCountries(journeyId);
+        if (data) {
+          let names = data.map((item) => item.name);
 
-        let countriesList: string[] = [];
-        journey!.majorStagesIds!.forEach((id) => {
-          countriesList.push(
-            majorStageCtx.majorStages.find((majorStage) => majorStage.id === id)
-              ?.country!
-          );
-        });
-        setChosenCountries(countriesList);
+          let countriesList: string[] = [];
+          journey!.majorStagesIds!.forEach((id) => {
+            countriesList.push(
+              majorStageCtx.majorStages.find(
+                (majorStage) => majorStage.id === id
+              )?.country!
+            );
+          });
+          setChosenCountries(countriesList);
 
-        if (countriesList) {
-          names = names.filter((item) => !countriesList.includes(item));
+          if (countriesList) {
+            names = names.filter((item) => !countriesList.includes(item));
+          }
+
+          LayoutAnimation.linear();
+          setFetchedData(names);
         }
-
-        LayoutAnimation.linear();
-        setFetchedData(names);
       }
-    }
 
-    fetchData();
-  }, [journeyId]);
+      fetchData();
+
+      return () => {
+        // Cleanup function to reset all states when the screen goes out of focus
+        setCountryName('');
+        setFetchedData([]);
+        setChosenCountries([]);
+        setOpenSelection(false);
+        setIsInvalid(false);
+      };
+    }, [journeyId])
+  );
 
   function handlePressListElement(item: string) {
     const prevCountry = countryName;
@@ -97,7 +112,11 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
       const reducedCountries = prevValues.filter(
         (element) => element !== prevCountry
       );
-      return [...reducedCountries, item];
+      if (!reducedCountries.includes(item)) {
+        return [...reducedCountries, item];
+      } else {
+        return [...reducedCountries];
+      }
     });
 
     setFetchedData((prevValues) => {
@@ -164,7 +183,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
               errors={errors}
               mandatory
               textInputConfig={{
-                value: countryName,
+                value: countryName !== '' ? countryName : defaultCountryName,
                 readOnly: true,
                 placeholder: 'Pick Country',
               }}
