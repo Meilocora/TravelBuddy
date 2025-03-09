@@ -164,7 +164,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 
     let response: InputValidationResponse;
     if (isEditing) {
-      response = await updateTransportation(inputs, majorStageId, minorStageId);
+      response = await updateTransportation(
+        inputs,
+        majorStage!.transportation!.id,
+        majorStageId,
+        minorStageId
+      );
     } else if (!isEditing) {
       response = await createTransportation(inputs, majorStageId, minorStageId);
     }

@@ -11,11 +11,11 @@ import {
 import ElementTitle from '../list/ElementTitle';
 import AdditionalInfoPoints from './AdditionalInfoPoints';
 import { GlobalStyles } from '../../../constants/styles';
-import Button from '../Button';
-import { ButtonMode, ColorScheme, Icons } from '../../../models';
+import { Icons } from '../../../models';
 import IconButton from '../IconButton';
 
 interface AdditionalInfoBoxProps {
+  onPressEdit: () => void;
   title: string;
   info: { title: string; value: string };
   additionalInfo: { title: string; value: string }[];
@@ -24,6 +24,7 @@ interface AdditionalInfoBoxProps {
 }
 
 const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
+  onPressEdit,
   additionalInfo,
   link,
   info,
@@ -50,32 +51,28 @@ const AdditionalInfoBox: React.FC<AdditionalInfoBoxProps> = ({
           pressed && styles.pressed,
         ]}
       >
-        <ElementTitle style={styles.title}>{title}</ElementTitle>
-        <Text>
-          {info.title} {info.value}
-        </Text>
+        <View style={styles.mainInfoContainer}>
+          <View style={styles.textContainer}>
+            <ElementTitle style={styles.title}>{title}</ElementTitle>
+            <Text style={styles.text}>
+              {info.title} {info.value}
+            </Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <IconButton
+              icon={Icons.edit}
+              color={GlobalStyles.colors.accent800}
+              onPress={onPressEdit}
+              style={styles.button}
+            />
+          </View>
+        </View>
         <AdditionalInfoPoints
           additionalInfo={additionalInfo}
           openInfoBox={openInfoBox}
           link={link}
         />
       </Pressable>
-      {openInfoBox && (
-        // <Button
-        //   onPress={() => {}}
-        //   mode={ButtonMode.flat}
-        //   colorScheme={ColorScheme.accent}
-        //   style={styles.button}
-        // >
-        //   Edit
-        // </Button>
-        <IconButton
-          icon={Icons.edit}
-          color={GlobalStyles.colors.accent800}
-          onPress={() => {}}
-          style={styles.button}
-        />
-      )}
     </View>
   );
 };
@@ -99,13 +96,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  mainInfoContainer: {
+    flexDirection: 'row',
+  },
+  textContainer: {
+    width: '80%',
+  },
+  text: {
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    width: '20%',
+  },
   pressed: {
     opacity: 0.5,
   },
   button: {
-    // maxWidth: '20%',
     width: 'auto',
-    marginHorizontal: 'auto',
+    // marginHorizontal: 'auto',
   },
 });
 

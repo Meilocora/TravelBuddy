@@ -44,6 +44,7 @@ def get_major_stages(current_user, journeyId):
             
             if transportation is not None:
                 major_stage_data['transportation'] = {
+                    'id': transportation.id,
                     'type': transportation.type,
                     'start_time': transportation.start_time,
                     'arrival_time': transportation.arrival_time,

@@ -46,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({
               colorScheme={ColorScheme.error}
               style={styles.button}
             >
-              [confirmText]
+              {confirmText}
             </Button>
           )}
         </View>

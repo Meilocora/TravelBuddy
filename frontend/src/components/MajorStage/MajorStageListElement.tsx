@@ -134,6 +134,17 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     });
   }
 
+  function handleEditTransportation() {
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'ManageTransportation',
+      params: {
+        journeyId: journeyId,
+        majorStageId: majorStage.id,
+        transportationId: majorStage.transportation!.id,
+      },
+    });
+  }
+
   function handleAddMinorStage() {
     navigation.navigate('MajorStageStackNavigator', {
       screen: 'ManageMinorStage',
@@ -180,6 +191,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
               <AdditionalInfoBox
+                onPressEdit={handleEditTransportation}
                 title='Transportation'
                 info={mainTransportationInfo}
                 additionalInfo={additionalInfo}

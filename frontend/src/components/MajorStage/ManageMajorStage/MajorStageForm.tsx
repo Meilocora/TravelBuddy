@@ -52,11 +52,10 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   const maxEndDate = journey!.scheduled_end_time;
 
   let maxAvailableMoney = journey!.costs.budget;
-  const majorStagesIds = journey?.majorStagesIds;
   const majorStageCtx = useContext(MajorStageContext);
-  majorStagesIds?.forEach((id) => {
-    maxAvailableMoney -=
-      majorStageCtx.majorStages.find((ms) => ms.id === id)?.costs.budget || 0;
+  const majorStages = majorStageCtx.majorStages;
+  majorStages.forEach((ms) => {
+    maxAvailableMoney -= ms.costs.budget;
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,6 +145,19 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     });
   }, [defaultValues]);
 
+  function resetValues() {
+    setInputs({
+      title: { value: '', isValid: true, errors: [] },
+      done: { value: false, isValid: true, errors: [] },
+      scheduled_start_time: { value: null, isValid: true, errors: [] },
+      scheduled_end_time: { value: null, isValid: true, errors: [] },
+      additional_info: { value: '', isValid: true, errors: [] },
+      budget: { value: 0, isValid: true, errors: [] },
+      spent_money: { value: 0, isValid: true, errors: [] },
+      country: { value: '', isValid: true, errors: [] },
+    });
+  }
+
   function inputChangedHandler(
     inputIdentifier: string,
     enteredValue: string | boolean
@@ -197,6 +209,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
     const { error, status, majorStage, majorStageFormValues } = response!;
 
     if (!error && majorStage) {
+      resetValues();
       onSubmit({ majorStage, status });
     } else if (error) {
       onSubmit({ error, status });
@@ -253,7 +266,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
         />
       )}
       <View style={styles.formContainer}>
-        {/* <Text style={styles.header}>Your Major Stage</Text> */}
         <View>
           <View style={styles.formRow}>
             <Input

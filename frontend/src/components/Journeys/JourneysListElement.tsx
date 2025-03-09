@@ -38,10 +38,9 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     {
       title: 'Costs',
       value: `${moneyPlanned} / ${moneyAvailable}`,
-      textStyle:
-        moneyAvailable < moneyPlanned
-          ? { color: GlobalStyles.colors.error200 }
-          : undefined,
+      textStyle: journey.costs.money_exceeded
+        ? { color: GlobalStyles.colors.error200 }
+        : undefined,
     },
     { title: 'Start Date', value: startDate },
     { title: 'End Date', value: endDate },

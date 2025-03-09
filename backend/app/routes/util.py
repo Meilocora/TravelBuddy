@@ -1,0 +1,46 @@
+from db import db
+from app.models import Costs, Spendings, MajorStage, MinorStage
+
+def calculate_minor_stage_costs(minor_stage_costs):
+    spent_money = 0
+    
+    spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=minor_stage_costs.id)).scalars().all()
+    for spending in spendings:
+        spent_money += spending.amount
+  
+    minor_stage_costs.spent_money = spent_money
+    minor_stage_costs.money_exceeded = minor_stage_costs.spent_money > minor_stage_costs.budget
+    db.session.commit()
+    return minor_stage_costs
+
+def calculate_major_stage_costs(major_stage_costs):
+    spent_money = 0
+    
+    spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=major_stage_costs.id)).scalars().all()
+    for spending in spendings:      
+        spent_money += spending.amount
+       
+    minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=major_stage_costs.major_stage_id)).scalars().all()
+    for minor_stage in minor_stages:
+        minor_stage_costs = db.session.execute(db.select(Costs).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
+        updated_minor_stage_costs = calculate_minor_stage_costs(minor_stage_costs)
+        spent_money += updated_minor_stage_costs.spent_money
+  
+    major_stage_costs.spent_money = spent_money
+    major_stage_costs.money_exceeded = major_stage_costs.spent_money > major_stage_costs.budget
+    db.session.commit()
+    return major_stage_costs
+    
+
+def calculate_journey_costs(journey_costs):
+    spent_money = 0
+    
+    major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journey_costs.journey_id)).scalars().all()
+    for major_stage in major_stages:
+        major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=major_stage.id)).scalars().first()
+        updated_major_stage_cost = calculate_major_stage_costs(major_stage_costs)        
+        spent_money += updated_major_stage_cost.spent_money
+  
+    journey_costs.spent_money = spent_money
+    journey_costs.money_exceeded = journey_costs.spent_money > journey_costs.budget
+    return db.session.commit()

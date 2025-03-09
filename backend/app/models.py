@@ -177,8 +177,6 @@ class Spendings(db.Model):
     costs: Mapped['Costs'] = relationship('Costs', back_populates='spendings')
     
 
-
-
 class Transportation(db.Model):
     __tablename__ = 'transportations'
     __table_args__ = {'extend_existing': True}

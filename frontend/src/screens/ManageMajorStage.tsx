@@ -1,5 +1,6 @@
 import React, {
   ReactElement,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -7,7 +8,11 @@ import React, {
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -134,6 +139,20 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     return;
   }
 
+  function resetValues() {
+    setMajorStageValues({
+      title: '',
+      done: false,
+      scheduled_start_time: null,
+      scheduled_end_time: null,
+      additional_info: '',
+      budget: 0,
+      spent_money: 0,
+      country: '',
+    });
+    console.log('MajorStageValues reset');
+  }
+
   function deleteHandler() {
     setIsDeleting(true);
   }
@@ -153,6 +172,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 200) {
         majorStageCtx.updateMajorStage(majorStage);
+        resetValues();
         const popupText = `"${majorStage.title}" successfully updated!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
@@ -165,6 +185,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 201) {
         majorStageCtx.addMajorStage(majorStage);
+        resetValues();
         const popupText = `"${majorStage.title}" successfully created!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,

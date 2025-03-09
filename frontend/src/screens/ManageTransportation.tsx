@@ -15,6 +15,9 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import TransportationForm from '../components/Transportation/TransportationForm';
 import { MinorStageContext } from '../store/minorStage-context';
 import { JourneyContext } from '../store/journey-context';
+import Modal from '../components/UI/Modal';
+import { deleteTransportation } from '../utils/http';
+import { GlobalStyles } from '../constants/styles';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -47,6 +50,10 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     route.params;
   let isEditing = !!transportationId;
 
+  const majorStage = majorStageCtx.majorStages.find(
+    (majorStage) => majorStage.id === majorStageId
+  );
+
   let selectedTransportation: Transportation | undefined;
   if (minorStageId) {
     selectedTransportation = minorStageCtx.minorStages.find(
@@ -77,26 +84,40 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     });
   }, [navigation]);
 
-  // async function deleteMajorStageHandler() {
-  //     try {
-  //       const { error, status } = await deleteMajorStage(editedMajorStageId!);
-  //       if (!error && status === 200) {
-  //         majorStageCtx.deleteMajorStage(editedMajorStageId!);
-  //         const popupText = `Major Stage successfully deleted!`;
-  //         planningNavigation.navigate('Planning', {
-  //           journeyId: journeyId,
-  //           popupText: popupText,
-  //         });
-  //       } else {
-  //         setError(error!);
-  //         return;
-  //       }
-  //     } catch (error) {
-  //       setError('Could not delete major stage!');
-  //     }
-  //     setIsDeleting(false);
-  //     return;
-  //   }
+  async function deleteHandler() {
+    try {
+      const { error, status } = await deleteTransportation(
+        majorStageId!,
+        minorStageId!
+      );
+      if (!error && status === 200) {
+        if (majorStageId) {
+          await majorStageCtx.refetchMajorStages(journeyId!);
+          await journeyCtx.refetchJourneys();
+          const popupText = `Transportation successfully deleted!`;
+          planningNavigation.navigate('Planning', {
+            journeyId: journeyId!,
+            popupText: popupText,
+          });
+        } else if (minorStageId) {
+          await minorStageCtx.refetchMinorStages(majorStageId!);
+          await majorStageCtx.refetchMajorStages(journeyId!);
+          await journeyCtx.refetchJourneys();
+          // const popupText = `Transportation successfully deleted!`;
+          // planningNavigation.navigate('Planning', {
+          // journeyId: journeyId,
+          // popupText: popupText,
+          // });
+        }
+      } else {
+        setError(error!);
+        return;
+      }
+    } catch (error) {
+      setError('Could not delete transportation!');
+    }
+    return;
+  }
 
   function cancelHandler() {
     planningNavigation.navigate('Planning', { journeyId: journeyId! });
@@ -116,24 +137,20 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       (transportation && status === 201)
     ) {
       if (mode === 'major') {
-        console.log('In here');
         await majorStageCtx.refetchMajorStages(journeyId!);
         await journeyCtx.refetchJourneys();
         const majorStageTitle = majorStageCtx.majorStages.find(
           (majorStage) => majorStage.id === majorStageId
         )!.title;
 
-        console.log('Here');
-
         const popupText = `"${majorStageTitle}" successfully updated!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId!,
           popupText: popupText,
         });
-
-        console.log('Major stage updated');
       } else if (mode === 'minor') {
         await minorStageCtx.refetchMinorStages(majorStageId!);
+        await majorStageCtx.refetchMajorStages(journeyId!);
         await journeyCtx.refetchJourneys();
         // const popupText = `"${majorStage.title}" successfully updated!`;
         // planningNavigation.navigate('Planning', {
@@ -158,6 +175,16 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
             majorStageId={majorStageId!}
             minorStageId={minorStageId || undefined}
           />
+          {isEditing && (
+            <View style={styles.btnContainer}>
+              <IconButton
+                icon={Icons.delete}
+                color={GlobalStyles.colors.error200}
+                onPress={deleteHandler}
+                size={36}
+              />
+            </View>
+          )}
         </Animated.ScrollView>
       </View>
     </>
