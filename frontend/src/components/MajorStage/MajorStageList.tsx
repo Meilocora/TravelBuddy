@@ -1,17 +1,13 @@
-import {
-  ReactElement,
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-} from 'react';
-import { FlatList, Text } from 'react-native';
+import { ReactElement, useState, useContext, useCallback } from 'react';
+import { FlatList } from 'react-native';
 
 import { fetchMajorStagesById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
 import InfoText from '../UI/InfoText';
 import { useFocusEffect } from '@react-navigation/native';
+import InfoCurtain from '../UI/InfoCurtain';
+import { JourneyContext } from '../../store/journey-context';
 
 interface MajorStageListProps {
   journeyId: number;
@@ -23,6 +19,8 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const journeyCtx = useContext(JourneyContext);
+  const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
   const majorStageCtx = useContext(MajorStageContext);
 
   const getMajorStages = useCallback(async (journeyId: number) => {
@@ -55,16 +53,19 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   }
 
   return (
-    <FlatList
-      data={majorStageCtx.majorStages}
-      renderItem={({ item, index }) => (
-        <MajorStageListElement
-          journeyId={journeyId}
-          majorStage={item}
-          index={index}
-        />
-      )}
-    />
+    <>
+      {journey?.description && <InfoCurtain info={journey?.description} />}
+      <FlatList
+        data={majorStageCtx.majorStages}
+        renderItem={({ item, index }) => (
+          <MajorStageListElement
+            journeyId={journeyId}
+            majorStage={item}
+            index={index}
+          />
+        )}
+      />
+    </>
   );
 };
 

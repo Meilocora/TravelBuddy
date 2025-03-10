@@ -1,6 +1,5 @@
 import React, {
   ReactElement,
-  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -8,11 +7,7 @@ import React, {
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -208,7 +203,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         />
       )}
       {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
-      <Animated.ScrollView entering={FadeInDown}>
+      <Animated.ScrollView entering={FadeInDown} nestedScrollEnabled={true}>
         <MajorStageForm
           onCancel={cancelHandler}
           onSubmit={confirmHandler}

@@ -111,7 +111,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   }
 
   function handleOnPress() {
-    // TODO: This nessesary?
+    // TODO: This should lead to MinorStagesScreen + redefine Planning to MajorStagesScreen + sort the Screens different (by Navigator)
+    // TODO: Add/ Edit/ Delete MinorStage => Maybe do it same as with MajorStage
   }
 
   function handleEdit() {
@@ -162,10 +163,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     setShowMinorStages((prevState) => !prevState);
   };
 
-  // TODO: Add Additional Infos somewhere (mabye, when tapping? + only then show transportation + minors  stages)
-  // TODO: Highlight, when budget is exceeded
-  // TODO: Add/ Edit/ Delete MinorStage => Maybe do it same as with MajorStage
-
   return (
     <View style={styles.outerContainer}>
       <LinearGradient
@@ -187,6 +184,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
               />
             </View>
             <ElementComment content={`${startDate} - ${endDate}`} />
+            {/* TODO: Handle analog to JourneysListElement */}
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
               <AdditionalInfoBox

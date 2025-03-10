@@ -1,10 +1,4 @@
-import React, {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { ReactElement, useCallback, useContext, useState } from 'react';
 import {
   Dimensions,
   Keyboard,
@@ -27,6 +21,7 @@ import { BlurView } from 'expo-blur';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import { useFocusEffect } from '@react-navigation/native';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface CountrySelectorProps {
   onChangeCountry: (countryName: string) => void;
@@ -136,9 +131,12 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
   return (
     <>
       {openSelection && (
-        <BlurView style={styles.blurView} intensity={100} tint='dark'>
+        <OutsidePressHandler
+          onOutsidePress={handleCloseModal}
+          style={styles.selectionContainer}
+        >
           <View style={styles.listContainer}>
-            <ScrollView style={styles.list}>
+            <ScrollView style={styles.list} nestedScrollEnabled={true}>
               {fetchedData.length > 0 &&
                 fetchedData.map((item) => (
                   <ListItem
@@ -173,7 +171,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
               Dismiss
             </Button>
           </View>
-        </BlurView>
+        </OutsidePressHandler>
       )}
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -224,15 +222,12 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.error200,
     fontStyle: 'italic',
   },
-  blurView: {
-    // TODO: Rework this , so it works for alle devices
-    marginHorizontal: -36,
-    marginVertical: -600,
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-    overflow: 'hidden',
+  selectionContainer: {
+    position: 'absolute',
+    left: Dimensions.get('window').width / 8,
+    bottom: Dimensions.get('window').height / 8,
+    maxHeight: 300,
     zIndex: 1,
-    ...StyleSheet.absoluteFillObject,
   },
   listContainer: {
     marginVertical: 'auto',
