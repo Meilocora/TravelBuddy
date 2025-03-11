@@ -8,6 +8,7 @@ import InfoText from '../UI/InfoText';
 import { useFocusEffect } from '@react-navigation/native';
 import InfoCurtain from '../UI/InfoCurtain';
 import { JourneyContext } from '../../store/journey-context';
+import { ColorScheme } from '../../models';
 
 interface MajorStageListProps {
   journeyId: number;
@@ -54,7 +55,12 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
 
   return (
     <>
-      {journey?.description && <InfoCurtain info={journey?.description} />}
+      {journey?.description && (
+        <InfoCurtain
+          info={journey?.description}
+          colorScheme={ColorScheme.accent}
+        />
+      )}
       <FlatList
         data={majorStageCtx.majorStages}
         renderItem={({ item, index }) => (

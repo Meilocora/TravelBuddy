@@ -2,25 +2,41 @@ import { ReactElement, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
 import Animated, { FadeOutUp } from 'react-native-reanimated';
+import { ColorScheme } from '../../models';
 
 interface InfoCurtainProps {
   info: string;
+  colorScheme?: ColorScheme;
 }
 
-const InfoCurtain: React.FC<InfoCurtainProps> = ({ info }): ReactElement => {
+const InfoCurtain: React.FC<InfoCurtainProps> = ({
+  info,
+  colorScheme = ColorScheme.primary,
+}): ReactElement => {
   const [showInfo, setShowInfo] = useState(true);
 
   // TODO: Maybe use LayoutAnimation instead?
-  // TODO: Make this compatible with a chosen ColorScheme (like in Button)
+  let schemeStyles = primaryStyles;
+
+  if (colorScheme === ColorScheme.accent) {
+    schemeStyles = accentStyles;
+  } else if (colorScheme === ColorScheme.complementary) {
+    schemeStyles = complementaryStyles;
+  } else if (colorScheme === ColorScheme.error) {
+    schemeStyles = errorStyles;
+  } else if (colorScheme === ColorScheme.neutral) {
+    schemeStyles = neutralStyles;
+  }
+
   return (
     <>
       {showInfo && (
         <Animated.View exiting={FadeOutUp}>
           <Pressable
-            style={styles.container}
+            style={[styles.container, schemeStyles.container]}
             onPress={() => setShowInfo(!showInfo)}
           >
-            <Text style={styles.text}>{info}</Text>
+            <Text style={[styles.text, schemeStyles.text]}>{info}</Text>
           </Pressable>
         </Animated.View>
       )}
@@ -33,16 +49,61 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingVertical: 20,
     marginHorizontal: 20,
-    backgroundColor: GlobalStyles.colors.accent100,
+    // backgroundColor: GlobalStyles.colors.accent100,
     borderRadius: 10,
     borderBottomRightRadius: 100,
     borderBottomLeftRadius: 100,
     margin: 10,
   },
   text: {
-    color: GlobalStyles.colors.accent800,
+    // color: GlobalStyles.colors.accent800,
     fontSize: 16,
     textAlign: 'center',
+  },
+});
+
+const neutralStyles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.colors.gray100,
+  },
+  text: {
+    color: GlobalStyles.colors.gray700,
+  },
+});
+
+const primaryStyles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.colors.primary100,
+  },
+  text: {
+    color: GlobalStyles.colors.primary800,
+  },
+});
+
+const accentStyles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.colors.accent100,
+  },
+  text: {
+    color: GlobalStyles.colors.accent800,
+  },
+});
+
+const complementaryStyles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.colors.complementary100,
+  },
+  text: {
+    color: GlobalStyles.colors.complementary800,
+  },
+});
+
+const errorStyles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.colors.error500,
+  },
+  text: {
+    color: GlobalStyles.colors.error50,
   },
 });
 

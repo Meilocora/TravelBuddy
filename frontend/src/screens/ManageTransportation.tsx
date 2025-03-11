@@ -102,8 +102,8 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
           await journeyCtx.refetchJourneys();
           // const popupText = `Transportation successfully deleted!`;
           // planningNavigation.navigate('Planning', {
-          // journeyId: journeyId,
-          // popupText: popupText,
+          //   journeyId: journeyId!,
+          //   popupText: popupText,
           // });
         }
       } else {

@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Icons, JourneyBottomTabsParamsList } from '../../models';
+import { ColorScheme, Icons, JourneyBottomTabsParamsList } from '../../models';
 import MajorStageList from '../../components/MajorStage/MajorStageList';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -63,7 +63,13 @@ const Planning: React.FC<PlanningProps> = ({
 
   return (
     <View style={styles.root}>
-      {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
+      {popupText && (
+        <Popup
+          content={popupText}
+          onClose={handleClosePopup}
+          colorScheme={ColorScheme.accent}
+        />
+      )}
       <MajorStageList journeyId={journeyId!} />
     </View>
   );
