@@ -77,9 +77,9 @@ export const loginUser = async (
 
 interface RefreshTokenProps {
   token?: string;
-  new_token?: string;
+  newToken?: string;
   refreshToken?: string;
-  new_refreshToken?: string;
+  newRefreshToken?: string;
   error?: string;
   status: number;
 }
@@ -99,8 +99,8 @@ export const refreshAuthToken = async (
     }
 
     return {
-      new_token: response.data.token,
-      new_refreshToken: response.data.refreshToken,
+      newToken: response.data.newToken,
+      newRefreshToken: response.data.newRefreshToken,
       status: response.data.status,
     };
   } catch (error) {

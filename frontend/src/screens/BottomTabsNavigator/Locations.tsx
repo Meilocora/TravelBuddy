@@ -1,12 +1,12 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import CustomCountries from '../components/Locations/CustomCountries';
-import { CustomCountryContext } from '../store/custom-country-context';
-import { fetchCustomCountries } from '../utils/http/custom_country';
+import CustomCountries from '../../components/Locations/CustomCountries';
+import { CustomCountryContext } from '../../store/custom-country-context';
+import { fetchCustomCountries } from '../../utils/http/custom_country';
 import { RouteProp } from '@react-navigation/native';
-import { BottomTabsParamList } from '../models';
-import Popup from '../components/UI/Popup';
+import { BottomTabsParamList } from '../../models';
+import Popup from '../../components/UI/Popup';
 
 interface LocationsProps {
   route: RouteProp<BottomTabsParamList, 'Locations'>;

@@ -10,6 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   authenticate: (token: string, refreshToken: string) => void;
   logout: () => void;
+  useRefreshToken: (refreshToken: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -19,6 +20,7 @@ export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   authenticate: (token, refreshToken) => {},
   logout: () => {},
+  useRefreshToken: (refreshToken) => {},
 });
 
 export default function AuthContextProvider({
@@ -43,18 +45,18 @@ export default function AuthContextProvider({
           setRefreshToken(storedRefreshToken);
           setUsername(decodedToken.username);
         } else {
-          const { error, status, new_token, new_refreshToken } =
+          const { error, status, newToken, newRefreshToken } =
             await refreshAuthToken(storedRefreshToken!);
-          if (!error && new_token && new_refreshToken) {
-            setAuthToken(new_token);
-            setRefreshToken(new_refreshToken);
+          if (!error && newToken && newRefreshToken) {
+            setAuthToken(newToken);
+            setRefreshToken(newRefreshToken);
             setUsername(
               JSON.parse(
-                Buffer.from(new_token.split('.')[1], 'base64').toString()
+                Buffer.from(newToken.split('.')[1], 'base64').toString()
               ).username
             );
-            AsyncStorage.setItem('token', new_token);
-            AsyncStorage.setItem('refreshToken', new_refreshToken);
+            AsyncStorage.setItem('token', newToken);
+            AsyncStorage.setItem('refreshToken', newRefreshToken);
           } else {
             return;
           }
@@ -88,6 +90,24 @@ export default function AuthContextProvider({
     AsyncStorage.removeItem('refreshToken');
   }
 
+  async function useRefreshToken(refreshToken: string) {
+    const { error, status, newToken, newRefreshToken } = await refreshAuthToken(
+      refreshToken!
+    );
+    if (!error && newToken && newRefreshToken) {
+      setAuthToken(newToken);
+      setRefreshToken(newRefreshToken);
+      setUsername(
+        JSON.parse(Buffer.from(newToken.split('.')[1], 'base64').toString())
+          .username
+      );
+      AsyncStorage.setItem('token', newToken);
+      AsyncStorage.setItem('refreshToken', newRefreshToken);
+    } else {
+      return error;
+    }
+  }
+
   const value = {
     username: username,
     token: authToken,
@@ -95,6 +115,7 @@ export default function AuthContextProvider({
     isAuthenticated: !!authToken,
     authenticate: authenticate,
     logout: logout,
+    useRefreshToken: useRefreshToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

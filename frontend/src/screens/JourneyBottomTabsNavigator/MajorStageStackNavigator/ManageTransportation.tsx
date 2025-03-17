@@ -1,22 +1,23 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+
 import {
   Icons,
   JourneyBottomTabsParamsList,
   MajorStageStackParamList,
   Transportation,
-} from '../models';
-import { RouteProp, useNavigation } from '@react-navigation/native';
-import { MajorStageContext } from '../store/majorStage-context.';
-import IconButton from '../components/UI/IconButton';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import Animated, { FadeInDown } from 'react-native-reanimated';
-import TransportationForm from '../components/Transportation/TransportationForm';
-import { MinorStageContext } from '../store/minorStage-context';
-import { JourneyContext } from '../store/journey-context';
-import { deleteTransportation } from '../utils/http';
-import { GlobalStyles } from '../constants/styles';
+} from '../../../models';
+import { MajorStageContext } from '../../../store/majorStage-context.';
+import IconButton from '../../../components/UI/IconButton';
+import TransportationForm from '../../../components/Transportation/TransportationForm';
+import { MinorStageContext } from '../../../store/minorStage-context';
+import { JourneyContext } from '../../../store/journey-context';
+import { deleteTransportation } from '../../../utils/http';
+import { GlobalStyles } from '../../../constants/styles';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<

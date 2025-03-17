@@ -13,7 +13,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { EventProvider } from 'react-native-outside-press';
 
 import MainGradient from './src/components/UI/LinearGradients/MainGradient';
-import AllJourneys from './src/screens/AllJourneys';
+import AllJourneys from './src/screens/BottomTabsNavigator/AllJourneys';
 import UserProfile from './src/screens/UserProfile';
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
@@ -26,26 +26,27 @@ import {
   AuthStackParamList,
   MajorStageStackParamList,
 } from './src/models';
-import ManageJourney from './src/screens/ManageJourney';
-import Locations from './src/screens/Locations';
-import Planning from './src/screens/Journey/Planning';
+import ManageJourney from './src/screens/BottomTabsNavigator/ManageJourney';
+import Locations from './src/screens/BottomTabsNavigator/Locations';
+import Planning from './src/screens/JourneyBottomTabsNavigator/Planning';
 import JourneyContextProvider from './src/store/journey-context';
 import MajorStageContextProvider from './src/store/majorStage-context.';
-import Overview from './src/screens/Journey/Overview';
-import Map from './src/screens/Journey/Map';
+import Overview from './src/screens/JourneyBottomTabsNavigator/Overview';
+import Map from './src/screens/JourneyBottomTabsNavigator/Map';
 import AuthContextProvider, { AuthContext } from './src/store/auth-context';
 import { useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AuthScreen from './src/screens/AuthScreen';
+import AuthScreen from './src/screens/Auth/AuthScreen';
 import CustomCountryContextProvider from './src/store/custom-country-context';
 import ManageCustomCountry from './src/screens/ManageCustomCountry';
 import ManagePlaceToVisit from './src/screens/ManagePlaceToVisit';
 import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
-import ManageMajorStage from './src/screens/ManageMajorStage';
+import ManageMajorStage from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
-import ManageTransportation from './src/screens/ManageTransportation';
-import ManageMinorStage from './src/screens/ManageMinorStage';
+import ManageTransportation from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageTransportation';
+import ManageMinorStage from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageMinorStage';
+import MinorStages from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/MinorStages';
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
@@ -270,6 +271,7 @@ const MajorStageStackNavigator = () => {
         name='ManageTransportation'
         component={ManageTransportation}
       />
+      <MajorStageStack.Screen name='MinorStages' component={MinorStages} />
     </MajorStageStack.Navigator>
   );
 };
@@ -350,6 +352,8 @@ const Navigation = () => {
 
 const Root = () => {
   const authCtx = useContext(AuthContext);
+
+  // TODO: Maybe adjust this
 
   // Logic for auto login
   useEffect(() => {

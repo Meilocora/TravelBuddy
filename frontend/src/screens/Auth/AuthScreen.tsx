@@ -1,10 +1,10 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { AuthContext } from '../store/auth-context';
-import MainHeader from '../components/UI/MainHeader';
-import AuthForm from '../components/Auth/AuthForm';
-import ErrorOverlay from '../components/UI/ErrorOverlay';
+import { AuthContext } from '../../store/auth-context';
+import MainHeader from '../../components/UI/MainHeader';
+import AuthForm from '../../components/Auth/AuthForm';
+import ErrorOverlay from '../../components/UI/ErrorOverlay';
 
 interface AuthScreenProps {}
 

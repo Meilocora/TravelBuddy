@@ -2,16 +2,16 @@ import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
 
-import JourneysList from '../components/Journeys/JourneysList';
-import { fetchJourneys } from '../utils/http';
+import JourneysList from '../../components/Journeys/JourneysList';
+import { fetchJourneys } from '../../utils/http';
 import { StyleSheet } from 'react-native';
-import { JourneyContext } from '../store/journey-context';
-import ErrorOverlay from '../components/UI/ErrorOverlay';
-import { BottomTabsParamList } from '../models';
+import { JourneyContext } from '../../store/journey-context';
+import ErrorOverlay from '../../components/UI/ErrorOverlay';
+import { BottomTabsParamList } from '../../models';
 import { RouteProp } from '@react-navigation/native';
-import Popup from '../components/UI/Popup';
-import InfoText from '../components/UI/InfoText';
-import { AuthContext } from '../store/auth-context';
+import Popup from '../../components/UI/Popup';
+import InfoText from '../../components/UI/InfoText';
+import { AuthContext } from '../../store/auth-context';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;

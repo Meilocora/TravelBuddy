@@ -9,16 +9,16 @@ import {
   JourneyValues,
   Journey,
   Icons,
-} from '../models';
-import { JourneyContext } from '../store/journey-context';
-import JourneyForm from '../components/Journeys/ManageJourney/JourneyForm';
-import IconButton from '../components/UI/IconButton';
-import { GlobalStyles } from '../constants/styles';
-import { formatDateString } from '../utils';
-import { deleteJourney } from '../utils/http';
+} from '../../models';
+import { JourneyContext } from '../../store/journey-context';
+import JourneyForm from '../../components/Journeys/ManageJourney/JourneyForm';
+import IconButton from '../../components/UI/IconButton';
+import { GlobalStyles } from '../../constants/styles';
+import { formatDateString } from '../../utils';
+import { deleteJourney } from '../../utils/http';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import Modal from '../components/UI/Modal';
-import ErrorOverlay from '../components/UI/ErrorOverlay';
+import Modal from '../../components/UI/Modal';
+import ErrorOverlay from '../../components/UI/ErrorOverlay';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;

@@ -15,7 +15,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import Input from '../UI/form/Input';
 import IconButton from '../UI/IconButton';
 import { createUser, loginUser } from '../../utils/http';
-import { AuthHandlerProps } from '../../screens/AuthScreen';
+import { AuthHandlerProps } from '../../screens/Auth/AuthScreen';
 
 type CredentialValidationResponse = {
   token?: string;

@@ -120,7 +120,7 @@ def refresh_token():
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=REFRESHTOKEN_DURATION)
         }, SECRET_KEY, algorithm='HS256')
         
-        return jsonify({'token': new_token, 'newRefreshToken': new_refresh_token})
+        return jsonify({'newToken': new_token, 'newRefreshToken': new_refresh_token})
     except Exception as e:
         return jsonify({'error': str(e), 'status': 500})
  

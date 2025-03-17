@@ -17,16 +17,16 @@ import {
   JourneyBottomTabsParamsList,
   Icons,
   MajorStageStackParamList,
-} from '../models';
-import { MajorStageContext } from '../store/majorStage-context.';
-import { formatDateString } from '../utils';
-import Modal from '../components/UI/Modal';
-import ErrorOverlay from '../components/UI/ErrorOverlay';
-import { GlobalStyles } from '../constants/styles';
-import IconButton from '../components/UI/IconButton';
-import MajorStageForm from '../components/MajorStage/ManageMajorStage/MajorStageForm';
-import { deleteMajorStage } from '../utils/http';
-import { JourneyContext } from '../store/journey-context';
+} from '../../../models';
+import { MajorStageContext } from '../../../store/majorStage-context.';
+import { formatDateString } from '../../../utils';
+import Modal from '../../../components/UI/Modal';
+import ErrorOverlay from '../../../components/UI/ErrorOverlay';
+import { GlobalStyles } from '../../../constants/styles';
+import IconButton from '../../../components/UI/IconButton';
+import MajorStageForm from '../../../components/MajorStage/ManageMajorStage/MajorStageForm';
+import { deleteMajorStage } from '../../../utils/http';
+import { JourneyContext } from '../../../store/journey-context';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<

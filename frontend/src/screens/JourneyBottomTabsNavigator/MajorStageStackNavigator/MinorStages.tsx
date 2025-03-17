@@ -1,22 +1,22 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement } from 'react';
 import { Text } from 'react-native';
-import { MajorStageStackParamList } from '../models';
+import { MajorStageStackParamList } from '../../../models';
 import { RouteProp } from '@react-navigation/native';
 
-interface ManageMinorStageProps {
+interface MinorStagesProps {
   navigation: NativeStackNavigationProp<
     MajorStageStackParamList,
-    'ManageMinorStage'
+    'MinorStages'
   >;
-  route: RouteProp<MajorStageStackParamList, 'ManageMinorStage'>;
+  route: RouteProp<MajorStageStackParamList, 'MinorStages'>;
 }
 
-const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
+const MinorStages: React.FC<MinorStagesProps> = ({
   route,
   navigation,
 }): ReactElement => {
-  return <Text>Manage Minor Stage</Text>;
+  return <Text>Minor Stages</Text>;
 };
 
-export default ManageMinorStage;
+export default MinorStages;
