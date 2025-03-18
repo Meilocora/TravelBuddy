@@ -57,7 +57,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   function handleOnPress() {
     navigationJourneyBottomTabs.navigate('JourneyBottomTabsNavigator', {
       screen: 'Planning',
-      params: { journeyId: journey.id, journeyName: journey.name },
+      params: { journeyId: journey.id },
     });
   }
 

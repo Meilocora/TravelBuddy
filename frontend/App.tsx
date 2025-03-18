@@ -248,11 +248,7 @@ const JourneyBottomTabsNavigator = () => {
 const MajorStageStackNavigator = () => {
   return (
     <MajorStageStack.Navigator
-      screenOptions={({
-        navigation,
-      }: {
-        navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList>;
-      }) => ({
+      screenOptions={() => ({
         headerTintColor: 'white',
         headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
         headerTitleAlign: 'center',
@@ -352,8 +348,6 @@ const Navigation = () => {
 
 const Root = () => {
   const authCtx = useContext(AuthContext);
-
-  // TODO: Maybe adjust this
 
   // Logic for auto login
   useEffect(() => {

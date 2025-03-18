@@ -5,6 +5,7 @@ import { fetchMinorStagesById } from '../../utils/http/minor_stage';
 import { MinorStageContext } from '../../store/minorStage-context';
 import MinorStageListElement from './MinorStageListElement';
 import { generateRandomString } from '../../utils/generator';
+import InfoText from '../UI/InfoText';
 
 interface MinorStageListProps {
   majorStageId: number;
@@ -35,14 +36,12 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   }, []);
 
   if (minorStageCtx.minorStages.length === 0 && !error) {
-    return <Text>No minor stages found!</Text>;
+    return <InfoText content='No minor stages found!' />;
   }
 
   if (error) {
     return <Text>{error}</Text>;
   }
-
-  // TODO: Integrate Add Minor Stage Button
 
   return (
     <FlatList

@@ -1,4 +1,10 @@
-import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  ReactElement,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { ColorScheme, Icons, JourneyBottomTabsParamsList } from '../../models';
@@ -7,6 +13,7 @@ import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../../components/UI/IconButton';
 import Popup from '../../components/UI/Popup';
+import { JourneyContext } from '../../store/journey-context';
 
 interface PlanningProps {
   navigation: NativeStackNavigationProp<
@@ -24,7 +31,11 @@ const Planning: React.FC<PlanningProps> = ({
   navigation,
 }): ReactElement => {
   const [popupText, setPopupText] = useState<string | null>();
-  let { journeyId, journeyName } = route.params;
+  let { journeyId } = route.params;
+  const journeyCtx = useContext(JourneyContext);
+  const journeyName = journeyCtx.journeys.find(
+    (journey) => journey.id === journeyId
+  )?.name;
 
   useEffect(() => {
     function activatePopup() {

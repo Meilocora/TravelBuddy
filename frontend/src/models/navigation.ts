@@ -16,11 +16,15 @@ export type MajorStageStackParamList = {
     minorStageId?: number;
     transportationId?: number;
   };
-  MinorStages: { majorStageId: number };
+  MinorStages: {
+    journeyId: number;
+    majorStageId: number;
+    popupText?: string;
+  };
 };
 
 export type JourneyBottomTabsParamsList = {
-  Planning: { journeyId: number; journeyName?: string; popupText?: string };
+  Planning: { journeyId: number; popupText?: string };
   Overview: undefined;
   Map: undefined;
   MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;

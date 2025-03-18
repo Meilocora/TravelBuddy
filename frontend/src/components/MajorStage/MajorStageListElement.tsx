@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { StyleSheet, View, LayoutAnimation, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -23,7 +23,6 @@ import DetailArea from '../UI/list/DetailArea';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
 import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
-import MinorStageList from '../MinorStage/MinorStageList';
 import Button from '../UI/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -42,8 +41,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
 
-  const hasMinorStages =
-    majorStage.minorStagesIds && majorStage.minorStagesIds.length > 0;
   // useReducer to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.budget);
   const moneyPlanned = formatAmount(majorStage.costs.spent_money);
@@ -111,8 +108,13 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   }
 
   function handleOnPress() {
-    // TODO: This should lead to MinorStagesScreen + redefine Planning to MajorStagesScreen + sort the Screens different (by Navigator)
-    // TODO: Add/ Edit/ Delete MinorStage => Maybe do it same as with MajorStage
+    navigation.navigate('MajorStageStackNavigator', {
+      screen: 'MinorStages',
+      params: {
+        majorStageId: majorStage.id,
+        journeyId: journeyId,
+      },
+    });
   }
 
   function handleEdit() {
@@ -145,23 +147,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
       },
     });
   }
-
-  function handleAddMinorStage() {
-    navigation.navigate('MajorStageStackNavigator', {
-      screen: 'ManageMinorStage',
-      params: {
-        majorStageId: majorStage.id,
-      },
-    });
-  }
-
-  const handleShowMinorStages = () => {
-    LayoutAnimation.configureNext({
-      duration: 500,
-      update: { type: 'spring', springDamping: 0.6 },
-    });
-    setShowMinorStages((prevState) => !prevState);
-  };
 
   return (
     <View style={styles.outerContainer}>
@@ -204,20 +189,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
                 Add Transportation
               </Button>
             )}
-            {hasMinorStages && (
-              <Button
-                onPress={handleShowMinorStages}
-                mode={ButtonMode.flat}
-                colorScheme={
-                  !showMinorStages
-                    ? ColorScheme.accent
-                    : ColorScheme.complementary
-                }
-              >
-                {!showMinorStages ? 'Show Minor Stages' : 'Hide Minor Stages'}
-              </Button>
-            )}
-            {showMinorStages && <MinorStageList majorStageId={majorStage.id} />}
           </View>
         </Pressable>
       </LinearGradient>
