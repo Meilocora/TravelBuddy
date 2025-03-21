@@ -6,15 +6,15 @@ import { RouteProp } from '@react-navigation/native';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 import { GlobalStyles } from '../../../constants/styles';
 
-interface ManageMinorStageProps {
+interface ManageActivityProps {
   navigation: NativeStackNavigationProp<
     MajorStageStackParamList,
-    'ManageMinorStage'
+    'ManageActivity'
   >;
-  route: RouteProp<MajorStageStackParamList, 'ManageMinorStage'>;
+  route: RouteProp<MajorStageStackParamList, 'ManageActivity'>;
 }
 
-const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
+const ManageActivity: React.FC<ManageActivityProps> = ({
   route,
   navigation,
 }): ReactElement => {
@@ -24,14 +24,12 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     });
   }, [navigation]);
 
-  // TODO: Costs for minorStages are not supposed to use "budget" and "money exceeded", they only consist of spendings and spent money
-
   return (
     <>
       <ComplementaryGradient />
-      <Text>Manage Minor Stage</Text>
+      <Text>Manage Activity</Text>
     </>
   );
 };
 
-export default ManageMinorStage;
+export default ManageActivity;

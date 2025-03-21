@@ -1,4 +1,4 @@
-import { Costs, Transportation } from './other_models';
+import { Costs, Transportation, Validable } from './other_models';
 import { PlaceToVisit } from './place';
 
 export interface MinorStage {
@@ -12,6 +12,22 @@ export interface MinorStage {
   accommodation?: Accommodation;
   activities?: Activity[];
   placesToVisit?: PlaceToVisit[];
+}
+
+export interface MinorStageValues {
+  title: string;
+  scheduled_start_time: string | null;
+  scheduled_end_time: string | null;
+  done: boolean;
+  spent_money: number;
+}
+
+export interface MinorStageFormValues {
+  title: Validable<string>;
+  scheduled_start_time: Validable<string | null>;
+  scheduled_end_time: Validable<string | null>;
+  done: Validable<boolean>;
+  spent_money: Validable<number>;
 }
 
 export interface Accommodation {

@@ -21,6 +21,14 @@ export type MajorStageStackParamList = {
     majorStageId: number;
     popupText?: string;
   };
+  ManageAccommodation: {
+    minorStageId: number;
+    accommodationId?: number;
+  };
+  ManageActivity: {
+    minorStageId: number;
+    activityId?: number;
+  };
 };
 
 export type JourneyBottomTabsParamsList = {

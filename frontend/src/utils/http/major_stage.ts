@@ -4,13 +4,13 @@ import { BACKEND_URL } from '@env';
 import { MajorStage, MajorStageFormValues } from '../../models';
 import api from './api';
 
+const prefix = `${BACKEND_URL}/major_stage`;
+
 interface FetchMajorStageProps {
   majorStages?: MajorStage[];
   status: number;
   error?: string;
 }
-
-const prefix = `${BACKEND_URL}/major_stage`;
 
 export const fetchMajorStagesById = async (
   id: number

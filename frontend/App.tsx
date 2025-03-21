@@ -47,6 +47,8 @@ import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGrad
 import ManageTransportation from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageTransportation';
 import ManageMinorStage from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageMinorStage';
 import MinorStages from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/MinorStages';
+import ManageAccommodation from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageAccommodation';
+import ManageActivity from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageActivity';
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
@@ -268,6 +270,14 @@ const MajorStageStackNavigator = () => {
         component={ManageTransportation}
       />
       <MajorStageStack.Screen name='MinorStages' component={MinorStages} />
+      <MajorStageStack.Screen
+        name='ManageAccommodation'
+        component={ManageAccommodation}
+      />
+      <MajorStageStack.Screen
+        name='ManageActivity'
+        component={ManageActivity}
+      />
     </MajorStageStack.Navigator>
   );
 };

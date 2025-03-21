@@ -1,11 +1,12 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { MinorStage } from '../../models';
+import { MinorStage, MinorStageFormValues } from '../../models';
+import api from './api';
 
 const prefix = `${BACKEND_URL}/minor_stage`;
 
-interface FetchMinorStagesProps {
+interface FetchMinorStageProps {
   minorStages?: MinorStage[];
   status: number;
   error?: string;
@@ -13,9 +14,9 @@ interface FetchMinorStagesProps {
 
 export const fetchMinorStagesById = async (
   id: number
-): Promise<FetchMinorStagesProps> => {
+): Promise<FetchMinorStageProps> => {
   try {
-    const response: AxiosResponse<FetchMinorStagesProps> = await axios.get(
+    const response: AxiosResponse<FetchMinorStageProps> = await api.get(
       `${prefix}/get-minor-stages/${id}`
     );
 
@@ -33,7 +34,98 @@ export const fetchMinorStagesById = async (
     return { minorStages, status };
   } catch (error) {
     // Error from frontend
+    return { status: 500, error: 'Could not fetch minor stages!' };
+  }
+};
 
-    return { status: 500, error: 'Could not fetch major stages!' };
+interface ManageMinorStageProps {
+  minorStage?: MinorStage;
+  minorStageFormValues?: MinorStageFormValues;
+  status: number;
+  error?: string;
+}
+
+export const createMinorStage = async (
+  majorStageId: number,
+  minorStageFormValues: MinorStageFormValues
+): Promise<ManageMinorStageProps> => {
+  try {
+    const response: AxiosResponse<ManageMinorStageProps> = await api.post(
+      `${prefix}/create-major-stage/${majorStageId}`,
+      minorStageFormValues
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    if (response.data.minorStageFormValues) {
+      return {
+        minorStageFormValues: response.data.minorStageFormValues,
+        status: response.data.status,
+      };
+    }
+
+    return {
+      minorStage: response.data.minorStage,
+      status: response.data.status,
+    };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not create minor stage!' };
+  }
+};
+
+export const updateMajorStage = async (
+  majorStageId: number,
+  minorStageFormValues: MinorStageFormValues,
+  minorStageId: number
+): Promise<ManageMinorStageProps> => {
+  try {
+    const response: AxiosResponse<ManageMinorStageProps> = await api.post(
+      `${prefix}/update-major-stage/${majorStageId}/${minorStageId}`,
+      minorStageFormValues
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    if (response.data.minorStageFormValues) {
+      return {
+        minorStageFormValues: response.data.minorStageFormValues,
+        status: response.data.status,
+      };
+    }
+
+    return {
+      minorStage: response.data.minorStage,
+      status: response.data.status,
+    };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not update minor stage!' };
+  }
+};
+
+export const deleteMinorStage = async (
+  minorStageId: number
+): Promise<ManageMinorStageProps> => {
+  try {
+    const response: AxiosResponse<ManageMinorStageProps> = await api.delete(
+      `${prefix}/delete-minor-stage/${minorStageId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not delete minor stage!' };
   }
 };

@@ -104,6 +104,7 @@ class MajorStage(db.Model):
 
     # Define relationships to children
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
+    # TODO: There can only be one transportation per major stage
     transportations: Mapped[list['Transportation']] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
     minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')
 
