@@ -1,5 +1,5 @@
 from db import db
-from app.models import Costs, Spendings, Transportation, MajorStage, MinorStage
+from app.models import Costs, Spendings, Transportation, MajorStage, MinorStage, Accommodation
 
 def calculate_minor_stage_costs(minor_stage_costs):
     spent_money = 0
@@ -7,6 +7,9 @@ def calculate_minor_stage_costs(minor_stage_costs):
     transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minor_stage_costs.minor_stage_id)).scalars().first()
     if transportation:
         spent_money += transportation.transportation_costs
+    
+    accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minor_stage_costs.minor_stage_id)).scalars().first()
+    spent_money += accommodation.costs
     
     spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=minor_stage_costs.id)).scalars().all()
     for spending in spendings:

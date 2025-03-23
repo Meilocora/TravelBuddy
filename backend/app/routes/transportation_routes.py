@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
-from app.models import Costs, Spendings, Journey, MajorStage, Transportation, MinorStage
+from app.models import Costs, Journey, MajorStage, Transportation
 from app.validation.transportation_validation import TransportationValidation
 from app.routes.util import calculate_journey_costs
 

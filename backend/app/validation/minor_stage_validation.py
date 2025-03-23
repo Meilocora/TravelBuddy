@@ -11,14 +11,14 @@ class MinorStageValidation(Validation):
     
   
   @staticmethod
-  def validate_minor_stage(minorStage, existing_minor_stages):
+  def validate_minor_stage(minorStage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs):
         errors = False
       
         for key, value in minorStage.items():
+            if key != 'accommodation_name' and key != 'accommodation_description' and key != 'accommodation_place' and key != 'accommodation_costs' and key != 'accommodation_link':
                 if value['value'] == "" or value['value'] == None:
                     minorStage[key]['errors'].append(f'Input is required')
                     minorStage[key]['isValid'] = False
-            
                  
         title_val = MinorStageValidation().validate_string(minorStage['title']['value'], min_length=3, max_length=50)
         if title_val:
@@ -50,6 +50,47 @@ class MinorStageValidation(Validation):
         if start_end_val:
             minorStage['scheduled_start_time']['errors'].append(f", {start_end_val}")
             minorStage['scheduled_start_time']['isValid'] = False
+            
+        
+        acc_name_val = MinorStageValidation().validate_string(minorStage['accommodation_name']['value'], max_length=50)
+        if acc_name_val:
+            minorStage['accommodation_name']['errors'].append(f", {acc_name_val}")
+            minorStage['accommodation_name']['isValid'] = False
+       
+        acc_desc_val = MinorStageValidation().validate_string(minorStage['accommodation_description']['value'], max_length=500)
+        if acc_desc_val:
+            minorStage['accommodation_description']['errors'].append(f", {acc_desc_val}")
+            minorStage['accommodation_description']['isValid'] = False
+        
+        acc_place_val = MinorStageValidation().validate_string(minorStage['accommodation_place']['value'], max_length=50)
+        if acc_place_val:
+            minorStage['accommodation_place']['errors'].append(f", {acc_place_val}")
+            minorStage['accommodation_place']['isValid'] = False
+        
+        acc_link_val = MinorStageValidation().validate_hyperlink(minorStage['accommodation_link']['value'])
+        if acc_link_val:
+            minorStage['accommodation_link']['errors'].append(f", {acc_link_val}")
+            minorStage['accommodation_link']['isValid'] = False
+            
+        acc_costs_val = MinorStageValidation().validate_number(minorStage['accommodation_costs']['value'])
+        if acc_costs_val:
+            minorStage['accommodation_costs']['errors'].append(f", {acc_costs_val}")
+            minorStage['accommodation_costs']['isValid'] = False
+            
+        money_val = MinorStageValidation().validate_amount(minorStage['budget']['value'])
+        if money_val:
+            minorStage['budget']['errors'].append(f", {money_val}")
+            minorStage['budget']['isValid'] = False
+            
+        minor_stages_budget = int(minorStage['budget']['value'])
+        major_stage_budget = major_stage_costs.budget
+        for existing_minor_stage_costs in existing_minor_stages_costs:
+            minor_stages_budget += existing_minor_stage_costs.budget
+        if minor_stages_budget > major_stage_budget:
+            max_available_money = major_stage_budget - minor_stages_budget + int(minorStage['budget']['value'])
+            max_available_money_str = locale.currency(max_available_money, grouping=True)
+            minorStage['budget']['errors'].append(f", Max available amount for major stage: {max_available_money_str}")
+            minorStage['budget']['isValid'] = False
             
         for key, value in minorStage.items():
             if 'errors' in value and value['errors']:
