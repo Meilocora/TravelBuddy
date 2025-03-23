@@ -5,9 +5,8 @@ import { Checkbox } from 'react-native-paper';
 import {
   ButtonMode,
   ColorScheme,
-  MajorStage,
-  MajorStageFormValues,
-  MajorStageValues,
+  MinorStage,
+  MinorStageFormValues,
   MinorStageValues,
 } from '../../../models';
 import Input from '../../UI/form/Input';
@@ -18,11 +17,11 @@ import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
-import { createMajorStage, updateMajorStage } from '../../../utils/http';
+import { MinorStageContext } from '../../../store/minorStage-context';
 
 type InputValidationResponse = {
-  minorStage?: MajorStage;
-  majorStageFormValues?: MajorStageFormValues;
+  minorStage?: MinorStage;
+  minorStageFormValues?: MinorStageFormValues;
   error?: string;
   status: number;
 };
@@ -34,6 +33,7 @@ interface MinorStageFormProps {
   defaultValues?: MinorStageValues;
   isEditing?: boolean;
   editMinorStageId?: number;
+  majorStageId: number;
   journeyId: number;
 }
 
@@ -44,27 +44,33 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   defaultValues,
   isEditing,
   editMinorStageId,
+  majorStageId,
   journeyId,
 }): ReactElement => {
+  // TODO: This really needed?!
   const journeyCtx = useContext(JourneyContext);
-  const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
-  const minStartDate = journey!.scheduled_start_time;
-  const maxEndDate = journey!.scheduled_end_time;
+  // const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
 
-  let maxAvailableMoney = journey!.costs.budget;
   const majorStageCtx = useContext(MajorStageContext);
-  const majorStages = majorStageCtx.majorStages;
-  majorStages.forEach((ms) => {
+  const majorStage = majorStageCtx.majorStages.find(
+    (ms) => ms.id === majorStageId
+  );
+  const minStartDate = majorStage!.scheduled_start_time;
+  const maxEndDate = majorStage!.scheduled_end_time;
+
+  let maxAvailableMoney = majorStage!.costs.budget;
+
+  const minorStageCtx = useContext(MinorStageContext);
+  const minorStages = minorStageCtx.minorStages;
+  minorStages.forEach((ms) => {
     maxAvailableMoney -= ms.costs.budget;
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
   const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
-  const [changeCountry, setChangeCountry] = useState(false);
-  const [updateConfirmed, setUpdateConfirmed] = useState(false);
 
-  const [inputs, setInputs] = useState<MajorStageFormValues>({
+  const [inputs, setInputs] = useState<MinorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
     done: {
       value: defaultValues?.done || false,
@@ -81,11 +87,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    additional_info: {
-      value: defaultValues?.additional_info || '',
-      isValid: true,
-      errors: [],
-    },
     budget: {
       value: defaultValues?.budget || 0,
       isValid: true,
@@ -96,8 +97,33 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    country: {
-      value: defaultValues?.country || '',
+    accommodation_name: {
+      value: defaultValues?.accommodation_name || '',
+      isValid: true,
+      errors: [],
+    },
+    accommodation_description: {
+      value: defaultValues?.accommodation_description || '',
+      isValid: true,
+      errors: [],
+    },
+    accommodation_place: {
+      value: defaultValues?.accommodation_place || '',
+      isValid: true,
+      errors: [],
+    },
+    accommodation_costs: {
+      value: defaultValues?.accommodation_costs || 0,
+      isValid: true,
+      errors: [],
+    },
+    accommodation_booked: {
+      value: defaultValues?.accommodation_booked || false,
+      isValid: true,
+      errors: [],
+    },
+    accommodation_link: {
+      value: defaultValues?.accommodation_link || '',
       isValid: true,
       errors: [],
     },
@@ -122,11 +148,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      additional_info: {
-        value: defaultValues?.additional_info || '',
-        isValid: true,
-        errors: [],
-      },
       budget: {
         value: defaultValues?.budget || 0,
         isValid: true,
@@ -137,8 +158,33 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      country: {
-        value: defaultValues?.country || '',
+      accommodation_name: {
+        value: defaultValues?.accommodation_name || '',
+        isValid: true,
+        errors: [],
+      },
+      accommodation_description: {
+        value: defaultValues?.accommodation_description || '',
+        isValid: true,
+        errors: [],
+      },
+      accommodation_place: {
+        value: defaultValues?.accommodation_place || '',
+        isValid: true,
+        errors: [],
+      },
+      accommodation_costs: {
+        value: defaultValues?.accommodation_costs || 0,
+        isValid: true,
+        errors: [],
+      },
+      accommodation_booked: {
+        value: defaultValues?.accommodation_booked || false,
+        isValid: true,
+        errors: [],
+      },
+      accommodation_link: {
+        value: defaultValues?.accommodation_link || '',
         isValid: true,
         errors: [],
       },
@@ -151,10 +197,14 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       done: { value: false, isValid: true, errors: [] },
       scheduled_start_time: { value: null, isValid: true, errors: [] },
       scheduled_end_time: { value: null, isValid: true, errors: [] },
-      additional_info: { value: '', isValid: true, errors: [] },
       budget: { value: 0, isValid: true, errors: [] },
       spent_money: { value: 0, isValid: true, errors: [] },
-      country: { value: '', isValid: true, errors: [] },
+      accommodation_name: { value: '', isValid: true, errors: [] },
+      accommodation_description: { value: '', isValid: true, errors: [] },
+      accommodation_place: { value: '', isValid: true, errors: [] },
+      accommodation_costs: { value: 0, isValid: true, errors: [] },
+      accommodation_booked: { value: false, isValid: true, errors: [] },
+      accommodation_link: { value: '', isValid: true, errors: [] },
     });
   }
 
@@ -170,55 +220,55 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     });
   }
 
-  function handleChangeCountry(countryName: string) {
-    setInputs((prevValues) => {
-      return {
-        ...prevValues,
-        country: {
-          value: countryName,
-          isValid: true,
-          errors: [],
-        },
-      };
-    });
-  }
+  // function handleChangeCountry(countryName: string) {
+  //   setInputs((prevValues) => {
+  //     return {
+  //       ...prevValues,
+  //       country: {
+  //         value: countryName,
+  //         isValid: true,
+  //         errors: [],
+  //       },
+  //     };
+  //   });
+  // }
 
-  async function validateInputs(): Promise<void> {
-    setIsSubmitting(true);
+  // async function validateInputs(): Promise<void> {
+  //   setIsSubmitting(true);
 
-    // Set all errors to empty array to prevent stacking of errors
-    for (const key in inputs) {
-      inputs[key as keyof MajorStageFormValues].errors = [];
-    }
+  //   // Set all errors to empty array to prevent stacking of errors
+  //   for (const key in inputs) {
+  //     inputs[key as keyof MinorStageFormValues].errors = [];
+  //   }
 
-    let response: InputValidationResponse;
-    if (isEditing) {
-      const former_country = majorStageCtx.majorStages.find(
-        (ms) => ms.id === editMajorStageId
-      )?.country;
+  //   let response: InputValidationResponse;
+  //   if (isEditing) {
+  //     const former_country = majorStageCtx.majorStages.find(
+  //       (ms) => ms.id === editMajorStageId
+  //     )?.country;
 
-      if (!updateConfirmed && inputs.country.value !== former_country) {
-        setChangeCountry(true);
-        return;
-      }
-      response = await updateMajorStage(journeyId, inputs, editMajorStageId!);
-    } else if (!isEditing) {
-      response = await createMajorStage(journeyId, inputs);
-    }
+  //     if (!updateConfirmed && inputs.country.value !== former_country) {
+  //       setChangeCountry(true);
+  //       return;
+  //     }
+  //     response = await updateMajorStage(journeyId, inputs, editMajorStageId!);
+  //   } else if (!isEditing) {
+  //     response = await createMajorStage(journeyId, inputs);
+  //   }
 
-    const { error, status, majorStage, majorStageFormValues } = response!;
+  //   const { error, status, majorStage, majorStageFormValues } = response!;
 
-    if (!error && majorStage) {
-      resetValues();
-      onSubmit({ majorStage, status });
-    } else if (error) {
-      onSubmit({ error, status });
-    } else if (majorStageFormValues) {
-      setInputs((prevValues) => majorStageFormValues);
-    }
-    setIsSubmitting(false);
-    return;
-  }
+  //   if (!error && majorStage) {
+  //     resetValues();
+  //     onSubmit({ majorStage, status });
+  //   } else if (error) {
+  //     onSubmit({ error, status });
+  //   } else if (majorStageFormValues) {
+  //     setInputs((prevValues) => majorStageFormValues);
+  //   }
+  //   setIsSubmitting(false);
+  //   return;
+  // }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
@@ -244,27 +294,8 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     setOpenEndDatePicker(false);
   }
 
-  function confirmModalHandler() {
-    setChangeCountry(false);
-    setUpdateConfirmed(true);
-    validateInputs();
-  }
-
-  function closeModalHandler() {
-    setChangeCountry(false);
-  }
-
   return (
     <>
-      {changeCountry && (
-        <Modal
-          title='Are you sure?'
-          content={`When you change the country, all Minor Stages that are connected to ${inputs.title.value} will be deleted.`}
-          confirmText='Change'
-          onConfirm={confirmModalHandler}
-          onCancel={closeModalHandler}
-        />
-      )}
       <View style={styles.formContainer}>
         <View>
           <View style={styles.formRow}>
@@ -276,18 +307,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               textInputConfig={{
                 value: inputs.title.value,
                 onChangeText: inputChangedHandler.bind(this, 'title'),
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Additional Information'
-              invalid={!inputs.additional_info.isValid}
-              errors={inputs.additional_info.errors}
-              textInputConfig={{
-                multiline: true,
-                value: inputs.additional_info.value,
-                onChangeText: inputChangedHandler.bind(this, 'additional_info'),
               }}
             />
           </View>
@@ -354,7 +373,104 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               maximumDate={parseDate(maxEndDate)}
             />
           </View>
+          {/* TODO: Separator for Infos about Accommodation */}
           <View style={styles.formRow}>
+            <Input
+              label='Name'
+              invalid={!inputs.accommodation_name.isValid}
+              errors={inputs.accommodation_name.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.title.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_name'
+                ),
+              }}
+            />
+            <Input
+              label='Place'
+              invalid={!inputs.accommodation_place.isValid}
+              errors={inputs.accommodation_place.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.title.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_place'
+                ),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Description'
+              invalid={!inputs.accommodation_description.isValid}
+              errors={inputs.accommodation_description.errors}
+              mandatory
+              textInputConfig={{
+                multiline: true,
+                value: inputs.accommodation_description.value || '',
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_description'
+                ),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}></View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.accommodation_link.isValid}
+              errors={inputs.accommodation_link.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.title.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_link'
+                ),
+              }}
+            />
+            <Input
+              label='Costs'
+              invalid={!inputs.accommodation_costs.isValid}
+              errors={inputs.accommodation_costs.errors}
+              mandatory
+              textInputConfig={{
+                keyboardType: 'decimal-pad',
+                value:
+                  inputs.accommodation_costs.value !== 0
+                    ? inputs.accommodation_costs.value!.toString()
+                    : '',
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_costs'
+                ),
+                // TODO: MaxValue for Acc_costs -> maybe Modal that tells user, it is too pricey?!
+                // placeholder: `Max: ${formatAmount(maxAvailableMoney)}`,
+              }}
+            />
+            <View style={styles.checkBoxContainer}>
+              <Text style={styles.checkBoxLabel}>Booked?</Text>
+              <Checkbox
+                status={
+                  inputs.accommodation_booked.value ? 'checked' : 'unchecked'
+                }
+                onPress={() =>
+                  inputChangedHandler(
+                    'accommodation_booked',
+                    !inputs.accommodation_booked.value
+                  )
+                }
+                uncheckedColor={GlobalStyles.colors.gray200}
+                color={GlobalStyles.colors.primary100}
+              />
+            </View>
+          </View>
+          {/* TODO: Picker for Places_to_visit ?! ... or put inside minorStageListElement if it gets too much for one form */}
+          {/* <View style={styles.formRow}>
             <CountrySelector
               onChangeCountry={handleChangeCountry}
               errors={inputs.country.errors}
@@ -375,7 +491,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 />
               </View>
             )}
-          </View>
+          </View> */}
         </View>
         <View style={styles.buttonsContainer}>
           <Button
@@ -385,7 +501,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           >
             Cancel
           </Button>
-          <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
+          <Button onPress={() => {}} colorScheme={ColorScheme.neutral}>
             {submitButtonLabel}
           </Button>
         </View>

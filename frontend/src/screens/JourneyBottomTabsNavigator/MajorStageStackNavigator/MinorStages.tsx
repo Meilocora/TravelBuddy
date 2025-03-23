@@ -75,6 +75,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   function handleAddMinorStage() {
     navigation.navigate('ManageMinorStage', {
+      journeyId: journeyId,
       majorStageId: majorStageId,
     });
   }

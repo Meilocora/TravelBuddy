@@ -25,6 +25,7 @@ import { JourneyContext } from '../../../store/journey-context';
 import Modal from '../../../components/UI/Modal';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import IconButton from '../../../components/UI/IconButton';
+import MinorStageForm from '../../../components/MinorStage/ManageMinorStage/MinorStageForm';
 
 interface ManageMinorStageProps {
   navigation: NativeStackNavigationProp<
@@ -88,7 +89,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       headerTitleAlign: 'center',
       title: isEditing
         ? `Manage "${selectedMinorStage?.title}"`
-        : 'Add Major Stage',
+        : 'Add Minor Stage',
       // headerLeft: ({ tintColor }) => (
       //   <IconButton
       //     color={tintColor}
@@ -220,7 +221,16 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       )}
       {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
       <Animated.ScrollView entering={FadeInDown} nestedScrollEnabled={true}>
-        <Text>Manage Minor Stage</Text>
+        <MinorStageForm
+          onCancel={cancelHandler}
+          onSubmit={() => {}}
+          submitButtonLabel={isEditing ? 'Update' : 'Create'}
+          defaultValues={isEditing ? minorStageValues : undefined}
+          isEditing={isEditing}
+          journeyId={journeyId}
+          majorStageId={majorStageId}
+          editMinorStageId={editedMinorStageId}
+        />
         {isEditing && (
           <View style={styles.btnContainer}>
             <IconButton

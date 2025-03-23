@@ -146,7 +146,6 @@ def create_minor_stage(current_user, majorStageId):
         db.session.commit()
         
         # TODO: Add places_to_visit like countries in journey
-        # TODO: Next step => create Form for MinorStage (including Accommodation and place_to_visit picker)
         
         # build response major stage object for the frontend
         response_minor_stage = {'id': new_minor_stage.id,

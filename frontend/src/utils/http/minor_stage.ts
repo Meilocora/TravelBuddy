@@ -77,7 +77,7 @@ export const createMinorStage = async (
   }
 };
 
-export const updateMajorStage = async (
+export const updateMinorStage = async (
   majorStageId: number,
   minorStageFormValues: MinorStageFormValues,
   minorStageId: number

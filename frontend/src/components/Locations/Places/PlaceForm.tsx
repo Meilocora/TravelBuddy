@@ -169,6 +169,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
               errors={inputs.description.errors}
               mandatory
               textInputConfig={{
+                // TODO: multiline: true,  ?
                 value: inputs.description.value,
                 onChangeText: inputChangedHandler.bind(this, 'description'),
               }}
