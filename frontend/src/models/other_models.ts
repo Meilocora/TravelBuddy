@@ -13,7 +13,7 @@ export interface Spendings {
 }
 
 export enum SpendingsCategory {
-  // transportations of minor and major stages are not implemented as spendings
+  // transportations of minor and major stages and accommodations are not implemented as spendings
   transportation = 'Transportation',
   acommodation = 'Acommodation',
   activities = 'Activities',

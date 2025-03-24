@@ -21,12 +21,12 @@ export interface MinorStageValues {
   scheduled_end_time: string | null;
   budget: number;
   spent_money: number;
-  accommodation_name: string | null;
-  accommodation_description: string | null;
-  accommodation_place: string | null;
+  accommodation_name: string;
+  accommodation_place: string;
   accommodation_costs: number | null;
   accommodation_booked: boolean;
-  accommodation_link: string | null;
+  accommodation_link: string;
+  accommodation_maps_link: string;
 }
 
 export interface MinorStageFormValues {
@@ -36,21 +36,21 @@ export interface MinorStageFormValues {
   scheduled_end_time: Validable<string | null>;
   budget: Validable<number>;
   spent_money: Validable<number>;
-  accommodation_name: Validable<string | null>;
-  accommodation_description: Validable<string | null>;
-  accommodation_place: Validable<string | null>;
-  accommodation_costs: Validable<number | null>;
+  accommodation_name: Validable<string>;
+  accommodation_place: Validable<string>;
+  accommodation_costs: Validable<number>;
   accommodation_booked: Validable<boolean>;
-  accommodation_link: Validable<string | null>;
+  accommodation_link: Validable<string>;
+  accommodation_maps_link: Validable<string>;
 }
 
 export interface Accommodation {
   name: string;
-  description: string;
   place: string;
   costs: number;
   booked: boolean;
   link: string;
+  maps_link: string;
 }
 
 export interface Activity {

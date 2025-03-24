@@ -52,7 +52,8 @@ def get_minor_stages(current_user, majorStageId):
                                     'place': accommodation.place,
                                     'costs': accommodation.costs,
                                     'booked': accommodation.booked,
-                                    'link': accommodation.link
+                                    'link': accommodation.link,
+                                    'maps_link': accommodation.maps_link
                                 }
             }
             
@@ -103,7 +104,7 @@ def create_minor_stage(current_user, majorStageId):
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
-    response, isValid = MinorStageValidation.validate_major_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)
+    response, isValid = MinorStageValidation.validate_minor_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)
     
     if not isValid:
         return jsonify({'minorStageFormValues': response, 'status': 400})
@@ -128,6 +129,7 @@ def create_minor_stage(current_user, majorStageId):
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
             link=minor_stage['accommodation_link']['value'],
+            maps_link=minor_stage['accommodation_maps_link']['value'],
             minor_stage_id=new_minor_stage.id
         )
         db.session.add(new_accommodation)
@@ -164,7 +166,8 @@ def create_minor_stage(current_user, majorStageId):
                                     'place': new_accommodation.place,
                                     'costs': new_accommodation.costs,
                                     'booked': new_accommodation.booked,
-                                    'link': new_accommodation.link
+                                    'link': new_accommodation.link,
+                                    'maps_link': new_accommodation.maps_link
                                 }
         }
         

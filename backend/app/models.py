@@ -104,8 +104,7 @@ class MajorStage(db.Model):
 
     # Define relationships to children
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
-    # TODO: There can only be one transportation per major stage
-    transportations: Mapped[list['Transportation']] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
+    transportations: Mapped['Transportation'] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
     minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')
 
     # Foreign keys to the parent
@@ -126,7 +125,7 @@ class MinorStage(db.Model):
 
     # Define relationships to children
     costs: Mapped[list['Costs']] = relationship('Costs', back_populates='minor_stage', cascade='all, delete-orphan')
-    transportations: Mapped[list['Transportation']] = relationship('Transportation', back_populates='minor_stage', cascade='all, delete-orphan')
+    transportations: Mapped['Transportation'] = relationship('Transportation', back_populates='minor_stage', cascade='all, delete-orphan')
     accommodations: Mapped[list['Accommodation']] = relationship('Accommodation', back_populates='minor_stage', cascade='all, delete-orphan')
     activities: Mapped[list['Activity']] = relationship('Activity', back_populates='minor_stage', cascade='all, delete-orphan')
     places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='minor_stage', cascade='all, delete-orphan')
@@ -205,13 +204,13 @@ class Accommodation(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[str] = mapped_column(String, nullable=True)
-    latitude: Mapped[float] = mapped_column(Float, nullable=True)
-    longitude: Mapped[float] = mapped_column(Float, nullable=True)
+    # latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    # longitude: Mapped[float] = mapped_column(Float, nullable=True)
     place: Mapped[str] = mapped_column(String, nullable=False)
     costs: Mapped[int] = mapped_column(Integer, nullable=False)
     booked: Mapped[bool] = mapped_column(Boolean, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
+    maps_link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)

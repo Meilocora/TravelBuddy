@@ -75,12 +75,11 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     budget: selectedMinorStage?.costs.budget || 0,
     spent_money: selectedMinorStage?.costs.spent_money || 0,
     accommodation_name: selectedMinorStage?.accommodation.name || '',
-    accommodation_description:
-      selectedMinorStage?.accommodation.description || '',
     accommodation_place: selectedMinorStage?.accommodation.place || '',
     accommodation_costs: selectedMinorStage?.accommodation.costs || 0,
     accommodation_booked: selectedMinorStage?.accommodation.booked || false,
     accommodation_link: selectedMinorStage?.accommodation.link || '',
+    accommodation_maps_link: selectedMinorStage?.accommodation.maps_link || '',
   });
 
   useLayoutEffect(() => {
@@ -117,12 +116,12 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       budget: selectedMinorStage?.costs.budget || 0,
       spent_money: selectedMinorStage?.costs.spent_money || 0,
       accommodation_name: selectedMinorStage?.accommodation.name || '',
-      accommodation_description:
-        selectedMinorStage?.accommodation.description || '',
       accommodation_place: selectedMinorStage?.accommodation.place || '',
       accommodation_costs: selectedMinorStage?.accommodation.costs || 0,
       accommodation_booked: selectedMinorStage?.accommodation.booked || false,
       accommodation_link: selectedMinorStage?.accommodation.link || '',
+      accommodation_maps_link:
+        selectedMinorStage?.accommodation.maps_link || '',
     });
   }, [selectedMinorStage]);
 
@@ -157,11 +156,11 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       budget: 0,
       spent_money: 0,
       accommodation_name: '',
-      accommodation_description: '',
       accommodation_place: '',
       accommodation_costs: 0,
       accommodation_booked: false,
       accommodation_link: '',
+      accommodation_maps_link: '',
     });
   }
 

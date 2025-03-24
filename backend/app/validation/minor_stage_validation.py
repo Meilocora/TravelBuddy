@@ -72,6 +72,11 @@ class MinorStageValidation(Validation):
             minorStage['accommodation_link']['errors'].append(f", {acc_link_val}")
             minorStage['accommodation_link']['isValid'] = False
             
+        acc_maps_link_val = MinorStageValidation().validate_hyperlink(minorStage['accommodation_maps_link']['value'])
+        if acc_maps_link_val:
+            minorStage['accommodation_maps_link']['errors'].append(f", {acc_link_val}")
+            minorStage['accommodation_maps_link']['isValid'] = False
+            
         acc_costs_val = MinorStageValidation().validate_number(minorStage['accommodation_costs']['value'])
         if acc_costs_val:
             minorStage['accommodation_costs']['errors'].append(f", {acc_costs_val}")

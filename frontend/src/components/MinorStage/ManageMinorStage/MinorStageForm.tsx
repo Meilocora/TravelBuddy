@@ -102,11 +102,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    accommodation_description: {
-      value: defaultValues?.accommodation_description || '',
-      isValid: true,
-      errors: [],
-    },
     accommodation_place: {
       value: defaultValues?.accommodation_place || '',
       isValid: true,
@@ -127,7 +122,28 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
+    accommodation_maps_link: {
+      value: defaultValues?.accommodation_maps_link || '',
+      isValid: true,
+      errors: [],
+    },
   });
+
+  const [maxAvailableMoneyAccommodation, setMaxAvailableMoneyAccommodation] =
+    useState(Math.max(0, inputs.budget.value));
+  useEffect(() => {
+    setMaxAvailableMoneyAccommodation(Math.max(0, inputs.budget.value));
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        accommodation_costs: {
+          value: prevValues.accommodation_costs.value,
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+  }, [inputs.budget.value]);
 
   // Redefine inputs, when defaultValues change
   useEffect(() => {
@@ -163,11 +179,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      accommodation_description: {
-        value: defaultValues?.accommodation_description || '',
-        isValid: true,
-        errors: [],
-      },
       accommodation_place: {
         value: defaultValues?.accommodation_place || '',
         isValid: true,
@@ -188,6 +199,11 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
+      accommodation_maps_link: {
+        value: defaultValues?.accommodation_maps_link || '',
+        isValid: true,
+        errors: [],
+      },
     });
   }, [defaultValues]);
 
@@ -200,11 +216,11 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       budget: { value: 0, isValid: true, errors: [] },
       spent_money: { value: 0, isValid: true, errors: [] },
       accommodation_name: { value: '', isValid: true, errors: [] },
-      accommodation_description: { value: '', isValid: true, errors: [] },
       accommodation_place: { value: '', isValid: true, errors: [] },
       accommodation_costs: { value: 0, isValid: true, errors: [] },
       accommodation_booked: { value: false, isValid: true, errors: [] },
       accommodation_link: { value: '', isValid: true, errors: [] },
+      accommodation_maps_link: { value: '', isValid: true, errors: [] },
     });
   }
 
@@ -247,6 +263,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   //       (ms) => ms.id === editMajorStageId
   //     )?.country;
 
+  // TODO: Change following lines, so there will be a modal, when accommodation_costs > maxAvailableMoneyAccommodation
   //     if (!updateConfirmed && inputs.country.value !== former_country) {
   //       setChangeCountry(true);
   //       return;
@@ -373,7 +390,9 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               maximumDate={parseDate(maxEndDate)}
             />
           </View>
-          {/* TODO: Separator for Infos about Accommodation */}
+          <View style={styles.separator}>
+            <Text style={styles.subtitle}>Accommodation</Text>
+          </View>
           <View style={styles.formRow}>
             <Input
               label='Name'
@@ -381,75 +400,11 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               errors={inputs.accommodation_name.errors}
               mandatory
               textInputConfig={{
-                value: inputs.title.value,
+                value: inputs.accommodation_name.value,
                 onChangeText: inputChangedHandler.bind(
                   this,
                   'accommodation_name'
                 ),
-              }}
-            />
-            <Input
-              label='Place'
-              invalid={!inputs.accommodation_place.isValid}
-              errors={inputs.accommodation_place.errors}
-              mandatory
-              textInputConfig={{
-                value: inputs.title.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_place'
-                ),
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Description'
-              invalid={!inputs.accommodation_description.isValid}
-              errors={inputs.accommodation_description.errors}
-              mandatory
-              textInputConfig={{
-                multiline: true,
-                value: inputs.accommodation_description.value || '',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_description'
-                ),
-              }}
-            />
-          </View>
-          <View style={styles.formRow}></View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.accommodation_link.isValid}
-              errors={inputs.accommodation_link.errors}
-              mandatory
-              textInputConfig={{
-                value: inputs.title.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_link'
-                ),
-              }}
-            />
-            <Input
-              label='Costs'
-              invalid={!inputs.accommodation_costs.isValid}
-              errors={inputs.accommodation_costs.errors}
-              mandatory
-              textInputConfig={{
-                keyboardType: 'decimal-pad',
-                value:
-                  inputs.accommodation_costs.value !== 0
-                    ? inputs.accommodation_costs.value!.toString()
-                    : '',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_costs'
-                ),
-                // TODO: MaxValue for Acc_costs -> maybe Modal that tells user, it is too pricey?!
-                // placeholder: `Max: ${formatAmount(maxAvailableMoney)}`,
               }}
             />
             <View style={styles.checkBoxContainer}>
@@ -468,6 +423,71 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 color={GlobalStyles.colors.primary100}
               />
             </View>
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Place'
+              invalid={!inputs.accommodation_place.isValid}
+              errors={inputs.accommodation_place.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.accommodation_place.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_place'
+                ),
+              }}
+            />
+            <Input
+              label='Costs'
+              invalid={!inputs.accommodation_costs.isValid}
+              errors={inputs.accommodation_costs.errors}
+              mandatory
+              textInputConfig={{
+                keyboardType: 'decimal-pad',
+                value:
+                  inputs.accommodation_costs.value !== 0
+                    ? inputs.accommodation_costs.value!.toString()
+                    : '',
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_costs'
+                ),
+                placeholder: maxAvailableMoneyAccommodation
+                  ? `Max: ${formatAmount(maxAvailableMoneyAccommodation)}`
+                  : '',
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.accommodation_link.isValid}
+              errors={inputs.accommodation_link.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.accommodation_link.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_link'
+                ),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Maps Link'
+              invalid={!inputs.accommodation_maps_link.isValid}
+              errors={inputs.accommodation_maps_link.errors}
+              mandatory
+              textInputConfig={{
+                value: inputs.accommodation_maps_link.value,
+                onChangeText: inputChangedHandler.bind(
+                  this,
+                  'accommodation_maps_link'
+                ),
+              }}
+            />
           </View>
           {/* TODO: Picker for Places_to_visit ?! ... or put inside minorStageListElement if it gets too much for one form */}
           {/* <View style={styles.formRow}>
@@ -537,8 +557,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 8,
+    marginVertical: 4,
     marginHorizontal: 12,
+  },
+  separator: {
+    borderTopColor: GlobalStyles.colors.gray100,
+    borderTopWidth: 2,
+    marginTop: 8,
+  },
+  subtitle: {
+    alignSelf: 'center',
+    fontSize: 18,
+    color: GlobalStyles.colors.gray50,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   checkBoxContainer: {
     alignItems: 'center',
