@@ -12,36 +12,36 @@ import { generateRandomString } from '../../../utils';
 import InfoText from '../../UI/InfoText';
 import { GlobalStyles } from '../../../constants/styles';
 import ListItem from '../../UI/search/ListItem';
-import { FetchCustomCountryResponseProps } from '../../../utils/http/custom_country';
 import Button from '../../UI/Button';
-import { BottomTabsParamList, ButtonMode, ColorScheme } from '../../../models';
+import { ButtonMode, ColorScheme, StackParamList } from '../../../models';
+import { FetchPlacesProps } from '../../../utils/http';
 
-interface SelectionProps {
-  onFetchRequest: (
-    journeyId?: number
-  ) => Promise<FetchCustomCountryResponseProps>;
+interface PlacesSelectionProps {
+  onFetchRequest: (countryName: string) => Promise<FetchPlacesProps>;
   onAddHandler: (addedItem: string) => void;
   onCloseModal: () => void;
-  chosenCountries: string[];
+  chosenPlaces: string[];
+  countryName: string;
 }
 
-const Selection = ({
+const PlacesSelection = ({
   onFetchRequest,
   onAddHandler,
   onCloseModal,
-  chosenCountries,
-}: SelectionProps): ReactElement => {
-  const navigation = useNavigation<NavigationProp<BottomTabsParamList>>();
+  chosenPlaces,
+  countryName,
+}: PlacesSelectionProps): ReactElement => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [fetchedData, setFetchedData] = useState<string[]>([]);
 
   // Fetch data
   useEffect(() => {
     async function fetchData() {
-      const { data } = await onFetchRequest();
-      if (data) {
-        const names = data.map((item) => item.name);
+      const { places } = await onFetchRequest(countryName);
+      if (places) {
+        const names = places.map((item) => item.name);
         const namesNotChosen = names.filter(
-          (name) => !chosenCountries.includes(name)
+          (name) => !chosenPlaces.includes(name)
         );
         LayoutAnimation.linear();
         setFetchedData(namesNotChosen);
@@ -49,7 +49,7 @@ const Selection = ({
     }
 
     fetchData();
-  }, [chosenCountries]);
+  }, [chosenPlaces]);
 
   // Timer to close Selection after 3 seconds
   useEffect(() => {
@@ -65,7 +65,11 @@ const Selection = ({
   }
 
   function handlePressAdd() {
-    navigation.navigate('Locations');
+    // TODO: How to get the countryId?
+    // navigation.navigate('ManagePlaceToVisit', {
+    //   placeId: null,
+    //   countryId: countryId,
+    // });
   }
 
   let content: ReactElement | null = null;
@@ -98,10 +102,9 @@ const Selection = ({
         <Button
           colorScheme={ColorScheme.accent}
           onPress={handlePressAdd}
-          // mode={ButtonMode.flat}
           style={styles.button}
         >
-          Add Country!
+          Add Place!
         </Button>
       </>
     );
@@ -150,4 +153,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Selection;
+export default PlacesSelection;

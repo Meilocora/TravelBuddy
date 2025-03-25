@@ -31,6 +31,33 @@ def get_places(current_user):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+@place_bp.route('/get-places-by-country/<str:countryName>', methods=['GET'])
+@token_required
+def get_places_by_country(current_user, countryName):
+    try:
+        
+        # TODO: Get countryId from the countryName or find a way to get the countryId... maybe another fetchRequest beforehand?
+        
+        result = db.session.execute(db.select(PlaceToVisit).filter_by(user_id=current_user))
+        places = result.scalars().all()
+        
+        places_list = []
+        for place in places:
+            # Append the whole place, that matches the model from frontend to the list
+            places_list.append({
+                'countryId': place.custom_country_id,
+                'id': place.id,
+                'name': place.name,
+                'description': place.description,
+                'visited': place.visited,
+                'favorite': place.favorite,
+                'link': place.link,
+                'maps_link': place.maps_link,
+            })    
+        return jsonify({'places': places_list, 'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
 @place_bp.route('/create-place', methods=['POST'])
 @token_required
 def create_place(current_user):

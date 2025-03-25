@@ -12,10 +12,10 @@ import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
-import CountriesSelection from './CountriesSelection';
 import { formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
+import CountriesSelectionForm from './CountriesSelectionForm';
 
 type InputValidationResponse = {
   journey?: Journey;
@@ -294,7 +294,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
               }
             />
           </View>
-          <CountriesSelection
+          <CountriesSelectionForm
             onAddCountry={handleAddCountry}
             onDeleteCountry={handleDeleteCountry}
             invalid={!inputs.countries.isValid}

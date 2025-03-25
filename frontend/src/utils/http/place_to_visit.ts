@@ -4,8 +4,9 @@ import { BACKEND_URL } from '@env';
 import { PlaceFormValues, PlaceToVisit } from '../../models';
 import api from './api';
 
-interface FetchPlacesProps {
+export interface FetchPlacesProps {
   places?: PlaceToVisit[];
+  countryName?: string;
   status: number;
   error?: string;
 }
@@ -16,6 +17,32 @@ export const fetchPlaces = async (): Promise<FetchPlacesProps> => {
   try {
     const response: AxiosResponse<FetchPlacesProps> = await api.get(
       `${prefix}/get-places`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    const { places, status } = response.data;
+
+    if (!places) {
+      return { status };
+    }
+
+    return { places, status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not fetch places!' };
+  }
+};
+
+export const fetchPlacesByCountry = async (
+  countryName: string
+): Promise<FetchPlacesProps> => {
+  try {
+    const response: AxiosResponse<FetchPlacesProps> = await api.get(
+      `${prefix}/get-places-by-country/${countryName}`
     );
 
     // Error from backend

@@ -27,6 +27,7 @@ export interface MinorStageValues {
   accommodation_booked: boolean;
   accommodation_link: string;
   accommodation_maps_link: string;
+  placesToVisist: string;
 }
 
 export interface MinorStageFormValues {
@@ -42,6 +43,7 @@ export interface MinorStageFormValues {
   accommodation_booked: Validable<boolean>;
   accommodation_link: Validable<string>;
   accommodation_maps_link: Validable<string>;
+  placesToVisist: Validable<string>;
 }
 
 export interface Accommodation {

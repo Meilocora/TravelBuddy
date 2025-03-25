@@ -18,6 +18,7 @@ import Modal from '../../UI/Modal';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import PlacesSelectionForm from './PlacesSelectionForm';
 
 type InputValidationResponse = {
   minorStage?: MinorStage;
@@ -55,6 +56,8 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   const majorStage = majorStageCtx.majorStages.find(
     (ms) => ms.id === majorStageId
   );
+  const countryName = majorStage!.country;
+
   const minStartDate = majorStage!.scheduled_start_time;
   const maxEndDate = majorStage!.scheduled_end_time;
 
@@ -127,6 +130,11 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
+    placesToVisist: {
+      value: defaultValues?.placesToVisist || '',
+      isValid: true,
+      errors: [],
+    },
   });
 
   const [maxAvailableMoneyAccommodation, setMaxAvailableMoneyAccommodation] =
@@ -144,6 +152,49 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       };
     });
   }, [inputs.budget.value]);
+
+  const defaultPlacesNames = defaultValues?.placesToVisist?.split(', ') || [];
+  // State only exists for easier handling of countryNames
+  const [currentPlacesNames, setCurrentPlacesNames] =
+    useState<string[]>(defaultPlacesNames);
+
+  function handleAddPlace(placeName: string) {
+    setCurrentPlacesNames([...currentPlacesNames, placeName]);
+
+    const updatedPlaceNames = [...currentPlacesNames, placeName];
+
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        placesToVisist: {
+          value: updatedPlaceNames.join(', '),
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+  }
+
+  function handleDeletePlace(placeName: string) {
+    setCurrentPlacesNames(
+      currentPlacesNames.filter((name) => name !== placeName)
+    );
+
+    const updatedCountryNames = [...currentPlacesNames];
+
+    setInputs((prevValues) => {
+      return {
+        ...prevValues,
+        placesToVisist: {
+          value: currentPlacesNames
+            .filter((name) => name !== placeName)
+            .join(', '),
+          isValid: true,
+          errors: [],
+        },
+      };
+    });
+  }
 
   // Redefine inputs, when defaultValues change
   useEffect(() => {
@@ -204,6 +255,11 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
+      placesToVisist: {
+        value: defaultValues?.placesToVisist || '',
+        isValid: true,
+        errors: [],
+      },
     });
   }, [defaultValues]);
 
@@ -221,6 +277,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       accommodation_booked: { value: false, isValid: true, errors: [] },
       accommodation_link: { value: '', isValid: true, errors: [] },
       accommodation_maps_link: { value: '', isValid: true, errors: [] },
+      placesToVisist: { value: '', isValid: true, errors: [] },
     });
   }
 
@@ -489,6 +546,13 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               }}
             />
           </View>
+          <PlacesSelectionForm
+            onAddPlace={handleAddPlace}
+            onDeletePlace={handleDeletePlace}
+            invalid={!inputs.placesToVisist.isValid}
+            defaultPlaceNames={defaultPlacesNames}
+            countryId={1}
+          />
           {/* TODO: Picker for Places_to_visit ?! ... or put inside minorStageListElement if it gets too much for one form */}
           {/* <View style={styles.formRow}>
             <CountrySelector
