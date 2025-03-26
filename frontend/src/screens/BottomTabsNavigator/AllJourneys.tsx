@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text, View } from 'react-native';
 
 import JourneysList from '../../components/Journeys/JourneysList';
-import { fetchJourneys } from '../../utils/http';
+import { fetchCountries, fetchJourneys } from '../../utils/http';
 import { StyleSheet } from 'react-native';
 import { JourneyContext } from '../../store/journey-context';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
@@ -12,6 +12,7 @@ import { RouteProp } from '@react-navigation/native';
 import Popup from '../../components/UI/Popup';
 import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
+import { CustomCountryContext } from '../../store/custom-country-context';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -29,6 +30,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
   const authCtx = useContext(AuthContext);
   const journeyCtx = useContext(JourneyContext);
+  const countryCtx = useContext(CustomCountryContext);
 
   useEffect(() => {
     function activatePopup() {
@@ -60,6 +62,8 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
       } else {
         setError(response.error);
       }
+      // TODO: Fetch everything usefull over here
+      countryCtx.refetchCustomCountries();
       setIsFetching(false);
     }
 

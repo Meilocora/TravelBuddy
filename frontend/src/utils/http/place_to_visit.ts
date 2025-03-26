@@ -6,6 +6,7 @@ import api from './api';
 
 export interface FetchPlacesProps {
   places?: PlaceToVisit[];
+  countryId?: number;
   countryName?: string;
   status: number;
   error?: string;
@@ -37,12 +38,13 @@ export const fetchPlaces = async (): Promise<FetchPlacesProps> => {
   }
 };
 
-export const fetchPlacesByCountry = async (
+export const fetchavailablePlacesByCountry = async (
+  minorStageId: number,
   countryName: string
 ): Promise<FetchPlacesProps> => {
   try {
     const response: AxiosResponse<FetchPlacesProps> = await api.get(
-      `${prefix}/get-places-by-country/${countryName}`
+      `${prefix}/get-available-places-by-country/${minorStageId}/${countryName}`
     );
 
     // Error from backend
@@ -50,13 +52,9 @@ export const fetchPlacesByCountry = async (
       return { status: response.data.status, error: response.data.error };
     }
 
-    const { places, status } = response.data;
+    const { places, countryId, status } = response.data;
 
-    if (!places) {
-      return { status };
-    }
-
-    return { places, status };
+    return { places, countryId, status };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch places!' };

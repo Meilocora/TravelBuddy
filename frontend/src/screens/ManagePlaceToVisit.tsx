@@ -47,6 +47,8 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
     countryId = route.params.countryId;
   }
 
+  console.log('countryId', countryId);
+
   // Empty, when no default values provided
   const [placeValues, setPlaceValues] = useState<PlaceValues>({
     countryId: countryId!,

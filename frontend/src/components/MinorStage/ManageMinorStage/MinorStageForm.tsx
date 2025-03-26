@@ -546,36 +546,15 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               }}
             />
           </View>
+          {/* TODO: Put this into the ListComponent ... to much for one form */}
           <PlacesSelectionForm
             onAddPlace={handleAddPlace}
             onDeletePlace={handleDeletePlace}
             invalid={!inputs.placesToVisist.isValid}
+            minorStageId={editMinorStageId || 0}
             defaultPlaceNames={defaultPlacesNames}
-            countryId={1}
+            countryName={countryName}
           />
-          {/* TODO: Picker for Places_to_visit ?! ... or put inside minorStageListElement if it gets too much for one form */}
-          {/* <View style={styles.formRow}>
-            <CountrySelector
-              onChangeCountry={handleChangeCountry}
-              errors={inputs.country.errors}
-              invalid={false}
-              journeyId={journeyId}
-              defaultCountryName={inputs.country.value}
-            />
-            {isEditing && (
-              <View style={styles.checkBoxContainer}>
-                <Text style={styles.checkBoxLabel}>Stage done?</Text>
-                <Checkbox
-                  status={inputs.done.value ? 'checked' : 'unchecked'}
-                  onPress={() =>
-                    inputChangedHandler('done', !inputs.done.value)
-                  }
-                  uncheckedColor={GlobalStyles.colors.gray200}
-                  color={GlobalStyles.colors.primary100}
-                />
-              </View>
-            )}
-          </View> */}
         </View>
         <View style={styles.buttonsContainer}>
           <Button

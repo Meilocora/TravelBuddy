@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import Input from '../../UI/form/Input';
@@ -20,6 +20,7 @@ import {
 } from '../../../utils/http/place_to_visit';
 import IconButton from '../../UI/IconButton';
 import Modal from '../../UI/Modal';
+import { CustomCountryContext } from '../../../store/custom-country-context';
 
 type InputValidationResponse = {
   place?: PlaceToVisit;
@@ -47,6 +48,11 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
   isEditing,
   editPlaceId,
 }): ReactElement => {
+  const countryCtx = useContext(CustomCountryContext);
+  const countryname = countryCtx.customCountries.find(
+    (country) => country.id === defaultValues?.countryId
+  )!.name;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [inputs, setInputs] = useState<PlaceFormValues>({
@@ -148,7 +154,9 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
         />
       )}
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Place To Visit</Text>
+        <Text style={styles.header}>
+          {isEditing ? 'Manage' : 'Add'} Place for "{countryname}"
+        </Text>
         <View>
           <View style={styles.formRow}>
             <Input

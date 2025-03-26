@@ -11,7 +11,8 @@ export interface MinorStage {
   transportation?: Transportation;
   accommodation: Accommodation;
   activities?: Activity[];
-  placesToVisit?: PlaceToVisit[];
+  // placesToVisit?: PlaceToVisit[];
+  placesToVisit?: string;
 }
 
 export interface MinorStageValues {

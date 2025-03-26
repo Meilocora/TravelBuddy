@@ -6,7 +6,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
@@ -80,6 +80,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     accommodation_booked: selectedMinorStage?.accommodation.booked || false,
     accommodation_link: selectedMinorStage?.accommodation.link || '',
     accommodation_maps_link: selectedMinorStage?.accommodation.maps_link || '',
+    placesToVisist: selectedMinorStage?.placesToVisit || '',
   });
 
   useLayoutEffect(() => {
@@ -102,7 +103,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     });
   }, [navigation, isEditing]);
 
-  // Redefine majorStageValues, when selectedMinorStage changes
+  // Redefine minorStageValues, when selectedMinorStage changes
   useEffect(() => {
     setMinorStageValues({
       title: selectedMinorStage?.title || '',
@@ -122,6 +123,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_link: selectedMinorStage?.accommodation.link || '',
       accommodation_maps_link:
         selectedMinorStage?.accommodation.maps_link || '',
+      placesToVisist: selectedMinorStage?.placesToVisit || '',
     });
   }, [selectedMinorStage]);
 
@@ -161,6 +163,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_booked: false,
       accommodation_link: '',
       accommodation_maps_link: '',
+      placesToVisist: '',
     });
   }
 

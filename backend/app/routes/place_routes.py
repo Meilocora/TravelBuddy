@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import PlaceToVisit
+from app.models import PlaceToVisit, CustomCountry
 from app.validation.place_validation import PlaceValidation
 from app.routes.route_protection import token_required
 
@@ -31,16 +31,16 @@ def get_places(current_user):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
-@place_bp.route('/get-places-by-country/<str:countryName>', methods=['GET'])
+@place_bp.route('/get-available-places-by-country/<int:minorStageId>/<string:countryName>', methods=['GET'])
 @token_required
-def get_places_by_country(current_user, countryName):
-    try:
-        
-        # TODO: Get countryId from the countryName or find a way to get the countryId... maybe another fetchRequest beforehand?
-        
-        result = db.session.execute(db.select(PlaceToVisit).filter_by(user_id=current_user))
+def get_places_by_country(current_user, minorStageId, countryName):
+    try:        
+        country = db.session.execute(db.select(CustomCountry).filter_by(user_id = current_user, name=countryName)).scalars().first()
+        result = db.session.execute(db.select(PlaceToVisit).filter_by(user_id=current_user, custom_country_id=country.id))
         places = result.scalars().all()
-        
+        # Filter for places that are not assigned to another minor stage        
+        places = [place for place in places if place.minor_stage_id == None or place.minor_stage_id == minorStageId]
+                          
         places_list = []
         for place in places:
             # Append the whole place, that matches the model from frontend to the list
@@ -54,7 +54,8 @@ def get_places_by_country(current_user, countryName):
                 'link': place.link,
                 'maps_link': place.maps_link,
             })    
-        return jsonify({'places': places_list, 'status': 200})
+                    
+        return jsonify({'places': places_list, 'countryId': country.id, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     

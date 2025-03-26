@@ -34,10 +34,15 @@ const PlacesSelection = ({
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [fetchedData, setFetchedData] = useState<string[]>([]);
 
+  const [customCountryId, setCustomCountryId] = useState<number | null>(null);
+
   // Fetch data
   useEffect(() => {
     async function fetchData() {
-      const { places } = await onFetchRequest(countryName);
+      const { places, countryId } = await onFetchRequest(countryName);
+
+      setCustomCountryId(countryId!);
+
       if (places) {
         const names = places.map((item) => item.name);
         const namesNotChosen = names.filter(
@@ -65,11 +70,10 @@ const PlacesSelection = ({
   }
 
   function handlePressAdd() {
-    // TODO: How to get the countryId?
-    // navigation.navigate('ManagePlaceToVisit', {
-    //   placeId: null,
-    //   countryId: countryId,
-    // });
+    navigation.navigate('ManagePlaceToVisit', {
+      placeId: null,
+      countryId: customCountryId,
+    });
   }
 
   let content: ReactElement | null = null;

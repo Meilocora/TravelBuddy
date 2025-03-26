@@ -5,15 +5,15 @@ import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { Icons } from '../../../models';
 import TagCloud from '../../UI/TagCloud';
-import { fetchCustomCountries } from '../../../utils/http/custom_country';
 import { generateRandomString } from '../../../utils';
 import PlacesSelection from './PlacesSelection';
-import { fetchPlacesByCountry } from '../../../utils/http';
+import { fetchavailablePlacesByCountry } from '../../../utils/http';
 
 interface PlacesSelectionFormProps {
   onAddPlace: (placeName: string) => void;
   onDeletePlace: (placeName: string) => void;
   invalid: boolean;
+  minorStageId: number;
   defaultPlaceNames?: string[];
   countryName: string;
 }
@@ -22,6 +22,7 @@ const PlacesSelectionForm: React.FC<PlacesSelectionFormProps> = ({
   onAddPlace,
   onDeletePlace,
   invalid,
+  minorStageId,
   defaultPlaceNames,
   countryName,
 }): ReactElement => {
@@ -55,6 +56,8 @@ const PlacesSelectionForm: React.FC<PlacesSelectionFormProps> = ({
     setOpenSelection((prevValue) => !prevValue);
   }
 
+  console.log(countryName);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -84,7 +87,9 @@ const PlacesSelectionForm: React.FC<PlacesSelectionFormProps> = ({
           countryName={countryName}
           onAddHandler={handleAddPlace}
           onCloseModal={handleCloseModal}
-          onFetchRequest={fetchPlacesByCountry}
+          onFetchRequest={() =>
+            fetchavailablePlacesByCountry(minorStageId, countryName)
+          }
         />
       )}
     </View>
