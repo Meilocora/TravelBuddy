@@ -80,7 +80,6 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     accommodation_booked: selectedMinorStage?.accommodation.booked || false,
     accommodation_link: selectedMinorStage?.accommodation.link || '',
     accommodation_maps_link: selectedMinorStage?.accommodation.maps_link || '',
-    placesToVisist: selectedMinorStage?.placesToVisit || '',
   });
 
   useLayoutEffect(() => {
@@ -90,16 +89,6 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       title: isEditing
         ? `Manage "${selectedMinorStage?.title}"`
         : 'Add Minor Stage',
-      // headerLeft: ({ tintColor }) => (
-      //   <IconButton
-      //     color={tintColor}
-      //     size={24}
-      //     icon={Icons.arrowBack}
-      //     onPress={() => {
-      //       planningNavigation.navigate('Planning', { journeyId: journeyId });
-      //     }}
-      //   />
-      // ),
     });
   }, [navigation, isEditing]);
 
@@ -123,7 +112,6 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_link: selectedMinorStage?.accommodation.link || '',
       accommodation_maps_link:
         selectedMinorStage?.accommodation.maps_link || '',
-      placesToVisist: selectedMinorStage?.placesToVisit || '',
     });
   }, [selectedMinorStage]);
 
@@ -132,12 +120,15 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       const { error, status } = await deleteMinorStage(editedMinorStageId!);
       if (!error && status === 200) {
         minorStageCtx.deleteMinorStage(editedMinorStageId!);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
-        //         const popupText = `Major Stage successfully deleted!`;
-        //         planningNavigation.navigate('Planning', {
-        //           journeyId: journeyId,
-        //           popupText: popupText,
-        //         });
+        const popupText = `Minor Stage successfully deleted!`;
+        navigation.navigate('MinorStages', {
+          journeyId: journeyId,
+          majorStageId: majorStageId,
+          popupText: popupText,
+        });
       } else {
         setError(error!);
         return;
@@ -163,7 +154,6 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_booked: false,
       accommodation_link: '',
       accommodation_maps_link: '',
-      placesToVisist: '',
     });
   }
 
@@ -180,35 +170,47 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     navigation.goBack();
   }
 
-  //   function confirmHandler({ status, error, majorStage }: ConfirmHandlerProps) {
-  //     if (isEditing) {
-  //       if (error) {
-  //         setError(error);
-  //         return;
-  //       } else if (majorStage && status === 200) {
-  //         majorStageCtx.updateMajorStage(majorStage);
-  //         resetValues();
-  //         const popupText = `"${majorStage.title}" successfully updated!`;
-  //         planningNavigation.navigate('Planning', {
-  //           journeyId: journeyId,
-  //           popupText: popupText,
-  //         });
-  //       }
-  //     } else {
-  //       if (error) {
-  //         setError(error);
-  //         return;
-  //       } else if (majorStage && status === 201) {
-  //         majorStageCtx.addMajorStage(majorStage);
-  //         resetValues();
-  //         const popupText = `"${majorStage.title}" successfully created!`;
-  //         planningNavigation.navigate('Planning', {
-  //           journeyId: journeyId,
-  //           popupText: popupText,
-  //         });
-  //       }
-  //     }
-  //   }
+  async function confirmHandler({
+    status,
+    error,
+    minorStage,
+  }: ConfirmHandlerProps) {
+    if (isEditing) {
+      if (error) {
+        setError(error);
+        return;
+      } else if (minorStage && status === 200) {
+        minorStageCtx.updateMinorStage(minorStage);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(journeyId);
+        await journeyCtx.refetchJourneys();
+        resetValues();
+        const popupText = `"${minorStage.title}" successfully updated!`;
+        navigation.navigate('MinorStages', {
+          journeyId: journeyId,
+          majorStageId: majorStageId,
+          popupText: popupText,
+        });
+      }
+    } else {
+      if (error) {
+        setError(error);
+        return;
+      } else if (minorStage && status === 201) {
+        minorStageCtx.addMinorStage(minorStage);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(journeyId);
+        await journeyCtx.refetchJourneys();
+        resetValues();
+        const popupText = `"${minorStage.title}" successfully created!`;
+        navigation.navigate('MinorStages', {
+          journeyId: journeyId,
+          majorStageId: majorStageId,
+          popupText: popupText,
+        });
+      }
+    }
+  }
 
   return (
     <View style={styles.root}>
@@ -225,11 +227,10 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       <Animated.ScrollView entering={FadeInDown} nestedScrollEnabled={true}>
         <MinorStageForm
           onCancel={cancelHandler}
-          onSubmit={() => {}}
+          onSubmit={confirmHandler}
           submitButtonLabel={isEditing ? 'Update' : 'Create'}
           defaultValues={isEditing ? minorStageValues : undefined}
           isEditing={isEditing}
-          journeyId={journeyId}
           majorStageId={majorStageId}
           editMinorStageId={editedMinorStageId}
         />

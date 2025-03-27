@@ -51,7 +51,7 @@ export const createMinorStage = async (
 ): Promise<ManageMinorStageProps> => {
   try {
     const response: AxiosResponse<ManageMinorStageProps> = await api.post(
-      `${prefix}/create-major-stage/${majorStageId}`,
+      `${prefix}/create-minor-stage/${majorStageId}`,
       minorStageFormValues
     );
 
@@ -84,7 +84,7 @@ export const updateMinorStage = async (
 ): Promise<ManageMinorStageProps> => {
   try {
     const response: AxiosResponse<ManageMinorStageProps> = await api.post(
-      `${prefix}/update-major-stage/${majorStageId}/${minorStageId}`,
+      `${prefix}/update-minor-stage/${majorStageId}/${minorStageId}`,
       minorStageFormValues
     );
 

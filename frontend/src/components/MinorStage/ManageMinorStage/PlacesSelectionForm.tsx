@@ -68,7 +68,7 @@ const PlacesSelectionForm: React.FC<PlacesSelectionFormProps> = ({
           <Text style={styles.errorText}>Please select a place to visit</Text>
         </View>
       )}
-      {/* TODO: List instead of TagCloud */}
+      {/* TODO: List instead of TagCloud ... maybe PlaceList? */}
       {placeNames.length > 0 && (
         <View style={styles.cloudContainer}>
           {placeNames.map((name) => (

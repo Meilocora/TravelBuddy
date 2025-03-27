@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
-from app.models import Costs, Spendings, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
+from app.models import Costs, Spendings, MajorStage, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.minor_stage_validation import MinorStageValidation
 from app.routes.util import calculate_journey_costs
 
@@ -14,7 +14,7 @@ def get_minor_stages(current_user, majorStageId):
         # Get all the minor stages from the database
         result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId).order_by(MinorStage.scheduled_start_time))
         minorStages = result.scalars().all()
-        
+                
         # Fetch costs, transportation, accommodation, activities and places_to_visit for each minor_stage
         minor_stages_list = []
         for minorStage in minorStages:
@@ -33,7 +33,7 @@ def get_minor_stages(current_user, majorStageId):
             
             places_to_visit_result = db.session.execute(db.select(PlaceToVisit).filter_by(minor_stage_id=minorStage.id))
             places_to_visit = places_to_visit_result.scalars().all()
-                        
+                                           
             # Append the whole minor stage, that matches the model from frontend to the list
             minor_stage_data = {
                 'id': minorStage.id,
@@ -48,7 +48,6 @@ def get_minor_stages(current_user, majorStageId):
                 },
                 'accommodation': {
                                     'name': accommodation.name,
-                                    'description': accommodation.description,
                                     'place': accommodation.place,
                                     'costs': accommodation.costs,
                                     'booked': accommodation.booked,
@@ -86,7 +85,7 @@ def get_minor_stages(current_user, majorStageId):
 
 @minor_stage_bp.route('/create-minor-stage/<int:majorStageId>', methods=['POST'])
 @token_required
-def create_minor_stage(current_user, majorStageId):
+def create_minor_stage(current_user, majorStageId):    
     try:
         minor_stage = request.get_json()
         result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId))
@@ -97,16 +96,17 @@ def create_minor_stage(current_user, majorStageId):
             existing_minor_stages_costs.append(db.session.execute(db.select(Costs).filter_by(minor_stage_id=stage.id)).scalars().first())
         
         major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
-        
-        journey_id = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId)).scalars().first().major_stage.journey_id
+
+        journey_id = db.session.execute(db.select(MajorStage).filter_by(id=majorStageId)).scalars().first().journey_id
         journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey_id)).scalars().first()
-         
+        
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
     response, isValid = MinorStageValidation.validate_minor_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)
-    
+
     if not isValid:
+        print(response)
         return jsonify({'minorStageFormValues': response, 'status': 400})
     
     try:
@@ -124,7 +124,6 @@ def create_minor_stage(current_user, majorStageId):
          # Create a new accommodation for the minor stage
         new_accommodation = Accommodation(
             name=minor_stage['accommodation_name']['value'],
-            description=minor_stage['accommodation_description']['value'],
             place=minor_stage['accommodation_place']['value'],
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
@@ -135,20 +134,18 @@ def create_minor_stage(current_user, majorStageId):
         db.session.add(new_accommodation)
         db.session.commit()
         
-        calculate_journey_costs(journey_costs)
-         
         # Create a new costs for the major stage
         costs = Costs(
             minor_stage_id=new_minor_stage.id,
             budget=minor_stage['budget']['value'],
-            spent_money=minor_stage['accommodation_costs']['value'],
+            spent_money=0,
             money_exceeded=False
         )
         db.session.add(costs)
         db.session.commit()
         
-        # TODO: Link places to visit to minor_stages
-        
+        calculate_journey_costs(journey_costs)
+                
         # build response major stage object for the frontend
         response_minor_stage = {'id': new_minor_stage.id,
                                 'title': new_minor_stage.title,

@@ -49,7 +49,7 @@ class Validation:
     try:
       datetime.strptime(value, '%d.%m.%Y')
     except (TypeError , ValueError):
-      self.error_list.append('Required format: DD.MM.YYYY')
+      self.error_list.append('Wrong format')
     else:
       if not min_date:
         min_date = self.current_date_string

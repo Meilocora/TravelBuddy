@@ -12,13 +12,16 @@ import {
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
-import { formatAmount, formatDate, parseDate } from '../../../utils';
+import {
+  createMinorStage,
+  formatAmount,
+  formatDate,
+  parseDate,
+  updateMinorStage,
+} from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
-import Modal from '../../UI/Modal';
-import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import { MinorStageContext } from '../../../store/minorStage-context';
-import PlacesSelectionForm from './PlacesSelectionForm';
 
 type InputValidationResponse = {
   minorStage?: MinorStage;
@@ -35,7 +38,6 @@ interface MinorStageFormProps {
   isEditing?: boolean;
   editMinorStageId?: number;
   majorStageId: number;
-  journeyId: number;
 }
 
 const MinorStageForm: React.FC<MinorStageFormProps> = ({
@@ -46,16 +48,13 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   isEditing,
   editMinorStageId,
   majorStageId,
-  journeyId,
 }): ReactElement => {
-  // TODO: This really needed?!
-  const journeyCtx = useContext(JourneyContext);
-  // const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
-
   const majorStageCtx = useContext(MajorStageContext);
   const majorStage = majorStageCtx.majorStages.find(
     (ms) => ms.id === majorStageId
   );
+
+  // TODO: This needed?
   const countryName = majorStage!.country;
 
   const minStartDate = majorStage!.scheduled_start_time;
@@ -130,11 +129,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    placesToVisist: {
-      value: defaultValues?.placesToVisist || '',
-      isValid: true,
-      errors: [],
-    },
   });
 
   const [maxAvailableMoneyAccommodation, setMaxAvailableMoneyAccommodation] =
@@ -153,48 +147,49 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     });
   }, [inputs.budget.value]);
 
-  const defaultPlacesNames = defaultValues?.placesToVisist?.split(', ') || [];
+  // TODO: Put Following code into another ManagePlacesToVisit component for minorStage
+  // const defaultPlacesNames = defaultValues?.placesToVisist?.split(', ') || [];
   // State only exists for easier handling of countryNames
-  const [currentPlacesNames, setCurrentPlacesNames] =
-    useState<string[]>(defaultPlacesNames);
+  // const [currentPlacesNames, setCurrentPlacesNames] =
+  // useState<string[]>(defaultPlacesNames);
 
-  function handleAddPlace(placeName: string) {
-    setCurrentPlacesNames([...currentPlacesNames, placeName]);
+  // function handleAddPlace(placeName: string) {
+  //   setCurrentPlacesNames([...currentPlacesNames, placeName]);
 
-    const updatedPlaceNames = [...currentPlacesNames, placeName];
+  //   const updatedPlaceNames = [...currentPlacesNames, placeName];
 
-    setInputs((prevValues) => {
-      return {
-        ...prevValues,
-        placesToVisist: {
-          value: updatedPlaceNames.join(', '),
-          isValid: true,
-          errors: [],
-        },
-      };
-    });
-  }
+  //   setInputs((prevValues) => {
+  //     return {
+  //       ...prevValues,
+  //       placesToVisist: {
+  //         value: updatedPlaceNames.join(', '),
+  //         isValid: true,
+  //         errors: [],
+  //       },
+  //     };
+  //   });
+  // }
 
-  function handleDeletePlace(placeName: string) {
-    setCurrentPlacesNames(
-      currentPlacesNames.filter((name) => name !== placeName)
-    );
+  // function handleDeletePlace(placeName: string) {
+  //   setCurrentPlacesNames(
+  //     currentPlacesNames.filter((name) => name !== placeName)
+  //   );
 
-    const updatedCountryNames = [...currentPlacesNames];
+  //   const updatedCountryNames = [...currentPlacesNames];
 
-    setInputs((prevValues) => {
-      return {
-        ...prevValues,
-        placesToVisist: {
-          value: currentPlacesNames
-            .filter((name) => name !== placeName)
-            .join(', '),
-          isValid: true,
-          errors: [],
-        },
-      };
-    });
-  }
+  //   setInputs((prevValues) => {
+  //     return {
+  //       ...prevValues,
+  //       placesToVisist: {
+  //         value: currentPlacesNames
+  //           .filter((name) => name !== placeName)
+  //           .join(', '),
+  //         isValid: true,
+  //         errors: [],
+  //       },
+  //     };
+  //   });
+  // }
 
   // Redefine inputs, when defaultValues change
   useEffect(() => {
@@ -255,11 +250,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      placesToVisist: {
-        value: defaultValues?.placesToVisist || '',
-        isValid: true,
-        errors: [],
-      },
     });
   }, [defaultValues]);
 
@@ -277,7 +267,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       accommodation_booked: { value: false, isValid: true, errors: [] },
       accommodation_link: { value: '', isValid: true, errors: [] },
       accommodation_maps_link: { value: '', isValid: true, errors: [] },
-      placesToVisist: { value: '', isValid: true, errors: [] },
     });
   }
 
@@ -293,56 +282,38 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     });
   }
 
-  // function handleChangeCountry(countryName: string) {
-  //   setInputs((prevValues) => {
-  //     return {
-  //       ...prevValues,
-  //       country: {
-  //         value: countryName,
-  //         isValid: true,
-  //         errors: [],
-  //       },
-  //     };
-  //   });
-  // }
+  async function validateInputs(): Promise<void> {
+    setIsSubmitting(true);
 
-  // async function validateInputs(): Promise<void> {
-  //   setIsSubmitting(true);
+    // Set all errors to empty array to prevent stacking of errors
+    for (const key in inputs) {
+      inputs[key as keyof MinorStageFormValues].errors = [];
+    }
 
-  //   // Set all errors to empty array to prevent stacking of errors
-  //   for (const key in inputs) {
-  //     inputs[key as keyof MinorStageFormValues].errors = [];
-  //   }
+    let response: InputValidationResponse;
+    if (isEditing) {
+      response = await updateMinorStage(
+        majorStageId,
+        inputs,
+        editMinorStageId!
+      );
+    } else if (!isEditing) {
+      response = await createMinorStage(majorStageId, inputs);
+    }
 
-  //   let response: InputValidationResponse;
-  //   if (isEditing) {
-  //     const former_country = majorStageCtx.majorStages.find(
-  //       (ms) => ms.id === editMajorStageId
-  //     )?.country;
+    const { error, status, minorStage, minorStageFormValues } = response!;
 
-  // TODO: Change following lines, so there will be a modal, when accommodation_costs > maxAvailableMoneyAccommodation
-  //     if (!updateConfirmed && inputs.country.value !== former_country) {
-  //       setChangeCountry(true);
-  //       return;
-  //     }
-  //     response = await updateMajorStage(journeyId, inputs, editMajorStageId!);
-  //   } else if (!isEditing) {
-  //     response = await createMajorStage(journeyId, inputs);
-  //   }
-
-  //   const { error, status, majorStage, majorStageFormValues } = response!;
-
-  //   if (!error && majorStage) {
-  //     resetValues();
-  //     onSubmit({ majorStage, status });
-  //   } else if (error) {
-  //     onSubmit({ error, status });
-  //   } else if (majorStageFormValues) {
-  //     setInputs((prevValues) => majorStageFormValues);
-  //   }
-  //   setIsSubmitting(false);
-  //   return;
-  // }
+    if (!error && minorStage) {
+      resetValues();
+      onSubmit({ minorStage, status });
+    } else if (error) {
+      onSubmit({ error, status });
+    } else if (minorStageFormValues) {
+      setInputs((prevValues) => minorStageFormValues);
+    }
+    setIsSubmitting(false);
+    return;
+  }
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
@@ -455,7 +426,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Name'
               invalid={!inputs.accommodation_name.isValid}
               errors={inputs.accommodation_name.errors}
-              mandatory
               textInputConfig={{
                 value: inputs.accommodation_name.value,
                 onChangeText: inputChangedHandler.bind(
@@ -486,7 +456,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Place'
               invalid={!inputs.accommodation_place.isValid}
               errors={inputs.accommodation_place.errors}
-              mandatory
               textInputConfig={{
                 value: inputs.accommodation_place.value,
                 onChangeText: inputChangedHandler.bind(
@@ -499,7 +468,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Costs'
               invalid={!inputs.accommodation_costs.isValid}
               errors={inputs.accommodation_costs.errors}
-              mandatory
               textInputConfig={{
                 keyboardType: 'decimal-pad',
                 value:
@@ -521,7 +489,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Link'
               invalid={!inputs.accommodation_link.isValid}
               errors={inputs.accommodation_link.errors}
-              mandatory
               textInputConfig={{
                 value: inputs.accommodation_link.value,
                 onChangeText: inputChangedHandler.bind(
@@ -536,7 +503,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Maps Link'
               invalid={!inputs.accommodation_maps_link.isValid}
               errors={inputs.accommodation_maps_link.errors}
-              mandatory
               textInputConfig={{
                 value: inputs.accommodation_maps_link.value,
                 onChangeText: inputChangedHandler.bind(
@@ -547,14 +513,14 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
             />
           </View>
           {/* TODO: Put this into the ListComponent ... to much for one form */}
-          <PlacesSelectionForm
+          {/* <PlacesSelectionForm
             onAddPlace={handleAddPlace}
             onDeletePlace={handleDeletePlace}
             invalid={!inputs.placesToVisist.isValid}
             minorStageId={editMinorStageId || 0}
             defaultPlaceNames={defaultPlacesNames}
             countryName={countryName}
-          />
+          /> */}
         </View>
         <View style={styles.buttonsContainer}>
           <Button
@@ -564,7 +530,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           >
             Cancel
           </Button>
-          <Button onPress={() => {}} colorScheme={ColorScheme.neutral}>
+          <Button onPress={validateInputs} colorScheme={ColorScheme.neutral}>
             {submitButtonLabel}
           </Button>
         </View>
