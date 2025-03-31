@@ -65,15 +65,24 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     // });
   }
 
+  // TODO: Proper styling of component analog to majorStageListComponent
+  // TODO: Finish deleting and updating minor stages
+  // TODO: Implement transportation handling
+  // TODO: Implement places handling
+  // TODO: Implement activities handling
+
   return (
     <View style={styles.container}>
-      <ElementTitle style={styles.heading}>{minorStage.title}</ElementTitle>
-      <IconButton
-        icon={Icons.edit}
-        color={GlobalStyles.colors.accent800}
-        onPress={handleEdit}
-      />
+      <View style={styles.headerContainer}>
+        <ElementTitle>{minorStage.title}</ElementTitle>
+        <IconButton
+          icon={Icons.edit}
+          color={GlobalStyles.colors.accent800}
+          onPress={handleEdit}
+        />
+      </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
+      {/* TODO: Display Accommodation info and costs here like in MajorStageListElement*/}
       <ContentBox minorStage={minorStage} />
     </View>
   );
@@ -82,15 +91,20 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: GlobalStyles.colors.complementary100,
+    borderColor: GlobalStyles.colors.complementary700,
     borderWidth: 1,
     borderRadius: 20,
-    borderColor: GlobalStyles.colors.complementary700,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    padding: 10,
+    backgroundColor: GlobalStyles.colors.complementary100,
   },
-  heading: {
-    fontSize: 16,
+  headerContainer: {
+    flex: 1,
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
 });
 

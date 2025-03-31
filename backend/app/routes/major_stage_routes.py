@@ -36,6 +36,7 @@ def get_major_stages(current_user, journeyId):
                 'done': majorStage.done,
                 'scheduled_start_time': majorStage.scheduled_start_time,
                 'scheduled_end_time': majorStage.scheduled_end_time,
+                'additional_info': majorStage.additional_info,
                 'costs': {
                     'budget': costs.budget,
                     'spent_money': costs.spent_money,

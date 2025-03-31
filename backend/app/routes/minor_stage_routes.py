@@ -106,7 +106,6 @@ def create_minor_stage(current_user, majorStageId):
     response, isValid = MinorStageValidation.validate_minor_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)
 
     if not isValid:
-        print(response)
         return jsonify({'minorStageFormValues': response, 'status': 400})
     
     try:

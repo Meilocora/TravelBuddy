@@ -169,7 +169,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
               />
             </View>
             <ElementComment content={`${startDate} - ${endDate}`} />
-            {/* TODO: Handle analog to JourneysListElement */}
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
               <AdditionalInfoBox

@@ -6,6 +6,9 @@ import { MinorStageContext } from '../../store/minorStage-context';
 import MinorStageListElement from './MinorStageListElement';
 import { generateRandomString } from '../../utils/generator';
 import InfoText from '../UI/InfoText';
+import { MajorStageContext } from '../../store/majorStage-context.';
+import InfoCurtain from '../UI/InfoCurtain';
+import { ColorScheme } from '../../models';
 
 interface MinorStageListProps {
   majorStageId: number;
@@ -18,6 +21,10 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const minorStageCtx = useContext(MinorStageContext);
+  const majorStageCtx = useContext(MajorStageContext);
+  const majorStage = majorStageCtx.majorStages.find(
+    (majorStage) => majorStage.id === majorStageId
+  );
 
   useEffect(() => {
     async function getMinorStages(majorStageId: number) {
@@ -44,14 +51,25 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   }
 
   return (
-    <FlatList
-      style={styles.container}
-      data={minorStageCtx.minorStages}
-      renderItem={({ item }) => (
-        <MinorStageListElement key={generateRandomString()} minorStage={item} />
+    <>
+      {majorStage?.additional_info && (
+        <InfoCurtain
+          info={majorStage?.additional_info}
+          colorScheme={ColorScheme.complementary}
+        />
       )}
-      keyExtractor={(item) => item.id.toString()}
-    />
+      <FlatList
+        style={styles.container}
+        data={minorStageCtx.minorStages}
+        renderItem={({ item }) => (
+          <MinorStageListElement
+            key={generateRandomString()}
+            minorStage={item}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </>
   );
 };
 

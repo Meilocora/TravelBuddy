@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import { MinorStage } from '../../../models';
-import { formatAmount } from '../../../utils';
+import { formatAmount, formatDateTimeString } from '../../../utils';
 import TextLink from '../TextLink';
 import { generateRandomString } from '../../../utils/generator';
 
@@ -24,49 +24,61 @@ const MainContent: React.FC<MainContentProps> = ({
   minorStage,
   contentState,
 }): ReactElement => {
-  let contents: Content[] = [
-    {
-      title: 'costs',
-      contents: [
-        {
-          subtitle: '',
-          data: `${formatAmount(minorStage.costs.spent_money)} / ${formatAmount(
-            minorStage.costs.budget
-          )}`,
-        },
-      ],
-    },
-  ];
+  let contents: Content[] = [];
+  //   {
+  //     title: 'costs',
+  //     contents: [
+  //       {
+  //         subtitle: '',
+  //         data: `${formatAmount(minorStage.costs.spent_money)} / ${formatAmount(
+  //           minorStage.costs.budget
+  //         )}`,
+  //       },
+  //     ],
+  //   },
+  // ];
 
-  if (minorStage.accommodation) {
+  if (minorStage.transportation) {
     contents.push({
-      title: 'accommodation',
+      title: 'transportation',
       contents: [
         {
-          subtitle: 'Location: ',
-          data: `"${minorStage.accommodation.name}" in ${minorStage.accommodation.place}`,
+          subtitle: 'Departure: ',
+          data: `"${formatDateTimeString(
+            minorStage.transportation.start_time
+          )}" at ${minorStage.transportation.place_of_departure}`,
           link: minorStage.accommodation.link,
         },
         {
-          subtitle: 'Description: ',
-          data: minorStage.accommodation.description,
+          subtitle: 'Arrival: ',
+          data: `"${formatDateTimeString(
+            minorStage.transportation.arrival_time
+          )}" at ${minorStage.transportation.place_of_arrival}`,
         },
         {
-          subtitle: 'Costs: ',
-          data: formatAmount(minorStage.accommodation.costs),
+          subtitle: 'Details: ',
+          data: `${minorStage.transportation.type} (${formatAmount(
+            minorStage.transportation.transportation_costs
+          )})`,
         },
+      ],
+    });
+  } else {
+    contents.push({
+      title: 'transportation',
+      contents: [
         {
-          subtitle: 'Booked? ',
-          data: minorStage.accommodation.booked ? 'Yes' : 'Not yet',
+          subtitle: 'No transportation planned yet.',
+          data: '',
         },
       ],
     });
   }
 
-  if (minorStage.placesToVisit) {
+  if (minorStage.placesToVisit!.length > 0) {
     contents.push({
       title: 'places',
-      contents: minorStage.placesToVisit.map((place) => {
+      contents: minorStage.placesToVisit!.map((place) => {
         return {
           subtitle: `${place.name}: `,
           data: place.description,
@@ -74,13 +86,23 @@ const MainContent: React.FC<MainContentProps> = ({
         };
       }),
     });
+  } else {
+    contents.push({
+      title: 'places',
+      contents: [
+        {
+          subtitle: 'No places planned yet.',
+          data: '',
+        },
+      ],
+    });
   }
 
-  if (minorStage.activities) {
+  if (minorStage.activities!.length > 0) {
     contents.push({
       title: 'activities',
-      contents: minorStage.activities
-        .map((activity) => [
+      contents: minorStage
+        .activities!.map((activity) => [
           {
             subtitle: `${activity.name}: `,
             data: activity.description,
@@ -101,11 +123,23 @@ const MainContent: React.FC<MainContentProps> = ({
         ])
         .flat(),
     });
+  } else {
+    contents.push({
+      title: 'activities',
+      contents: [
+        {
+          subtitle: 'No activities planned yet.',
+          data: '',
+        },
+      ],
+    });
   }
 
   const displayedContent = contents.find(
     (content) => content.title === contentState.activeHeader
   );
+
+  console.log(contents);
 
   return (
     <View style={styles.container}>

@@ -22,19 +22,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
     setContentState({ activeHeader: header.toLowerCase() });
   };
 
-  let contentHeaders = ['Costs'];
-
-  if (minorStage.baseLocation) {
-    contentHeaders.push('Accommodation');
-  }
-
-  if (minorStage.placesToVisit) {
-    contentHeaders.push('Places');
-  }
-
-  if (minorStage.activities) {
-    contentHeaders.push('Activities');
-  }
+  let contentHeaders = ['Transportation', 'Places', 'Activities'];
 
   return (
     <>
