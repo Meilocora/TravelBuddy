@@ -25,22 +25,10 @@ const MainContent: React.FC<MainContentProps> = ({
   contentState,
 }): ReactElement => {
   let contents: Content[] = [];
-  //   {
-  //     title: 'costs',
-  //     contents: [
-  //       {
-  //         subtitle: '',
-  //         data: `${formatAmount(minorStage.costs.spent_money)} / ${formatAmount(
-  //           minorStage.costs.budget
-  //         )}`,
-  //       },
-  //     ],
-  //   },
-  // ];
 
   if (minorStage.transportation) {
     contents.push({
-      title: 'transportation',
+      title: 'transport',
       contents: [
         {
           subtitle: 'Departure: ',
@@ -65,17 +53,17 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   } else {
     contents.push({
-      title: 'transportation',
+      title: 'transport',
       contents: [
         {
-          subtitle: 'No transportation planned yet.',
+          subtitle: 'No transport planned yet.',
           data: '',
         },
       ],
     });
   }
 
-  if (minorStage.placesToVisit!.length > 0) {
+  if (minorStage.placesToVisit && minorStage.placesToVisit!.length > 0) {
     contents.push({
       title: 'places',
       contents: minorStage.placesToVisit!.map((place) => {
@@ -98,7 +86,7 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   }
 
-  if (minorStage.activities!.length > 0) {
+  if (minorStage.activities && minorStage.activities!.length > 0) {
     contents.push({
       title: 'activities',
       contents: minorStage
@@ -135,11 +123,31 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   }
 
+  if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {
+    contents.push({
+      title: 'spendings',
+      contents: minorStage.costs.spendings!.map((spending) => {
+        return {
+          subtitle: `${spending.name}: `,
+          data: formatAmount(spending.amount),
+        };
+      }),
+    });
+  } else {
+    contents.push({
+      title: 'spendings',
+      contents: [
+        {
+          subtitle: 'No spendings found.',
+          data: '',
+        },
+      ],
+    });
+  }
+
   const displayedContent = contents.find(
     (content) => content.title === contentState.activeHeader
   );
-
-  console.log(contents);
 
   return (
     <View style={styles.container}>

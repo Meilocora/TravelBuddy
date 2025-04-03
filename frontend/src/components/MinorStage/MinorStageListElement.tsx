@@ -1,10 +1,14 @@
 import { ReactElement, useContext } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 import { Icons, MajorStageStackParamList, MinorStage } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
-import { formatDateString } from '../../utils';
+import {
+  formatAmount,
+  formatDateString,
+  formatDurationToDays,
+} from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import ContentBox from '../UI/contentbox/ContentBox';
 import { useNavigation } from '@react-navigation/native';
@@ -12,6 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { JourneyContext } from '../../store/journey-context';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import IconButton from '../UI/IconButton';
+import DetailArea from '../UI/list/DetailArea';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
@@ -26,15 +31,54 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   const journeyCtx = useContext(JourneyContext);
   const majorStageCtx = useContext(MajorStageContext);
 
-  const majorStageId = majorStageCtx.majorStages.find((majorStage) =>
+  const majorStage = majorStageCtx.majorStages.find((majorStage) =>
     majorStage.minorStagesIds!.includes(minorStage.id)
-  )!.id;
-  const journeyId = journeyCtx.journeys.find((journey) =>
+  );
+  const majorStageId = majorStage?.id!;
+
+  const journey = journeyCtx.journeys.find((journey) =>
     journey.majorStagesIds!.includes(majorStageId)
-  )!.id;
+  );
+  const journeyId = journey?.id!;
 
   const startDate = formatDateString(minorStage.scheduled_start_time);
   const endDate = formatDateString(minorStage.scheduled_end_time);
+  const durationInDays = formatDurationToDays(
+    minorStage.scheduled_start_time,
+    minorStage.scheduled_end_time
+  );
+  const moneyAvailable = formatAmount(minorStage.costs.budget);
+  const moneyPlanned = formatAmount(minorStage.costs.spent_money);
+
+  const elementDetailInfo = [
+    {
+      title: 'Duration',
+      value: `${durationInDays} days`,
+    },
+    {
+      title: 'Costs',
+      value: `${moneyPlanned} / ${moneyAvailable}`,
+    },
+  ];
+
+  const elementAccommodationDetailInfo = [
+    {
+      title: 'Name',
+      value: `${minorStage.accommodation.name} `,
+    },
+    {
+      title: 'Place',
+      value: `${minorStage.accommodation.place} `,
+    },
+    {
+      title: 'Costs',
+      value: formatAmount(minorStage.accommodation.costs),
+    },
+    {
+      title: 'Booked',
+      value: minorStage.accommodation.booked ? 'Yes' : 'No',
+    },
+  ];
 
   function handleEdit() {
     navigation.navigate('ManageMinorStage', {
@@ -65,11 +109,12 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     // });
   }
 
-  // TODO: Proper styling of component analog to majorStageListComponent
-  // TODO: Finish deleting and updating minor stages
+  // TODO: for accommodation => name = accommodation (booked), costs = accommodation costs, delete place everywhere
+  // TODO: Delete name or place for accommodation everywhere
   // TODO: Implement transportation handling
   // TODO: Implement places handling
   // TODO: Implement activities handling
+  // TODO: Implement spendings handling
 
   return (
     <View style={styles.container}>
@@ -82,7 +127,14 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
         />
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
-      {/* TODO: Display Accommodation info and costs here like in MajorStageListElement*/}
+      <DetailArea elementDetailInfo={elementDetailInfo} />
+      {minorStage.accommodation.name !== '' && (
+        <View>
+          {/* TODO: style this textline */}
+          <Text>Accommodation</Text>
+          <DetailArea elementDetailInfo={elementAccommodationDetailInfo} />
+        </View>
+      )}
       <ContentBox minorStage={minorStage} />
     </View>
   );

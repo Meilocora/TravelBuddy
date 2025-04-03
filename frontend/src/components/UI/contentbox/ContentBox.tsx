@@ -22,7 +22,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
     setContentState({ activeHeader: header.toLowerCase() });
   };
 
-  let contentHeaders = ['Transportation', 'Places', 'Activities'];
+  let contentHeaders = ['Transport', 'Places', 'Activities', 'Spendings'];
 
   return (
     <>

@@ -128,7 +128,7 @@ class MinorStage(db.Model):
     transportations: Mapped['Transportation'] = relationship('Transportation', back_populates='minor_stage', cascade='all, delete-orphan')
     accommodations: Mapped[list['Accommodation']] = relationship('Accommodation', back_populates='minor_stage', cascade='all, delete-orphan')
     activities: Mapped[list['Activity']] = relationship('Activity', back_populates='minor_stage', cascade='all, delete-orphan')
-    places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='minor_stage', cascade='all, delete-orphan')
+    places_to_visit: Mapped[list['PlaceToVisit']] = relationship('PlaceToVisit', back_populates='minor_stage')
 
     # Foreign keys to the parent
     major_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('major_stages.id', ondelete='CASCADE'), nullable=False)

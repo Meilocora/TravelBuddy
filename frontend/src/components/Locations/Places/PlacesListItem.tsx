@@ -8,7 +8,6 @@ import { GlobalStyles } from '../../../constants/styles';
 import Link from '../../UI/Link';
 import { PlaceContext } from '../../../store/place-context';
 import {
-  deletePlace,
   toggleFavoritePlace,
   toggleVisitedPlace,
 } from '../../../utils/http/place_to_visit';

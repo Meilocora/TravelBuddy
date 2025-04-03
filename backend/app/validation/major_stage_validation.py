@@ -80,6 +80,8 @@ class MajorStageValidation(Validation):
      
         return majorStage, not errors
      
+  
+#   TODO: This extra validation with old_major_stage needed? same as the one above...
   @staticmethod
   def validate_major_stage_update(majorStage, old_major_stage, existing_major_stages, existing_major_stages_costs,journey_costs):
         errors = False

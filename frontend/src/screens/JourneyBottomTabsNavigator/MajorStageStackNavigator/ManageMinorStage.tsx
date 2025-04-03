@@ -180,34 +180,34 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 200) {
-        minorStageCtx.updateMinorStage(minorStage);
+        await minorStageCtx.refetchMinorStages(editedMinorStageId!);
         // Refetch Journeys and MajorStages in case the costs have changed
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
-        resetValues();
         const popupText = `"${minorStage.title}" successfully updated!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
           majorStageId: majorStageId,
           popupText: popupText,
         });
+        resetValues();
       }
     } else {
       if (error) {
         setError(error);
         return;
       } else if (minorStage && status === 201) {
-        minorStageCtx.addMinorStage(minorStage);
+        await minorStageCtx.refetchMinorStages(editedMinorStageId!);
         // Refetch Journeys and MajorStages in case the costs have changed
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
-        resetValues();
         const popupText = `"${minorStage.title}" successfully created!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
           majorStageId: majorStageId,
           popupText: popupText,
         });
+        resetValues();
       }
     }
   }

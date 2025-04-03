@@ -8,7 +8,12 @@ import { generateRandomString } from '../../../utils/generator';
 interface DetailProps {
   areaStyle?: ViewStyle;
   detailStyle?: ViewStyle;
-  elementDetailInfo: { title: string; value: string; textStyle?: TextStyle }[];
+  elementDetailInfo: {
+    title: string;
+    value: string;
+    textStyle?: TextStyle;
+    link?: string;
+  }[];
 }
 
 const DetailArea: React.FC<DetailProps> = ({
@@ -25,6 +30,7 @@ const DetailArea: React.FC<DetailProps> = ({
           value={info.value}
           style={detailStyle}
           textStyle={info.textStyle}
+          link={info.link}
         />
       ))}
     </View>

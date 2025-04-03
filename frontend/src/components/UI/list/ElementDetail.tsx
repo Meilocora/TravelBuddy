@@ -1,11 +1,13 @@
 import { ReactElement } from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import TextLink from '../TextLink';
 
 interface ElementDetailProps {
   title: string;
   value: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  link?: string;
 }
 
 const ElementDetail = ({
@@ -13,11 +15,17 @@ const ElementDetail = ({
   value,
   style,
   textStyle,
+  link,
 }: ElementDetailProps): ReactElement => {
   return (
     <View style={[styles.container, style]}>
       <Text style={[styles.title, textStyle]}>{title}</Text>
-      <Text style={textStyle}>{value}</Text>
+      {!link && <Text style={textStyle}>{value}</Text>}
+      {link && (
+        <TextLink link={link} textStyle={textStyle}>
+          {value}
+        </TextLink>
+      )}
     </View>
   );
 };

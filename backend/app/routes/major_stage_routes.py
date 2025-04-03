@@ -172,6 +172,9 @@ def update_major_stage(current_user, journeyId, majorStageId):
     minorStages = minorStages_result.scalars().all()
     minorStagesIds = [minorStage.id for minorStage in minorStages]
     
+    major_stage_spendings = db.session.execute(db.select(Spendings).join(Costs).filter(Costs.major_stage_id == majorStageId)).scalars().all()
+    transportation = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStageId)).scalars().first()
+    
     try:    
         # Update the major_stage
         db.session.execute(db.update(MajorStage).where(MajorStage.id == majorStageId).values(
@@ -192,9 +195,6 @@ def update_major_stage(current_user, journeyId, majorStageId):
         ))
         db.session.commit()
         
-        major_stage_spendings = db.session.execute(db.select(Spendings).join(Costs).filter(Costs.major_stage_id == majorStageId)).scalars().all()
-        transportation = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStageId)).scalars().first()
-            
         response_major_stage = {'id': majorStageId,
                                 'title': major_stage['title']['value'],
                                 'done': major_stage['done']['value'],
