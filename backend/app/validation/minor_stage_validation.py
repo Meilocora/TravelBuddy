@@ -84,7 +84,8 @@ class MinorStageValidation(Validation):
         minor_stages_budget = int(minorStage['budget']['value'])
         major_stage_budget = major_stage_costs.budget
         
-        for existing_minor_stage_costs in existing_minor_stages_costs:
+        if existing_minor_stages_costs and existing_minor_stages_costs[0] != None:
+            for existing_minor_stage_costs in existing_minor_stages_costs:
                 minor_stages_budget += existing_minor_stage_costs.budget
         if minor_stages_budget > major_stage_budget:
             max_available_money = major_stage_budget - minor_stages_budget + int(minorStage['budget']['value'])

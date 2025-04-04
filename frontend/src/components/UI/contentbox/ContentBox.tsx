@@ -9,6 +9,14 @@ import { generateRandomString } from '../../../utils/generator';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
+  // TODO: This component should be fed with list of: [contentheader, content: {subtitle, data, link?}, handleAdd, handleEdit?, handleDelete[]] ... this should make the MainConent dynamic and more functional
+  // handleManageTransportation: () => void;
+  // handleAddPlace: () => void;
+  // handleDeletePlace: (placeId: number) => void;
+  // handleManageActivity: (activityId?: number) => void;
+  // handleDeleteActivity: (activityId: number) => void;
+  // handleHandleSpendings: (spendingId?: number) => void;
+  // handleDeleteSpendings: (spendingId: number) => void;
 }
 
 const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
@@ -52,7 +60,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 5,
+    marginTop: 5,
+    marginBottom: 10,
     paddingBottom: 5,
     borderBottomWidth: 2,
     borderBottomColor: GlobalStyles.colors.complementary200,

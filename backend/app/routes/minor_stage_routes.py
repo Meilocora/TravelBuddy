@@ -123,7 +123,7 @@ def create_minor_stage(current_user, majorStageId):
         )
         db.session.add(new_accommodation)
         db.session.commit()
-        
+                
         # Create a new costs for the minor stage
         costs = Costs(
             minor_stage_id=new_minor_stage.id,

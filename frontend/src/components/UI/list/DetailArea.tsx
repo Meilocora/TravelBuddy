@@ -5,15 +5,17 @@ import { View } from 'react-native';
 import ElementDetail from './ElementDetail';
 import { generateRandomString } from '../../../utils/generator';
 
+export interface ElementDetailInfo {
+  title: string;
+  value: string;
+  textStyle?: TextStyle;
+  link?: string;
+}
+
 interface DetailProps {
   areaStyle?: ViewStyle;
   detailStyle?: ViewStyle;
-  elementDetailInfo: {
-    title: string;
-    value: string;
-    textStyle?: TextStyle;
-    link?: string;
-  }[];
+  elementDetailInfo: ElementDetailInfo[];
 }
 
 const DetailArea: React.FC<DetailProps> = ({

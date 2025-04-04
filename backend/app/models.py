@@ -203,7 +203,6 @@ class Accommodation(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
     # latitude: Mapped[float] = mapped_column(Float, nullable=True)
     # longitude: Mapped[float] = mapped_column(Float, nullable=True)
     place: Mapped[str] = mapped_column(String, nullable=False)

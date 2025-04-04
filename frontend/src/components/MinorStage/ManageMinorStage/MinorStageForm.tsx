@@ -423,24 +423,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 ),
               }}
             />
-            <View style={styles.checkBoxContainer}>
-              <Text style={styles.checkBoxLabel}>Booked?</Text>
-              <Checkbox
-                status={
-                  inputs.accommodation_booked.value ? 'checked' : 'unchecked'
-                }
-                onPress={() =>
-                  inputChangedHandler(
-                    'accommodation_booked',
-                    !inputs.accommodation_booked.value
-                  )
-                }
-                uncheckedColor={GlobalStyles.colors.gray200}
-                color={GlobalStyles.colors.primary100}
-              />
-            </View>
-          </View>
-          <View style={styles.formRow}>
             <Input
               label='Costs'
               invalid={!inputs.accommodation_costs.isValid}
@@ -474,6 +456,22 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 ),
               }}
             />
+            <View style={styles.checkBoxContainer}>
+              <Text style={styles.checkBoxLabel}>Booked?</Text>
+              <Checkbox
+                status={
+                  inputs.accommodation_booked.value ? 'checked' : 'unchecked'
+                }
+                onPress={() =>
+                  inputChangedHandler(
+                    'accommodation_booked',
+                    !inputs.accommodation_booked.value
+                  )
+                }
+                uncheckedColor={GlobalStyles.colors.gray200}
+                color={GlobalStyles.colors.primary100}
+              />
+            </View>
           </View>
           <View style={styles.formRow}>
             <Input

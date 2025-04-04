@@ -16,7 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { JourneyContext } from '../../store/journey-context';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import IconButton from '../UI/IconButton';
-import DetailArea from '../UI/list/DetailArea';
+import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
@@ -50,7 +50,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   const moneyAvailable = formatAmount(minorStage.costs.budget);
   const moneyPlanned = formatAmount(minorStage.costs.spent_money);
 
-  const elementDetailInfo = [
+  const elementDetailInfo: ElementDetailInfo[] = [
     {
       title: 'Duration',
       value: `${durationInDays} days`,
@@ -61,20 +61,31 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     },
   ];
 
-  const elementAccommodationDetailInfo = [
-    {
-      title: 'Place',
-      value: `${minorStage.accommodation.place} `,
-    },
-    {
-      title: 'Costs',
-      value: formatAmount(minorStage.accommodation.costs),
-    },
-    {
-      title: 'Booked',
-      value: minorStage.accommodation.booked ? 'Yes' : 'No',
-    },
-  ];
+  if (minorStage.accommodation.place !== '') {
+    elementDetailInfo.push(
+      {
+        title: 'Accommodation',
+        value: minorStage.accommodation.place,
+        link: minorStage.accommodation.link,
+      },
+      {
+        title: 'Price',
+        value: formatAmount(minorStage.accommodation.costs),
+      },
+      {
+        title: 'Booked',
+        value: minorStage.accommodation.booked ? 'Yes' : 'No',
+      },
+      {
+        title: 'Maps link',
+        value: minorStage.accommodation.maps_link !== '' ? 'Link' : 'No link',
+        link:
+          minorStage.accommodation.maps_link !== ''
+            ? minorStage.accommodation.maps_link
+            : undefined,
+      }
+    );
+  }
 
   function handleEdit() {
     navigation.navigate('ManageMinorStage', {
@@ -105,7 +116,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     // });
   }
 
-  // TODO: for accommodation => name = accommodation (booked), costs = accommodation costs, delete place everywhere
   // TODO: Implement transportation handling
   // TODO: Implement places handling
   // TODO: Implement activities handling
@@ -114,22 +124,19 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <ElementTitle>{minorStage.title}</ElementTitle>
-        <IconButton
-          icon={Icons.edit}
-          color={GlobalStyles.colors.accent800}
-          onPress={handleEdit}
-        />
+        <View style={styles.titleContainer}>
+          <ElementTitle>{minorStage.title}</ElementTitle>
+        </View>
+        <View style={styles.iconContainer}>
+          <IconButton
+            icon={Icons.edit}
+            color={GlobalStyles.colors.accent800}
+            onPress={handleEdit}
+          />
+        </View>
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
-      {minorStage.accommodation.place !== '' && (
-        <View>
-          {/* TODO: style this textline */}
-          <Text>Accommodation</Text>
-          <DetailArea elementDetailInfo={elementAccommodationDetailInfo} />
-        </View>
-      )}
       <ContentBox minorStage={minorStage} />
     </View>
   );
@@ -148,9 +155,17 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flex: 1,
-    width: '90%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 8.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    flex: 1.5,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });
