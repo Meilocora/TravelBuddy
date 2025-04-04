@@ -99,11 +99,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    accommodation_name: {
-      value: defaultValues?.accommodation_name || '',
-      isValid: true,
-      errors: [],
-    },
     accommodation_place: {
       value: defaultValues?.accommodation_place || '',
       isValid: true,
@@ -220,11 +215,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      accommodation_name: {
-        value: defaultValues?.accommodation_name || '',
-        isValid: true,
-        errors: [],
-      },
       accommodation_place: {
         value: defaultValues?.accommodation_place || '',
         isValid: true,
@@ -261,7 +251,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       scheduled_end_time: { value: null, isValid: true, errors: [] },
       budget: { value: 0, isValid: true, errors: [] },
       spent_money: { value: 0, isValid: true, errors: [] },
-      accommodation_name: { value: '', isValid: true, errors: [] },
       accommodation_place: { value: '', isValid: true, errors: [] },
       accommodation_costs: { value: 0, isValid: true, errors: [] },
       accommodation_booked: { value: false, isValid: true, errors: [] },
@@ -423,14 +412,14 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           </View>
           <View style={styles.formRow}>
             <Input
-              label='Name'
-              invalid={!inputs.accommodation_name.isValid}
-              errors={inputs.accommodation_name.errors}
+              label='Place'
+              invalid={!inputs.accommodation_place.isValid}
+              errors={inputs.accommodation_place.errors}
               textInputConfig={{
-                value: inputs.accommodation_name.value,
+                value: inputs.accommodation_place.value,
                 onChangeText: inputChangedHandler.bind(
                   this,
-                  'accommodation_name'
+                  'accommodation_place'
                 ),
               }}
             />
@@ -452,18 +441,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
             </View>
           </View>
           <View style={styles.formRow}>
-            <Input
-              label='Place'
-              invalid={!inputs.accommodation_place.isValid}
-              errors={inputs.accommodation_place.errors}
-              textInputConfig={{
-                value: inputs.accommodation_place.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_place'
-                ),
-              }}
-            />
             <Input
               label='Costs'
               invalid={!inputs.accommodation_costs.isValid}

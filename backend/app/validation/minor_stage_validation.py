@@ -50,13 +50,6 @@ class MinorStageValidation(Validation):
         if start_end_val:
             minorStage['scheduled_start_time']['errors'].append(f", {start_end_val}")
             minorStage['scheduled_start_time']['isValid'] = False
-            
-        
-        if minorStage['accommodation_name']['value'] != "":
-            acc_name_val = MinorStageValidation().validate_string(minorStage['accommodation_name']['value'], max_length=50)
-            if acc_name_val:
-                minorStage['accommodation_name']['errors'].append(f", {acc_name_val}")
-                minorStage['accommodation_name']['isValid'] = False
         
         if minorStage['accommodation_place']['value'] != "":
             acc_place_val = MinorStageValidation().validate_string(minorStage['accommodation_place']['value'], max_length=50)

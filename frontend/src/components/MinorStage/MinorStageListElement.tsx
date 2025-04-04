@@ -63,10 +63,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
 
   const elementAccommodationDetailInfo = [
     {
-      title: 'Name',
-      value: `${minorStage.accommodation.name} `,
-    },
-    {
       title: 'Place',
       value: `${minorStage.accommodation.place} `,
     },
@@ -110,7 +106,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   }
 
   // TODO: for accommodation => name = accommodation (booked), costs = accommodation costs, delete place everywhere
-  // TODO: Delete name or place for accommodation everywhere
   // TODO: Implement transportation handling
   // TODO: Implement places handling
   // TODO: Implement activities handling
@@ -128,7 +123,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
-      {minorStage.accommodation.name !== '' && (
+      {minorStage.accommodation.place !== '' && (
         <View>
           {/* TODO: style this textline */}
           <Text>Accommodation</Text>

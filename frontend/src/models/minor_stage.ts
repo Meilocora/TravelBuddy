@@ -21,7 +21,6 @@ export interface MinorStageValues {
   scheduled_end_time: string | null;
   budget: number;
   spent_money: number;
-  accommodation_name: string;
   accommodation_place: string;
   accommodation_costs: number | null;
   accommodation_booked: boolean;
@@ -36,7 +35,6 @@ export interface MinorStageFormValues {
   scheduled_end_time: Validable<string | null>;
   budget: Validable<number>;
   spent_money: Validable<number>;
-  accommodation_name: Validable<string>;
   accommodation_place: Validable<string>;
   accommodation_costs: Validable<number>;
   accommodation_booked: Validable<boolean>;
@@ -45,7 +43,6 @@ export interface MinorStageFormValues {
 }
 
 export interface Accommodation {
-  name: string;
   place: string;
   costs: number;
   booked: boolean;

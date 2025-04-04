@@ -56,8 +56,6 @@ const PlacesSelectionForm: React.FC<PlacesSelectionFormProps> = ({
     setOpenSelection((prevValue) => !prevValue);
   }
 
-  console.log(countryName);
-
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>

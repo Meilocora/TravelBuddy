@@ -40,7 +40,6 @@ def get_minor_stages(current_user, majorStageId):
                     'money_exceeded': costs.money_exceeded,
                 },
                 'accommodation': {
-                                    'name': accommodation.name,
                                     'place': accommodation.place,
                                     'costs': accommodation.costs,
                                     'booked': accommodation.booked,
@@ -115,7 +114,6 @@ def create_minor_stage(current_user, majorStageId):
         
          # Create a new accommodation for the minor stage
         new_accommodation = Accommodation(
-            name=minor_stage['accommodation_name']['value'],
             place=minor_stage['accommodation_place']['value'],
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
@@ -150,7 +148,6 @@ def create_minor_stage(current_user, majorStageId):
                                     'money_exceeded': costs.money_exceeded
                                 },  
                                 'accommodation': {
-                                    'name': new_accommodation.name,
                                     'place': new_accommodation.place,
                                     'costs': new_accommodation.costs,
                                     'booked': new_accommodation.booked,
@@ -209,7 +206,6 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         
          # Update the accommodation for the minor stage
         db.session.execute(db.update(Accommodation).where(Accommodation.minor_stage_id == minorStageId).values(
-            name=minor_stage['accommodation_name']['value'],
             place=minor_stage['accommodation_place']['value'],
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
@@ -241,7 +237,6 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
                                     'money_exceeded': money_exceeded
                                 },  
                                 'accommodation': {
-                                    'name': minor_stage['accommodation_name']['value'],
                                     'place': minor_stage['accommodation_place']['value'],
                                     'costs': minor_stage['accommodation_costs']['value'],
                                     'booked': minor_stage['accommodation_booked']['value'],
