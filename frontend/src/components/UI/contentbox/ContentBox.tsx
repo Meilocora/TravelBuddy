@@ -9,20 +9,19 @@ import { generateRandomString } from '../../../utils/generator';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
-  // TODO: This component should be fed with list of: [contentheader, content: {subtitle, data, link?}, handleAdd, handleEdit?, handleDelete[]] ... this should make the MainConent dynamic and more functional
-  // handleManageTransportation: () => void;
-  // handleAddPlace: () => void;
-  // handleDeletePlace: (placeId: number) => void;
-  // handleManageActivity: (activityId?: number) => void;
-  // handleDeleteActivity: (activityId: number) => void;
-  // handleHandleSpendings: (spendingId?: number) => void;
-  // handleDeleteSpendings: (spendingId: number) => void;
+  journeyId: number;
 }
 
-const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
-  const [contentState, setContentState] = useState({ activeHeader: 'costs' });
+const ContentBox: React.FC<ContenBoxProps> = ({
+  journeyId,
+  minorStage,
+}): ReactElement => {
+  const [contentState, setContentState] = useState({
+    activeHeader: 'transport',
+  });
 
   const handleOnPressHeader = (header: string) => {
+    // TODO: Why this animation is not working?
     LayoutAnimation.configureNext({
       duration: 500,
       update: { type: 'spring', springDamping: 0.7 },
@@ -50,7 +49,11 @@ const ContentBox: React.FC<ContenBoxProps> = ({ minorStage }): ReactElement => {
           );
         })}
       </View>
-      <MainContent minorStage={minorStage} contentState={contentState} />
+      <MainContent
+        journeyId={journeyId}
+        minorStage={minorStage}
+        contentState={contentState}
+      />
     </>
   );
 };

@@ -1,174 +1,155 @@
 import { ReactElement } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import { MinorStage } from '../../../models';
-import { formatAmount, formatDateTimeString } from '../../../utils';
-import TextLink from '../TextLink';
-import { generateRandomString } from '../../../utils/generator';
+import { MajorStageStackParamList, MinorStage } from '../../../models';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import TransportationElement from './TransportationElement';
 
 interface MainContentProps {
+  journeyId: number;
   minorStage: MinorStage;
   contentState: { activeHeader: string };
 }
 
+interface ContentElementProps {
+  handleAdd: () => void;
+  handleEdit: (id: number) => void;
+  handleDelete?: (id: number) => void;
+}
+
 interface Content {
   title: string;
-  contents: {
-    subtitle: string;
-    data: string;
-    link?: string;
-  }[];
+  element: ReactElement<ContentElementProps>;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
+  journeyId,
   minorStage,
   contentState,
 }): ReactElement => {
-  let contents: Content[] = [];
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
-  if (minorStage.transportation) {
-    contents.push({
+  let content: Content[] = [
+    {
       title: 'transport',
-      contents: [
-        {
-          subtitle: 'Departure: ',
-          data: `"${formatDateTimeString(
-            minorStage.transportation.start_time
-          )}" at ${minorStage.transportation.place_of_departure}`,
-          link: minorStage.accommodation.link,
-        },
-        {
-          subtitle: 'Arrival: ',
-          data: `"${formatDateTimeString(
-            minorStage.transportation.arrival_time
-          )}" at ${minorStage.transportation.place_of_arrival}`,
-        },
-        {
-          subtitle: 'Details: ',
-          data: `${minorStage.transportation.type} (${formatAmount(
-            minorStage.transportation.transportation_costs
-          )})`,
-        },
-      ],
-    });
-  } else {
-    contents.push({
-      title: 'transport',
-      contents: [
-        {
-          subtitle: 'No transport planned yet.',
-          data: '',
-        },
-      ],
+      element: (
+        <TransportationElement
+          transportation={minorStage.transportation}
+          handleAdd={handleAddTransportation}
+          handleEdit={handleEditTransportation}
+        />
+      ),
+    },
+  ];
+
+  function handleAddTransportation() {
+    navigation.navigate('ManageTransportation', {
+      journeyId: journeyId,
+      minorStageId: minorStage.id,
     });
   }
 
-  if (minorStage.placesToVisit && minorStage.placesToVisit!.length > 0) {
-    contents.push({
-      title: 'places',
-      contents: minorStage.placesToVisit!.map((place) => {
-        return {
-          subtitle: `${place.name}: `,
-          data: place.description,
-          link: place.link,
-        };
-      }),
-    });
-  } else {
-    contents.push({
-      title: 'places',
-      contents: [
-        {
-          subtitle: 'No places planned yet.',
-          data: '',
-        },
-      ],
+  function handleEditTransportation(id: number) {
+    navigation.navigate('ManageTransportation', {
+      journeyId: journeyId,
+      minorStageId: minorStage.id,
+      transportationId: id,
     });
   }
 
-  if (minorStage.activities && minorStage.activities!.length > 0) {
-    contents.push({
-      title: 'activities',
-      contents: minorStage
-        .activities!.map((activity) => [
-          {
-            subtitle: `${activity.name}: `,
-            data: activity.description,
-            link: activity.link,
-          },
-          {
-            subtitle: 'Place: ',
-            data: activity.place,
-          },
-          {
-            subtitle: 'Booked? ',
-            data: activity.booked ? 'Yes' : 'Not yet',
-          },
-          {
-            subtitle: 'Costs: ',
-            data: formatAmount(activity.costs),
-          },
-        ])
-        .flat(),
-    });
-  } else {
-    contents.push({
-      title: 'activities',
-      contents: [
-        {
-          subtitle: 'No activities planned yet.',
-          data: '',
-        },
-      ],
-    });
-  }
+  // TODO: Implement places handling
+  // TODO: Implement activities handling
+  // TODO: Implement spendings handling
 
-  if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {
-    contents.push({
-      title: 'spendings',
-      contents: minorStage.costs.spendings!.map((spending) => {
-        return {
-          subtitle: `${spending.name}: `,
-          data: formatAmount(spending.amount),
-        };
-      }),
-    });
-  } else {
-    contents.push({
-      title: 'spendings',
-      contents: [
-        {
-          subtitle: 'No spendings found.',
-          data: '',
-        },
-      ],
-    });
-  }
+  // if (minorStage.placesToVisit && minorStage.placesToVisit!.length > 0) {
+  //   content.push({
+  //     title: 'places',
+  //     contents: minorStage.placesToVisit!.map((place) => {
+  //       return {
+  //         subtitle: `${place.name}: `,
+  //         data: place.description,
+  //         link: place.link,
+  //       };
+  //     }),
+  //   });
+  // } else {
+  //   content.push({
+  //     title: 'places',
+  //     contents: [
+  //       {
+  //         subtitle: 'No places planned yet.',
+  //         data: '',
+  //       },
+  //     ],
+  //   });
+  // }
 
-  const displayedContent = contents.find(
+  // if (minorStage.activities && minorStage.activities!.length > 0) {
+  //   content.push({
+  //     title: 'activities',
+  //     contents: minorStage
+  //       .activities!.map((activity) => [
+  //         {
+  //           subtitle: `${activity.name}: `,
+  //           data: activity.description,
+  //           link: activity.link,
+  //         },
+  //         {
+  //           subtitle: 'Place: ',
+  //           data: activity.place,
+  //         },
+  //         {
+  //           subtitle: 'Booked? ',
+  //           data: activity.booked ? 'Yes' : 'Not yet',
+  //         },
+  //         {
+  //           subtitle: 'Costs: ',
+  //           data: formatAmount(activity.costs),
+  //         },
+  //       ])
+  //       .flat(),
+  //   });
+  // } else {
+  //   content.push({
+  //     title: 'activities',
+  //     contents: [
+  //       {
+  //         subtitle: 'No activities planned yet.',
+  //         data: '',
+  //       },
+  //     ],
+  //   });
+  // }
+
+  // if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {
+  //   content.push({
+  //     title: 'spendings',
+  //     contents: minorStage.costs.spendings!.map((spending) => {
+  //       return {
+  //         subtitle: `${spending.name}: `,
+  //         data: formatAmount(spending.amount),
+  //       };
+  //     }),
+  //   });
+  // } else {
+  //   content.push({
+  //     title: 'spendings',
+  //     contents: [
+  //       {
+  //         subtitle: 'No spendings found.',
+  //         data: '',
+  //       },
+  //     ],
+  //   });
+  // }
+
+  const displayedContent = content.find(
     (content) => content.title === contentState.activeHeader
   );
 
-  return (
-    <View style={styles.container}>
-      {displayedContent?.contents.map((content, index) => {
-        return (
-          <View style={styles.detailContainer} key={generateRandomString()}>
-            <Text style={styles.subtitle}>
-              {content.link ? (
-                <TextLink link={content.link}>{content.subtitle}</TextLink>
-              ) : (
-                content.subtitle
-              )}
-            </Text>
-            <View style={styles.innerDetailContainer}>
-              <Text>{content.data}</Text>
-            </View>
-          </View>
-        );
-      })}
-    </View>
-  );
+  return <View style={styles.container}>{displayedContent?.element}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -177,20 +158,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     marginHorizontal: 10,
-  },
-  detailContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  innerDetailContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  subtitle: {
-    fontWeight: 'bold',
-  },
-  mainLink: {
-    marginHorizontal: 'auto',
   },
 });
 

@@ -58,6 +58,9 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     {
       title: 'Costs',
       value: `${moneyPlanned} / ${moneyAvailable}`,
+      textStyle: minorStage.costs.money_exceeded
+        ? { color: GlobalStyles.colors.error200, fontWeight: 'bold' }
+        : undefined,
     },
   ];
 
@@ -75,16 +78,19 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       {
         title: 'Booked',
         value: minorStage.accommodation.booked ? 'Yes' : 'No',
-      },
-      {
-        title: 'Maps link',
-        value: minorStage.accommodation.maps_link !== '' ? 'Link' : 'No link',
-        link:
-          minorStage.accommodation.maps_link !== ''
-            ? minorStage.accommodation.maps_link
-            : undefined,
       }
     );
+  }
+
+  if (minorStage.accommodation.maps_link !== '') {
+    elementDetailInfo.push({
+      title: 'Maps link',
+      value: minorStage.accommodation.maps_link !== '' ? 'Show me' : 'No link',
+      link:
+        minorStage.accommodation.maps_link !== ''
+          ? minorStage.accommodation.maps_link
+          : undefined,
+    });
   }
 
   function handleEdit() {
@@ -94,32 +100,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       minorStageId: minorStage.id,
     });
   }
-
-  function handleAddTransportation() {
-    // navigation.navigate('MajorStageStackNavigator', {
-    //   screen: 'ManageTransportation',
-    //   params: {
-    //     journeyId: journeyId,
-    //     majorStageId: majorStage.id,
-    //   },
-    // });
-  }
-
-  function handleEditTransportation() {
-    // navigation.navigate('MajorStageStackNavigator', {
-    //   screen: 'ManageTransportation',
-    //   params: {
-    //     journeyId: journeyId,
-    //     majorStageId: majorStage.id,
-    //     transportationId: majorStage.transportation!.id,
-    //   },
-    // });
-  }
-
-  // TODO: Implement transportation handling
-  // TODO: Implement places handling
-  // TODO: Implement activities handling
-  // TODO: Implement spendings handling
 
   return (
     <View style={styles.container}>
@@ -137,7 +117,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
-      <ContentBox minorStage={minorStage} />
+      <ContentBox journeyId={journeyId} minorStage={minorStage} />
     </View>
   );
 };

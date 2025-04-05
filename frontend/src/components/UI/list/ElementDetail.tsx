@@ -19,7 +19,7 @@ const ElementDetail = ({
 }: ElementDetailProps): ReactElement => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={[styles.title, textStyle]}>{title}</Text>
+      <Text style={[styles.title]}>{title}</Text>
       {!link && <Text style={textStyle}>{value}</Text>}
       {link && (
         <TextLink link={link} textStyle={textStyle}>

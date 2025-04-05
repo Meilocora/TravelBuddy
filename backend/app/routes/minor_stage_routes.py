@@ -50,7 +50,8 @@ def get_minor_stages(current_user, majorStageId):
             
             if transportation is not None:
                 minor_stage_data['transportation'] = {
-                  'type': transportation.type,
+                    'id': transportation.id,
+                    'type': transportation.type,
                     'start_time': transportation.start_time,
                     'arrival_time': transportation.arrival_time,
                     'place_of_departure': transportation.place_of_departure,

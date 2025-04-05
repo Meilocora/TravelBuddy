@@ -63,7 +63,6 @@ const Button: React.FC<ButtonProps> = ({
 const generalStyles = StyleSheet.create({
   container: {
     marginVertical: 4,
-    minWidth: 75,
   },
   button: {
     borderRadius: 4,
@@ -76,6 +75,7 @@ const generalStyles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontSize: 16,
+    paddingHorizontal: 4,
   },
   pressed: {
     opacity: 0.75,

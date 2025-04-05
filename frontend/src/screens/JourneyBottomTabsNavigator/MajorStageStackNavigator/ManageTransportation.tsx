@@ -18,6 +18,7 @@ import { MinorStageContext } from '../../../store/minorStage-context';
 import { JourneyContext } from '../../../store/journey-context';
 import { deleteTransportation } from '../../../utils/http';
 import { GlobalStyles } from '../../../constants/styles';
+import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -31,6 +32,7 @@ interface ConfirmHandlerProps {
   error?: string;
   status: number;
   transportation?: Transportation;
+  backendMajorStageId?: number;
   mode?: 'major' | 'minor';
 }
 
@@ -46,13 +48,9 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   const journeyCtx = useContext(JourneyContext);
   const minorStageCtx = useContext(MinorStageContext);
   const majorStageCtx = useContext(MajorStageContext);
-  const { journeyId, majorStageId, minorStageId, transportationId } =
+  let { journeyId, majorStageId, minorStageId, transportationId } =
     route.params;
   let isEditing = !!transportationId;
-
-  const majorStage = majorStageCtx.majorStages.find(
-    (majorStage) => majorStage.id === majorStageId
-  );
 
   let selectedTransportation: Transportation | undefined;
   if (minorStageId) {
@@ -67,6 +65,10 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
 
   useLayoutEffect(() => {
     planningNavigation.setOptions({
+      headerStyle:
+        majorStageId !== undefined
+          ? { backgroundColor: GlobalStyles.colors.accent700 }
+          : { backgroundColor: GlobalStyles.colors.complementary700 },
       headerTitleAlign: 'center',
       title: isEditing ? `Manage Transportation` : 'Add Transportation',
       headerLeft: ({ tintColor }) => (
@@ -75,7 +77,13 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
           size={24}
           icon={Icons.arrowBack}
           onPress={() => {
-            planningNavigation.navigate('Planning', { journeyId: journeyId! });
+            if (majorStageId !== undefined) {
+              planningNavigation.navigate('Planning', {
+                journeyId: journeyId!,
+              });
+            } else {
+              navigation.goBack();
+            }
           }}
         />
       ),
@@ -84,7 +92,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
 
   async function deleteHandler() {
     try {
-      const { error, status } = await deleteTransportation(
+      const { error, status, backendMajorStageId } = await deleteTransportation(
         majorStageId!,
         minorStageId!
       );
@@ -98,14 +106,15 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
             popupText: popupText,
           });
         } else if (minorStageId) {
-          await minorStageCtx.refetchMinorStages(majorStageId!);
+          await minorStageCtx.refetchMinorStages(backendMajorStageId!);
           await majorStageCtx.refetchMajorStages(journeyId!);
           await journeyCtx.refetchJourneys();
-          // const popupText = `Transportation successfully deleted!`;
-          // planningNavigation.navigate('Planning', {
-          //   journeyId: journeyId!,
-          //   popupText: popupText,
-          // });
+          const popupText = `Transportation successfully deleted!`;
+          navigation.navigate('MinorStages', {
+            journeyId: journeyId!,
+            majorStageId: backendMajorStageId!,
+            popupText: popupText,
+          });
         }
       } else {
         setError(error!);
@@ -125,6 +134,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     status,
     error,
     transportation,
+    backendMajorStageId,
     mode,
   }: ConfirmHandlerProps) {
     if (error) {
@@ -147,20 +157,26 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
           popupText: popupText,
         });
       } else if (mode === 'minor') {
-        await minorStageCtx.refetchMinorStages(majorStageId!);
+        await minorStageCtx.refetchMinorStages(backendMajorStageId!);
         await majorStageCtx.refetchMajorStages(journeyId!);
         await journeyCtx.refetchJourneys();
-        // const popupText = `"${majorStage.title}" successfully updated!`;
-        // planningNavigation.navigate('Planning', {
-        // journeyId: journeyId,
-        // popupText: popupText,
-        // });
+
+        const minorStage = minorStageCtx.minorStages.find(
+          (minorStage) => minorStage.id === minorStageId
+        )!;
+        const popupText = `"${minorStage.title}" successfully updated!`;
+        navigation.navigate('MinorStages', {
+          journeyId: journeyId!,
+          majorStageId: backendMajorStageId!,
+          popupText: popupText,
+        });
       }
     }
   }
 
   return (
     <>
+      {minorStageId !== undefined && <ComplementaryGradient />}
       <View style={styles.root}>
         <Animated.ScrollView entering={FadeInDown}>
           <TransportationForm
@@ -169,9 +185,8 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
             submitButtonLabel={isEditing ? 'Update' : 'Add'}
             defaultValues={isEditing ? selectedTransportation : undefined}
             isEditing={isEditing}
-            journeyId={journeyId!}
             majorStageId={majorStageId!}
-            minorStageId={minorStageId || undefined}
+            minorStageId={minorStageId!}
           />
           {isEditing && (
             <View style={styles.btnContainer}>

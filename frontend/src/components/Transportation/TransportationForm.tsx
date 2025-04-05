@@ -4,6 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   ButtonMode,
   ColorScheme,
+  MajorStage,
+  MinorStage,
   Transportation,
   TransportationFormValues,
   TransportationValues,
@@ -19,9 +21,11 @@ import {
   createTransportation,
   updateTransportation,
 } from '../../utils/http/transportation';
+import { MinorStageContext } from '../../store/minorStage-context';
 
 type InputValidationResponse = {
   transportation?: Transportation;
+  backendMajorStageId?: number;
   transportationFormValues?: TransportationFormValues;
   error?: string;
   status: number;
@@ -34,7 +38,6 @@ interface TransportationFormProps {
   submitButtonLabel: string;
   defaultValues?: TransportationValues;
   isEditing?: boolean;
-  journeyId: number;
   majorStageId: number;
   minorStageId?: number;
 }
@@ -45,18 +48,24 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   submitButtonLabel,
   defaultValues,
   isEditing,
-  journeyId,
   majorStageId,
   minorStageId,
 }): ReactElement => {
-  const majorStageCtx = useContext(MajorStageContext);
-  const majorStage = majorStageCtx.majorStages.find(
-    (ms) => ms.id === majorStageId
-  );
+  let stage: MajorStage | MinorStage;
+  let minStartDate: Date;
+  let maxStartDate: Date;
 
-  const minStartDate = parseDate(majorStage!.scheduled_start_time);
+  if (majorStageId !== undefined) {
+    const majorStageCtx = useContext(MajorStageContext);
+    stage = majorStageCtx.majorStages.find((ms) => ms.id === majorStageId)!;
+  } else {
+    const minorStageCtx = useContext(MinorStageContext);
+    stage = minorStageCtx.minorStages.find((ms) => ms.id === minorStageId)!;
+  }
+
+  minStartDate = parseDate(stage!.scheduled_start_time);
   minStartDate.setDate(minStartDate.getDate() - 1);
-  const maxStartDate = parseDate(majorStage!.scheduled_start_time);
+  maxStartDate = parseDate(stage!.scheduled_start_time);
   maxStartDate.setDate(maxStartDate.getDate() + 1);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -166,7 +175,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     if (isEditing) {
       response = await updateTransportation(
         inputs,
-        majorStage!.transportation!.id,
+        stage!.transportation!.id,
         majorStageId,
         minorStageId
       );
@@ -174,17 +183,27 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
       response = await createTransportation(inputs, majorStageId, minorStageId);
     }
 
-    const { error, status, transportation, transportationFormValues } =
-      response!;
+    const {
+      error,
+      status,
+      transportation,
+      backendMajorStageId,
+      transportationFormValues,
+    } = response!;
 
     if (!error && transportation) {
       onSubmit({
         transportation,
         status,
+        backendMajorStageId,
         mode: minorStageId ? 'minor' : 'major',
       });
     } else if (error) {
-      onSubmit({ error, status, mode: minorStageId ? 'minor' : 'major' });
+      onSubmit({
+        error,
+        status,
+        mode: minorStageId ? 'minor' : 'major',
+      });
     } else if (transportationFormValues) {
       setInputs((prevValues) => transportationFormValues);
     }
@@ -211,7 +230,11 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 
   return (
     <View style={styles.formContainer}>
-      <Text style={styles.header}>Destination: "{majorStage!.country}"</Text>
+      {'country' in stage ? (
+        <Text style={styles.header}>Destination: "{stage!.country}"</Text>
+      ) : (
+        <Text style={styles.header}>Origin: "{stage!.title}"</Text>
+      )}
       <View>
         <View style={styles.formRow}>
           <TransportTypeSelector

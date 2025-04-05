@@ -22,10 +22,16 @@ const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
       {openInfoBox &&
         additionalInfo.map((info, index) => (
           <View key={generateRandomString()} style={styles.infoPointContainer}>
-            <Text style={[styles.additionalInfo, styles.title]}>
+            <Text
+              style={[styles.additionalInfo, styles.title]}
+              numberOfLines={1}
+            >
               {info.title}
             </Text>
-            <Text style={[styles.additionalInfo, styles.value]}>
+            <Text
+              style={[styles.additionalInfo, styles.value]}
+              numberOfLines={1}
+            >
               {info.value}
             </Text>
           </View>
@@ -50,17 +56,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   additionalInfo: {
-    fontSize: 12,
     fontStyle: 'italic',
   },
   title: {
     fontWeight: 'bold',
-    textAlign: 'right',
     flexBasis: '25%',
-    marginRight: 5,
   },
   value: {
-    textAlign: 'left',
     flexBasis: '75%',
   },
   link: {

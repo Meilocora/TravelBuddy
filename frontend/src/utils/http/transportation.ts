@@ -9,6 +9,7 @@ const prefix = `${BACKEND_URL}/transportation`;
 interface ManageTransportProps {
   transportation?: Transportation;
   transportationFormValues?: TransportationFormValues;
+  backendMajorStageId?: number;
   status: number;
   error?: string;
 }
@@ -46,6 +47,9 @@ export const createTransportation = async (
 
     return {
       transportation: response!.data.transportation,
+      backendMajorStageId: response!.data.backendMajorStageId
+        ? response!.data.backendMajorStageId
+        : undefined,
       status: response!.data.status,
     };
   } catch (error) {
@@ -88,6 +92,9 @@ export const updateTransportation = async (
 
     return {
       transportation: response!.data.transportation,
+      backendMajorStageId: response!.data.backendMajorStageId
+        ? response!.data.backendMajorStageId
+        : undefined,
       status: response!.data.status,
     };
   } catch (error) {
@@ -117,7 +124,10 @@ export const deleteTransportation = async (
       return { status: response!.data.status, error: response!.data.error };
     }
 
-    return { status: response!.data.status };
+    return {
+      status: response!.data.status,
+      backendMajorStageId: response!.data.backendMajorStageId,
+    };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not delete transportation!' };
