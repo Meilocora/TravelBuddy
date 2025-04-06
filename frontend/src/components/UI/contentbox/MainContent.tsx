@@ -38,29 +38,6 @@ const MainContent: React.FC<MainContentProps> = ({
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
-  let content: Content[] = [
-    {
-      title: 'transport',
-      element: (
-        <TransportationElement
-          transportation={minorStage.transportation}
-          handleAdd={handleAddTransportation}
-          handleEdit={handleEditTransportation}
-        />
-      ),
-    },
-    {
-      title: 'places',
-      element: (
-        <PlacesElement
-          minorStage={minorStage}
-          handleAdd={handleAddPlace}
-          handleDelete={handleRemovePlace}
-        />
-      ),
-    },
-  ];
-
   function handleAddTransportation() {
     navigation.navigate('ManageTransportation', {
       journeyId: journeyId,
@@ -86,11 +63,29 @@ const MainContent: React.FC<MainContentProps> = ({
     await minorStageCtx.refetchMinorStages(minorStage.id);
   }
 
-  function handleEditPlace(id: number) {
-    // TODO: Navigate to ManagePlaceToVisit screen
-  }
+  let content: Content[] = [
+    {
+      title: 'transport',
+      element: (
+        <TransportationElement
+          transportation={minorStage.transportation}
+          handleAdd={handleAddTransportation}
+          handleEdit={handleEditTransportation}
+        />
+      ),
+    },
+    {
+      title: 'places',
+      element: (
+        <PlacesElement
+          minorStage={minorStage}
+          handleAdd={handleAddPlace}
+          handleDelete={handleRemovePlace}
+        />
+      ),
+    },
+  ];
 
-  // TODO: Implement places handling
   // TODO: Implement activities handling
   // TODO: Implement spendings handling
 

@@ -13,6 +13,7 @@ export interface PlaceToVisit {
 
 export interface PlaceValues {
   countryId: number;
+  id?: number;
   name: string;
   description: string;
   visited: boolean;

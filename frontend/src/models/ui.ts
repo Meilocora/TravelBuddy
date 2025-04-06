@@ -29,6 +29,7 @@ export enum Icons {
   menu = 'menu',
   linkOutline = 'link-outline',
   close = 'close',
+  remove = 'close-circle-outline',
 }
 
 export enum ButtonMode {

@@ -29,12 +29,11 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   route,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
-
+  const customCountryCtx = useContext(CustomCountryContext);
   const placeCtx = useContext(PlaceContext);
+
   const placeId = route.params?.placeId;
   let isEditing = !!placeId;
-
-  const customCountryCtx = useContext(CustomCountryContext);
 
   const selectedPlace = placeCtx.placesToVisit.find(
     (place) => place.id === placeId

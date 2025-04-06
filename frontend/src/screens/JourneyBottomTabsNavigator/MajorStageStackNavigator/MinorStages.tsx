@@ -6,7 +6,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 
 import {

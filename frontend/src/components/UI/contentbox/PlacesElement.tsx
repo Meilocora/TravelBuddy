@@ -63,6 +63,7 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
               key={generateRandomString()}
               onToggleFavorite={handleToggleFavourite}
               onToggleVisited={handleToggleVisited}
+              onRemovePlace={handleDelete}
             />
           ))}
         </ScrollView>

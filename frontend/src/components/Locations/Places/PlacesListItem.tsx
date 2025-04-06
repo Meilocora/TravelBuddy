@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -8,24 +8,49 @@ import { GlobalStyles } from '../../../constants/styles';
 import Link from '../../UI/Link';
 import { PlaceContext } from '../../../store/place-context';
 import {
+  fetchPlaces,
   toggleFavoritePlace,
   toggleVisitedPlace,
 } from '../../../utils/http/place_to_visit';
+import { CustomCountryContext } from '../../../store/custom-country-context';
+import { fetchCustomCountries } from '../../../utils/http';
 
 interface PlacesListItemProps {
   place: PlaceToVisit;
   onToggleFavorite: (placeId: number) => void;
   onToggleVisited: (placeId: number) => void;
+  onRemovePlace?: (name: string) => void;
 }
 
 const PlacesListItem: React.FC<PlacesListItemProps> = ({
   place,
   onToggleFavorite,
   onToggleVisited,
+  onRemovePlace,
 }): ReactElement => {
   const [isOpened, setIsOpened] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const customCountryCtx = useContext(CustomCountryContext);
   const placeCtx = useContext(PlaceContext);
+
+  // Fetch data in case the user navigates to this screen directly from MinorStages Screen
+  useEffect(() => {
+    if (onRemovePlace) {
+      const fetchData = async () => {
+        // Fetch custom countries
+        const { data } = await fetchCustomCountries();
+        customCountryCtx.setCustomCountries(data || []);
+
+        // Fetch places
+        const response = await fetchPlaces();
+        if (!response.error) {
+          placeCtx.setPlacesToVisit(response.places || []);
+        }
+      };
+
+      fetchData();
+    }
+  }, [onRemovePlace]);
 
   async function handleToggleFavorite() {
     const response = await toggleFavoritePlace(place.id);
@@ -50,7 +75,9 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
     });
   }
 
-  // TODO: Handle remove place, when displayed in MinorStages Screen
+  function handleRemove() {
+    onRemovePlace?.(place.name);
+  }
 
   return (
     <View style={styles.container}>
@@ -78,6 +105,14 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
               color={GlobalStyles.colors.edit}
               containerStyle={styles.button}
             />
+            {onRemovePlace && (
+              <IconButton
+                icon={Icons.remove}
+                onPress={handleRemove}
+                color={GlobalStyles.colors.error200}
+                containerStyle={styles.button}
+              />
+            )}
           </View>
         </View>
         {isOpened && (
