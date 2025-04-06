@@ -54,9 +54,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     (ms) => ms.id === majorStageId
   );
 
-  // TODO: This needed?
-  const countryName = majorStage!.country;
-
   const minStartDate = majorStage!.scheduled_start_time;
   const maxEndDate = majorStage!.scheduled_end_time;
 
@@ -141,50 +138,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       };
     });
   }, [inputs.budget.value]);
-
-  // TODO: Put Following code into another ManagePlacesToVisit component for minorStage
-  // const defaultPlacesNames = defaultValues?.placesToVisist?.split(', ') || [];
-  // State only exists for easier handling of countryNames
-  // const [currentPlacesNames, setCurrentPlacesNames] =
-  // useState<string[]>(defaultPlacesNames);
-
-  // function handleAddPlace(placeName: string) {
-  //   setCurrentPlacesNames([...currentPlacesNames, placeName]);
-
-  //   const updatedPlaceNames = [...currentPlacesNames, placeName];
-
-  //   setInputs((prevValues) => {
-  //     return {
-  //       ...prevValues,
-  //       placesToVisist: {
-  //         value: updatedPlaceNames.join(', '),
-  //         isValid: true,
-  //         errors: [],
-  //       },
-  //     };
-  //   });
-  // }
-
-  // function handleDeletePlace(placeName: string) {
-  //   setCurrentPlacesNames(
-  //     currentPlacesNames.filter((name) => name !== placeName)
-  //   );
-
-  //   const updatedCountryNames = [...currentPlacesNames];
-
-  //   setInputs((prevValues) => {
-  //     return {
-  //       ...prevValues,
-  //       placesToVisist: {
-  //         value: currentPlacesNames
-  //           .filter((name) => name !== placeName)
-  //           .join(', '),
-  //         isValid: true,
-  //         errors: [],
-  //       },
-  //     };
-  //   });
-  // }
 
   // Redefine inputs, when defaultValues change
   useEffect(() => {
@@ -487,15 +440,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               }}
             />
           </View>
-          {/* TODO: Put this into the ListComponent ... to much for one form */}
-          {/* <PlacesSelectionForm
-            onAddPlace={handleAddPlace}
-            onDeletePlace={handleDeletePlace}
-            invalid={!inputs.placesToVisist.isValid}
-            minorStageId={editMinorStageId || 0}
-            defaultPlaceNames={defaultPlacesNames}
-            countryName={countryName}
-          /> */}
         </View>
         <View style={styles.buttonsContainer}>
           <Button

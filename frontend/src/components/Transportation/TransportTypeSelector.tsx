@@ -7,13 +7,14 @@ import {
   Text,
   View,
 } from 'react-native';
+import OutsidePressHandler from 'react-native-outside-press';
+
 import ListItem from '../UI/search/ListItem';
 import { generateRandomString } from '../../utils';
 import Button from '../UI/Button';
 import { ButtonMode, ColorScheme, TransportationType } from '../../models';
 import Input from '../UI/form/Input';
 import { GlobalStyles } from '../../constants/styles';
-import OutsidePressHandler from 'react-native-outside-press';
 
 interface TransportTypeSelectorProps {
   onChangeTransportType: (transportType: string) => void;

@@ -17,6 +17,9 @@ interface MinorStageListProps {
 const MinorStageList: React.FC<MinorStageListProps> = ({
   majorStageId,
 }): ReactElement => {
+  const [contentState, setContentState] = useState({
+    activeHeader: 'transport',
+  });
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,6 +68,8 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
           <MinorStageListElement
             key={generateRandomString()}
             minorStage={item}
+            contentState={contentState}
+            setContentState={setContentState}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

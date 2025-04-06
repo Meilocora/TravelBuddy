@@ -184,3 +184,44 @@ export const toggleVisitedPlace = async (
     return { status: 500, error: 'Could not change visited state of place!' };
   }
 };
+
+export const addMinorStageToFavoritePlace = async (
+  name: string,
+  minorStageId: number
+): Promise<ManagePlaceProps> => {
+  try {
+    const response: AxiosResponse<ManagePlaceProps> = await api.post(
+      `${prefix}/add-minor-stage-to-place/${name}/${minorStageId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not change add minor stage to place!' };
+  }
+};
+
+export const removeMinorStageFromFavoritePlace = async (
+  name: string
+): Promise<ManagePlaceProps> => {
+  try {
+    const response: AxiosResponse<ManagePlaceProps> = await api.post(
+      `${prefix}/remove-minor-stage-from-place/${name}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    return { status: response.data.status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not remove minor stage from place!' };
+  }
+};

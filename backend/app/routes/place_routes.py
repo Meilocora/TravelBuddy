@@ -190,3 +190,29 @@ def delete_place(current_user, placeId):
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    
+    
+@place_bp.route('/add-minor-stage-to-place/<string:name>/<int:minorStageId>', methods=['POST'])
+@token_required
+def add_minor_stage_to_place(current_user, name, minorStageId):
+    try:
+        old_place = db.session.execute(db.select(PlaceToVisit).filter_by(user_id=current_user, name=name)).scalars().first()
+        old_place.minor_stage_id = minorStageId
+        db.session.commit()
+
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)
+    
+    
+@place_bp.route('/remove-minor-stage-from-place/<string:name>', methods=['POST'])
+@token_required
+def remove_minor_stage_from_place(current_user, name):
+    try:
+        old_place = db.session.execute(db.select(PlaceToVisit).filter_by(user_id=current_user, name=name)).scalars().first()        
+        old_place.minor_stage_id = None
+        db.session.commit()
+
+        return jsonify({'status': 200})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)

@@ -93,7 +93,6 @@ const PlacesList: React.FC<PlacesListProps> = ({
             ))}
           </ScrollView>
         )}
-        {/* {countryPlaces.length === 0 && ( */}
         {!isFetching && countryPlaces.length === 0 && (
           <InfoText content='No places found...' style={styles.info} />
         )}

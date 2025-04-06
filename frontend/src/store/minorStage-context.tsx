@@ -10,6 +10,8 @@ interface MinorStageContextType {
   deleteMinorStage: (minorStageId: number) => void;
   updateMinorStage: (minorStages: MinorStage) => void;
   refetchMinorStages: (majorStageId: number) => Promise<void>;
+  toggleFavoritePlace: (minorStageId: number, placeId: number) => void;
+  toggleVisitedPlace?: (minorStageId: number, placeId: number) => void;
 }
 
 export const MinorStageContext = createContext<MinorStageContextType>({
@@ -19,6 +21,8 @@ export const MinorStageContext = createContext<MinorStageContextType>({
   deleteMinorStage: () => {},
   updateMinorStage: () => {},
   refetchMinorStages: async () => {},
+  toggleFavoritePlace: () => {},
+  toggleVisitedPlace: () => {},
 });
 
 export default function MinorStageContextProvider({
@@ -53,6 +57,44 @@ export default function MinorStageContextProvider({
     }
   }
 
+  function toggleFavoritePlace(minorStageId: number, placeId: number) {
+    setMinorStages((prevMinorStages) =>
+      prevMinorStages.map((minorStage) => {
+        if (minorStage.id === minorStageId) {
+          return {
+            ...minorStage,
+            placesToVisit: minorStage.placesToVisit?.map((place) => {
+              if (place.id === placeId) {
+                return { ...place, favorite: !place.favorite };
+              }
+              return place;
+            }),
+          };
+        }
+        return minorStage;
+      })
+    );
+  }
+
+  function toggleVisitedPlace(minorStageId: number, placeId: number) {
+    setMinorStages((prevMinorStages) =>
+      prevMinorStages.map((minorStage) => {
+        if (minorStage.id === minorStageId) {
+          return {
+            ...minorStage,
+            placesToVisit: minorStage.placesToVisit?.map((place) => {
+              if (place.id === placeId) {
+                return { ...place, visited: !place.visited };
+              }
+              return place;
+            }),
+          };
+        }
+        return minorStage;
+      })
+    );
+  }
+
   const value = {
     minorStages,
     setMinorStages,
@@ -60,6 +102,8 @@ export default function MinorStageContextProvider({
     deleteMinorStage,
     updateMinorStage,
     refetchMinorStages,
+    toggleFavoritePlace,
+    toggleVisitedPlace,
   };
 
   return (

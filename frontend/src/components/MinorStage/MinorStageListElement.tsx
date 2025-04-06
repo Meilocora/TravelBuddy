@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
 import { Icons, MajorStageStackParamList, MinorStage } from '../../models';
@@ -20,10 +20,16 @@ import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
+  contentState: { activeHeader: string };
+  setContentState: React.Dispatch<
+    React.SetStateAction<{ activeHeader: string }>
+  >;
 }
 
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   minorStage,
+  contentState,
+  setContentState,
 }): ReactElement => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
@@ -117,7 +123,12 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
-      <ContentBox journeyId={journeyId} minorStage={minorStage} />
+      <ContentBox
+        journeyId={journeyId}
+        minorStage={minorStage}
+        contentState={contentState}
+        setContentState={setContentState}
+      />
     </View>
   );
 };

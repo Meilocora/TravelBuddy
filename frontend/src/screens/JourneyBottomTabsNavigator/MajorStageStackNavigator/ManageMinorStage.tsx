@@ -163,7 +163,6 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
   }
 
   function cancelHandler() {
-    //     planningNavigation.navigate('Planning', { journeyId: journeyId });
     navigation.goBack();
   }
 

@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { View, StyleSheet, LayoutAnimation } from 'react-native';
 
 import { MinorStage } from '../../../models';
@@ -10,16 +10,18 @@ import { generateRandomString } from '../../../utils/generator';
 interface ContenBoxProps {
   minorStage: MinorStage;
   journeyId: number;
+  contentState: { activeHeader: string };
+  setContentState: React.Dispatch<
+    React.SetStateAction<{ activeHeader: string }>
+  >;
 }
 
 const ContentBox: React.FC<ContenBoxProps> = ({
   journeyId,
   minorStage,
+  contentState,
+  setContentState,
 }): ReactElement => {
-  const [contentState, setContentState] = useState({
-    activeHeader: 'transport',
-  });
-
   const handleOnPressHeader = (header: string) => {
     // TODO: Why this animation is not working?
     LayoutAnimation.configureNext({

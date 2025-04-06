@@ -50,6 +50,8 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
     });
   }
 
+  // TODO: Handle remove place, when displayed in MinorStages Screen
+
   return (
     <View style={styles.container}>
       <Pressable onPress={() => setIsOpened(!isOpened)}>

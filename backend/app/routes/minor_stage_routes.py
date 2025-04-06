@@ -67,7 +67,7 @@ def get_minor_stages(current_user, majorStageId):
                 minor_stage_data['activities'] = [{'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
             
             if places_to_visit is not None:
-                minor_stage_data['placesToVisit'] = [{'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
+                minor_stage_data['placesToVisit'] = [{'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
             
             minor_stages_list.append(minor_stage_data)
         

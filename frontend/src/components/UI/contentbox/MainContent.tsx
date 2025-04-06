@@ -1,10 +1,16 @@
-import { ReactElement } from 'react';
+import { ReactElement, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { MajorStageStackParamList, MinorStage } from '../../../models';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TransportationElement from './TransportationElement';
+import PlacesElement from './PlacesElement';
+import {
+  addMinorStageToFavoritePlace,
+  removeMinorStageFromFavoritePlace,
+} from '../../../utils/http';
+import { MinorStageContext } from '../../../store/minorStage-context';
 
 interface MainContentProps {
   journeyId: number;
@@ -13,9 +19,9 @@ interface MainContentProps {
 }
 
 interface ContentElementProps {
-  handleAdd: () => void;
-  handleEdit: (id: number) => void;
-  handleDelete?: (id: number) => void;
+  handleAdd?: (name?: string) => void;
+  handleEdit?: (id: number) => void;
+  handleDelete?: (id?: number, name?: string) => void;
 }
 
 interface Content {
@@ -28,6 +34,7 @@ const MainContent: React.FC<MainContentProps> = ({
   minorStage,
   contentState,
 }): ReactElement => {
+  const minorStageCtx = useContext(MinorStageContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
@@ -39,6 +46,16 @@ const MainContent: React.FC<MainContentProps> = ({
           transportation={minorStage.transportation}
           handleAdd={handleAddTransportation}
           handleEdit={handleEditTransportation}
+        />
+      ),
+    },
+    {
+      title: 'places',
+      element: (
+        <PlacesElement
+          minorStage={minorStage}
+          handleAdd={handleAddPlace}
+          handleDelete={handleRemovePlace}
         />
       ),
     },
@@ -59,32 +76,23 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   }
 
+  async function handleAddPlace(name: string) {
+    await addMinorStageToFavoritePlace(name, minorStage.id);
+    await minorStageCtx.refetchMinorStages(minorStage.id);
+  }
+
+  async function handleRemovePlace(name: string) {
+    await removeMinorStageFromFavoritePlace(name);
+    await minorStageCtx.refetchMinorStages(minorStage.id);
+  }
+
+  function handleEditPlace(id: number) {
+    // TODO: Navigate to ManagePlaceToVisit screen
+  }
+
   // TODO: Implement places handling
   // TODO: Implement activities handling
   // TODO: Implement spendings handling
-
-  // if (minorStage.placesToVisit && minorStage.placesToVisit!.length > 0) {
-  //   content.push({
-  //     title: 'places',
-  //     contents: minorStage.placesToVisit!.map((place) => {
-  //       return {
-  //         subtitle: `${place.name}: `,
-  //         data: place.description,
-  //         link: place.link,
-  //       };
-  //     }),
-  //   });
-  // } else {
-  //   content.push({
-  //     title: 'places',
-  //     contents: [
-  //       {
-  //         subtitle: 'No places planned yet.',
-  //         data: '',
-  //       },
-  //     ],
-  //   });
-  // }
 
   // if (minorStage.activities && minorStage.activities!.length > 0) {
   //   content.push({
