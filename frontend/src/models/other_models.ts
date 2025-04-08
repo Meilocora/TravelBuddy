@@ -1,4 +1,5 @@
 export interface Costs {
+  id: number;
   budget: number;
   spent_money: number;
   money_exceeded: boolean;
@@ -6,6 +7,7 @@ export interface Costs {
 }
 
 export interface Spendings {
+  id: number;
   name: string;
   amount: number;
   date: string;

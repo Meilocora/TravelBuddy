@@ -48,9 +48,11 @@ import ManageTransportation from './src/screens/JourneyBottomTabsNavigator/Major
 import ManageMinorStage from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageMinorStage';
 import MinorStages from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/MinorStages';
 import ManageActivity from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageActivity';
+import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageSpending';
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
+// TODO: Implement Maps API to show the route of the journey
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -271,6 +273,10 @@ const MajorStageStackNavigator = () => {
       <MajorStageStack.Screen
         name='ManageActivity'
         component={ManageActivity}
+      />
+      <MajorStageStack.Screen
+        name='ManageSpending'
+        component={ManageSpending}
       />
     </MajorStageStack.Navigator>
   );

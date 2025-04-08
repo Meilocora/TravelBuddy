@@ -19,6 +19,7 @@ import { JourneyContext } from '../../../store/journey-context';
 import { deleteTransportation } from '../../../utils/http';
 import { GlobalStyles } from '../../../constants/styles';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
+import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -176,6 +177,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
 
   return (
     <>
+      {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
       {minorStageId !== undefined && <ComplementaryGradient />}
       <View style={styles.root}>
         <Animated.ScrollView entering={FadeInDown}>

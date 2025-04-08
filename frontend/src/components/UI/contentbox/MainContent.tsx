@@ -11,6 +11,7 @@ import {
   removeMinorStageFromFavoritePlace,
 } from '../../../utils/http';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import ActivityElement from './ActivityElement';
 
 interface MainContentProps {
   journeyId: number;
@@ -63,6 +64,19 @@ const MainContent: React.FC<MainContentProps> = ({
     await minorStageCtx.refetchMinorStages(minorStage.id);
   }
 
+  function handleAddActivity() {
+    navigation.navigate('ManageActivity', {
+      minorStageId: minorStage.id,
+    });
+  }
+
+  function handleEditActivity(id: number) {
+    navigation.navigate('ManageActivity', {
+      minorStageId: minorStage.id,
+      activityId: id,
+    });
+  }
+
   let content: Content[] = [
     {
       title: 'transport',
@@ -81,6 +95,16 @@ const MainContent: React.FC<MainContentProps> = ({
           minorStage={minorStage}
           handleAdd={handleAddPlace}
           handleDelete={handleRemovePlace}
+        />
+      ),
+    },
+    {
+      title: 'activities',
+      element: (
+        <ActivityElement
+          minorStage={minorStage}
+          handleAdd={handleAddActivity}
+          handleEdit={handleEditActivity}
         />
       ),
     },

@@ -51,10 +51,20 @@ export interface Accommodation {
 }
 
 export interface Activity {
+  id?: number;
   name: string;
   description: string;
   costs: number;
   booked: boolean;
   place: string;
   link: string;
+}
+
+export interface ActivityFormValues {
+  name: Validable<string>;
+  description: Validable<string>;
+  costs: Validable<number>;
+  booked: Validable<boolean>;
+  place: Validable<string>;
+  link: Validable<string>;
 }

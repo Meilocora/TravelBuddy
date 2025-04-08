@@ -29,6 +29,10 @@ export type MajorStageStackParamList = {
     minorStageId: number;
     activityId?: number;
   };
+  ManageSpending: {
+    minorStageId: number;
+    spendingId?: number;
+  };
 };
 
 export type JourneyBottomTabsParamsList = {

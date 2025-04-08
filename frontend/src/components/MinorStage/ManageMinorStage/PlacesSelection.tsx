@@ -4,6 +4,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  View,
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -115,12 +116,10 @@ const PlacesSelection = ({
   }
 
   return (
-    <Animated.View
-      entering={FadeInUp}
-      exiting={FadeOutUp}
-      style={styles.outerContainer}
-    >
-      <Pressable onPress={onCloseModal}>{content}</Pressable>
+    <Animated.View entering={FadeInUp} exiting={FadeOutUp}>
+      <View style={styles.outerContainer}>
+        <Pressable onPress={onCloseModal}>{content}</Pressable>
+      </View>
     </Animated.View>
   );
 };
@@ -128,7 +127,9 @@ const PlacesSelection = ({
 const styles = StyleSheet.create({
   outerContainer: {
     position: 'absolute',
-    bottom: 140,
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -150 }, { translateY: -200 }],
     paddingVertical: 5,
     paddingHorizontal: 10,
     width: '90%',
