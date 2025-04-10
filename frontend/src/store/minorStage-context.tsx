@@ -2,6 +2,7 @@ import { createContext, useState } from 'react';
 
 import { MinorStage, Transportation } from '../models';
 import { fetchMinorStagesById } from '../utils';
+import { deleteActivity } from '../utils/http';
 
 interface MinorStageContextType {
   minorStages: MinorStage[];
@@ -12,6 +13,7 @@ interface MinorStageContextType {
   refetchMinorStages: (majorStageId: number) => Promise<void>;
   toggleFavoritePlace: (minorStageId: number, placeId: number) => void;
   toggleVisitedPlace?: (minorStageId: number, placeId: number) => void;
+  deleteActivity: (minorStageId: number, activityId: number) => void;
 }
 
 export const MinorStageContext = createContext<MinorStageContextType>({
@@ -23,6 +25,7 @@ export const MinorStageContext = createContext<MinorStageContextType>({
   refetchMinorStages: async () => {},
   toggleFavoritePlace: () => {},
   toggleVisitedPlace: () => {},
+  deleteActivity: () => {},
 });
 
 export default function MinorStageContextProvider({
@@ -95,6 +98,22 @@ export default function MinorStageContextProvider({
     );
   }
 
+  function deleteActivity(minorStageId: number, activityId: number) {
+    setMinorStages((prevMinorStages) =>
+      prevMinorStages.map((minorStage) => {
+        if (minorStage.id === minorStageId) {
+          return {
+            ...minorStage,
+            activities: minorStage.activities?.filter(
+              (activity) => activity.id !== activityId
+            ),
+          };
+        }
+        return minorStage;
+      })
+    );
+  }
+
   const value = {
     minorStages,
     setMinorStages,
@@ -104,6 +123,7 @@ export default function MinorStageContextProvider({
     refetchMinorStages,
     toggleFavoritePlace,
     toggleVisitedPlace,
+    deleteActivity,
   };
 
   return (

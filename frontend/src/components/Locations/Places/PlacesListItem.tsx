@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
   name: {
     color: GlobalStyles.colors.gray50,
     fontSize: 16,
+    maxWidth: '65%',
   },
   row: {
     flexDirection: 'row',

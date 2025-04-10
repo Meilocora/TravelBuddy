@@ -13,10 +13,12 @@ import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { formatAmount } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import { createActivity, updateActivity } from '../../../utils/http';
 
 type InputValidationResponse = {
   activity?: Activity;
   activityFormValues?: ActivityFormValues;
+  backendJourneyId?: number;
   error?: string;
   status: number;
 };
@@ -145,26 +147,23 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     }
 
     let response: InputValidationResponse;
-    // if (isEditing) {
-    // response = await updateMinorStage(
-    //   majorStageId,
-    //   inputs,
-    //   editMinorStageId!
-    // );
-    // } else if (!isEditing) {
-    // response = await createMinorStage(majorStageId, inputs);
-    // }
+    if (isEditing) {
+      response = await updateActivity(inputs, editActivityId!, minorStageId);
+    } else if (!isEditing) {
+      response = await createActivity(inputs, minorStageId);
+    }
 
-    // const { error, status, activity, activityFormValues } = response!;
+    const { error, status, activity, activityFormValues, backendJourneyId } =
+      response!;
 
-    // if (!error && minorStage) {
-    //   resetValues();
-    //   onSubmit({ minorStage, status });
-    // } else if (error) {
-    //   onSubmit({ error, status });
-    // } else if (minorStageFormValues) {
-    //   setInputs((prevValues) => minorStageFormValues);
-    // }
+    if (!error && minorStage) {
+      resetValues();
+      onSubmit({ activity, status, backendJourneyId });
+    } else if (error) {
+      onSubmit({ error, status });
+    } else if (activityFormValues) {
+      setInputs((prevValues) => activityFormValues);
+    }
     setIsSubmitting(false);
     return;
   }
@@ -191,10 +190,30 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           </View>
           <View style={styles.formRow}>
             <Input
+              label='Description'
+              invalid={!inputs.description.isValid}
+              errors={inputs.description.errors}
+              textInputConfig={{
+                value: inputs.description.value,
+                multiline: true,
+                onChangeText: inputChangedHandler.bind(this, 'description'),
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Place'
+              invalid={!inputs.place.isValid}
+              errors={inputs.place.errors}
+              textInputConfig={{
+                value: inputs.place.value,
+                onChangeText: inputChangedHandler.bind(this, 'place'),
+              }}
+            />
+            <Input
               label='Costs'
               invalid={!inputs.costs.isValid}
               errors={inputs.costs.errors}
-              mandatory
               textInputConfig={{
                 keyboardType: 'decimal-pad',
                 value:
@@ -204,6 +223,17 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                   maxAvailableMoney > 0
                     ? `Max: ${formatAmount(maxAvailableMoney)}`
                     : '',
+              }}
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.link.isValid}
+              errors={inputs.link.errors}
+              textInputConfig={{
+                value: inputs.link.value,
+                onChangeText: inputChangedHandler.bind(this, 'link'),
               }}
             />
             <View style={styles.checkBoxContainer}>
@@ -217,26 +247,6 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 color={GlobalStyles.colors.primary100}
               />
             </View>
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Place'
-              invalid={!inputs.place.isValid}
-              errors={inputs.place.errors}
-              textInputConfig={{
-                value: inputs.place.value,
-                onChangeText: inputChangedHandler.bind(this, 'place'),
-              }}
-            />
-            <Input
-              label='Link'
-              invalid={!inputs.link.isValid}
-              errors={inputs.link.errors}
-              textInputConfig={{
-                value: inputs.link.value,
-                onChangeText: inputChangedHandler.bind(this, 'link'),
-              }}
-            />
           </View>
         </View>
         <View style={styles.buttonsContainer}>
@@ -273,30 +283,12 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.26,
   },
-  header: {
-    fontSize: 22,
-    textAlign: 'center',
-    color: GlobalStyles.colors.gray50,
-    fontWeight: 'bold',
-  },
   formRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 4,
     marginHorizontal: 12,
-  },
-  separator: {
-    borderTopColor: GlobalStyles.colors.gray100,
-    borderTopWidth: 2,
-    marginTop: 8,
-  },
-  subtitle: {
-    alignSelf: 'center',
-    fontSize: 18,
-    color: GlobalStyles.colors.gray50,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   checkBoxContainer: {
     alignItems: 'center',

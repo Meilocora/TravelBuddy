@@ -5,3 +5,4 @@ export * from './auth';
 export * from './custom_country';
 export * from './place_to_visit';
 export * from './transportation';
+export * from './activity';

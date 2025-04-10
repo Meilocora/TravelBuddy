@@ -49,6 +49,8 @@ const Input: React.FC<InputProps> = ({
     textInputConfig.value = '';
   }
 
+  // TODO: Prevent field from getting larger when the input gets too long
+
   return (
     <Animated.View style={[styles.inputContainer, style]}>
       <Text style={[styles.label, invalid && styles.invalidLabel]}>

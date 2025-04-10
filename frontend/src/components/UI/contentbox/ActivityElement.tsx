@@ -1,51 +1,181 @@
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  Pressable,
+} from 'react-native';
 
 import {
   Activity,
   ButtonMode,
   ColorScheme,
+  Icons,
+  MajorStageStackParamList,
   MinorStage,
-  Transportation,
 } from '../../../models';
 import Button from '../Button';
-import { formatAmount, formatDateTimeString } from '../../../utils';
 import Link from '../Link';
-import { MinorStageContext } from '../../../store/minorStage-context';
-import { useContext } from 'react';
-import InfoText from '../InfoText';
+import { useState } from 'react';
+import { GlobalStyles } from '../../../constants/styles';
+import IconButton from '../IconButton';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { formatAmount, generateRandomString } from '../../../utils';
 
-// interface ActivityElementInfopointProps {
-//   subtitle: string;
-//   data: string;
-// }
+interface ActivityListElementProps {
+  activity: Activity;
+  handleEdit: (id: number) => void;
+  handleDelete: (id: number) => void;
+}
 
-// const TransportElementInfopoint: React.FC<TransportElementInfopointProps> = ({
-//   subtitle,
-//   data,
-// }) => {
-//   return (
-//     <View style={styles.innerContainer}>
-//       <Text style={styles.subtitle}>{subtitle}: </Text>
-//       <View style={styles.data}>
-//         <Text numberOfLines={1}>{data}</Text>
-//       </View>
-//     </View>
-//   );
-// };
+const ActivityListElement: React.FC<ActivityListElementProps> = ({
+  activity,
+  handleEdit,
+  handleDelete,
+}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
+  const [isOpened, setIsOpened] = useState(false);
+
+  return (
+    <View style={listElementStyles.container}>
+      <Pressable onPress={() => setIsOpened(!isOpened)}>
+        <View style={listElementStyles.row}>
+          <Text style={listElementStyles.name}>{activity.name}</Text>
+          <View style={listElementStyles.buttonsContainer}>
+            <IconButton
+              icon={
+                activity.booked ? Icons.checkmarkFilled : Icons.checkmarkOutline
+              }
+              onPress={() => {}}
+              color={GlobalStyles.colors.visited}
+              containerStyle={listElementStyles.button}
+            />
+            <IconButton
+              icon={Icons.editFilled}
+              onPress={handleEdit.bind(null, activity.id!)}
+              color={GlobalStyles.colors.edit}
+              containerStyle={listElementStyles.button}
+            />
+
+            <IconButton
+              icon={Icons.remove}
+              onPress={handleDelete.bind(null, activity.id!)}
+              color={GlobalStyles.colors.error200}
+              containerStyle={listElementStyles.button}
+            />
+          </View>
+        </View>
+        {isOpened && (
+          <View style={listElementStyles.additionalContainer}>
+            <Text style={listElementStyles.description}>
+              {activity.description}
+            </Text>
+            {activity.place && (
+              // TODO: Put extra View inside the row for better spacing
+              <View style={listElementStyles.row}>
+                <Text style={listElementStyles.subtitle}>Place:</Text>
+                <Text style={listElementStyles.description}>
+                  {activity.place}
+                </Text>
+              </View>
+            )}
+            <View style={listElementStyles.row}>
+              <Text style={listElementStyles.description}>
+                Booked: {activity.booked ? 'Yes' : 'No'}
+              </Text>
+              <Text style={listElementStyles.description}>
+                Costs: {formatAmount(activity.costs)}
+              </Text>
+            </View>
+            {activity.link && (
+              <View style={listElementStyles.row}>
+                <Text style={listElementStyles.description}>
+                  Link to the place:
+                </Text>
+                <Link
+                  link={activity.link}
+                  color={GlobalStyles.colors.visited}
+                />
+              </View>
+            )}
+            {/* subtitle: 'Costs: ', */}
+            {/* //           data: formatAmount(activity.costs), */}
+            {/* {place.maps_link && (
+              <View style={styles.row}>
+                <Text style={styles.description}>Link to Google Maps:</Text>
+                <Link
+                  link={place.maps_link}
+                  color={GlobalStyles.colors.visited}
+                  icon={Icons.location}
+                />
+              </View>
+            )} */}
+          </View>
+        )}
+      </Pressable>
+    </View>
+  );
+};
+
+const listElementStyles = StyleSheet.create({
+  container: {
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    marginVertical: 5,
+    backgroundColor: GlobalStyles.colors.gray500,
+    borderRadius: 16,
+  },
+  name: {
+    color: GlobalStyles.colors.gray50,
+    fontSize: 16,
+    maxWidth: '65%',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 8,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginHorizontal: 4,
+  },
+  button: {
+    marginHorizontal: 0,
+    paddingHorizontal: 4,
+  },
+  additionalContainer: {
+    marginHorizontal: 8,
+    paddingBottom: 8,
+  },
+  subtitle: {
+    color: GlobalStyles.colors.gray200,
+    fontWeight: 'bold',
+  },
+  description: {
+    color: GlobalStyles.colors.gray200,
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+});
 
 interface ActivityElementProps {
   minorStage: MinorStage;
   handleAdd: () => void;
   handleEdit: (id: number) => void;
+  handleDelete: (id: number) => void;
 }
 
 const ActivityElement: React.FC<ActivityElementProps> = ({
   minorStage,
   handleAdd,
   handleEdit,
+  handleDelete,
 }) => {
-  // const minorStageCtx = useContext(MinorStageContext);
-
   const screenHeight = Dimensions.get('window').height;
 
   return (
@@ -57,14 +187,12 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
       ) : (
         <ScrollView style={{ maxHeight: screenHeight / 3 }}>
           {minorStage.activities!.map((activity) => (
-            // <PlacesListItem
-            //   place={place}
-            //   key={generateRandomString()}
-            //   onToggleFavorite={handleToggleFavourite}
-            //   onToggleVisited={handleToggleVisited}
-            //   onRemovePlace={handleDelete}
-            // />
-            <Text>{activity.name}</Text>
+            <ActivityListElement
+              activity={activity}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              key={generateRandomString()}
+            />
           ))}
         </ScrollView>
       )}

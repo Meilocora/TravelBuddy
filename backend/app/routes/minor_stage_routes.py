@@ -64,7 +64,7 @@ def get_minor_stages(current_user, majorStageId):
                 minor_stage_data['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
             
             if activities is not None:
-                minor_stage_data['activities'] = [{'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
+                minor_stage_data['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
             
             if places_to_visit is not None:
                 minor_stage_data['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
@@ -261,7 +261,7 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
             response_minor_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
             
         if activities is not None:
-            response_minor_stage['activities'] = [{'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
+            response_minor_stage['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
             
         if places_to_visit is not None:
                 response_minor_stage['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]

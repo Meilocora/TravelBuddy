@@ -6,7 +6,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Activity, Icons, MajorStageStackParamList } from '../../../models';
 import { RouteProp } from '@react-navigation/native';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
@@ -15,6 +15,10 @@ import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import IconButton from '../../../components/UI/IconButton';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import ActivityForm from '../../../components/MinorStage/ManageActivity/ActivityForm';
+import { MajorStageContext } from '../../../store/majorStage-context.';
+import { JourneyContext } from '../../../store/journey-context';
+import { deleteActivity } from '../../../utils/http';
 
 interface ManageActivityProps {
   navigation: NativeStackNavigationProp<
@@ -28,6 +32,7 @@ interface ConfirmHandlerProps {
   error?: string;
   status: number;
   activity?: Activity;
+  journeyId?: number;
 }
 
 const ManageActivity: React.FC<ManageActivityProps> = ({
@@ -37,6 +42,8 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const minorStageCtx = useContext(MinorStageContext);
+  const majorStageCtx = useContext(MajorStageContext);
+  const journeyCtx = useContext(JourneyContext);
 
   const { minorStageId, activityId } = route.params;
   const isEditing = !!activityId;
@@ -48,6 +55,9 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
       .find((minorStage) => minorStage.id === minorStageId)!
       .activities!.find((activity) => activity.id === activityId);
   }
+
+  console.log(activityId);
+  console.log(selectedActivity);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -80,28 +90,23 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
   }, [selectedActivity]);
 
   async function deleteHandler() {
-    //     try {
-    //       const { error, status } = await deleteMinorStage(editedMinorStageId!);
-    //       if (!error && status === 200) {
-    //         minorStageCtx.deleteMinorStage(editedMinorStageId!);
-    //         // Refetch Journeys and MajorStages in case the costs have changed
-    //         await majorStageCtx.refetchMajorStages(journeyId);
-    //         await journeyCtx.refetchJourneys();
-    //         const popupText = `Minor Stage successfully deleted!`;
-    //         navigation.navigate('MinorStages', {
-    //           journeyId: journeyId,
-    //           majorStageId: majorStageId,
-    //           popupText: popupText,
-    //         });
-    //       } else {
-    //         setError(error!);
-    //         return;
-    //       }
-    //     } catch (error) {
-    //       setError('Could not delete major stage!');
-    //     }
-    //     setIsDeleting(false);
-    //     return;
+    try {
+      const { error, status, backendJourneyId } = await deleteActivity(
+        activityId!
+      );
+      if (!error && status === 200) {
+        await minorStageCtx.refetchMinorStages(minorStageId);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(backendJourneyId!);
+        await journeyCtx.refetchJourneys();
+        navigation.goBack();
+      } else {
+        setError(error!);
+        return;
+      }
+    } catch (error) {
+      setError('Could not delete major stage!');
+    }
   }
 
   function resetValues() {
@@ -115,62 +120,58 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
     });
   }
 
-  // async function confirmHandler({
-  //   status,
-  //   error,
-  //   minorStage,
-  // }: ConfirmHandlerProps) {
-  //   if (isEditing) {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (minorStage && status === 200) {
-  //       await minorStageCtx.refetchMinorStages(editedMinorStageId!);
-  //       // Refetch Journeys and MajorStages in case the costs have changed
-  //       await majorStageCtx.refetchMajorStages(journeyId);
-  //       await journeyCtx.refetchJourneys();
-  //       const popupText = `"${minorStage.title}" successfully updated!`;
-  //       navigation.navigate('MinorStages', {
-  //         journeyId: journeyId,
-  //         majorStageId: majorStageId,
-  //         popupText: popupText,
-  //       });
-  //       resetValues();
-  //     }
-  //   } else {
-  //     if (error) {
-  //       setError(error);
-  //       return;
-  //     } else if (minorStage && status === 201) {
-  //       await minorStageCtx.refetchMinorStages(editedMinorStageId!);
-  //       // Refetch Journeys and MajorStages in case the costs have changed
-  //       await majorStageCtx.refetchMajorStages(journeyId);
-  //       await journeyCtx.refetchJourneys();
-  //       const popupText = `"${minorStage.title}" successfully created!`;
-  //       navigation.navigate('MinorStages', {
-  //         journeyId: journeyId,
-  //         majorStageId: majorStageId,
-  //         popupText: popupText,
-  //       });
-  //       resetValues();
-  //     }
-  //   }
-  // }
+  async function confirmHandler({
+    status,
+    error,
+    activity,
+    journeyId,
+  }: ConfirmHandlerProps) {
+    if (isEditing) {
+      if (error) {
+        setError(error);
+        return;
+      } else if (activity && status === 200) {
+        // TODO: Something didnt work => user is not sent back after updating
+        await minorStageCtx.refetchMinorStages(minorStageId);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(journeyId!);
+        await journeyCtx.refetchJourneys();
+        navigation.goBack();
+        resetValues();
+      }
+    } else {
+      if (error) {
+        setError(error);
+        return;
+      } else if (activity && status === 201) {
+        await minorStageCtx.refetchMinorStages(minorStageId);
+        // Refetch Journeys and MajorStages in case the costs have changed
+        await majorStageCtx.refetchMajorStages(journeyId!);
+        await journeyCtx.refetchJourneys();
+        navigation.goBack();
+        resetValues();
+      }
+    }
+  }
+
+  function cancelHandler() {
+    navigation.goBack();
+  }
 
   return (
     <View style={styles.root}>
       <ComplementaryGradient />
       {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
       <Animated.ScrollView entering={FadeInDown} nestedScrollEnabled={true}>
-        {/* <MinorStageForm
+        <ActivityForm
+          minorStageId={minorStageId}
           onCancel={cancelHandler}
           onSubmit={confirmHandler}
-          submitButtonLabel={isEditing ? 'Update' : 'Create'}
-          defaultValues={isEditing ? minorStageValues : undefined}
+          submitButtonLabel={isEditing ? 'Update' : 'Add'}
+          defaultValues={isEditing ? activityValues : undefined}
+          editActivityId={activityId}
           isEditing={isEditing}
-          majorStageId={majorStageId}
-          editMinorStageId={editedMinorStageId}
-        /> */}
+        />
         {isEditing && (
           <View style={styles.btnContainer}>
             <IconButton

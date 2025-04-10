@@ -77,6 +77,11 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   }
 
+  async function handleDeleteActivity(id: number) {
+    await minorStageCtx.deleteActivity(id, minorStage.id);
+    await minorStageCtx.refetchMinorStages(minorStage.id);
+  }
+
   let content: Content[] = [
     {
       title: 'transport',
@@ -105,6 +110,7 @@ const MainContent: React.FC<MainContentProps> = ({
           minorStage={minorStage}
           handleAdd={handleAddActivity}
           handleEdit={handleEditActivity}
+          handleDelete={handleDeleteActivity}
         />
       ),
     },
@@ -112,43 +118,6 @@ const MainContent: React.FC<MainContentProps> = ({
 
   // TODO: Implement activities handling
   // TODO: Implement spendings handling
-
-  // if (minorStage.activities && minorStage.activities!.length > 0) {
-  //   content.push({
-  //     title: 'activities',
-  //     contents: minorStage
-  //       .activities!.map((activity) => [
-  //         {
-  //           subtitle: `${activity.name}: `,
-  //           data: activity.description,
-  //           link: activity.link,
-  //         },
-  //         {
-  //           subtitle: 'Place: ',
-  //           data: activity.place,
-  //         },
-  //         {
-  //           subtitle: 'Booked? ',
-  //           data: activity.booked ? 'Yes' : 'Not yet',
-  //         },
-  //         {
-  //           subtitle: 'Costs: ',
-  //           data: formatAmount(activity.costs),
-  //         },
-  //       ])
-  //       .flat(),
-  //   });
-  // } else {
-  //   content.push({
-  //     title: 'activities',
-  //     contents: [
-  //       {
-  //         subtitle: 'No activities planned yet.',
-  //         data: '',
-  //       },
-  //     ],
-  //   });
-  // }
 
   // if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {
   //   content.push({
