@@ -26,10 +26,12 @@ export type MajorStageStackParamList = {
     popupText?: string;
   };
   ManageActivity: {
+    majorStageId: number;
     minorStageId: number;
     activityId?: number;
   };
   ManageSpending: {
+    majorStageId: number;
     minorStageId: number;
     spendingId?: number;
   };

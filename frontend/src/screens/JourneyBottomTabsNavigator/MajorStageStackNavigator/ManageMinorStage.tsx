@@ -176,7 +176,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 200) {
-        await minorStageCtx.refetchMinorStages(editedMinorStageId!);
+        await minorStageCtx.refetchMinorStages(majorStageId);
         // Refetch Journeys and MajorStages in case the costs have changed
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
@@ -193,7 +193,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 201) {
-        await minorStageCtx.refetchMinorStages(editedMinorStageId!);
+        await minorStageCtx.refetchMinorStages(majorStageId);
         // Refetch Journeys and MajorStages in case the costs have changed
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();

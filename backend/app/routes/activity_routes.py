@@ -95,7 +95,7 @@ def update_activity(current_user, minorStageId, activityId):
                                     'link': new_activity['link']['value'],
                                     'booked': new_activity['booked']['value']}
 
-        return jsonify({'activity': response_activity, 'backendJourneyId': journey.id, 'status': 201})
+        return jsonify({'activity': response_activity, 'backendJourneyId': journey.id, 'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
 

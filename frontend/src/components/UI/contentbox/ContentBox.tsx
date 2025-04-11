@@ -9,6 +9,7 @@ import { generateRandomString } from '../../../utils/generator';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
+  majorStageId: number;
   journeyId: number;
   contentState: { activeHeader: string };
   setContentState: React.Dispatch<
@@ -18,6 +19,7 @@ interface ContenBoxProps {
 
 const ContentBox: React.FC<ContenBoxProps> = ({
   journeyId,
+  majorStageId,
   minorStage,
   contentState,
   setContentState,
@@ -53,6 +55,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
       </View>
       <MainContent
         journeyId={journeyId}
+        majorStageId={majorStageId}
         minorStage={minorStage}
         contentState={contentState}
       />

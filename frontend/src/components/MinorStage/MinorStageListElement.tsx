@@ -125,6 +125,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       <DetailArea elementDetailInfo={elementDetailInfo} />
       <ContentBox
         journeyId={journeyId}
+        majorStageId={majorStageId}
         minorStage={minorStage}
         contentState={contentState}
         setContentState={setContentState}

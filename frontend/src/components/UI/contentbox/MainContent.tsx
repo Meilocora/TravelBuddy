@@ -8,6 +8,7 @@ import TransportationElement from './TransportationElement';
 import PlacesElement from './PlacesElement';
 import {
   addMinorStageToFavoritePlace,
+  deleteActivity,
   removeMinorStageFromFavoritePlace,
 } from '../../../utils/http';
 import { MinorStageContext } from '../../../store/minorStage-context';
@@ -15,6 +16,7 @@ import ActivityElement from './ActivityElement';
 
 interface MainContentProps {
   journeyId: number;
+  majorStageId: number;
   minorStage: MinorStage;
   contentState: { activeHeader: string };
 }
@@ -32,6 +34,7 @@ interface Content {
 
 const MainContent: React.FC<MainContentProps> = ({
   journeyId,
+  majorStageId,
   minorStage,
   contentState,
 }): ReactElement => {
@@ -56,17 +59,18 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleAddPlace(name: string) {
     await addMinorStageToFavoritePlace(name, minorStage.id);
-    await minorStageCtx.refetchMinorStages(minorStage.id);
+    await minorStageCtx.refetchMinorStages(majorStageId);
   }
 
   async function handleRemovePlace(name: string) {
     await removeMinorStageFromFavoritePlace(name);
-    await minorStageCtx.refetchMinorStages(minorStage.id);
+    await minorStageCtx.refetchMinorStages(majorStageId);
   }
 
   function handleAddActivity() {
     navigation.navigate('ManageActivity', {
       minorStageId: minorStage.id,
+      majorStageId: majorStageId,
     });
   }
 
@@ -74,12 +78,13 @@ const MainContent: React.FC<MainContentProps> = ({
     navigation.navigate('ManageActivity', {
       minorStageId: minorStage.id,
       activityId: id,
+      majorStageId: majorStageId,
     });
   }
 
   async function handleDeleteActivity(id: number) {
-    await minorStageCtx.deleteActivity(id, minorStage.id);
-    await minorStageCtx.refetchMinorStages(minorStage.id);
+    await deleteActivity(id);
+    await minorStageCtx.refetchMinorStages(majorStageId);
   }
 
   let content: Content[] = [
@@ -116,7 +121,6 @@ const MainContent: React.FC<MainContentProps> = ({
     },
   ];
 
-  // TODO: Implement activities handling
   // TODO: Implement spendings handling
 
   // if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {

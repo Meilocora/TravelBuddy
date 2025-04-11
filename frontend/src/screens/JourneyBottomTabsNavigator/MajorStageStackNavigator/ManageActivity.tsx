@@ -32,7 +32,7 @@ interface ConfirmHandlerProps {
   error?: string;
   status: number;
   activity?: Activity;
-  journeyId?: number;
+  backendJourneyId?: number;
 }
 
 const ManageActivity: React.FC<ManageActivityProps> = ({
@@ -45,7 +45,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
   const majorStageCtx = useContext(MajorStageContext);
   const journeyCtx = useContext(JourneyContext);
 
-  const { minorStageId, activityId } = route.params;
+  const { minorStageId, activityId, majorStageId } = route.params;
   const isEditing = !!activityId;
 
   let selectedActivity: Activity | undefined;
@@ -55,9 +55,6 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
       .find((minorStage) => minorStage.id === minorStageId)!
       .activities!.find((activity) => activity.id === activityId);
   }
-
-  console.log(activityId);
-  console.log(selectedActivity);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -124,17 +121,16 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
     status,
     error,
     activity,
-    journeyId,
+    backendJourneyId,
   }: ConfirmHandlerProps) {
     if (isEditing) {
       if (error) {
         setError(error);
         return;
       } else if (activity && status === 200) {
-        // TODO: Something didnt work => user is not sent back after updating
-        await minorStageCtx.refetchMinorStages(minorStageId);
+        await minorStageCtx.refetchMinorStages(majorStageId);
         // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(journeyId!);
+        await majorStageCtx.refetchMajorStages(backendJourneyId!);
         await journeyCtx.refetchJourneys();
         navigation.goBack();
         resetValues();
@@ -144,9 +140,9 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
         setError(error);
         return;
       } else if (activity && status === 201) {
-        await minorStageCtx.refetchMinorStages(minorStageId);
+        await minorStageCtx.refetchMinorStages(majorStageId);
         // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(journeyId!);
+        await majorStageCtx.refetchMajorStages(backendJourneyId!);
         await journeyCtx.refetchJourneys();
         navigation.goBack();
         resetValues();

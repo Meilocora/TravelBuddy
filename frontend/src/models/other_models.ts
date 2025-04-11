@@ -3,10 +3,10 @@ export interface Costs {
   budget: number;
   spent_money: number;
   money_exceeded: boolean;
-  spendings: Spendings[] | null;
+  spendings: Spending[] | null;
 }
 
-export interface Spendings {
+export interface Spending {
   id: number;
   name: string;
   amount: number;

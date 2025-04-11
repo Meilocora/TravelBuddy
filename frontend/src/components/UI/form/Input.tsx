@@ -34,6 +34,9 @@ const Input: React.FC<InputProps> = ({
 }): ReactElement => {
   const inputStyles: StyleProp<TextStyle>[] = [styles.input];
 
+  // this boolean is used later to give not multiline inputs tha numberOfLines={1} prop
+  const isMultiline = textInputConfig?.multiline || false;
+
   if (textInputConfig && textInputConfig.multiline) {
     inputStyles.push(styles.inputMultiline);
   }
@@ -49,23 +52,34 @@ const Input: React.FC<InputProps> = ({
     textInputConfig.value = '';
   }
 
-  // TODO: Prevent field from getting larger when the input gets too long
-
   return (
     <Animated.View style={[styles.inputContainer, style]}>
       <Text style={[styles.label, invalid && styles.invalidLabel]}>
         {label}
         {mandatory && ' *'}
       </Text>
-      <TextInput
-        style={inputStyles}
-        readOnly={!isEditing}
-        autoCorrect={false}
-        autoCapitalize='none'
-        autoComplete='off'
-        {...textInputConfig}
-        selectionColor='white'
-      />
+      {isMultiline ? (
+        <TextInput
+          style={inputStyles}
+          readOnly={!isEditing}
+          autoCorrect={false}
+          autoCapitalize='none'
+          autoComplete='off'
+          {...textInputConfig}
+          selectionColor='white'
+        />
+      ) : (
+        <TextInput
+          style={inputStyles}
+          readOnly={!isEditing}
+          autoCorrect={false}
+          autoCapitalize='none'
+          autoComplete='off'
+          numberOfLines={1}
+          {...textInputConfig}
+          selectionColor='white'
+        />
+      )}
       {errors &&
         errors.map((error, index) => (
           <Animated.Text

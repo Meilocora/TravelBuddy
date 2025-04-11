@@ -42,17 +42,9 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
   return (
     <View style={listElementStyles.container}>
       <Pressable onPress={() => setIsOpened(!isOpened)}>
-        <View style={listElementStyles.row}>
+        <View style={listElementStyles.mainRow}>
           <Text style={listElementStyles.name}>{activity.name}</Text>
           <View style={listElementStyles.buttonsContainer}>
-            <IconButton
-              icon={
-                activity.booked ? Icons.checkmarkFilled : Icons.checkmarkOutline
-              }
-              onPress={() => {}}
-              color={GlobalStyles.colors.visited}
-              containerStyle={listElementStyles.button}
-            />
             <IconButton
               icon={Icons.editFilled}
               onPress={handleEdit.bind(null, activity.id!)}
@@ -74,35 +66,46 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
               {activity.description}
             </Text>
             {activity.place && (
-              // TODO: Put extra View inside the row for better spacing
               <View style={listElementStyles.row}>
-                <Text style={listElementStyles.subtitle}>Place:</Text>
-                <Text style={listElementStyles.description}>
-                  {activity.place}
-                </Text>
+                <View style={listElementStyles.rowElement}>
+                  <Text style={listElementStyles.subtitle}>Place: </Text>
+                  <Text
+                    style={listElementStyles.description}
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  >
+                    {activity.place}
+                  </Text>
+                </View>
+                <View style={listElementStyles.rowElement}>
+                  <Text style={listElementStyles.subtitle}>Costs: </Text>
+                  <Text
+                    style={listElementStyles.description}
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  >
+                    {formatAmount(activity.costs)}
+                  </Text>
+                </View>
               </View>
             )}
             <View style={listElementStyles.row}>
-              <Text style={listElementStyles.description}>
-                Booked: {activity.booked ? 'Yes' : 'No'}
-              </Text>
-              <Text style={listElementStyles.description}>
-                Costs: {formatAmount(activity.costs)}
-              </Text>
-            </View>
-            {activity.link && (
-              <View style={listElementStyles.row}>
+              <View style={listElementStyles.rowElement}>
+                <Text style={listElementStyles.subtitle}>Booked: </Text>
                 <Text style={listElementStyles.description}>
-                  Link to the place:
+                  {activity.booked ? 'Yes' : 'No'}
                 </Text>
-                <Link
-                  link={activity.link}
-                  color={GlobalStyles.colors.visited}
-                />
               </View>
-            )}
-            {/* subtitle: 'Costs: ', */}
-            {/* //           data: formatAmount(activity.costs), */}
+              {activity.link && (
+                <View style={listElementStyles.rowElement}>
+                  <Text style={listElementStyles.subtitle}>Link: </Text>
+                  <Link
+                    link={activity.link}
+                    color={GlobalStyles.colors.visited}
+                  />
+                </View>
+              )}
+            </View>
             {/* {place.maps_link && (
               <View style={styles.row}>
                 <Text style={styles.description}>Link to Google Maps:</Text>
@@ -133,11 +136,22 @@ const listElementStyles = StyleSheet.create({
     fontSize: 16,
     maxWidth: '65%',
   },
-  row: {
+  mainRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginLeft: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 8,
+  },
+  rowElement: {
+    maxWidth: '50%',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -153,10 +167,12 @@ const listElementStyles = StyleSheet.create({
     paddingBottom: 8,
   },
   subtitle: {
+    marginRight: 2,
     color: GlobalStyles.colors.gray200,
     fontWeight: 'bold',
   },
   description: {
+    marginVertical: 2,
     color: GlobalStyles.colors.gray200,
     fontSize: 14,
     fontStyle: 'italic',
