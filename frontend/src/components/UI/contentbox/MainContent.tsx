@@ -13,6 +13,8 @@ import {
 } from '../../../utils/http';
 import { MinorStageContext } from '../../../store/minorStage-context';
 import ActivityElement from './ActivityElement';
+import SpendingElement from './SpendingElement';
+import { deleteSpending } from '../../../utils/http/spending';
 
 interface MainContentProps {
   journeyId: number;
@@ -87,6 +89,26 @@ const MainContent: React.FC<MainContentProps> = ({
     await minorStageCtx.refetchMinorStages(majorStageId);
   }
 
+  function handleAddSpending() {
+    navigation.navigate('ManageSpending', {
+      minorStageId: minorStage.id,
+      majorStageId: majorStageId,
+    });
+  }
+
+  function handleEditSpending(id: number) {
+    navigation.navigate('ManageSpending', {
+      minorStageId: minorStage.id,
+      spendingId: id,
+      majorStageId: majorStageId,
+    });
+  }
+
+  async function handleDeleteSpending(id: number) {
+    await deleteSpending(id);
+    await minorStageCtx.refetchMinorStages(majorStageId);
+  }
+
   let content: Content[] = [
     {
       title: 'transport',
@@ -119,31 +141,18 @@ const MainContent: React.FC<MainContentProps> = ({
         />
       ),
     },
+    {
+      title: 'spendings',
+      element: (
+        <SpendingElement
+          minorStage={minorStage}
+          handleAdd={handleAddSpending}
+          handleEdit={handleEditSpending}
+          handleDelete={handleDeleteSpending}
+        />
+      ),
+    },
   ];
-
-  // TODO: Implement spendings handling
-
-  // if (minorStage.costs.spendings && minorStage.costs.spendings!.length > 0) {
-  //   content.push({
-  //     title: 'spendings',
-  //     contents: minorStage.costs.spendings!.map((spending) => {
-  //       return {
-  //         subtitle: `${spending.name}: `,
-  //         data: formatAmount(spending.amount),
-  //       };
-  //     }),
-  //   });
-  // } else {
-  //   content.push({
-  //     title: 'spendings',
-  //     contents: [
-  //       {
-  //         subtitle: 'No spendings found.',
-  //         data: '',
-  //       },
-  //     ],
-  //   });
-  // }
 
   const displayedContent = content.find(
     (content) => content.title === contentState.activeHeader

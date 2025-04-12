@@ -74,7 +74,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
     link: selectedActivity?.link || '',
   });
 
-  // Redefine minorStageValues, when selectedActivity changes
+  // Redefine activityValues, when selectedActivity changes
   useEffect(() => {
     setActivityValues({
       name: selectedActivity?.name || '',
@@ -102,7 +102,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
         return;
       }
     } catch (error) {
-      setError('Could not delete major stage!');
+      setError('Could not delete activity!');
     }
   }
 

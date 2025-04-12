@@ -14,6 +14,7 @@ import {
   Icons,
   MajorStageStackParamList,
   MinorStage,
+  Spending,
 } from '../../../models';
 import Button from '../Button';
 import Link from '../Link';
@@ -24,160 +25,82 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { formatAmount, generateRandomString } from '../../../utils';
 
-// interface ActivityListElementProps {
-//   activity: Activity;
-//   handleEdit: (id: number) => void;
-//   handleDelete: (id: number) => void;
-// }
+interface SpendingListElementProps {
+  spending: Spending;
+  handleEdit: (id: number) => void;
+  handleDelete: (id: number) => void;
+}
 
-// const ActivityListElement: React.FC<ActivityListElementProps> = ({
-//   activity,
-//   handleEdit,
-//   handleDelete,
-// }) => {
-//   const navigation =
-//     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
-//   const [isOpened, setIsOpened] = useState(false);
+const SpendingListElement: React.FC<SpendingListElementProps> = ({
+  spending,
+  handleEdit,
+  handleDelete,
+}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
+  const [isOpened, setIsOpened] = useState(false);
 
-//   return (
-//     <View style={listElementStyles.container}>
-//       <Pressable onPress={() => setIsOpened(!isOpened)}>
-//         <View style={listElementStyles.mainRow}>
-//           <Text style={listElementStyles.name}>{activity.name}</Text>
-//           <View style={listElementStyles.buttonsContainer}>
-//             <IconButton
-//               icon={Icons.editFilled}
-//               onPress={handleEdit.bind(null, activity.id!)}
-//               color={GlobalStyles.colors.edit}
-//               containerStyle={listElementStyles.button}
-//             />
+  const tableHeaders = ['Name', 'Category', 'Amount', 'Date'];
 
-//             <IconButton
-//               icon={Icons.remove}
-//               onPress={handleDelete.bind(null, activity.id!)}
-//               color={GlobalStyles.colors.error200}
-//               containerStyle={listElementStyles.button}
-//             />
-//           </View>
-//         </View>
-//         {isOpened && (
-//           <View style={listElementStyles.additionalContainer}>
-//             <Text style={listElementStyles.description}>
-//               {activity.description}
-//             </Text>
-//             {activity.place && (
-//               <View style={listElementStyles.row}>
-//                 <View style={listElementStyles.rowElement}>
-//                   <Text style={listElementStyles.subtitle}>Place: </Text>
-//                   <Text
-//                     style={listElementStyles.description}
-//                     ellipsizeMode='tail'
-//                     numberOfLines={1}
-//                   >
-//                     {activity.place}
-//                   </Text>
-//                 </View>
-//                 <View style={listElementStyles.rowElement}>
-//                   <Text style={listElementStyles.subtitle}>Costs: </Text>
-//                   <Text
-//                     style={listElementStyles.description}
-//                     ellipsizeMode='tail'
-//                     numberOfLines={1}
-//                   >
-//                     {formatAmount(activity.costs)}
-//                   </Text>
-//                 </View>
-//               </View>
-//             )}
-//             <View style={listElementStyles.row}>
-//               <View style={listElementStyles.rowElement}>
-//                 <Text style={listElementStyles.subtitle}>Booked: </Text>
-//                 <Text style={listElementStyles.description}>
-//                   {activity.booked ? 'Yes' : 'No'}
-//                 </Text>
-//               </View>
-//               {activity.link && (
-//                 <View style={listElementStyles.rowElement}>
-//                   <Text style={listElementStyles.subtitle}>Link: </Text>
-//                   <Link
-//                     link={activity.link}
-//                     color={GlobalStyles.colors.visited}
-//                   />
-//                 </View>
-//               )}
-//             </View>
-//             {/* {place.maps_link && (
-//               <View style={styles.row}>
-//                 <Text style={styles.description}>Link to Google Maps:</Text>
-//                 <Link
-//                   link={place.maps_link}
-//                   color={GlobalStyles.colors.visited}
-//                   icon={Icons.location}
-//                 />
-//               </View>
-//             )} */}
-//           </View>
-//         )}
-//       </Pressable>
-//     </View>
-//   );
-// };
+  // TODO: Add Actions, when user taps on the spending with big modal
 
-// const listElementStyles = StyleSheet.create({
-//   container: {
-//     paddingVertical: 2,
-//     paddingHorizontal: 4,
-//     marginVertical: 5,
-//     backgroundColor: GlobalStyles.colors.gray500,
-//     borderRadius: 16,
-//   },
-//   name: {
-//     color: GlobalStyles.colors.gray50,
-//     fontSize: 16,
-//     maxWidth: '65%',
-//   },
-//   mainRow: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     marginLeft: 8,
-//   },
-//   row: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     marginHorizontal: 8,
-//   },
-//   rowElement: {
-//     maxWidth: '50%',
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   buttonsContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'flex-end',
-//     marginHorizontal: 4,
-//   },
-//   button: {
-//     marginHorizontal: 0,
-//     paddingHorizontal: 4,
-//   },
-//   additionalContainer: {
-//     marginHorizontal: 8,
-//     paddingBottom: 8,
-//   },
-//   subtitle: {
-//     marginRight: 2,
-//     color: GlobalStyles.colors.gray200,
-//     fontWeight: 'bold',
-//   },
-//   description: {
-//     marginVertical: 2,
-//     color: GlobalStyles.colors.gray200,
-//     fontSize: 14,
-//     fontStyle: 'italic',
-//   },
-// });
+  return (
+    <ScrollView style={listElementStyles.container}>
+      <View style={[listElementStyles.row, listElementStyles.firstRow]}>
+        {tableHeaders.map((header) => (
+          <View
+            style={listElementStyles.rowElement}
+            key={generateRandomString()}
+          >
+            <Text style={listElementStyles.headerText}>{header}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* <View style={listElementStyles.rowElement}>
+                  <Text style={listElementStyles.subtitle}>Costs: </Text>
+                  <Text
+                    style={listElementStyles.description}
+                    ellipsizeMode='tail'
+                    numberOfLines={1}
+                  >
+                    {formatAmount(activity.costs)}
+                  </Text>
+                </View> */}
+    </ScrollView>
+  );
+};
+
+const listElementStyles = StyleSheet.create({
+  container: {
+    marginVertical: 5,
+    maxHeight: 300,
+  },
+  row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  firstRow: {
+    backgroundColor: GlobalStyles.colors.gray500,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  rowElement: {
+    flexBasis: '25%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // borderBottomWidth: 3,
+    // borderBottomColor: GlobalStyles.colors.complementary200,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    // paddingHorizontal: 10,
+    paddingVertical: 5,
+    color: GlobalStyles.colors.gray200,
+  },
+});
 
 interface SpendingElementProps {
   minorStage: MinorStage;
@@ -196,22 +119,22 @@ const SpendingElement: React.FC<SpendingElementProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* {minorStage.activities!.length === 0 ? (
+      {minorStage.costs.spendings!.length === 0 ? (
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>No activities selected</Text>
+          <Text style={styles.infoText}>No spendings found</Text>
         </View>
       ) : (
         <ScrollView style={{ maxHeight: screenHeight / 3 }}>
-          {minorStage.activities!.map((activity) => (
-             <ActivityListElement
-               activity={activity}
-               handleEdit={handleEdit}
-               handleDelete={handleDelete}
-               key={generateRandomString()}
-             />
+          {minorStage.costs.spendings!.map((spending) => (
+            <SpendingListElement
+              spending={spending}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              key={generateRandomString()}
+            />
           ))}
         </ScrollView>
-      )} */}
+      )}
       <View style={styles.buttonContainer}>
         <Button
           onPress={handleAdd}

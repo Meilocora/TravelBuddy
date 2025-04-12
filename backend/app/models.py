@@ -103,7 +103,7 @@ class MajorStage(db.Model):
     country: Mapped[str] = mapped_column(String, nullable=False)
 
     # Define relationships to children
-    costs: Mapped[list['Costs']] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='major_stage', cascade='all, delete-orphan')
     transportations: Mapped['Transportation'] = relationship('Transportation', back_populates='major_stage', cascade='all, delete-orphan')
     minor_stages: Mapped[list['MinorStage']] = relationship('MinorStage', back_populates='major_stage', cascade='all, delete-orphan')
 
@@ -124,7 +124,7 @@ class MinorStage(db.Model):
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Define relationships to children
-    costs: Mapped[list['Costs']] = relationship('Costs', back_populates='minor_stage', cascade='all, delete-orphan')
+    costs: Mapped['Costs'] = relationship('Costs', back_populates='minor_stage', cascade='all, delete-orphan')
     transportations: Mapped['Transportation'] = relationship('Transportation', back_populates='minor_stage', cascade='all, delete-orphan')
     accommodations: Mapped[list['Accommodation']] = relationship('Accommodation', back_populates='minor_stage', cascade='all, delete-orphan')
     activities: Mapped[list['Activity']] = relationship('Activity', back_populates='minor_stage', cascade='all, delete-orphan')

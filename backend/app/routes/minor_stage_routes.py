@@ -61,7 +61,7 @@ def get_minor_stages(current_user, majorStageId):
                 }
                 
             if spendings is not None:
-                minor_stage_data['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
+                minor_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
                         
             if activities is not None:
                 minor_stage_data['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]

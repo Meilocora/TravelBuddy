@@ -198,7 +198,7 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
     <View style={styles.container}>
       {minorStage.activities!.length === 0 ? (
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>No activities selected</Text>
+          <Text style={styles.infoText}>No activities found.</Text>
         </View>
       ) : (
         <ScrollView style={{ maxHeight: screenHeight / 3 }}>

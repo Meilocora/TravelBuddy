@@ -38,7 +38,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
   if (transportation === undefined) {
     return (
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>No transportation data available.</Text>
+        <Text style={styles.infoText}>No transportation found.</Text>
         <Button
           onPress={handleAdd}
           colorScheme={ColorScheme.complementary}

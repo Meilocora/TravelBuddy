@@ -47,7 +47,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     (minorStage) => minorStage.id === minorStageId
   );
 
-  const maxAvailableMoney = Math.min(
+  const maxAvailableMoney = Math.max(
     minorStage!.costs.budget - minorStage!.costs.spent_money,
     0
   );
@@ -221,7 +221,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 onChangeText: inputChangedHandler.bind(this, 'costs'),
                 placeholder:
                   maxAvailableMoney > 0
-                    ? `Max: ${formatAmount(maxAvailableMoney)}`
+                    ? `Remaining: ${formatAmount(maxAvailableMoney)}`
                     : '',
               }}
             />

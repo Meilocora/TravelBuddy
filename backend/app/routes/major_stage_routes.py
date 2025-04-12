@@ -56,8 +56,9 @@ def get_major_stages(current_user, journeyId):
                     'link': transportation.link,
                 }
             
+            # TODO: Maybe allow spendings for majorStages aswell?
             if spendings is not None:
-                major_stage_data['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
+                major_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
             
             if minorStages is not None:
                 major_stage_data['minorStagesIds'] = [minorStage.id for minorStage in minorStages]

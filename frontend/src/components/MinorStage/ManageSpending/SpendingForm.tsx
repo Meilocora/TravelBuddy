@@ -1,24 +1,24 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Checkbox } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
 
 import {
-  Activity,
-  ActivityFormValues,
   ButtonMode,
   ColorScheme,
   Spending,
+  SpendingFormValues,
 } from '../../../models';
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
-import { formatAmount } from '../../../utils';
+import { formatAmount, formatDate, parseDate } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
-import { createActivity, updateActivity } from '../../../utils/http';
+import { createSpending, updateSpending } from '../../../utils/http/spending';
+import DatePicker from '../../UI/form/DatePicker';
+import SpendingCategorySelector from './SpendingCategorySelector';
 
 type InputValidationResponse = {
   spending?: Spending;
-  activityFormValues?: ActivityFormValues;
+  spendingFormValues?: SpendingFormValues;
   backendJourneyId?: number;
   error?: string;
   status: number;
@@ -28,9 +28,9 @@ interface SpendingFormProps {
   onCancel: () => void;
   onSubmit: (response: InputValidationResponse) => void;
   submitButtonLabel: string;
-  defaultValues?: Activity;
+  defaultValues?: Spending;
   isEditing?: boolean;
-  editActivityId?: number;
+  editSpendingId?: number;
   minorStageId: number;
 }
 
@@ -40,45 +40,39 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   submitButtonLabel,
   defaultValues,
   isEditing,
-  editActivityId,
+  editSpendingId,
   minorStageId,
 }): ReactElement => {
+  const [openDatePicker, setOpenDatePicker] = useState(false);
   const minorStageCtx = useContext(MinorStageContext);
   const minorStage = minorStageCtx.minorStages.find(
     (minorStage) => minorStage.id === minorStageId
   );
 
-  const maxAvailableMoney = Math.min(
+  const minStartDate = minorStage!.scheduled_start_time;
+  const maxEndDate = minorStage!.scheduled_end_time;
+
+  const maxAvailableMoney = Math.max(
     minorStage!.costs.budget - minorStage!.costs.spent_money,
     0
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [inputs, setInputs] = useState<ActivityFormValues>({
+  const [inputs, setInputs] = useState<SpendingFormValues>({
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
-    description: {
-      value: defaultValues?.description || '',
+    amount: {
+      value: defaultValues?.amount || 0,
       isValid: true,
       errors: [],
     },
-    costs: {
-      value: defaultValues?.costs || 0,
+    date: {
+      value: defaultValues?.date || '',
       isValid: true,
       errors: [],
     },
-    booked: {
-      value: defaultValues?.booked || false,
-      isValid: true,
-      errors: [],
-    },
-    place: {
-      value: defaultValues?.place || '',
-      isValid: true,
-      errors: [],
-    },
-    link: {
-      value: defaultValues?.link || '',
+    category: {
+      value: defaultValues?.category || 'Other',
       isValid: true,
       errors: [],
     },
@@ -88,28 +82,18 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   useEffect(() => {
     setInputs({
       name: { value: defaultValues?.name || '', isValid: true, errors: [] },
-      description: {
-        value: defaultValues?.description || '',
+      amount: {
+        value: defaultValues?.amount || 0,
         isValid: true,
         errors: [],
       },
-      costs: {
-        value: defaultValues?.costs || 0,
+      date: {
+        value: defaultValues?.date || '',
         isValid: true,
         errors: [],
       },
-      booked: {
-        value: defaultValues?.booked || false,
-        isValid: true,
-        errors: [],
-      },
-      place: {
-        value: defaultValues?.place || '',
-        isValid: true,
-        errors: [],
-      },
-      link: {
-        value: defaultValues?.link || '',
+      category: {
+        value: defaultValues?.category || 'Other',
         isValid: true,
         errors: [],
       },
@@ -119,11 +103,9 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   function resetValues() {
     setInputs({
       name: { value: '', isValid: true, errors: [] },
-      description: { value: '', isValid: true, errors: [] },
-      costs: { value: 0, isValid: true, errors: [] },
-      booked: { value: false, isValid: true, errors: [] },
-      place: { value: '', isValid: true, errors: [] },
-      link: { value: '', isValid: true, errors: [] },
+      amount: { value: 0, isValid: true, errors: [] },
+      date: { value: '', isValid: true, errors: [] },
+      category: { value: 'Other', isValid: true, errors: [] },
     });
   }
 
@@ -144,26 +126,26 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
 
     // Set all errors to empty array to prevent stacking of errors
     for (const key in inputs) {
-      inputs[key as keyof ActivityFormValues].errors = [];
+      inputs[key as keyof SpendingFormValues].errors = [];
     }
 
     let response: InputValidationResponse;
     if (isEditing) {
-      response = await updateActivity(inputs, editActivityId!, minorStageId);
+      response = await updateSpending(inputs, editSpendingId!, minorStageId);
     } else if (!isEditing) {
-      response = await createActivity(inputs, minorStageId);
+      response = await createSpending(inputs, minorStageId);
     }
 
-    const { error, status, activity, activityFormValues, backendJourneyId } =
+    const { error, status, spending, spendingFormValues, backendJourneyId } =
       response!;
 
     if (!error && minorStage) {
       resetValues();
-      onSubmit({ activity, status, backendJourneyId });
+      onSubmit({ spending, status, backendJourneyId });
     } else if (error) {
       onSubmit({ error, status });
-    } else if (activityFormValues) {
-      setInputs((prevValues) => activityFormValues);
+    } else if (spendingFormValues) {
+      setInputs((prevValues) => spendingFormValues);
     }
     setIsSubmitting(false);
     return;
@@ -171,6 +153,25 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
 
   if (isSubmitting) {
     const submitButtonLabel = 'Submitting...';
+  }
+
+  function handleChangeDate(
+    inputIdentifier: string,
+    selectedDate: Date | undefined
+  ) {
+    if (selectedDate === undefined) {
+      return;
+    }
+    const formattedDate = formatDate(new Date(selectedDate));
+    setInputs((prevValues) => ({
+      ...prevValues,
+      [inputIdentifier]: {
+        value: formattedDate,
+        isValid: true,
+        errors: [],
+      },
+    }));
+    setOpenDatePicker(false);
   }
 
   return (
@@ -190,62 +191,51 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
             />
           </View>
           <View style={styles.formRow}>
-            <Input
-              label='Description'
-              invalid={!inputs.description.isValid}
-              errors={inputs.description.errors}
-              textInputConfig={{
-                value: inputs.description.value,
-                multiline: true,
-                onChangeText: inputChangedHandler.bind(this, 'description'),
-              }}
+            <SpendingCategorySelector
+              onChangeSpendingCategory={inputChangedHandler.bind(
+                this,
+                'category'
+              )}
+              defaultCategory={inputs.category.value}
+              invalid={!inputs.category.isValid}
+              errors={inputs.category.errors}
             />
           </View>
           <View style={styles.formRow}>
-            <Input
-              label='Place'
-              invalid={!inputs.place.isValid}
-              errors={inputs.place.errors}
-              textInputConfig={{
-                value: inputs.place.value,
-                onChangeText: inputChangedHandler.bind(this, 'place'),
-              }}
-            />
-            <Input
-              label='Costs'
-              invalid={!inputs.costs.isValid}
-              errors={inputs.costs.errors}
-              textInputConfig={{
-                keyboardType: 'decimal-pad',
-                value:
-                  inputs.costs.value !== 0 ? inputs.costs.value.toString() : '',
-                onChangeText: inputChangedHandler.bind(this, 'costs'),
-                placeholder:
-                  maxAvailableMoney > 0
-                    ? `Max: ${formatAmount(maxAvailableMoney)}`
-                    : '',
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.link.isValid}
-              errors={inputs.link.errors}
-              textInputConfig={{
-                value: inputs.link.value,
-                onChangeText: inputChangedHandler.bind(this, 'link'),
-              }}
-            />
-            <View style={styles.checkBoxContainer}>
-              <Text style={styles.checkBoxLabel}>Booked?</Text>
-              <Checkbox
-                status={inputs.booked.value ? 'checked' : 'unchecked'}
-                onPress={() =>
-                  inputChangedHandler('booked', !inputs.booked.value)
+            <View style={styles.rowElement}>
+              <Input
+                label='Amount'
+                invalid={!inputs.amount.isValid}
+                errors={inputs.amount.errors}
+                mandatory
+                textInputConfig={{
+                  keyboardType: 'decimal-pad',
+                  value:
+                    inputs.amount.value !== 0
+                      ? inputs.amount.value.toString()
+                      : '',
+                  onChangeText: inputChangedHandler.bind(this, 'amount'),
+                  placeholder:
+                    maxAvailableMoney > 0
+                      ? `Remaining: ${formatAmount(maxAvailableMoney)}`
+                      : '',
+                }}
+              />
+            </View>
+            <View style={styles.rowElement}>
+              <DatePicker
+                openDatePicker={openDatePicker}
+                setOpenDatePicker={() =>
+                  setOpenDatePicker((prevValue) => !prevValue)
                 }
-                uncheckedColor={GlobalStyles.colors.gray200}
-                color={GlobalStyles.colors.primary100}
+                handleChange={handleChangeDate}
+                inputIdentifier='date'
+                invalid={!inputs.date.isValid}
+                errors={inputs.date.errors}
+                value={inputs.date.value?.toString()}
+                label='Date'
+                minimumDate={parseDate(minStartDate)}
+                maximumDate={parseDate(maxEndDate)}
               />
             </View>
           </View>
@@ -290,6 +280,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 4,
     marginHorizontal: 12,
+  },
+  rowElement: {
+    flexBasis: '50%',
   },
   checkBoxContainer: {
     alignItems: 'center',

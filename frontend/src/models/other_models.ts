@@ -7,15 +7,22 @@ export interface Costs {
 }
 
 export interface Spending {
-  id: number;
+  id?: number;
   name: string;
   amount: number;
   date: string;
-  category: SpendingsCategory;
+  category: string;
 }
 
-export enum SpendingsCategory {
-  // transportations of minor and major stages and accommodations are not implemented as spendings
+export interface SpendingFormValues {
+  name: Validable<string>;
+  amount: Validable<number>;
+  date: Validable<string | null>;
+  category: Validable<string>;
+}
+
+export enum SpendingCategory {
+  // transportations of minor and major stages, accommodations and activities are not implemented as spendings
   transportation = 'Transportation',
   acommodation = 'Acommodation',
   activities = 'Activities',
