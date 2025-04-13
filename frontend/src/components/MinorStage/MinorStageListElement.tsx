@@ -70,6 +70,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     },
   ];
 
+  // TODO: Make this separate ... header: Accommodation an then Name (Price), Link for Maps and if booked (Ionicon Bookmark?)
   if (minorStage.accommodation.place !== '') {
     elementDetailInfo.push(
       {
@@ -91,7 +92,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   if (minorStage.accommodation.maps_link !== '') {
     elementDetailInfo.push({
       title: 'Maps link',
-      value: minorStage.accommodation.maps_link !== '' ? 'Show me' : 'No link',
+      value: minorStage.accommodation.maps_link !== '' ? 'Show me' : '',
       link:
         minorStage.accommodation.maps_link !== ''
           ? minorStage.accommodation.maps_link

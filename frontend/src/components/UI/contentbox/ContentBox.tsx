@@ -75,8 +75,9 @@ const styles = StyleSheet.create({
     borderBottomColor: GlobalStyles.colors.complementary200,
   },
   activeHeader: {
+    color: GlobalStyles.colors.complementary800,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
   },
   activeContainer: {
     backgroundColor: GlobalStyles.colors.complementary100,

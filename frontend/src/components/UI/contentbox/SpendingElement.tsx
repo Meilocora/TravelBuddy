@@ -114,7 +114,11 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 <Text
                   ellipsizeMode='tail'
                   numberOfLines={1}
-                  style={listElementStyles.text}
+                  style={
+                    index % 2 === 0
+                      ? listElementStyles.evenText
+                      : listElementStyles.oddText
+                  }
                 >
                   {spending.name}
                 </Text>
@@ -123,7 +127,11 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 <Text
                   ellipsizeMode='tail'
                   numberOfLines={1}
-                  style={listElementStyles.text}
+                  style={
+                    index % 2 === 0
+                      ? listElementStyles.evenText
+                      : listElementStyles.oddText
+                  }
                 >
                   {spending.category}
                 </Text>
@@ -132,7 +140,11 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 <Text
                   ellipsizeMode='tail'
                   numberOfLines={1}
-                  style={listElementStyles.text}
+                  style={
+                    index % 2 === 0
+                      ? listElementStyles.evenText
+                      : listElementStyles.oddText
+                  }
                 >
                   {formatAmount(spending.amount)}
                 </Text>
@@ -141,7 +153,11 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 <Text
                   ellipsizeMode='tail'
                   numberOfLines={1}
-                  style={listElementStyles.text}
+                  style={
+                    index % 2 === 0
+                      ? listElementStyles.evenText
+                      : listElementStyles.oddText
+                  }
                 >
                   {spending.date}
                 </Text>
@@ -158,6 +174,9 @@ const listElementStyles = StyleSheet.create({
   container: {
     marginVertical: 5,
     maxHeight: 200,
+    paddingBottom: 5,
+    borderBottomColor: GlobalStyles.colors.complementary700,
+    borderBottomWidth: 2,
   },
   row: {
     flexDirection: 'row',
@@ -172,11 +191,14 @@ const listElementStyles = StyleSheet.create({
   },
   oddRow: {
     marginBottom: 3,
-    backgroundColor: GlobalStyles.colors.gray400,
+    borderWidth: 1,
+    borderColor: GlobalStyles.colors.complementary700,
+    backgroundColor: GlobalStyles.colors.complementary700,
   },
   evenRow: {
     marginBottom: 3,
-    backgroundColor: GlobalStyles.colors.gray300,
+    borderWidth: 1,
+    borderColor: GlobalStyles.colors.complementary700,
   },
   lastRow: {
     borderBottomLeftRadius: 10,
@@ -193,10 +215,16 @@ const listElementStyles = StyleSheet.create({
     paddingVertical: 5,
     color: GlobalStyles.colors.gray200,
   },
-  text: {
+  evenText: {
     fontSize: 14,
-    color: GlobalStyles.colors.gray50,
     paddingVertical: 5,
+    color: GlobalStyles.colors.complementary700,
+  },
+  oddText: {
+    fontSize: 14,
+    paddingVertical: 5,
+    // color: GlobalStyles.colors.gray50,
+    color: GlobalStyles.colors.complementary100,
   },
   modalContainer: {
     flex: 1,
