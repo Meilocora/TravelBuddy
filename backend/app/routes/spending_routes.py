@@ -25,9 +25,6 @@ def create_spending(current_user, minorStageId):
     if not isValid:
         return jsonify({'spendingFormValues': response, 'status': 400})
     
-    print('Here')
-    print(minor_stage.costs.id)
-    
     try:
         # Create a new spending
         new_spending = Spendings(

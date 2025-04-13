@@ -73,6 +73,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
       placeId: place.id,
       countryId: place.countryId,
     });
+    // TODO: Maybe refetch MinorStages
   }
 
   function handleRemove() {
@@ -83,7 +84,9 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
     <View style={styles.container}>
       <Pressable onPress={() => setIsOpened(!isOpened)}>
         <View style={styles.row}>
-          <Text style={styles.name}>{place.name}</Text>
+          <Text style={styles.name} ellipsizeMode='tail' numberOfLines={1}>
+            {place.name}
+          </Text>
           <View style={styles.buttonsContainer}>
             <IconButton
               icon={place.favorite ? Icons.heartFilled : Icons.heartOutline}
@@ -124,6 +127,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
                 <Link link={place.link} color={GlobalStyles.colors.visited} />
               </View>
             )}
+            {/* TODO: Maps Link don't show? */}
             {place.maps_link && (
               <View style={styles.row}>
                 <Text style={styles.description}>Link to Google Maps:</Text>

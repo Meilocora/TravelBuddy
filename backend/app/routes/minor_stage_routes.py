@@ -20,7 +20,7 @@ def get_minor_stages(current_user, majorStageId):
         for minorStage in minorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(minor_stage_id=minorStage.id))
             costs = costs_result.scalars().first()
-            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id).order_by(Spendings.date)).scalars().all()
             
             transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minorStage.id)).scalars().first()
             accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minorStage.id)).scalars().first()          

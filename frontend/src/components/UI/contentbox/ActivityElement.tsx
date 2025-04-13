@@ -43,7 +43,13 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
     <View style={listElementStyles.container}>
       <Pressable onPress={() => setIsOpened(!isOpened)}>
         <View style={listElementStyles.mainRow}>
-          <Text style={listElementStyles.name}>{activity.name}</Text>
+          <Text
+            style={listElementStyles.name}
+            ellipsizeMode='tail'
+            numberOfLines={1}
+          >
+            {activity.name}
+          </Text>
           <View style={listElementStyles.buttonsContainer}>
             <IconButton
               icon={Icons.editFilled}

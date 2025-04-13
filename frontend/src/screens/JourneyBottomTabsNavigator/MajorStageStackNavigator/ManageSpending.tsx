@@ -168,7 +168,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
               icon={Icons.delete}
               color={GlobalStyles.colors.error200}
               onPress={deleteHandler}
-              size={36}
+              size={46}
             />
           </View>
         )}

@@ -8,97 +8,211 @@ import {
 } from 'react-native';
 
 import {
-  Activity,
   ButtonMode,
   ColorScheme,
   Icons,
-  MajorStageStackParamList,
   MinorStage,
   Spending,
 } from '../../../models';
 import Button from '../Button';
-import Link from '../Link';
 import { useState } from 'react';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../IconButton';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { formatAmount, generateRandomString } from '../../../utils';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface SpendingListElementProps {
-  spending: Spending;
+  spendings: Spending[];
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
 }
 
 const SpendingListElement: React.FC<SpendingListElementProps> = ({
-  spending,
+  spendings,
   handleEdit,
   handleDelete,
 }) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
-  const [isOpened, setIsOpened] = useState(false);
+  const [modal, setModal] = useState<{ state: boolean; id: number | null }>({
+    state: false,
+    id: null,
+  });
+
+  function onTap(id: number) {
+    if (modal.state) {
+      setModal({ state: false, id: null });
+    } else {
+      setModal({ state: true, id: id });
+    }
+  }
+
+  function handleClose() {
+    setModal({ state: false, id: null });
+  }
 
   const tableHeaders = ['Name', 'Category', 'Amount', 'Date'];
 
-  // TODO: Add Actions, when user taps on the spending with big modal
-
   return (
-    <ScrollView style={listElementStyles.container}>
-      <View style={[listElementStyles.row, listElementStyles.firstRow]}>
-        {tableHeaders.map((header) => (
-          <View
-            style={listElementStyles.rowElement}
-            key={generateRandomString()}
-          >
-            <Text style={listElementStyles.headerText}>{header}</Text>
-          </View>
-        ))}
-      </View>
+    <OutsidePressHandler onOutsidePress={handleClose}>
+      {modal.state && (
+        <Animated.View
+          entering={FadeInDown}
+          exiting={FadeOutDown}
+          style={listElementStyles.modalContainer}
+        >
+          <View style={listElementStyles.modal}>
+            <View style={listElementStyles.buttonsContainer}>
+              <IconButton
+                icon={Icons.editFilled}
+                onPress={handleEdit.bind(null, modal.id!)}
+                color={GlobalStyles.colors.edit}
+                size={32}
+              />
 
-      {/* <View style={listElementStyles.rowElement}>
-                  <Text style={listElementStyles.subtitle}>Costs: </Text>
-                  <Text
-                    style={listElementStyles.description}
-                    ellipsizeMode='tail'
-                    numberOfLines={1}
-                  >
-                    {formatAmount(activity.costs)}
-                  </Text>
-                </View> */}
-    </ScrollView>
+              <IconButton
+                icon={Icons.delete}
+                onPress={handleDelete.bind(null, modal.id!)}
+                color={GlobalStyles.colors.error200}
+                size={32}
+              />
+            </View>
+            <Button
+              mode={ButtonMode.flat}
+              onPress={handleClose}
+              colorScheme={ColorScheme.neutral}
+            >
+              Dismiss
+            </Button>
+          </View>
+        </Animated.View>
+      )}
+      <View style={listElementStyles.container}>
+        <View style={[listElementStyles.row, listElementStyles.headRow]}>
+          {tableHeaders.map((header) => (
+            <View
+              style={listElementStyles.rowElement}
+              key={generateRandomString()}
+            >
+              <Text style={listElementStyles.headerText}>{header}</Text>
+            </View>
+          ))}
+        </View>
+        <ScrollView>
+          {spendings.map((spending, index) => (
+            <Pressable
+              key={generateRandomString()}
+              onPress={() => onTap(spending.id!)}
+              style={[
+                listElementStyles.row,
+                index % 2 === 0
+                  ? listElementStyles.evenRow
+                  : listElementStyles.oddRow,
+                index + 1 === spendings.length ? listElementStyles.lastRow : {},
+              ]}
+            >
+              <View style={listElementStyles.rowElement}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={listElementStyles.text}
+                >
+                  {spending.name}
+                </Text>
+              </View>
+              <View style={listElementStyles.rowElement}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={listElementStyles.text}
+                >
+                  {spending.category}
+                </Text>
+              </View>
+              <View style={listElementStyles.rowElement}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={listElementStyles.text}
+                >
+                  {formatAmount(spending.amount)}
+                </Text>
+              </View>
+              <View style={listElementStyles.rowElement}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={listElementStyles.text}
+                >
+                  {spending.date}
+                </Text>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+    </OutsidePressHandler>
   );
 };
 
 const listElementStyles = StyleSheet.create({
   container: {
     marginVertical: 5,
-    maxHeight: 300,
+    maxHeight: 200,
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  firstRow: {
+  headRow: {
     backgroundColor: GlobalStyles.colors.gray500,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    marginBottom: 3,
+  },
+  oddRow: {
+    marginBottom: 3,
+    backgroundColor: GlobalStyles.colors.gray400,
+  },
+  evenRow: {
+    marginBottom: 3,
+    backgroundColor: GlobalStyles.colors.gray300,
+  },
+  lastRow: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   rowElement: {
     flexBasis: '25%',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderBottomWidth: 3,
-    // borderBottomColor: GlobalStyles.colors.complementary200,
   },
   headerText: {
     fontSize: 16,
     fontWeight: 'bold',
-    // paddingHorizontal: 10,
     paddingVertical: 5,
     color: GlobalStyles.colors.gray200,
+  },
+  text: {
+    fontSize: 14,
+    color: GlobalStyles.colors.gray50,
+    paddingVertical: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 1,
+  },
+  modal: {
+    transform: [{ translateX: Dimensions.get('screen').width / 4 }],
+    backgroundColor: GlobalStyles.colors.gray400,
+    borderWidth: 1,
+    borderRadius: 20,
+    zIndex: 2,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
@@ -125,14 +239,12 @@ const SpendingElement: React.FC<SpendingElementProps> = ({
         </View>
       ) : (
         <ScrollView style={{ maxHeight: screenHeight / 3 }}>
-          {minorStage.costs.spendings!.map((spending) => (
-            <SpendingListElement
-              spending={spending}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              key={generateRandomString()}
-            />
-          ))}
+          <SpendingListElement
+            spendings={minorStage.costs.spendings!}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            key={generateRandomString()}
+          />
         </ScrollView>
       )}
       <View style={styles.buttonContainer}>
