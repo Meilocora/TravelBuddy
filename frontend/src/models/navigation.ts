@@ -40,7 +40,7 @@ export type MajorStageStackParamList = {
 export type JourneyBottomTabsParamsList = {
   Planning: { journeyId: number; popupText?: string };
   Overview: undefined;
-  Map: undefined;
+  Map: { initialLat?: number; initialLng?: number };
   MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;
 };
 

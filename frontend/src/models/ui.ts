@@ -30,6 +30,7 @@ export enum Icons {
   linkOutline = 'link-outline',
   close = 'close',
   remove = 'close-circle-outline',
+  save = 'save-outline',
 }
 
 export enum ButtonMode {

@@ -57,6 +57,8 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 // TODO: Implement diagramms for costs in Overview
 // TODO: ColorSchemes => colorful, dark, light
 
+// TODO: Add Location-Picker everywhere, where a maps-link could be needed
+
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
 const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
