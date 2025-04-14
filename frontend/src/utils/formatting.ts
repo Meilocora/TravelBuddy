@@ -28,7 +28,6 @@ export function formatDate(date: Date): string {
   return `${day}.${month}.${year}`;
 }
 
-// TODO: Is this needed somewhere?
 export function parseDate(dateString: string): Date {
   const [day, month, year] = dateString.split('.').map(Number);
   return new Date(year, month - 1, day); // Months are zero-based in JavaScript Date

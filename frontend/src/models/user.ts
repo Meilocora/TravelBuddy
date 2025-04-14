@@ -6,6 +6,8 @@ export interface User {
   journeysIds?: number[];
   countriesIds?: number[];
   // TODO: currentJourney
+  // TODO: currentMajorStage
+  // TODO. currentMinorStage
   // TODO: currentCountry
   // TODO: defaultCurrency
 }

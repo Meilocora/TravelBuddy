@@ -18,6 +18,7 @@ const ElementDetail = ({
   link,
 }: ElementDetailProps): ReactElement => {
   return (
+    // TODO: Allow icons here for titles + maybe extra border
     <View style={[styles.container, style]}>
       <Text style={[styles.title]}>{title}</Text>
       {!link && <Text style={textStyle}>{value}</Text>}

@@ -68,8 +68,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     navigationBottomTabs.navigate('ManageJourney', { journeyId: journey.id });
   }
 
-  // TODO: Add Major stages z.b. 3/5
-  // TODO: Countrylist, mark countries that are visited
+  // TODO: Add major- and minor stages z.b. 3/5
+  // TODO: Highlight current Country
   // TODO: Add Countdown till journey starts
   // TODO: Journey should start automatically, when start date is reached
 
@@ -87,6 +87,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
               <ElementTitle>{journey.name}</ElementTitle>
+              {/* // TODO: Start and End Date should be below the title */}
               <IconButton
                 icon={Icons.edit}
                 color={GlobalStyles.colors.primary500}

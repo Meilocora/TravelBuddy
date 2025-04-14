@@ -25,36 +25,37 @@ import OutsidePressHandler from 'react-native-outside-press';
 interface SpendingListElementProps {
   spendings: Spending[];
   handleEdit: (id: number) => void;
-  handleDelete: (id: number) => void;
+  // handleDelete: (id: number) => void;
 }
 
 const SpendingListElement: React.FC<SpendingListElementProps> = ({
   spendings,
   handleEdit,
-  handleDelete,
+  // handleDelete,
 }) => {
-  const [modal, setModal] = useState<{ state: boolean; id: number | null }>({
-    state: false,
-    id: null,
-  });
+  // const [modal, setModal] = useState<{ state: boolean; id: number | null }>({
+  // state: false,
+  // id: null,
+  // });
 
-  function onTap(id: number) {
-    if (modal.state) {
-      setModal({ state: false, id: null });
-    } else {
-      setModal({ state: true, id: id });
-    }
-  }
+  // function onTap(id: number) {
+  // if (modal.state) {
+  // setModal({ state: false, id: null });
+  // } else {
+  // setModal({ state: true, id: id });
+  // }
+  // }
 
-  function handleClose() {
-    setModal({ state: false, id: null });
-  }
+  // function handleClose() {
+  // setModal({ state: false, id: null });
+  // }
 
   const tableHeaders = ['Name', 'Category', 'Amount', 'Date'];
 
   return (
-    <OutsidePressHandler onOutsidePress={handleClose}>
-      {modal.state && (
+    // <OutsidePressHandler onOutsidePress={handleClose}>
+    <>
+      {/* {modal.state && (
         <Animated.View
           entering={FadeInDown}
           exiting={FadeOutDown}
@@ -85,7 +86,7 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
             </Button>
           </View>
         </Animated.View>
-      )}
+      )} */}
       <View style={listElementStyles.container}>
         <View style={[listElementStyles.row, listElementStyles.headRow]}>
           {tableHeaders.map((header) => (
@@ -101,7 +102,7 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
           {spendings.map((spending, index) => (
             <Pressable
               key={generateRandomString()}
-              onPress={() => onTap(spending.id!)}
+              onPress={() => handleEdit(spending.id!)}
               style={[
                 listElementStyles.row,
                 index % 2 === 0
@@ -166,7 +167,8 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
           ))}
         </ScrollView>
       </View>
-    </OutsidePressHandler>
+    </>
+    // </OutsidePressHandler>
   );
 };
 
@@ -223,39 +225,38 @@ const listElementStyles = StyleSheet.create({
   oddText: {
     fontSize: 14,
     paddingVertical: 5,
-    // color: GlobalStyles.colors.gray50,
     color: GlobalStyles.colors.complementary100,
   },
-  modalContainer: {
-    flex: 1,
-    position: 'absolute',
-    zIndex: 1,
-  },
-  modal: {
-    transform: [{ translateX: Dimensions.get('screen').width / 4 }],
-    backgroundColor: GlobalStyles.colors.gray400,
-    borderWidth: 1,
-    borderRadius: 20,
-    zIndex: 2,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  // modalContainer: {
+  //   flex: 1,
+  //   position: 'absolute',
+  //   zIndex: 1,
+  // },
+  // modal: {
+  //   transform: [{ translateX: Dimensions.get('screen').width / 4 }],
+  //   backgroundColor: GlobalStyles.colors.gray400,
+  //   borderWidth: 1,
+  //   borderRadius: 20,
+  //   zIndex: 2,
+  // },
+  // buttonsContainer: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  // },
 });
 
 interface SpendingElementProps {
   minorStage: MinorStage;
   handleAdd: () => void;
   handleEdit: (id: number) => void;
-  handleDelete: (id: number) => void;
+  // handleDelete: (id: number) => void;
 }
 
 const SpendingElement: React.FC<SpendingElementProps> = ({
   minorStage,
   handleAdd,
   handleEdit,
-  handleDelete,
+  // handleDelete,
 }) => {
   const screenHeight = Dimensions.get('window').height;
 
@@ -270,7 +271,7 @@ const SpendingElement: React.FC<SpendingElementProps> = ({
           <SpendingListElement
             spendings={minorStage.costs.spendings!}
             handleEdit={handleEdit}
-            handleDelete={handleDelete}
+            // handleDelete={handleDelete}
             key={generateRandomString()}
           />
         </ScrollView>

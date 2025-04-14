@@ -53,6 +53,9 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: Implement Maps API to show the route of the journey
+// TODO: Implement a way to track the current journey, majorStage, minorStage
+// TODO: Implement diagramms for costs in Overview
+// TODO: ColorSchemes => colorful, dark, light
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();
@@ -255,6 +258,7 @@ const MajorStageStackNavigator = () => {
         headerStyle: { backgroundColor: GlobalStyles.colors.accent700 },
         headerTitleAlign: 'center',
         headerShadowVisible: false,
+        animationEnabled: false,
       })}
     >
       <MajorStageStack.Screen
@@ -300,6 +304,7 @@ const AuthenticatedStack = () => {
                   },
                   headerTitleAlign: 'center',
                   headerShadowVisible: false,
+                  animationEnabled: false,
                 })}
               >
                 <Stack.Screen

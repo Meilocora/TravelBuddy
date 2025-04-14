@@ -148,7 +148,7 @@ const MainContent: React.FC<MainContentProps> = ({
           minorStage={minorStage}
           handleAdd={handleAddSpending}
           handleEdit={handleEditSpending}
-          handleDelete={handleDeleteSpending}
+          // handleDelete={handleDeleteSpending}
         />
       ),
     },
