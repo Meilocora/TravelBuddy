@@ -21,6 +21,8 @@ import {
 import IconButton from '../../UI/IconButton';
 import Modal from '../../UI/Modal';
 import { CustomCountryContext } from '../../../store/custom-country-context';
+import LocationPicker from '../../UI/form/LocationPicker';
+import { parseMapsLink } from '../../../utils';
 
 type InputValidationResponse = {
   place?: PlaceToVisit;
@@ -93,6 +95,15 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
       return {
         ...currInputs,
         [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
+
+  function handlePickLocation(mapsLink: string) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        maps_link: { value: mapsLink, isValid: true, errors: [] },
       };
     });
   }
@@ -203,6 +214,14 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
                 value: inputs.maps_link.value,
                 onChangeText: inputChangedHandler.bind(this, 'maps_link'),
               }}
+            />
+            <LocationPicker
+              onPickLocation={handlePickLocation}
+              pickedLocation={
+                inputs.maps_link.value
+                  ? parseMapsLink(inputs.maps_link.value)
+                  : undefined
+              }
             />
           </View>
           <View style={styles.formRow}>

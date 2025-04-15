@@ -1,4 +1,5 @@
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
+import { MapLocation } from '../models';
 
 export function formatAmount(amount: number): string {
   return new Intl.NumberFormat('de-DE', {
@@ -112,4 +113,19 @@ export function formatProgress(startDate: string, endDate: string): Float {
 
 export function formatStringToList(string: string): string[] {
   return string.split(',').map((item) => item.trim());
+}
+
+export function parseMapsLink(mapsLink: string): MapLocation {
+  const latLng =
+    mapsLink.split('@')[1].split(',')[0] +
+    ',' +
+    mapsLink.split('@')[1].split(',')[1];
+  const lat = parseFloat(latLng.split(',')[0]);
+  const lng = parseFloat(latLng.split(',')[1]);
+
+  return { lat, lng };
+}
+
+export function formatMapsLink(location: MapLocation): string {
+  return `https://www.google.com/maps/@${location.lat},${location.lng}`;
 }

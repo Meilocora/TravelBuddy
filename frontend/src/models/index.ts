@@ -8,3 +8,4 @@ export * from './other_models';
 export * from './custom_country';
 export * from './auth';
 export * from './place';
+export * from './map';

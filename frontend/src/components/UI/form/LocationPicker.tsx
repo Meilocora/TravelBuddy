@@ -3,144 +3,104 @@ import {
   useForegroundPermissions,
   PermissionStatus,
 } from 'expo-location';
-import { StyleSheet, View, Alert, Image, Text } from 'react-native';
-import {
-  useNavigation,
-  useRoute,
-  useIsFocused,
-} from '@react-navigation/native';
+import { StyleSheet, View, Alert } from 'react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { ReactElement, useEffect, useState } from 'react';
 
+import { Icons, MapLocation, StackParamList } from '../../../models';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { formatMapsLink } from '../../../utils';
+import IconButton from '../IconButton';
+
 interface LocationPickerProps {
-  onPickLocation: (location: {
-    lat: number;
-    lng: number;
-    address: string;
-  }) => void;
+  pickedLocation?: MapLocation;
+  onPickLocation: (mapsLink: string) => void;
 }
 
 const LocationPicker: React.FC<LocationPickerProps> = ({
+  pickedLocation,
   onPickLocation,
 }): ReactElement => {
-  const [pickedLocation, setPickedLocation] = useState();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
+  const [hasInitialLocation, setHasInitialLocation] = useState(false);
   const isFocused = useIsFocused(); // true, when mainscreen for user
 
-  const navigation = useNavigation();
-  const route = useRoute();
+  useEffect(() => {
+    if (pickedLocation) {
+      setHasInitialLocation(true);
+    }
+  }, [pickedLocation]);
 
   const [locationPermissionInfotmation, requestPermission] =
     useForegroundPermissions();
 
-  // useEffect(() => {
-  //   // needs isFocused, so the component is recreated and therefor the lat and lng will be received
-  //   if (isFocused && route.params) {
-  //     // params from Map, when already used
-  //     const mapPickedLocation = {
-  //       lat: route.params.pickedLat,
-  //       lng: route.params.pickedLng,
-  //     };
+  async function verifyPermissions() {
+    if (
+      locationPermissionInfotmation!.status === PermissionStatus.UNDETERMINED
+    ) {
+      const permissionResponse = await requestPermission();
 
-  //     setPickedLocation(mapPickedLocation);
-  //   }
-  // }, [route, isFocused]);
+      return permissionResponse.granted;
+    }
 
-  // useEffect(() => {
-  //   async function handleLocation() {
-  //     if (pickedLocation) {
-  //       const address = await getAddress(
-  //         pickedLocation.lat,
-  //         pickedLocation.lng
-  //       );
-  //       onPickLocation({ ...pickedLocation, address: address });
-  //     }
-  //   }
+    if (locationPermissionInfotmation!.status === PermissionStatus.DENIED) {
+      Alert.alert(
+        'Insufficient Permissions!',
+        'You need to grant location permissions to use this app.'
+      );
+      return false;
+    }
+    return true;
+  }
 
-  //   handleLocation();
-  // }, [pickedLocation, onPickLocation]);
+  async function pickOnMapHandler() {
+    const hasPermission = await verifyPermissions();
 
-  // async function verifyPermissions() {
-  //   if (
-  //     locationPermissionInfotmation.status === PermissionStatus.UNDETERMINED
-  //   ) {
-  //     const permissionResponse = await requestPermission();
+    if (!hasPermission) {
+      return;
+    }
 
-  //     return permissionResponse.granted;
-  //   }
+    let latitude: number;
+    let longitude: number;
+    if (!pickedLocation) {
+      const location = await getCurrentPositionAsync();
+      latitude = location.coords.latitude!;
+      longitude = location.coords.longitude!;
+    } else {
+      latitude = pickedLocation.lat!;
+      longitude = pickedLocation.lng!;
+    }
 
-  //   if (locationPermissionInfotmation.status === PermissionStatus.DENIED) {
-  //     Alert.alert(
-  //       'Insufficient Permissions!',
-  //       'You need to grant location permissions to use this app.'
-  //     );
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
-  // async function getLocationHandler() {
-  //   const hasPermission = await verifyPermissions();
-
-  //   if (!hasPermission) {
-  //     return;
-  //   }
-
-  //   const location = await getCurrentPositionAsync();
-  //   setPickedLocation({
-  //     lat: location.coords.latitude,
-  //     lng: location.coords.longitude,
-  //   });
-  // }
-
-  // function pickOnMapHandler() {
-  //   navigation.navigate('Map');
-  // }
-
-  // let locationPreview = <Text>No location picked yet</Text>;
-
-  // if (pickedLocation) {
-  //   locationPreview = (
-  //     <Image
-  //       style={styles.image}
-  //       source={{ uri: getMapPreview(pickedLocation.lat, pickedLocation.lng) }}
-  //     />
-  //   );
-  // }
+    navigation.navigate('LocationPickMap', {
+      initialLat: latitude,
+      initialLng: longitude,
+      onPickLocation: (location: MapLocation) => {
+        onPickLocation(formatMapsLink(location));
+      },
+      hasInitialLocation: hasInitialLocation,
+    });
+  }
 
   return (
-    <View>
-      {/* <View style={styles.mapPreview}>{locationPreview}</View>
-      <View style={styles.actions}>
-        <OutlinedButton icon='location' onPress={getLocationHandler}>
-          Locate User
-        </OutlinedButton>
-        <OutlinedButton icon='map' onPress={pickOnMapHandler}>
-          Pick on Map
-        </OutlinedButton>
-      </View> */}
+    <View style={styles.container}>
+      <IconButton
+        icon={Icons.locate}
+        onPress={pickOnMapHandler}
+        size={32}
+        containerStyle={styles.button}
+      />
     </View>
   );
 };
 
-// const styles = StyleSheet.create({
-//   mapPreview: {
-//     width: '100%',
-//     height: 200,
-//     marginVertical: 8,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: Colors.primary100,
-//     borderRadius: 4,
-//   },
-//   actions: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-around',
-//     alignItems: 'center',
-//   },
-//   image: {
-//     width: '100%',
-//     height: '100%',
-//     borderRadius: 4,
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'flex-end',
+  },
+  button: {
+    marginVertical: '15%',
+  },
+});
 
 export default LocationPicker;

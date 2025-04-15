@@ -49,6 +49,7 @@ import ManageMinorStage from './src/screens/JourneyBottomTabsNavigator/MajorStag
 import MinorStages from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/MinorStages';
 import ManageActivity from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageActivity';
 import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageSpending';
+import LocationPickMap from './src/screens/LocationPickMap';
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
@@ -343,6 +344,10 @@ const AuthenticatedStack = () => {
                 <Stack.Screen
                   name='ManagePlaceToVisit'
                   component={ManagePlaceToVisit}
+                />
+                <Stack.Screen
+                  name='LocationPickMap'
+                  component={LocationPickMap}
                 />
               </Stack.Navigator>
             </MinorStageContextProvider>

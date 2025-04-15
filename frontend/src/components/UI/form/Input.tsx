@@ -67,6 +67,8 @@ const Input: React.FC<InputProps> = ({
           autoComplete='off'
           {...textInputConfig}
           selectionColor='white'
+          // autoFocus={true}
+          // selection={{ start: 0, end: 0 }}
         />
       ) : (
         <TextInput
@@ -78,6 +80,9 @@ const Input: React.FC<InputProps> = ({
           numberOfLines={1}
           {...textInputConfig}
           selectionColor='white'
+          // TODO: Do this with optional prop
+          // autoFocus={true}
+          // selection={{ start: 0, end: 0 }}
         />
       )}
       {errors &&

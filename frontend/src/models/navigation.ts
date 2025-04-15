@@ -1,4 +1,5 @@
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
+import { MapLocation } from './map';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
@@ -51,6 +52,12 @@ export type StackParamList = {
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
   ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
+  LocationPickMap: {
+    initialLat: number;
+    initialLng: number;
+    onPickLocation: (location: MapLocation) => void;
+    hasInitialLocation: boolean;
+  };
 };
 
 export type AuthStackParamList = {
