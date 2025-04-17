@@ -13,6 +13,7 @@ interface ModalProps {
   confirmText?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
+  positiveConfirm?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   confirmText = 'Delete',
   onConfirm,
   onCancel,
+  positiveConfirm,
 }): ReactElement => {
   return (
     <BlurView intensity={85} tint='dark' style={styles.blurcontainer}>
@@ -43,7 +45,9 @@ const Modal: React.FC<ModalProps> = ({
           {onConfirm && (
             <Button
               onPress={onConfirm}
-              colorScheme={ColorScheme.error}
+              colorScheme={
+                positiveConfirm ? ColorScheme.primary : ColorScheme.error
+              }
               style={styles.button}
             >
               {confirmText}

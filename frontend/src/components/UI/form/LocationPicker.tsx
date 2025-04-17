@@ -78,7 +78,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       onPickLocation: (location: MapLocation) => {
         onPickLocation(formatMapsLink(location));
       },
-      hasInitialLocation: hasInitialLocation,
+      hasLocation: hasInitialLocation,
     });
   }
 
