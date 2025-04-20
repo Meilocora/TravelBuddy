@@ -7,8 +7,9 @@ export interface PlaceToVisit {
   description: string;
   visited: boolean;
   favorite: boolean;
+  latitude: number;
+  longitude: number;
   link?: string;
-  maps_link?: string;
 }
 
 export interface PlaceValues {
@@ -18,8 +19,9 @@ export interface PlaceValues {
   description: string;
   visited: boolean;
   favorite: boolean;
+  latitude?: number;
+  longitude?: number;
   link?: string;
-  maps_link?: string;
 }
 
 export interface PlaceFormValues {
@@ -28,6 +30,7 @@ export interface PlaceFormValues {
   description: Validable<string>;
   visited: Validable<boolean>;
   favorite: Validable<boolean>;
+  latitude: Validable<number | undefined>;
+  longitude: Validable<number | undefined>;
   link: Validable<string>;
-  maps_link: Validable<string>;
 }

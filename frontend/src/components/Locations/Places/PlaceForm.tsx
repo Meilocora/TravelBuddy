@@ -6,6 +6,7 @@ import {
   ButtonMode,
   ColorScheme,
   Icons,
+  MapLocation,
   PlaceFormValues,
   PlaceToVisit,
   PlaceValues,
@@ -22,7 +23,6 @@ import IconButton from '../../UI/IconButton';
 import Modal from '../../UI/Modal';
 import { CustomCountryContext } from '../../../store/custom-country-context';
 import LocationPicker from '../../UI/form/LocationPicker';
-import { parseMapsLink } from '../../../utils';
 
 type InputValidationResponse = {
   place?: PlaceToVisit;
@@ -75,13 +75,18 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
       isValid: true,
       errors: [],
     },
-    link: {
-      value: defaultValues?.link || '',
+    latitude: {
+      value: defaultValues?.latitude || undefined,
       isValid: true,
       errors: [],
     },
-    maps_link: {
-      value: defaultValues?.maps_link || '',
+    longitude: {
+      value: defaultValues?.longitude || undefined,
+      isValid: true,
+      errors: [],
+    },
+    link: {
+      value: defaultValues?.link || '',
       isValid: true,
       errors: [],
     },
@@ -99,11 +104,13 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     });
   }
 
-  function handlePickLocation(mapsLink: string) {
+  function handlePickLocation(location: MapLocation) {
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        maps_link: { value: mapsLink, isValid: true, errors: [] },
+        name: { value: location.title!, isValid: true, errors: [] },
+        latitude: { value: location.lat, isValid: true, errors: [] },
+        longitude: { value: location.lng, isValid: true, errors: [] },
       };
     });
   }
@@ -180,13 +187,29 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
                 onChangeText: inputChangedHandler.bind(this, 'name'),
               }}
             />
+            <LocationPicker
+              onPickLocation={handlePickLocation}
+              pickedLocation={
+                inputs.latitude.value && inputs.longitude.value
+                  ? {
+                      lat: inputs.latitude.value,
+                      lng: inputs.longitude.value,
+                      title: inputs.name.value,
+                    }
+                  : undefined
+              }
+              iconColor={
+                !inputs.latitude.isValid
+                  ? GlobalStyles.colors.error200
+                  : undefined
+              }
+            />
           </View>
           <View style={styles.formRow}>
             <Input
               label='Description'
               invalid={!inputs.description.isValid}
               errors={inputs.description.errors}
-              mandatory
               textInputConfig={{
                 multiline: true,
                 value: inputs.description.value,
@@ -203,25 +226,6 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
                 value: inputs.link.value,
                 onChangeText: inputChangedHandler.bind(this, 'link'),
               }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Maps Link'
-              invalid={!inputs.maps_link.isValid}
-              errors={inputs.maps_link.errors}
-              textInputConfig={{
-                value: inputs.maps_link.value,
-                onChangeText: inputChangedHandler.bind(this, 'maps_link'),
-              }}
-            />
-            <LocationPicker
-              onPickLocation={handlePickLocation}
-              pickedLocation={
-                inputs.maps_link.value
-                  ? parseMapsLink(inputs.maps_link.value)
-                  : undefined
-              }
             />
           </View>
           <View style={styles.formRow}>

@@ -71,6 +71,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   ];
 
   // TODO: Make this separate ... header: Accommodation an then Name (Price), Link for Maps and if booked (Ionicon Bookmark?)
+  // TODO: Also add icon, so the user can check the location on map
   if (minorStage.accommodation.place !== '') {
     elementDetailInfo.push(
       {
@@ -87,17 +88,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
         value: minorStage.accommodation.booked ? 'Yes' : 'No',
       }
     );
-  }
-
-  if (minorStage.accommodation.maps_link !== '') {
-    elementDetailInfo.push({
-      title: 'Maps link',
-      value: minorStage.accommodation.maps_link !== '' ? 'Show me' : '',
-      link:
-        minorStage.accommodation.maps_link !== ''
-          ? minorStage.accommodation.maps_link
-          : undefined,
-    });
   }
 
   function handleEdit() {

@@ -12,9 +12,10 @@ class JourneyValidation(Validation):
         errors = False
       
         for key, value in journey.items():
-            if value['value'] == "" or value['value'] == None:
-                journey[key]['errors'].append(f'Input is required')
-                journey[key]['isValid'] = False
+            if key != 'description':
+                if value['value'] == "" or value['value'] == None:
+                    journey[key]['errors'].append(f'Input is required')
+                    journey[key]['isValid'] = False
             
                  
         name_val = JourneyValidation().validate_string(journey['name']['value'], min_length=3, max_length=50)
@@ -69,9 +70,11 @@ class JourneyValidation(Validation):
           errors = False
         
           for key, value in journey.items():
-              if value['value'] == "" or value['value'] == None:
-                  journey[key]['errors'].append(f'Input is required')
-                  journey[key]['isValid'] = False
+            if key != 'description':
+                if value['value'] == "" or value['value'] == None:
+                    journey[key]['errors'].append(f'Input is required')
+                    journey[key]['isValid'] = False
+            
             
           if len(journey['countries']['value']) == 0:
               journey['countries']['errors'].append(f'At least one country is required')

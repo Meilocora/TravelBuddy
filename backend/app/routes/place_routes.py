@@ -24,8 +24,9 @@ def get_places(current_user):
                 'description': place.description,
                 'visited': place.visited,
                 'favorite': place.favorite,
+                'latitude': place.latitude, 
+                'longitude': place.longitude,
                 'link': place.link,
-                'maps_link': place.maps_link,
             })    
         return jsonify({'places': places_list, 'status': 200})
     except Exception as e:
@@ -51,8 +52,9 @@ def get_places_by_country(current_user, minorStageId, countryName):
                 'description': place.description,
                 'visited': place.visited,
                 'favorite': place.favorite,
+                'latitude': place.latitude, 
+                'longitude': place.longitude,
                 'link': place.link,
-                'maps_link': place.maps_link,
             })    
                     
         return jsonify({'places': places_list, 'countryId': country.id, 'status': 200})
@@ -67,6 +69,8 @@ def create_place(current_user):
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
+    print(place)
+    
     response, isValid = PlaceValidation.validate_place(place=place)
     
     if not isValid:
@@ -80,8 +84,9 @@ def create_place(current_user):
             description=place['description']['value'],
             visited=place['visited']['value'],
             favorite=place['favorite']['value'],
+            latitude=place['latitude']['value'],
+            longitude=place['longitude']['value'],
             link=place['link']['value'],
-            maps_link=place['maps_link']['value'],
             user_id=current_user
         )
         db.session.add(new_place)
@@ -94,8 +99,9 @@ def create_place(current_user):
                 'description': new_place.description,
                 'visited': new_place.visited,
                 'favorite': new_place.favorite,
-                'link': new_place.link,
-                'maps_link': new_place.maps_link}
+                'latitude': new_place.latitude,
+                'longitude': new_place.longitude,
+                'link': new_place.link}
         
         return jsonify({'place': response_place,'status': 201})
     except Exception as e:
@@ -124,8 +130,9 @@ def update_journey(current_user, placeId):
             description=place['description']['value'],
             visited=place['visited']['value'],
             favorite=place['favorite']['value'],
+            latitude=place['latitude']['value'],
+            longitude=place['longitude']['value'],
             link=place['link']['value'],
-            maps_link=place['maps_link']['value'],
         ))
         db.session.commit()
         
@@ -135,8 +142,9 @@ def update_journey(current_user, placeId):
                 'description': place['description']['value'],
                 'visited': place['visited']['value'],
                 'favorite': place['favorite']['value'],
+                'latitude': place['latitude']['value'],
+                'longitude': place['longitude']['value'],
                 'link': place['link']['value'],
-                'maps_link': place['maps_link']['value']
                 }
         
         

@@ -186,7 +186,11 @@ class Transportation(db.Model):
     start_time: Mapped[str] = mapped_column(String, nullable=False)
     arrival_time: Mapped[str] = mapped_column(String, nullable=False)
     place_of_departure: Mapped[str] = mapped_column(String, nullable=False)
+    departure_latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    departure_longitude: Mapped[float] = mapped_column(Float, nullable=True)
     place_of_arrival: Mapped[str] = mapped_column(String, nullable=False)
+    arrival_latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    arrival_longitude: Mapped[float] = mapped_column(Float, nullable=True)
     transportation_costs: Mapped[int] = mapped_column(Integer, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
 
@@ -203,13 +207,12 @@ class Accommodation(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    # latitude: Mapped[float] = mapped_column(Float, nullable=True)
-    # longitude: Mapped[float] = mapped_column(Float, nullable=True)
+    latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float] = mapped_column(Float, nullable=True)
     place: Mapped[str] = mapped_column(String, nullable=False)
     costs: Mapped[int] = mapped_column(Integer, nullable=False)
     booked: Mapped[bool] = mapped_column(Boolean, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
-    maps_link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
     minor_stage_id: Mapped[int] = mapped_column(Integer, ForeignKey('minor_stages.id', ondelete='CASCADE'), nullable=True)
@@ -227,6 +230,8 @@ class Activity(db.Model):
     costs: Mapped[int] = mapped_column(Integer, nullable=False)
     booked: Mapped[bool] = mapped_column(Boolean, nullable=False)
     place: Mapped[str] = mapped_column(String, nullable=False)
+    latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float] = mapped_column(Float, nullable=True)
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
@@ -242,12 +247,11 @@ class PlaceToVisit(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    # latitude: Mapped[float] = mapped_column(Float, nullable=True)
-    # longitude: Mapped[float] = mapped_column(Float, nullable=True)
     visited: Mapped[bool] = mapped_column(Boolean, nullable=False)
     favorite: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float] = mapped_column(Float, nullable=True)
     link: Mapped[str] = mapped_column(String, nullable=True)
-    maps_link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)

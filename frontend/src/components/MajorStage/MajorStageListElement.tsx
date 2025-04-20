@@ -62,6 +62,8 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     { title: 'Country', value: majorStage.country },
   ];
 
+  // TODO: Red color, when budget exceeded
+
   if (majorStage.minorStagesIds) {
     elementDetailInfo.push({
       title: 'Minor Stages',

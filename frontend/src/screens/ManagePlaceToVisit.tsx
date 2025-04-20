@@ -53,8 +53,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
     description: selectedPlace?.description || '',
     visited: selectedPlace?.visited || false,
     favorite: selectedPlace?.favorite || false,
+    latitude: selectedPlace?.latitude || undefined,
+    longitude: selectedPlace?.longitude || undefined,
     link: selectedPlace?.link || '',
-    maps_link: selectedPlace?.maps_link || '',
   });
 
   function confirmHandler({ status, error, place }: ConfirmHandlerProps) {

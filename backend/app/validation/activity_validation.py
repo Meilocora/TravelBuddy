@@ -25,7 +25,7 @@ class ActivityValidation(Validation):
         
         if activity['place']['value'] != "": 
             place_val = ActivityValidation().validate_string(activity['place']['value'], min_length=3, max_length=50)
-            if description_val:
+            if place_val:
                 activity['place']['errors'].append(f", {place_val}")
                 activity['place']['isValid'] = False
         

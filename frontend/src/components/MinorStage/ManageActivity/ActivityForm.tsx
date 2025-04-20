@@ -7,6 +7,7 @@ import {
   ActivityFormValues,
   ButtonMode,
   ColorScheme,
+  MapLocation,
 } from '../../../models';
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
@@ -14,6 +15,7 @@ import Button from '../../UI/Button';
 import { formatAmount } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
 import { createActivity, updateActivity } from '../../../utils/http';
+import LocationPicker from '../../UI/form/LocationPicker';
 
 type InputValidationResponse = {
   activity?: Activity;
@@ -76,6 +78,16 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       isValid: true,
       errors: [],
     },
+    latitude: {
+      value: defaultValues?.latitude || undefined,
+      isValid: true,
+      errors: [],
+    },
+    longitude: {
+      value: defaultValues?.longitude || undefined,
+      isValid: true,
+      errors: [],
+    },
     link: {
       value: defaultValues?.link || '',
       isValid: true,
@@ -107,6 +119,16 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
         isValid: true,
         errors: [],
       },
+      latitude: {
+        value: defaultValues?.latitude || undefined,
+        isValid: true,
+        errors: [],
+      },
+      longitude: {
+        value: defaultValues?.longitude || undefined,
+        isValid: true,
+        errors: [],
+      },
       link: {
         value: defaultValues?.link || '',
         isValid: true,
@@ -122,6 +144,8 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       costs: { value: 0, isValid: true, errors: [] },
       booked: { value: false, isValid: true, errors: [] },
       place: { value: '', isValid: true, errors: [] },
+      latitude: { value: undefined, isValid: true, errors: [] },
+      longitude: { value: undefined, isValid: true, errors: [] },
       link: { value: '', isValid: true, errors: [] },
     });
   }
@@ -134,6 +158,17 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       return {
         ...currInputs,
         [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
+
+  function handlePickLocation(location: MapLocation) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        place: { value: location.title!, isValid: true, errors: [] },
+        latitude: { value: location.lat, isValid: true, errors: [] },
+        longitude: { value: location.lng, isValid: true, errors: [] },
       };
     });
   }
@@ -210,6 +245,20 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 onChangeText: inputChangedHandler.bind(this, 'place'),
               }}
             />
+            <LocationPicker
+              onPickLocation={handlePickLocation}
+              pickedLocation={
+                inputs.latitude.value && inputs.longitude.value
+                  ? {
+                      lat: inputs.latitude.value,
+                      lng: inputs.longitude.value,
+                      title: inputs.place.value,
+                    }
+                  : undefined
+              }
+            />
+          </View>
+          <View style={styles.formRow}>
             <Input
               label='Costs'
               invalid={!inputs.costs.isValid}
@@ -221,19 +270,11 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 onChangeText: inputChangedHandler.bind(this, 'costs'),
                 placeholder:
                   maxAvailableMoney > 0
-                    ? `Remaining: ${formatAmount(maxAvailableMoney)}`
+                    ? `Max: ${formatAmount(maxAvailableMoney)}`
                     : '',
               }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.link.isValid}
-              errors={inputs.link.errors}
-              textInputConfig={{
-                value: inputs.link.value,
-                onChangeText: inputChangedHandler.bind(this, 'link'),
+              style={{
+                maxWidth: '50%',
               }}
             />
             <View style={styles.checkBoxContainer}>
@@ -247,6 +288,17 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 color={GlobalStyles.colors.primary100}
               />
             </View>
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.link.isValid}
+              errors={inputs.link.errors}
+              textInputConfig={{
+                value: inputs.link.value,
+                onChangeText: inputChangedHandler.bind(this, 'link'),
+              }}
+            />
           </View>
         </View>
         <View style={styles.buttonsContainer}>

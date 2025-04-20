@@ -13,7 +13,7 @@ class SpendingValidation(Validation):
         errors = False
         
         for key, value in spending.items():
-            if value['value'] == "" or value['value'] == None:
+            if value['value'] == "" or value['value'] == None or value['value'] == 0:
                 spending[key]['errors'].append(f'Input is required')
                 spending[key]['isValid'] = False
                  
@@ -36,7 +36,7 @@ class SpendingValidation(Validation):
         if category_val:
             spending['category']['errors'].append(f", {category_val}")
             spending['category']['isValid'] = False
-            
+                        
         for key, value in spending.items():
             if 'errors' in value and value['errors']:
                 errors = True

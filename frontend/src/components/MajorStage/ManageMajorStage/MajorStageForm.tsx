@@ -304,7 +304,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
               label='Budget'
               invalid={!inputs.budget.isValid}
               errors={inputs.budget.errors}
-              mandatory
               textInputConfig={{
                 keyboardType: 'decimal-pad',
                 value:

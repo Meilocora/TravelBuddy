@@ -5,6 +5,7 @@ import { Checkbox } from 'react-native-paper';
 import {
   ButtonMode,
   ColorScheme,
+  MapLocation,
   MinorStage,
   MinorStageFormValues,
   MinorStageValues,
@@ -22,6 +23,7 @@ import {
 import DatePicker from '../../UI/form/DatePicker';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import LocationPicker from '../../UI/form/LocationPicker';
 
 type InputValidationResponse = {
   minorStage?: MinorStage;
@@ -111,13 +113,18 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       isValid: true,
       errors: [],
     },
-    accommodation_link: {
-      value: defaultValues?.accommodation_link || '',
+    accommodation_latitude: {
+      value: defaultValues?.accommodation_latitude || undefined,
       isValid: true,
       errors: [],
     },
-    accommodation_maps_link: {
-      value: defaultValues?.accommodation_maps_link || '',
+    accommodation_longitude: {
+      value: defaultValues?.accommodation_longitude || undefined,
+      isValid: true,
+      errors: [],
+    },
+    accommodation_link: {
+      value: defaultValues?.accommodation_link || '',
       isValid: true,
       errors: [],
     },
@@ -183,13 +190,18 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         isValid: true,
         errors: [],
       },
-      accommodation_link: {
-        value: defaultValues?.accommodation_link || '',
+      accommodation_latitude: {
+        value: defaultValues?.accommodation_latitude || undefined,
         isValid: true,
         errors: [],
       },
-      accommodation_maps_link: {
-        value: defaultValues?.accommodation_maps_link || '',
+      accommodation_longitude: {
+        value: defaultValues?.accommodation_longitude || undefined,
+        isValid: true,
+        errors: [],
+      },
+      accommodation_link: {
+        value: defaultValues?.accommodation_link || '',
         isValid: true,
         errors: [],
       },
@@ -207,8 +219,9 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       accommodation_place: { value: '', isValid: true, errors: [] },
       accommodation_costs: { value: 0, isValid: true, errors: [] },
       accommodation_booked: { value: false, isValid: true, errors: [] },
+      accommodation_latitude: { value: undefined, isValid: true, errors: [] },
+      accommodation_longitude: { value: undefined, isValid: true, errors: [] },
       accommodation_link: { value: '', isValid: true, errors: [] },
-      accommodation_maps_link: { value: '', isValid: true, errors: [] },
     });
   }
 
@@ -220,6 +233,29 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       return {
         ...currInputs,
         [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
+
+  function handlePickLocation(location: MapLocation) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        accommodation_place: {
+          value: location.title!,
+          isValid: true,
+          errors: [],
+        },
+        accommodation_latitude: {
+          value: location.lat,
+          isValid: true,
+          errors: [],
+        },
+        accommodation_longitude: {
+          value: location.lng,
+          isValid: true,
+          errors: [],
+        },
       };
     });
   }
@@ -310,7 +346,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
               label='Budget'
               invalid={!inputs.budget.isValid}
               errors={inputs.budget.errors}
-              mandatory
               textInputConfig={{
                 keyboardType: 'decimal-pad',
                 value:
@@ -376,6 +411,26 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 ),
               }}
             />
+            <LocationPicker
+              onPickLocation={handlePickLocation}
+              pickedLocation={
+                inputs.accommodation_latitude.value &&
+                inputs.accommodation_longitude.value
+                  ? {
+                      lat: inputs.accommodation_latitude.value,
+                      lng: inputs.accommodation_longitude.value,
+                      title: inputs.accommodation_place.value,
+                    }
+                  : undefined
+              }
+              iconColor={
+                !inputs.accommodation_latitude.isValid
+                  ? GlobalStyles.colors.error200
+                  : undefined
+              }
+            />
+          </View>
+          <View style={styles.formRow}>
             <Input
               label='Costs'
               invalid={!inputs.accommodation_costs.isValid}
@@ -394,20 +449,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                   ? `Max: ${formatAmount(maxAvailableMoneyAccommodation)}`
                   : '',
               }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.accommodation_link.isValid}
-              errors={inputs.accommodation_link.errors}
-              textInputConfig={{
-                value: inputs.accommodation_link.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_link'
-                ),
-              }}
+              style={{ maxWidth: '50%' }}
             />
             <View style={styles.checkBoxContainer}>
               <Text style={styles.checkBoxLabel}>Booked?</Text>
@@ -428,14 +470,14 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           </View>
           <View style={styles.formRow}>
             <Input
-              label='Maps Link'
-              invalid={!inputs.accommodation_maps_link.isValid}
-              errors={inputs.accommodation_maps_link.errors}
+              label='Link'
+              invalid={!inputs.accommodation_link.isValid}
+              errors={inputs.accommodation_link.errors}
               textInputConfig={{
-                value: inputs.accommodation_maps_link.value,
+                value: inputs.accommodation_link.value,
                 onChangeText: inputChangedHandler.bind(
                   this,
-                  'accommodation_maps_link'
+                  'accommodation_link'
                 ),
               }}
             />

@@ -112,16 +112,7 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
                 </View>
               )}
             </View>
-            {/* {place.maps_link && (
-              <View style={styles.row}>
-                <Text style={styles.description}>Link to Google Maps:</Text>
-                <Link
-                  link={place.maps_link}
-                  color={GlobalStyles.colors.visited}
-                  icon={Icons.location}
-                />
-              </View>
-            )} */}
+            {/* TODO: Add Icon to see location on map */}
           </View>
         )}
       </Pressable>

@@ -82,6 +82,7 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
             readOnly: true,
             value: value,
           }}
+          style={{ minWidth: '95%' }}
         />
       </Pressable>
       {openDatePicker && !openTimePicker && (

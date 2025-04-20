@@ -15,7 +15,7 @@ class MinorStageValidation(Validation):
         errors = False
       
         for key, value in minorStage.items():
-            if key != 'accommodation_name' and key != 'accommodation_place' and key != 'accommodation_costs' and key != 'accommodation_link' and key != 'accommodation_maps_link':
+            if key != 'accommodation_name' and key != 'accommodation_place' and key != 'accommodation_costs' and key != 'accommodation_link' and key != 'accommodation_latitude' and key != 'accommodation_longitude':
                 if value['value'] == "" or value['value'] == None:
                     minorStage[key]['errors'].append(f'Input is required')
                     minorStage[key]['isValid'] = False
@@ -52,23 +52,26 @@ class MinorStageValidation(Validation):
             minorStage['scheduled_start_time']['isValid'] = False
         
         if minorStage['accommodation_place']['value'] != "":
+            try: 
+                minorStage['accommodation_latitude']['value']
+                minorStage['accommodation_longitude']['value']
+            except KeyError:
+                minorStage['accommodation_place']['errors'].append(f", Select a location on the map")
+                minorStage['accommodation_place']['isValid'] = False
+                minorStage['accommodation_latitude']['isValid'] = False
+            else: 
+                pass     
+            
             acc_place_val = MinorStageValidation().validate_string(minorStage['accommodation_place']['value'], max_length=50)
             if acc_place_val:
                 minorStage['accommodation_place']['errors'].append(f", {acc_place_val}")
                 minorStage['accommodation_place']['isValid'] = False
-        
 
         if minorStage['accommodation_link']['value'] != "":
             acc_link_val = MinorStageValidation().validate_hyperlink(minorStage['accommodation_link']['value'])
             if acc_link_val:
                 minorStage['accommodation_link']['errors'].append(f", {acc_link_val}")
             minorStage['accommodation_link']['isValid'] = False
-        
-        if minorStage['accommodation_maps_link']['value'] != "":    
-            acc_maps_link_val = MinorStageValidation().validate_hyperlink(minorStage['accommodation_maps_link']['value'])
-            if acc_maps_link_val:
-                minorStage['accommodation_maps_link']['errors'].append(f", {acc_link_val}")
-                minorStage['accommodation_maps_link']['isValid'] = False
         
         if minorStage['accommodation_costs']['value'] != "":    
             acc_costs_val = MinorStageValidation().validate_amount(minorStage['accommodation_costs']['value'])

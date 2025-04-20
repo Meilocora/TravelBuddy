@@ -24,8 +24,9 @@ export interface MinorStageValues {
   accommodation_place: string;
   accommodation_costs: number | null;
   accommodation_booked: boolean;
+  accommodation_latitude: number | undefined;
+  accommodation_longitude: number | undefined;
   accommodation_link: string;
-  accommodation_maps_link: string;
 }
 
 export interface MinorStageFormValues {
@@ -38,8 +39,9 @@ export interface MinorStageFormValues {
   accommodation_place: Validable<string>;
   accommodation_costs: Validable<number>;
   accommodation_booked: Validable<boolean>;
+  accommodation_latitude: Validable<number | undefined>;
+  accommodation_longitude: Validable<number | undefined>;
   accommodation_link: Validable<string>;
-  accommodation_maps_link: Validable<string>;
 }
 
 export interface Accommodation {
@@ -47,7 +49,8 @@ export interface Accommodation {
   costs: number;
   booked: boolean;
   link: string;
-  maps_link: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Activity {
@@ -57,6 +60,8 @@ export interface Activity {
   costs: number;
   booked: boolean;
   place: string;
+  latitude: number | undefined;
+  longitude: number | undefined;
   link: string;
 }
 
@@ -66,5 +71,7 @@ export interface ActivityFormValues {
   costs: Validable<number>;
   booked: Validable<boolean>;
   place: Validable<string>;
+  latitude: Validable<number | undefined>;
+  longitude: Validable<number | undefined>;
   link: Validable<string>;
 }

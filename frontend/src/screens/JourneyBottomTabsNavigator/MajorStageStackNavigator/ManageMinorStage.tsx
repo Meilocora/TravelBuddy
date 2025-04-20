@@ -77,8 +77,11 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     accommodation_place: selectedMinorStage?.accommodation.place || '',
     accommodation_costs: selectedMinorStage?.accommodation.costs || 0,
     accommodation_booked: selectedMinorStage?.accommodation.booked || false,
+    accommodation_latitude:
+      selectedMinorStage?.accommodation.latitude || undefined,
+    accommodation_longitude:
+      selectedMinorStage?.accommodation.longitude || undefined,
     accommodation_link: selectedMinorStage?.accommodation.link || '',
-    accommodation_maps_link: selectedMinorStage?.accommodation.maps_link || '',
   });
 
   useLayoutEffect(() => {
@@ -107,9 +110,11 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_place: selectedMinorStage?.accommodation.place || '',
       accommodation_costs: selectedMinorStage?.accommodation.costs || 0,
       accommodation_booked: selectedMinorStage?.accommodation.booked || false,
+      accommodation_latitude:
+        selectedMinorStage?.accommodation.latitude || undefined,
+      accommodation_longitude:
+        selectedMinorStage?.accommodation.longitude || undefined,
       accommodation_link: selectedMinorStage?.accommodation.link || '',
-      accommodation_maps_link:
-        selectedMinorStage?.accommodation.maps_link || '',
     });
   }, [selectedMinorStage]);
 
@@ -149,8 +154,9 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       accommodation_place: '',
       accommodation_costs: 0,
       accommodation_booked: false,
+      accommodation_latitude: undefined,
+      accommodation_longitude: undefined,
       accommodation_link: '',
-      accommodation_maps_link: '',
     });
   }
 

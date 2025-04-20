@@ -4,27 +4,28 @@ import {
   PermissionStatus,
 } from 'expo-location';
 import { StyleSheet, View, Alert } from 'react-native';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { ReactElement, useEffect, useState } from 'react';
 
 import { Icons, MapLocation, StackParamList } from '../../../models';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { formatMapsLink } from '../../../utils';
 import IconButton from '../IconButton';
+import { GlobalStyles } from '../../../constants/styles';
 
 interface LocationPickerProps {
   pickedLocation?: MapLocation;
-  onPickLocation: (mapsLink: string) => void;
+  onPickLocation: (location: MapLocation) => void;
+  iconColor?: string;
 }
 
 const LocationPicker: React.FC<LocationPickerProps> = ({
   pickedLocation,
   onPickLocation,
+  iconColor,
 }): ReactElement => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const [hasInitialLocation, setHasInitialLocation] = useState(false);
-  const isFocused = useIsFocused(); // true, when mainscreen for user
 
   useEffect(() => {
     if (pickedLocation) {
@@ -73,10 +74,11 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     }
 
     navigation.navigate('LocationPickMap', {
+      initialTitle: pickedLocation?.title,
       initialLat: latitude,
       initialLng: longitude,
       onPickLocation: (location: MapLocation) => {
-        onPickLocation(formatMapsLink(location));
+        onPickLocation(location);
       },
       hasLocation: hasInitialLocation,
     });
@@ -85,10 +87,17 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   return (
     <View style={styles.container}>
       <IconButton
-        icon={Icons.locate}
+        icon={hasInitialLocation ? Icons.map : Icons.mapFilled}
         onPress={pickOnMapHandler}
         size={32}
         containerStyle={styles.button}
+        color={
+          iconColor
+            ? iconColor
+            : hasInitialLocation
+            ? GlobalStyles.colors.primary100
+            : 'white'
+        }
       />
     </View>
   );
@@ -97,6 +106,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-end',
+    marginVertical: 'auto',
   },
   button: {
     marginVertical: '15%',

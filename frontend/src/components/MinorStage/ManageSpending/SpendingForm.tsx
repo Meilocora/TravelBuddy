@@ -139,7 +139,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     const { error, status, spending, spendingFormValues, backendJourneyId } =
       response!;
 
-    if (!error && minorStage) {
+    if (!error && spending) {
       resetValues();
       onSubmit({ spending, status, backendJourneyId });
     } else if (error) {
@@ -217,7 +217,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
                   onChangeText: inputChangedHandler.bind(this, 'amount'),
                   placeholder:
                     maxAvailableMoney > 0
-                      ? `Remaining: ${formatAmount(maxAvailableMoney)}`
+                      ? `Max: ${formatAmount(maxAvailableMoney)}`
                       : '',
                 }}
               />

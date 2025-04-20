@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 
@@ -14,6 +14,7 @@ interface ModalProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   positiveConfirm?: boolean;
+  containerStyle?: ViewStyle;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -23,13 +24,14 @@ const Modal: React.FC<ModalProps> = ({
   onConfirm,
   onCancel,
   positiveConfirm,
+  containerStyle,
 }): ReactElement => {
   return (
     <BlurView intensity={85} tint='dark' style={styles.blurcontainer}>
       <Animated.View
         entering={FadeInDown}
         exiting={FadeOutDown}
-        style={styles.container}
+        style={[styles.container, containerStyle]}
       >
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.content}>{content}</Text>

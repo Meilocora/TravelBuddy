@@ -5,6 +5,7 @@ import {
   ButtonMode,
   ColorScheme,
   MajorStage,
+  MapLocation,
   MinorStage,
   Transportation,
   TransportationFormValues,
@@ -22,6 +23,7 @@ import {
   updateTransportation,
 } from '../../utils/http/transportation';
 import { MinorStageContext } from '../../store/minorStage-context';
+import LocationPicker from '../UI/form/LocationPicker';
 
 type InputValidationResponse = {
   transportation?: Transportation;
@@ -93,8 +95,28 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
       isValid: true,
       errors: [],
     },
+    departure_latitude: {
+      value: defaultValues?.departure_latitude || undefined,
+      isValid: true,
+      errors: [],
+    },
+    departure_longitude: {
+      value: defaultValues?.departure_longitude || undefined,
+      isValid: true,
+      errors: [],
+    },
     place_of_arrival: {
       value: defaultValues?.place_of_arrival || '',
+      isValid: true,
+      errors: [],
+    },
+    arrival_latitude: {
+      value: defaultValues?.arrival_latitude || undefined,
+      isValid: true,
+      errors: [],
+    },
+    arrival_longitude: {
+      value: defaultValues?.arrival_longitude || undefined,
       isValid: true,
       errors: [],
     },
@@ -133,8 +155,28 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         isValid: true,
         errors: [],
       },
+      departure_latitude: {
+        value: defaultValues?.departure_latitude || undefined,
+        isValid: true,
+        errors: [],
+      },
+      departure_longitude: {
+        value: defaultValues?.departure_longitude || undefined,
+        isValid: true,
+        errors: [],
+      },
       place_of_arrival: {
         value: defaultValues?.place_of_arrival || '',
+        isValid: true,
+        errors: [],
+      },
+      arrival_latitude: {
+        value: defaultValues?.arrival_latitude || undefined,
+        isValid: true,
+        errors: [],
+      },
+      arrival_longitude: {
+        value: defaultValues?.arrival_longitude || undefined,
         isValid: true,
         errors: [],
       },
@@ -159,6 +201,32 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
       return {
         ...currInputs,
         [inputIdentifier]: { value: enteredValue, isValid: true, errors: [] }, // dynamically use propertynames for objects
+      };
+    });
+  }
+
+  function handleDeparturePickLocation(location: MapLocation) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        place_of_departure: {
+          value: location.title!,
+          isValid: true,
+          errors: [],
+        },
+        departure_latitude: { value: location.lat, isValid: true, errors: [] },
+        departure_longitude: { value: location.lng, isValid: true, errors: [] },
+      };
+    });
+  }
+
+  function handleArrivalPickLocation(location: MapLocation) {
+    setInputs((currInputs) => {
+      return {
+        ...currInputs,
+        place_of_arrival: { value: location.title!, isValid: true, errors: [] },
+        arrival_latitude: { value: location.lat, isValid: true, errors: [] },
+        arrival_longitude: { value: location.lng, isValid: true, errors: [] },
       };
     });
   }
@@ -261,7 +329,6 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
-          {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
           <Input
             label='Place of departure'
             invalid={!inputs.place_of_departure.isValid}
@@ -275,7 +342,21 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
               ),
             }}
           />
-          {/* TODO: Maybe add links to places, so the user can just tap on the name and get to google maps immediately */}
+          <LocationPicker
+            onPickLocation={handleDeparturePickLocation}
+            pickedLocation={
+              inputs.departure_latitude.value &&
+              inputs.departure_longitude.value
+                ? {
+                    lat: inputs.departure_latitude.value,
+                    lng: inputs.departure_longitude.value,
+                    title: inputs.place_of_departure.value,
+                  }
+                : undefined
+            }
+          />
+        </View>
+        <View style={styles.formRow}>
           <Input
             label='Place of arrival'
             invalid={!inputs.place_of_arrival.isValid}
@@ -285,6 +366,18 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
               value: inputs.place_of_arrival.value,
               onChangeText: inputChangedHandler.bind(this, 'place_of_arrival'),
             }}
+          />
+          <LocationPicker
+            onPickLocation={handleArrivalPickLocation}
+            pickedLocation={
+              inputs.arrival_latitude.value && inputs.arrival_longitude.value
+                ? {
+                    lat: inputs.arrival_latitude.value,
+                    lng: inputs.arrival_longitude.value,
+                    title: inputs.place_of_arrival.value,
+                  }
+                : undefined
+            }
           />
         </View>
         <View style={styles.formRow}>

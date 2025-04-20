@@ -53,6 +53,7 @@ export type StackParamList = {
   ManageCustomCountry: { countryId: number };
   ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
   LocationPickMap: {
+    initialTitle: string | undefined;
     initialLat: number;
     initialLng: number;
     onPickLocation: (location: MapLocation) => void;

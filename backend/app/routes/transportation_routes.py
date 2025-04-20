@@ -31,7 +31,11 @@ def create_major_stage_transportation(current_user, majorStageId):
             start_time=transportation['start_time']['value'],
             arrival_time=transportation['arrival_time']['value'],
             place_of_departure=transportation['place_of_departure']['value'],
+            departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
+            departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
             place_of_arrival=transportation['place_of_arrival']['value'],
+            arrival_latitude=transportation.get('arrival_latitude', {}).get('value', None),
+            arrival_longitude=transportation.get('arrival_longitude', {}).get('value', None),
             transportation_costs=transportation['transportation_costs']['value'],
             link=transportation['link']['value'],
             major_stage_id=majorStageId
@@ -47,7 +51,11 @@ def create_major_stage_transportation(current_user, majorStageId):
                                     'start_time': new_transportation.start_time,
                                     'arrival_time': new_transportation.arrival_time,
                                     'place_of_departure': new_transportation.place_of_departure,
+                                    'departure_latitude': new_transportation.departure_latitude if new_transportation.departure_latitude else None,
+                                    'departure_longitude': new_transportation.departure_longitude if new_transportation.departure_longitude else None,
                                     'place_of_arrival': new_transportation.place_of_arrival,
+                                    'arrival_latitude': new_transportation.arrival_latitude if new_transportation.arrival_latitude else None,
+                                    'arrival_longitude': new_transportation.arrival_longitude if new_transportation.arrival_longitude else None,
                                     'transportation_costs': new_transportation.transportation_costs,
                                     'link': new_transportation.link}
         
@@ -80,7 +88,11 @@ def create_minor_stage_transportation(current_user, minorStageId):
             start_time=transportation['start_time']['value'],
             arrival_time=transportation['arrival_time']['value'],
             place_of_departure=transportation['place_of_departure']['value'],
+            departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
+            departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
             place_of_arrival=transportation['place_of_arrival']['value'],
+            arrival_latitude=transportation.get('arrival_latitude', {}).get('value', None),
+            arrival_longitude=transportation.get('arrival_longitude', {}).get('value', None),
             transportation_costs=transportation['transportation_costs']['value'],
             link=transportation['link']['value'],
             minor_stage_id=minorStageId
@@ -96,7 +108,11 @@ def create_minor_stage_transportation(current_user, minorStageId):
                                     'start_time': new_transportation.start_time,
                                     'arrival_time': new_transportation.arrival_time,
                                     'place_of_departure': new_transportation.place_of_departure,
+                                    'departure_latitude': new_transportation.departure_latitude if new_transportation.departure_latitude else None,
+                                    'departure_longitude': new_transportation.departure_longitude if new_transportation.departure_longitude else None,
                                     'place_of_arrival': new_transportation.place_of_arrival,
+                                    'arrival_latitude': new_transportation.arrival_latitude if new_transportation.arrival_latitude else None,
+                                    'arrival_longitude': new_transportation.arrival_longitude if new_transportation.arrival_longitude else None,
                                     'transportation_costs': new_transportation.transportation_costs,
                                     'link': new_transportation.link}
         
@@ -129,7 +145,11 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
         old_transportation.start_time = new_transportation['start_time']['value']
         old_transportation.arrival_time = new_transportation['arrival_time']['value']
         old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
+        old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
+        old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)
         old_transportation.place_of_arrival = new_transportation['place_of_arrival']['value']
+        old_transportation.arrival_latitude = new_transportation.get('arrival_latitude', {}).get('value', None)
+        old_transportation.arrival_longitude = new_transportation.get('arrival_longitude', {}).get('value', None)
         old_transportation.transportation_costs = new_transportation['transportation_costs']['value']
         old_transportation.link = new_transportation['link']['value']
         db.session.commit()
@@ -142,7 +162,11 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
                                     'start_time': new_transportation['start_time']['value'],
                                     'arrival_time': new_transportation['arrival_time']['value'],
                                     'place_of_departure': new_transportation['place_of_departure']['value'],
+                                    'departure_latitude': new_transportation['departure_latitude']['value'] if new_transportation['departure_latitude'] else None,
+                                    'departure_longitude': new_transportation['departure_longitude']['value'] if new_transportation['departure_longitude'] else None,
                                     'place_of_arrival': new_transportation['place_of_arrival']['value'],
+                                    'arrival_latitude': new_transportation['arrival_latitude']['value'] if new_transportation['arrival_latitude'] else None,
+                                    'arrival_longitude': new_transportation['arrival_longitude']['value'] if new_transportation['arrival_longitude'] else None,
                                     'transportation_costs': new_transportation['transportation_costs']['value'],
                                     'link': new_transportation['link']['value']}
 
@@ -175,7 +199,11 @@ def update_minor_stage_transportation(current_user, minorStageId, transportation
         old_transportation.start_time = new_transportation['start_time']['value']
         old_transportation.arrival_time = new_transportation['arrival_time']['value']
         old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
+        old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
+        old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)
         old_transportation.place_of_arrival = new_transportation['place_of_arrival']['value']
+        old_transportation.arrival_latitude = new_transportation.get('arrival_latitude', {}).get('value', None)
+        old_transportation.arrival_longitude = new_transportation.get('arrival_longitude', {}).get('value', None)
         old_transportation.transportation_costs = new_transportation['transportation_costs']['value']
         old_transportation.link = new_transportation['link']['value']
         db.session.commit()
@@ -188,7 +216,11 @@ def update_minor_stage_transportation(current_user, minorStageId, transportation
                                     'start_time': new_transportation['start_time']['value'],
                                     'arrival_time': new_transportation['arrival_time']['value'],
                                     'place_of_departure': new_transportation['place_of_departure']['value'],
+                                    'departure_latitude': new_transportation['departure_latitude']['value'] if new_transportation['departure_latitude'] else None,
+                                    'departure_longitude': new_transportation['departure_longitude']['value'] if new_transportation['departure_longitude'] else None,
                                     'place_of_arrival': new_transportation['place_of_arrival']['value'],
+                                    'arrival_latitude': new_transportation['arrival_latitude']['value'] if new_transportation['arrival_latitude'] else None,
+                                    'arrival_longitude': new_transportation['arrival_longitude']['value'] if new_transportation['arrival_longitude'] else None,
                                     'transportation_costs': new_transportation['transportation_costs']['value'],
                                     'link': new_transportation['link']['value']}
 

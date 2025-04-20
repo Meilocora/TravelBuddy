@@ -66,7 +66,7 @@ def update_spending(current_user, minorStageId, spendingId):
         return jsonify({'error': 'Unknown error'}, 400) 
     
     response, isValid = SpendingValidation.validate_spending(new_spending)
-    
+        
     if not isValid:
         return jsonify({'spendingFormValues': response, 'status': 400})
     

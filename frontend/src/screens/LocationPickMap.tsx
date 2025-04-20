@@ -1,14 +1,15 @@
 import 'react-native-get-random-values';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useLayoutEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import { StackParamList } from '../models';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
+import { GlobalStyles } from '../constants/styles';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
@@ -31,6 +32,9 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     latitudeDelta: 0.1,
     longitudeDelta: 0.04,
   });
+  const [title, setTitle] = useState<string | undefined>(
+    route.params.initialTitle
+  );
   const [showModal, setShowModal] = useState(false);
 
   function selectLocationHandler(event: MapPressEvent) {
@@ -55,6 +59,8 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
         latitudeDelta: 0.1,
         longitudeDelta: 0.04,
       });
+
+      setTitle(details.name);
       setHasLocation(true);
       setShowModal(true);
     }
@@ -63,6 +69,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
 
   function handleSelectPlace() {
     route.params.onPickLocation({
+      title: title,
       lat: region.latitude,
       lng: region.longitude,
     });
@@ -75,6 +82,8 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     });
   }, []);
 
+  const { width, height } = Dimensions.get('window');
+
   return (
     <View style={styles.container}>
       {showModal && (
@@ -85,6 +94,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           onCancel={() => setShowModal(false)}
           onConfirm={handleSelectPlace}
           positiveConfirm
+          containerStyle={styles.modal}
         />
       )}
       <GooglePlacesAutocomplete
@@ -115,6 +125,20 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           />
         )}
       </MapView>
+      {title && (
+        <View
+          style={[
+            styles.titleContainer,
+            {
+              top: height / 2,
+              left: width / 2 - title.length * 5,
+              transform: [{ translateY: -height / 25 }],
+            },
+          ]}
+        >
+          <Text style={styles.titleText}>{title}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -138,6 +162,25 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  modal: {
+    marginTop: '25%',
+  },
+  titleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1,
+    position: 'absolute',
+    backgroundColor: GlobalStyles.colors.gray700,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+  },
+  titleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

@@ -32,6 +32,8 @@ def create_activity(current_user, minorStageId):
             description=activity['description']['value'],
             place=activity['place']['value'],
             costs=activity['costs']['value'],
+            latitude = activity.get('latitude', {}).get('value', None),
+            longitude = activity.get('longitude', {}).get('value', None),
             link=activity['link']['value'],
             booked=activity['booked']['value'],
             minor_stage_id=minorStageId
@@ -47,6 +49,8 @@ def create_activity(current_user, minorStageId):
                                 'description': new_activity.description,
                                 'place': new_activity.place,
                                 'costs': new_activity.costs,
+                                'latitude': new_activity.latitude if new_activity.latitude else None,
+                                'longitude': new_activity.longitude if new_activity.longitude else None,
                                 'link': new_activity.link,
                                 'booked': new_activity.booked}
         
@@ -80,6 +84,8 @@ def update_activity(current_user, minorStageId, activityId):
         old_activity.description = new_activity['description']['value']
         old_activity.place = new_activity['place']['value']
         old_activity.costs = new_activity['costs']['value']
+        old_activity.latitude = new_activity.get('latitude', {}).get('value', None),
+        old_activity.longitude = new_activity.get('longitude', {}).get('value', None),
         old_activity.link = new_activity['link']['value']
         old_activity.booked = new_activity['booked']['value']
         db.session.commit()
@@ -92,6 +98,8 @@ def update_activity(current_user, minorStageId, activityId):
                                     'description': new_activity['description']['value'],
                                     'place': new_activity['place']['value'],
                                     'costs': new_activity['costs']['value'],
+                                    'latitude': new_activity.get('latitude', {}).get('value', None),
+                                    'longitude': new_activity.get('longitude', {}).get('value', None),
                                     'link': new_activity['link']['value'],
                                     'booked': new_activity['booked']['value']}
 

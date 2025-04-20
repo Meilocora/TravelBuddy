@@ -38,7 +38,11 @@ export interface Transportation {
   start_time: string;
   arrival_time: string;
   place_of_departure: string;
+  departure_latitude: number | undefined;
+  departure_longitude: number | undefined;
   place_of_arrival: string;
+  arrival_latitude: number | undefined;
+  arrival_longitude: number | undefined;
   transportation_costs: number;
   link: string;
 }
@@ -48,7 +52,11 @@ export interface TransportationValues {
   start_time: string;
   arrival_time: string;
   place_of_departure: string;
+  departure_latitude: number | undefined;
+  departure_longitude: number | undefined;
   place_of_arrival: string;
+  arrival_latitude: number | undefined;
+  arrival_longitude: number | undefined;
   transportation_costs: number;
   link: string;
 }
@@ -58,7 +66,11 @@ export interface TransportationFormValues {
   start_time: Validable<string | null>;
   arrival_time: Validable<string | null>;
   place_of_departure: Validable<string | undefined>;
+  departure_latitude: Validable<number | undefined>;
+  departure_longitude: Validable<number | undefined>;
   place_of_arrival: Validable<string | undefined>;
+  arrival_latitude: Validable<number | undefined>;
+  arrival_longitude: Validable<number | undefined>;
   transportation_costs: Validable<number>;
   link: Validable<string | undefined>;
 }

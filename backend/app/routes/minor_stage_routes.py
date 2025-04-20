@@ -43,8 +43,9 @@ def get_minor_stages(current_user, majorStageId):
                                     'place': accommodation.place,
                                     'costs': accommodation.costs,
                                     'booked': accommodation.booked,
+                                    'latitude': accommodation.latitude if accommodation.latitude else None,
+                                    'longitude': accommodation.longitude if accommodation.longitude else None,
                                     'link': accommodation.link,
-                                    'maps_link': accommodation.maps_link
                                 }
             }
             
@@ -55,7 +56,11 @@ def get_minor_stages(current_user, majorStageId):
                     'start_time': transportation.start_time,
                     'arrival_time': transportation.arrival_time,
                     'place_of_departure': transportation.place_of_departure,
+                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
+                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
                     'place_of_arrival': transportation.place_of_arrival,
+                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
+                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }
@@ -64,10 +69,10 @@ def get_minor_stages(current_user, majorStageId):
                 minor_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
                         
             if activities is not None:
-                minor_stage_data['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
+                minor_stage_data['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'latitude': activity.latitude, 'longitude': activity.longitude ,'link': activity.link} for activity in activities]
             
             if places_to_visit is not None:
-                minor_stage_data['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
+                minor_stage_data['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'latitude': place_to_visit.latitude, 'longitude': place_to_visit.longitude, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
             
             minor_stages_list.append(minor_stage_data)
         
@@ -118,8 +123,9 @@ def create_minor_stage(current_user, majorStageId):
             place=minor_stage['accommodation_place']['value'],
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
+            latitude=minor_stage.get('accommodation_latitude', {}).get('value', None),
+            longitude=minor_stage.get('accommodation_longitude', {}).get('value', None),
             link=minor_stage['accommodation_link']['value'],
-            maps_link=minor_stage['accommodation_maps_link']['value'],
             minor_stage_id=new_minor_stage.id
         )
         db.session.add(new_accommodation)
@@ -152,8 +158,9 @@ def create_minor_stage(current_user, majorStageId):
                                     'place': new_accommodation.place,
                                     'costs': new_accommodation.costs,
                                     'booked': new_accommodation.booked,
+                                    'latitude': new_accommodation.latitude if new_accommodation.latitude else None,
+                                    'longitude': new_accommodation.longitude if new_accommodation.longitude else None,
                                     'link': new_accommodation.link,
-                                    'maps_link': new_accommodation.maps_link
                                 }
         }
         
@@ -210,8 +217,9 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
             place=minor_stage['accommodation_place']['value'],
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
+            latitude=minor_stage.get('accommodation_latitude', {}).get('value', None),
+            longitude=minor_stage.get('accommodation_longitude', {}).get('value', None),
             link=minor_stage['accommodation_link']['value'],
-            maps_link=minor_stage['accommodation_maps_link']['value'],
             minor_stage_id=minorStageId
         ))
         db.session.commit()
@@ -241,8 +249,9 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
                                     'place': minor_stage['accommodation_place']['value'],
                                     'costs': minor_stage['accommodation_costs']['value'],
                                     'booked': minor_stage['accommodation_booked']['value'],
+                                    'latitude': minor_stage['accommodation_latitude']['value'] if minor_stage['accommodation_latitude']['value'] else None,
+                                    'longitude': minor_stage['accommodation_longitude']['value'] if minor_stage['accommodation_longitude']['value'] else None,
                                     'link': minor_stage['accommodation_link']['value'],
-                                    'maps_link': minor_stage['accommodation_maps_link']['value']
                                 }
         }
                 
@@ -252,7 +261,11 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
                     'start_time': transportation.start_time,
                     'arrival_time': transportation.arrival_time,
                     'place_of_departure': transportation.place_of_departure,
+                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
+                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
                     'place_of_arrival': transportation.place_of_arrival,
+                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
+                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }
@@ -261,10 +274,10 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
             response_minor_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
             
         if activities is not None:
-            response_minor_stage['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'link': activity.link} for activity in activities]
+            response_minor_stage['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'latitude': activity.latitude, 'longitude': activity.longitude ,'link': activity.link} for activity in activities]
             
         if places_to_visit is not None:
-                response_minor_stage['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
+                response_minor_stage['placesToVisit'] = [{'countryId': place_to_visit.custom_country_id ,'id': place_to_visit.id, 'name': place_to_visit.name, 'description': place_to_visit.description, 'visited': place_to_visit.visited, 'favorite': place_to_visit.favorite, 'latitude': place_to_visit.latitude, 'longitude': place_to_visit.longitude, 'link': place_to_visit.link} for place_to_visit in places_to_visit]
 
         return jsonify({'minorStage': response_minor_stage,'status': 200})
     except Exception as e:
@@ -293,4 +306,4 @@ def delete_minor_stage(current_user, minorStageId):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
-# TODO: Add feature to add spendings
+    

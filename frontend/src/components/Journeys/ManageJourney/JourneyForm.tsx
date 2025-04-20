@@ -231,7 +231,6 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             label='Description'
             invalid={!inputs.description.isValid}
             errors={inputs.description.errors}
-            mandatory
             textInputConfig={{
               multiline: true,
               value: inputs.description.value,

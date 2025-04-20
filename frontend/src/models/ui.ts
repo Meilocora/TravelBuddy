@@ -32,6 +32,8 @@ export enum Icons {
   remove = 'close-circle-outline',
   save = 'save-outline',
   locate = 'locate-outline',
+  map = 'map-outline',
+  mapFilled = 'map',
 }
 
 export enum ButtonMode {
