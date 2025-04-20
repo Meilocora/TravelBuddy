@@ -9,29 +9,22 @@ interface AdditionalInfoPointsProps {
   openInfoBox: boolean;
   link?: string;
 }
+// TODO: Completely rewoerk this => also add icons to let user see the location at the map
 
 const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
   additionalInfo,
   openInfoBox,
   link,
 }) => {
-  // Button to edit Transport
-
   return (
     <View style={[styles.infoBox, openInfoBox && styles.openedBox]}>
       {openInfoBox &&
         additionalInfo.map((info, index) => (
           <View key={generateRandomString()} style={styles.infoPointContainer}>
-            <Text
-              style={[styles.additionalInfo, styles.title]}
-              numberOfLines={1}
-            >
+            <Text style={[styles.additionalInfo, styles.title]}>
               {info.title}
             </Text>
-            <Text
-              style={[styles.additionalInfo, styles.value]}
-              numberOfLines={1}
-            >
+            <Text style={[styles.additionalInfo, styles.value]}>
               {info.value}
             </Text>
           </View>

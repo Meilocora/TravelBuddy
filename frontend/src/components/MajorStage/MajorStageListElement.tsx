@@ -41,7 +41,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
 
-  // useReducer to get rid of alle that code
   const moneyAvailable = formatAmount(majorStage.costs.budget);
   const moneyPlanned = formatAmount(majorStage.costs.spent_money);
   const startDate = formatDateString(majorStage.scheduled_start_time);
@@ -96,7 +95,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     additionalInfo = [
       {
         title: 'Departure: ',
-        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`, // TODO: lat + lng for place and quick-link to google maps?
+        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`,
       },
       {
         title: 'Arrival: ',

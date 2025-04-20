@@ -12,8 +12,8 @@ import {
   ButtonMode,
   ColorScheme,
   Icons,
-  MajorStageStackParamList,
   MinorStage,
+  StackParamList,
 } from '../../../models';
 import Button from '../Button';
 import Link from '../Link';
@@ -35,9 +35,18 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
   handleEdit,
   handleDelete,
 }) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
   const [isOpened, setIsOpened] = useState(false);
+
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
+  function handleShowLocation() {
+    navigation.navigate('ShowMap', {
+      title: activity.place,
+      lat: activity.latitude!,
+      lng: activity.longitude!,
+      colorScheme: 'complementary',
+    });
+  }
 
   return (
     <View style={listElementStyles.container}>
@@ -51,13 +60,20 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
             {activity.name}
           </Text>
           <View style={listElementStyles.buttonsContainer}>
+            {activity.latitude && activity.longitude && (
+              <IconButton
+                icon={Icons.location}
+                onPress={handleShowLocation}
+                color={GlobalStyles.colors.visited}
+                containerStyle={listElementStyles.button}
+              />
+            )}
             <IconButton
               icon={Icons.editFilled}
               onPress={handleEdit.bind(null, activity.id!)}
               color={GlobalStyles.colors.edit}
               containerStyle={listElementStyles.button}
             />
-
             <IconButton
               icon={Icons.remove}
               onPress={handleDelete.bind(null, activity.id!)}
@@ -112,7 +128,6 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
                 </View>
               )}
             </View>
-            {/* TODO: Add Icon to see location on map */}
           </View>
         )}
       </Pressable>

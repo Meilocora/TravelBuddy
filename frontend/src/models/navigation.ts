@@ -59,6 +59,12 @@ export type StackParamList = {
     onPickLocation: (location: MapLocation) => void;
     hasLocation: boolean;
   };
+  ShowMap: {
+    title?: string;
+    lat: number;
+    lng: number;
+    colorScheme: string;
+  };
 };
 
 export type AuthStackParamList = {

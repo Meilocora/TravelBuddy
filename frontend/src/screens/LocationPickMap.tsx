@@ -125,6 +125,8 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           />
         )}
       </MapView>
+      {/* TODO: Rework this to use a better approach for positioning the title */}
+      {/* TODO: Give user a functionality to delete the lat and lng  */}
       {title && (
         <View
           style={[

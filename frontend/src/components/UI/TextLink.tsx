@@ -10,10 +10,11 @@ import {
 } from 'react-native';
 
 interface TextLinkProps {
-  link: string;
+  link?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
-  children: string;
+  children: any;
+  onPress?: () => void;
 }
 
 const TextLink: React.FC<TextLinkProps> = ({
@@ -21,15 +22,23 @@ const TextLink: React.FC<TextLinkProps> = ({
   style,
   textStyle,
   children,
+  onPress,
 }): ReactElement => {
   return (
     <View style={[styles.container, style]}>
-      <TouchableOpacity
-        onPress={() => Linking.openURL(link)}
-        style={{ height: 'auto' }}
-      >
-        <Text style={[styles.text, textStyle]}>{children}</Text>
-      </TouchableOpacity>
+      {link && (
+        <TouchableOpacity
+          onPress={() => Linking.openURL(link!)}
+          style={{ height: 'auto' }}
+        >
+          <Text style={[styles.text, textStyle]}>{children}</Text>
+        </TouchableOpacity>
+      )}
+      {onPress && (
+        <TouchableOpacity onPress={onPress} style={{ height: 'auto' }}>
+          <Text style={[styles.text, textStyle]}>{children}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

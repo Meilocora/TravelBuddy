@@ -104,11 +104,6 @@ const MainContent: React.FC<MainContentProps> = ({
     });
   }
 
-  async function handleDeleteSpending(id: number) {
-    await deleteSpending(id);
-    await minorStageCtx.refetchMinorStages(majorStageId);
-  }
-
   let content: Content[] = [
     {
       title: 'transport',
@@ -148,7 +143,6 @@ const MainContent: React.FC<MainContentProps> = ({
           minorStage={minorStage}
           handleAdd={handleAddSpending}
           handleEdit={handleEditSpending}
-          // handleDelete={handleDeleteSpending}
         />
       ),
     },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Pressable } from 'react-native';
+import { StyleSheet, Pressable, View } from 'react-native';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import Input from './Input';
@@ -36,7 +36,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <Pressable onPress={setOpenDatePicker}>
         <Input
           label={label}
@@ -68,10 +68,14 @@ const DatePicker: React.FC<DatePickerProps> = ({
           />
         </OutsidePressHandler>
       )}
-    </>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default DatePicker;
