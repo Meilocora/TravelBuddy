@@ -7,168 +7,103 @@ import {
   Pressable,
 } from 'react-native';
 
-import {
-  ButtonMode,
-  ColorScheme,
-  Icons,
-  MinorStage,
-  Spending,
-} from '../../../models';
+import { ButtonMode, ColorScheme, MinorStage, Spending } from '../../../models';
 import Button from '../Button';
-import { useState } from 'react';
 import { GlobalStyles } from '../../../constants/styles';
-import IconButton from '../IconButton';
 import { formatAmount, generateRandomString } from '../../../utils';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
-import OutsidePressHandler from 'react-native-outside-press';
 
 interface SpendingListElementProps {
   spendings: Spending[];
   handleEdit: (id: number) => void;
-  // handleDelete: (id: number) => void;
 }
 
 const SpendingListElement: React.FC<SpendingListElementProps> = ({
   spendings,
   handleEdit,
-  // handleDelete,
 }) => {
-  // const [modal, setModal] = useState<{ state: boolean; id: number | null }>({
-  // state: false,
-  // id: null,
-  // });
-
-  // function onTap(id: number) {
-  // if (modal.state) {
-  // setModal({ state: false, id: null });
-  // } else {
-  // setModal({ state: true, id: id });
-  // }
-  // }
-
-  // function handleClose() {
-  // setModal({ state: false, id: null });
-  // }
-
   const tableHeaders = ['Name', 'Category', 'Amount', 'Date'];
 
   return (
-    // <OutsidePressHandler onOutsidePress={handleClose}>
-    <>
-      {/* {modal.state && (
-        <Animated.View
-          entering={FadeInDown}
-          exiting={FadeOutDown}
-          style={listElementStyles.modalContainer}
-        >
-          <View style={listElementStyles.modal}>
-            <View style={listElementStyles.buttonsContainer}>
-              <IconButton
-                icon={Icons.editFilled}
-                onPress={handleEdit.bind(null, modal.id!)}
-                color={GlobalStyles.colors.edit}
-                size={32}
-              />
-
-              <IconButton
-                icon={Icons.delete}
-                onPress={handleDelete.bind(null, modal.id!)}
-                color={GlobalStyles.colors.error200}
-                size={32}
-              />
-            </View>
-            <Button
-              mode={ButtonMode.flat}
-              onPress={handleClose}
-              colorScheme={ColorScheme.neutral}
-            >
-              Dismiss
-            </Button>
+    <View style={listElementStyles.container}>
+      <View style={[listElementStyles.row, listElementStyles.headRow]}>
+        {tableHeaders.map((header) => (
+          <View
+            style={listElementStyles.rowElement}
+            key={generateRandomString()}
+          >
+            <Text style={listElementStyles.headerText}>{header}</Text>
           </View>
-        </Animated.View>
-      )} */}
-      <View style={listElementStyles.container}>
-        <View style={[listElementStyles.row, listElementStyles.headRow]}>
-          {tableHeaders.map((header) => (
-            <View
-              style={listElementStyles.rowElement}
-              key={generateRandomString()}
-            >
-              <Text style={listElementStyles.headerText}>{header}</Text>
-            </View>
-          ))}
-        </View>
-        <ScrollView>
-          {spendings.map((spending, index) => (
-            <Pressable
-              key={generateRandomString()}
-              onPress={() => handleEdit(spending.id!)}
-              style={[
-                listElementStyles.row,
-                index % 2 === 0
-                  ? listElementStyles.evenRow
-                  : listElementStyles.oddRow,
-                index + 1 === spendings.length ? listElementStyles.lastRow : {},
-              ]}
-            >
-              <View style={listElementStyles.rowElement}>
-                <Text
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                  style={
-                    index % 2 === 0
-                      ? listElementStyles.evenText
-                      : listElementStyles.oddText
-                  }
-                >
-                  {spending.name}
-                </Text>
-              </View>
-              <View style={listElementStyles.rowElement}>
-                <Text
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                  style={
-                    index % 2 === 0
-                      ? listElementStyles.evenText
-                      : listElementStyles.oddText
-                  }
-                >
-                  {spending.category}
-                </Text>
-              </View>
-              <View style={listElementStyles.rowElement}>
-                <Text
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                  style={
-                    index % 2 === 0
-                      ? listElementStyles.evenText
-                      : listElementStyles.oddText
-                  }
-                >
-                  {formatAmount(spending.amount)}
-                </Text>
-              </View>
-              <View style={listElementStyles.rowElement}>
-                <Text
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                  style={
-                    index % 2 === 0
-                      ? listElementStyles.evenText
-                      : listElementStyles.oddText
-                  }
-                >
-                  {spending.date}
-                </Text>
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
+        ))}
       </View>
-    </>
-    // </OutsidePressHandler>
+      <ScrollView>
+        {spendings.map((spending, index) => (
+          <Pressable
+            key={generateRandomString()}
+            onPress={() => handleEdit(spending.id!)}
+            style={[
+              listElementStyles.row,
+              index % 2 === 0
+                ? listElementStyles.evenRow
+                : listElementStyles.oddRow,
+              index + 1 === spendings.length ? listElementStyles.lastRow : {},
+            ]}
+          >
+            <View style={listElementStyles.rowElement}>
+              <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
+                style={
+                  index % 2 === 0
+                    ? listElementStyles.evenText
+                    : listElementStyles.oddText
+                }
+              >
+                {spending.name}
+              </Text>
+            </View>
+            <View style={listElementStyles.rowElement}>
+              <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
+                style={
+                  index % 2 === 0
+                    ? listElementStyles.evenText
+                    : listElementStyles.oddText
+                }
+              >
+                {spending.category}
+              </Text>
+            </View>
+            <View style={listElementStyles.rowElement}>
+              <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
+                style={
+                  index % 2 === 0
+                    ? listElementStyles.evenText
+                    : listElementStyles.oddText
+                }
+              >
+                {formatAmount(spending.amount)}
+              </Text>
+            </View>
+            <View style={listElementStyles.rowElement}>
+              <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
+                style={
+                  index % 2 === 0
+                    ? listElementStyles.evenText
+                    : listElementStyles.oddText
+                }
+              >
+                {spending.date}
+              </Text>
+            </View>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -227,36 +162,18 @@ const listElementStyles = StyleSheet.create({
     paddingVertical: 5,
     color: GlobalStyles.colors.complementary100,
   },
-  // modalContainer: {
-  //   flex: 1,
-  //   position: 'absolute',
-  //   zIndex: 1,
-  // },
-  // modal: {
-  //   transform: [{ translateX: Dimensions.get('screen').width / 4 }],
-  //   backgroundColor: GlobalStyles.colors.gray400,
-  //   borderWidth: 1,
-  //   borderRadius: 20,
-  //   zIndex: 2,
-  // },
-  // buttonsContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  // },
 });
 
 interface SpendingElementProps {
   minorStage: MinorStage;
   handleAdd: () => void;
   handleEdit: (id: number) => void;
-  // handleDelete: (id: number) => void;
 }
 
 const SpendingElement: React.FC<SpendingElementProps> = ({
   minorStage,
   handleAdd,
   handleEdit,
-  // handleDelete,
 }) => {
   const screenHeight = Dimensions.get('window').height;
 
@@ -271,7 +188,6 @@ const SpendingElement: React.FC<SpendingElementProps> = ({
           <SpendingListElement
             spendings={minorStage.costs.spendings!}
             handleEdit={handleEdit}
-            // handleDelete={handleDelete}
             key={generateRandomString()}
           />
         </ScrollView>

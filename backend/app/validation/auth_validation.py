@@ -11,9 +11,15 @@ class AuthValidation(Validation):
         errors = False
     
         for key, value in signUpData.items():
-            if value['value'] == "" or value['value'] == None:
-                signUpData[key]['errors'].append(f'Input is required')
-                signUpData[key]['isValid'] = False
+            try: 
+                if value['value'] == "" or value['value'] == None:
+                    signUpData[key]['errors'].append(f'Input is required')
+                    signUpData[key]['isValid'] = False
+            except KeyError:
+                signUpData['username']['errors'].append(f", Inputs is required")
+                signUpData['username']['isValid'] = False
+                errors = True
+                return signUpData, not errors
         
         userNameInvalid = AuthValidation().validate_string(signUpData['username']['value'], min_length=3, max_length=20)
         if userNameInvalid:

@@ -14,7 +14,6 @@ import {
 import { MinorStageContext } from '../../../store/minorStage-context';
 import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
-import { deleteSpending } from '../../../utils/http/spending';
 
 interface MainContentProps {
   journeyId: number;

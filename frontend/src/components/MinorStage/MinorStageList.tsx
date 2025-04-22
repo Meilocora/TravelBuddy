@@ -30,6 +30,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   );
 
   useEffect(() => {
+    // TODO: This should also get triggered, when a place is being updated?
     async function getMinorStages(majorStageId: number) {
       setIsFetching(true);
       const response = await fetchMinorStagesById(majorStageId);

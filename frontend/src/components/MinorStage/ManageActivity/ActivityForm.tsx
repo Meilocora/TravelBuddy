@@ -191,7 +191,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     const { error, status, activity, activityFormValues, backendJourneyId } =
       response!;
 
-    if (!error && minorStage) {
+    if (!error && activity) {
       resetValues();
       onSubmit({ activity, status, backendJourneyId });
     } else if (error) {

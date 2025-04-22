@@ -71,6 +71,8 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
     costs: selectedActivity?.costs || 0,
     booked: selectedActivity?.booked || false,
     place: selectedActivity?.place || '',
+    latitude: selectedActivity?.latitude || undefined,
+    longitude: selectedActivity?.longitude || undefined,
     link: selectedActivity?.link || '',
   });
 
@@ -82,6 +84,8 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
       costs: selectedActivity?.costs || 0,
       booked: selectedActivity?.booked || false,
       place: selectedActivity?.place || '',
+      latitude: selectedActivity?.latitude || undefined,
+      longitude: selectedActivity?.longitude || undefined,
       link: selectedActivity?.link || '',
     });
   }, [selectedActivity]);
@@ -113,6 +117,8 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
       costs: 0,
       booked: false,
       place: '',
+      latitude: undefined,
+      longitude: undefined,
       link: '',
     });
   }

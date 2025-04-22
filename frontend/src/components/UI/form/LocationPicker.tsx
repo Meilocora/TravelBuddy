@@ -80,8 +80,14 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       onPickLocation: (location: MapLocation) => {
         onPickLocation(location);
       },
+      onResetLocation: handleResetLocation,
       hasLocation: hasInitialLocation,
     });
+  }
+
+  function handleResetLocation() {
+    setHasInitialLocation(false);
+    onPickLocation({ title: undefined, lat: undefined, lng: undefined });
   }
 
   return (

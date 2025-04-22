@@ -83,12 +83,13 @@ def update_activity(current_user, minorStageId, activityId):
         old_activity.name = new_activity['name']['value']
         old_activity.description = new_activity['description']['value']
         old_activity.place = new_activity['place']['value']
-        old_activity.costs = new_activity['costs']['value']
-        old_activity.latitude = new_activity.get('latitude', {}).get('value', None),
-        old_activity.longitude = new_activity.get('longitude', {}).get('value', None),
+        old_activity.costs = new_activity['costs']['value']        
+        old_activity.latitude = new_activity.get('latitude', {}).get('value', None)
+        old_activity.longitude = new_activity.get('longitude', {}).get('value', None)
         old_activity.link = new_activity['link']['value']
         old_activity.booked = new_activity['booked']['value']
         db.session.commit()
+        
         
         calculate_journey_costs(journey_costs)
         
@@ -102,6 +103,8 @@ def update_activity(current_user, minorStageId, activityId):
                                     'longitude': new_activity.get('longitude', {}).get('value', None),
                                     'link': new_activity['link']['value'],
                                     'booked': new_activity['booked']['value']}
+        
+        print(response_activity)
 
         return jsonify({'activity': response_activity, 'backendJourneyId': journey.id, 'status': 200})
     except Exception as e:

@@ -11,7 +11,19 @@ class ActivityValidation(Validation):
   @staticmethod
   def validate_activity(activity):
         errors = False
-                 
+                            
+        try:
+            if activity['name']['value'] == "" or activity['name']['value'] == None:
+                activity['name']['errors'].append(f'Input is required')
+                activity['name']['isValid'] = False  
+                errors = True                
+                return activity, not errors
+        except KeyError:
+            activity['name']['errors'].append(f'Input is required')
+            activity['name']['isValid'] = False   
+            errors = True
+            return activity, not errors
+        
         name_val = ActivityValidation().validate_string(activity['name']['value'], min_length=3, max_length=50)
         if name_val:
             activity['name']['errors'].append(f", {name_val}")

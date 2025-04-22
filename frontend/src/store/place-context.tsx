@@ -58,11 +58,14 @@ export default function PlaceContextProvider({
   }
 
   function updatePlace(updatedPlace: PlaceToVisit) {
+    // TODO: This won't work inside MinorStageListElement?
+    console.log('Updating place:', updatedPlace);
     setPlacesToVisit((prevPlaces) =>
       prevPlaces.map((place) =>
         place.id === updatedPlace.id ? updatedPlace : place
       )
     );
+    console.log(placesToVisit);
   }
 
   function getPlacesByCountry(countryId: number) {

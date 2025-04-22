@@ -57,6 +57,7 @@ export type StackParamList = {
     initialLat: number;
     initialLng: number;
     onPickLocation: (location: MapLocation) => void;
+    onResetLocation: () => void;
     hasLocation: boolean;
   };
   ShowMap: {

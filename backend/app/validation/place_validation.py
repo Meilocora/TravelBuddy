@@ -11,10 +11,15 @@ class PlaceValidation(Validation):
       
         for key, value in place.items():
             if key != 'description' and key != 'link' and key != 'latitude' and key != 'longitude':
-                
-                if value['value'] == "" or value['value'] == None:
-                    place[key]['errors'].append(f'Input is required')
-                    place[key]['isValid'] = False
+                try:
+                    if value['value'] == "" or value['value'] == None:
+                        place[key]['errors'].append(f'Input is required')
+                        place[key]['isValid'] = False
+                except KeyError:
+                    place['name']['errors'].append(f", Inputs is required")
+                    place['name']['isValid'] = False
+                    errors = True
+                    return place, not errors
         
         try: 
             place['latitude']['value']

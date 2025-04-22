@@ -6,10 +6,11 @@ import { RouteProp } from '@react-navigation/native';
 import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-import { StackParamList } from '../models';
+import { ColorScheme, StackParamList } from '../models';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
 import { GlobalStyles } from '../constants/styles';
+import Button from '../components/UI/Button';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
@@ -76,6 +77,11 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     navigation.goBack();
   }
 
+  function handleResetPlace() {
+    route.params.onResetLocation();
+    navigation.goBack();
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Pick a Location',
@@ -125,8 +131,12 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           />
         )}
       </MapView>
+      <View style={styles.buttonContainer}>
+        <Button colorScheme={ColorScheme.primary} onPress={handleResetPlace}>
+          Reset Location
+        </Button>
+      </View>
       {/* TODO: Rework this to use a better approach for positioning the title */}
-      {/* TODO: Give user a functionality to delete the lat and lng  */}
       {title && (
         <View
           style={[
@@ -183,6 +193,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 10,
+    alignSelf: 'center',
+    zIndex: 1,
   },
 });
 
