@@ -82,6 +82,15 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
     onRemovePlace?.(place.name);
   }
 
+  function handleShowLocation() {
+    navigation.navigate('ShowMap', {
+      title: place.name,
+      lat: place.latitude!,
+      lng: place.longitude!,
+      colorScheme: majorStageId ? 'complementary' : 'primary',
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Pressable onPress={() => setIsOpened(!isOpened)}>
@@ -120,16 +129,32 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
             )}
           </View>
         </View>
+
         {isOpened && (
           <View style={styles.additionalContainer}>
             <Text style={styles.description}>{place.description}</Text>
-            {place.link && (
-              <View style={styles.row}>
-                <Text style={styles.description}>Link to the place:</Text>
-                <Link link={place.link} color={GlobalStyles.colors.visited} />
-              </View>
-            )}
-            {/* TODO: Maybe let user check location on the map */}
+            <View style={styles.row}>
+              {place.link && (
+                <View style={styles.halfRow}>
+                  <Text style={styles.detail}>Link: </Text>
+                  <Link link={place.link} color={GlobalStyles.colors.visited} />
+                </View>
+              )}
+              {place.latitude && place.longitude && (
+                <View style={styles.halfRow}>
+                  <Text style={styles.detail}>Map: </Text>
+                  <IconButton
+                    icon={Icons.location}
+                    onPress={handleShowLocation}
+                    color={GlobalStyles.colors.visited}
+                    containerStyle={{
+                      marginHorizontal: 0,
+                      paddingHorizontal: 0,
+                    }}
+                  />
+                </View>
+              )}
+            </View>
           </View>
         )}
       </Pressable>
@@ -149,12 +174,29 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.gray50,
     fontSize: 16,
     maxWidth: '65%',
+    marginLeft: 10,
+  },
+  description: {
+    color: GlobalStyles.colors.gray200,
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginLeft: 4,
+  },
+  detail: {
+    color: GlobalStyles.colors.gray200,
+    fontSize: 14,
+    // marginLeft: 8,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginLeft: 8,
+  },
+  halfRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '50%',
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -168,11 +210,6 @@ const styles = StyleSheet.create({
   additionalContainer: {
     marginHorizontal: 8,
     paddingBottom: 8,
-  },
-  description: {
-    color: GlobalStyles.colors.gray200,
-    fontSize: 14,
-    fontStyle: 'italic',
   },
 });
 

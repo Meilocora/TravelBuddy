@@ -17,6 +17,7 @@ import { JourneyContext } from '../../store/journey-context';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import IconButton from '../UI/IconButton';
 import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
+import AccommodationBox from './AccommodationBox';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
@@ -70,26 +71,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
     },
   ];
 
-  // TODO: Make this separate ... header: Accommodation an then Name (Price), Link for Maps and if booked (Ionicon Bookmark?)
-  // TODO: Also add icon, so the user can check the location on map
-  if (minorStage.accommodation.place !== '') {
-    elementDetailInfo.push(
-      {
-        title: 'Accommodation',
-        value: minorStage.accommodation.place,
-        link: minorStage.accommodation.link,
-      },
-      {
-        title: 'Price',
-        value: formatAmount(minorStage.accommodation.costs),
-      },
-      {
-        title: 'Booked',
-        value: minorStage.accommodation.booked ? 'Yes' : 'No',
-      }
-    );
-  }
-
   function handleEdit() {
     navigation.navigate('ManageMinorStage', {
       journeyId: journeyId,
@@ -114,6 +95,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
+      <AccommodationBox minorStage={minorStage} />
       <ContentBox
         journeyId={journeyId}
         majorStageId={majorStageId}
