@@ -51,7 +51,11 @@ export type StackParamList = {
   UserProfile: undefined;
   JourneyBottomTabsNavigator: NavigatorScreenParams<JourneyBottomTabsParamsList>;
   ManageCustomCountry: { countryId: number };
-  ManagePlaceToVisit: { placeId: number | null; countryId: number | null };
+  ManagePlaceToVisit: {
+    placeId: number | null;
+    countryId: number | null;
+    majorStageId?: number;
+  };
   LocationPickMap: {
     initialTitle: string | undefined;
     initialLat: number;

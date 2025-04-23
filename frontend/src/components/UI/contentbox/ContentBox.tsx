@@ -25,7 +25,6 @@ const ContentBox: React.FC<ContenBoxProps> = ({
   setContentState,
 }): ReactElement => {
   const handleOnPressHeader = (header: string) => {
-    // TODO: Why this animation is not working?
     LayoutAnimation.configureNext({
       duration: 500,
       update: { type: 'spring', springDamping: 0.7 },

@@ -118,6 +118,7 @@ const MainContent: React.FC<MainContentProps> = ({
       title: 'places',
       element: (
         <PlacesElement
+          majorStageId={majorStageId}
           minorStage={minorStage}
           handleAdd={handleAddPlace}
           handleDelete={handleRemovePlace}

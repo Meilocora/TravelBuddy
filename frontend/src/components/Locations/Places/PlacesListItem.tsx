@@ -20,6 +20,7 @@ interface PlacesListItemProps {
   onToggleFavorite: (placeId: number) => void;
   onToggleVisited: (placeId: number) => void;
   onRemovePlace?: (name: string) => void;
+  majorStageId?: number;
 }
 
 const PlacesListItem: React.FC<PlacesListItemProps> = ({
@@ -27,6 +28,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
   onToggleFavorite,
   onToggleVisited,
   onRemovePlace,
+  majorStageId,
 }): ReactElement => {
   const [isOpened, setIsOpened] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -72,6 +74,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
     navigation.navigate('ManagePlaceToVisit', {
       placeId: place.id,
       countryId: place.countryId,
+      majorStageId: majorStageId,
     });
   }
 

@@ -77,7 +77,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const exampleLink2 =
     'https://www.google.de/maps/place/Gewerbegebiet+Bajuwarenstra%C3%9Fe,+85757+Karlsfeld/@48.2220299,11.4567484';
 
-  // TODO: Let User choose a majorStage and minorStages in different colors with from the map, also
+  // TODO: Let User choose a majorStage and minorStages in different colors with from the map, also different icons for transport, places, actitivites, accommodation, etc.
   // TODO: Make component, that draws a <Polyline /> or <MapViewDirections /> between locations
 
   return (

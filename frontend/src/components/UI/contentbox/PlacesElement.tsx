@@ -11,12 +11,14 @@ import { generateRandomString } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
 
 interface PlacesElementProps {
+  majorStageId: number;
   minorStage: MinorStage;
   handleAdd: (name: string) => void;
   handleDelete: (name: string) => void;
 }
 
 const PlacesElement: React.FC<PlacesElementProps> = ({
+  majorStageId,
   minorStage,
   handleAdd,
   handleDelete,
@@ -64,6 +66,7 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
               onToggleFavorite={handleToggleFavourite}
               onToggleVisited={handleToggleVisited}
               onRemovePlace={handleDelete}
+              majorStageId={majorStageId}
             />
           ))}
         </ScrollView>

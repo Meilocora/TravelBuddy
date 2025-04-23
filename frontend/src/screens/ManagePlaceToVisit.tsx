@@ -12,6 +12,7 @@ import { PlaceContext } from '../store/place-context';
 import PlaceForm from '../components/Locations/Places/PlaceForm';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
 import { CustomCountryContext } from '../store/custom-country-context';
+import { MinorStageContext } from '../store/minorStage-context';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -31,7 +32,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   const [error, setError] = useState<string | null>(null);
   const customCountryCtx = useContext(CustomCountryContext);
   const placeCtx = useContext(PlaceContext);
+  const minorStageCtx = useContext(MinorStageContext);
 
+  const majorStageId = route.params?.majorStageId;
   const placeId = route.params?.placeId;
   let isEditing = !!placeId;
 
@@ -58,7 +61,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
     link: selectedPlace?.link || '',
   });
 
-  function confirmHandler({ status, error, place }: ConfirmHandlerProps) {
+  async function confirmHandler({ status, error, place }: ConfirmHandlerProps) {
     if (isEditing) {
       if (error) {
         setError(error);
@@ -66,6 +69,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
       } else if (place && status === 200) {
         placeCtx.updatePlace(place);
         customCountryCtx.refetchCustomCountries();
+        if (majorStageId) {
+          await minorStageCtx.refetchMinorStages(majorStageId);
+        }
         navigation.goBack();
       }
     } else {
