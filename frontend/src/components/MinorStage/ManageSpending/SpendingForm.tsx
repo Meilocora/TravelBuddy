@@ -284,13 +284,6 @@ const styles = StyleSheet.create({
   rowElement: {
     flexBasis: '50%',
   },
-  checkBoxContainer: {
-    alignItems: 'center',
-    marginHorizontal: 'auto',
-  },
-  checkBoxLabel: {
-    color: GlobalStyles.colors.gray50,
-  },
   buttonsContainer: {
     flexDirection: 'row',
     width: '50%',

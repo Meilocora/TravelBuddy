@@ -1,5 +1,5 @@
-import { ReactElement, useContext, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { ReactElement, useContext } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { Icons, MajorStageStackParamList, MinorStage } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
@@ -95,7 +95,9 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
-      <AccommodationBox minorStage={minorStage} />
+      {minorStage.accommodation.place !== '' && (
+        <AccommodationBox minorStage={minorStage} />
+      )}
       <ContentBox
         journeyId={journeyId}
         majorStageId={majorStageId}

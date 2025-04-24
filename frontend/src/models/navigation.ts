@@ -1,5 +1,6 @@
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { MapLocation } from './map';
+import { ColorScheme } from './ui';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
@@ -63,6 +64,7 @@ export type StackParamList = {
     onPickLocation: (location: MapLocation) => void;
     onResetLocation: () => void;
     hasLocation: boolean;
+    colorScheme?: ColorScheme;
   };
   ShowMap: {
     title?: string;

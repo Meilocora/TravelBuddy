@@ -163,12 +163,31 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
   }
 
   function handlePickLocation(location: MapLocation) {
+    if (location.title) {
+      setInputs((currInputs) => {
+        return {
+          ...currInputs,
+          accommodation_place: {
+            value: location.title!,
+            isValid: true,
+            errors: [],
+          },
+        };
+      });
+    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        place: { value: location.title!, isValid: true, errors: [] },
-        latitude: { value: location.lat, isValid: true, errors: [] },
-        longitude: { value: location.lng, isValid: true, errors: [] },
+        accommodation_latitude: {
+          value: location.lat,
+          isValid: true,
+          errors: [],
+        },
+        accommodation_longitude: {
+          value: location.lng,
+          isValid: true,
+          errors: [],
+        },
       };
     });
   }
@@ -256,6 +275,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                     }
                   : undefined
               }
+              colorScheme={ColorScheme.complementary}
             />
           </View>
           <View style={styles.formRow}>
@@ -285,7 +305,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                   inputChangedHandler('booked', !inputs.booked.value)
                 }
                 uncheckedColor={GlobalStyles.colors.gray200}
-                color={GlobalStyles.colors.primary100}
+                color={GlobalStyles.colors.complementary100}
               />
             </View>
           </View>

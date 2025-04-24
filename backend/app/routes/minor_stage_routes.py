@@ -211,7 +211,7 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
             scheduled_end_time=minor_stage['scheduled_end_time']['value'],
         ))
         db.session.commit()
-        
+                
          # Update the accommodation for the minor stage
         db.session.execute(db.update(Accommodation).where(Accommodation.minor_stage_id == minorStageId).values(
             place=minor_stage['accommodation_place']['value'],
@@ -233,7 +233,7 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         db.session.commit()
         
         calculate_journey_costs(journey_costs)
-           
+        
         # build response minor stage object for the frontend
         response_minor_stage = {'id': minorStageId,
                                 'title': minor_stage['title']['value'],
@@ -249,11 +249,12 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
                                     'place': minor_stage['accommodation_place']['value'],
                                     'costs': minor_stage['accommodation_costs']['value'],
                                     'booked': minor_stage['accommodation_booked']['value'],
-                                    'latitude': minor_stage['accommodation_latitude']['value'] if minor_stage['accommodation_latitude']['value'] else None,
-                                    'longitude': minor_stage['accommodation_longitude']['value'] if minor_stage['accommodation_longitude']['value'] else None,
+                                    'latitude': minor_stage.get('accommodation_latitude', {}).get('value', None),
+                                    'longitude': minor_stage.get('accommodation_latitude', {}).get('value', None),
                                     'link': minor_stage['accommodation_link']['value'],
                                 }
         }
+        
                 
         if transportation is not None:
             response_minor_stage['transportation'] = {

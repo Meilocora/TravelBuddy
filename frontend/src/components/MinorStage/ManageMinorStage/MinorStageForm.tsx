@@ -238,14 +238,21 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   }
 
   function handlePickLocation(location: MapLocation) {
+    if (location.title) {
+      setInputs((currInputs) => {
+        return {
+          ...currInputs,
+          accommodation_place: {
+            value: location.title!,
+            isValid: true,
+            errors: [],
+          },
+        };
+      });
+    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        accommodation_place: {
-          value: location.title!,
-          isValid: true,
-          errors: [],
-        },
         accommodation_latitude: {
           value: location.lat,
           isValid: true,
@@ -423,11 +430,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                     }
                   : undefined
               }
-              iconColor={
-                !inputs.accommodation_latitude.isValid
-                  ? GlobalStyles.colors.error200
-                  : undefined
-              }
+              colorScheme={ColorScheme.complementary}
             />
           </View>
           <View style={styles.formRow}>
@@ -464,7 +467,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                   )
                 }
                 uncheckedColor={GlobalStyles.colors.gray200}
-                color={GlobalStyles.colors.primary100}
+                color={GlobalStyles.colors.complementary100}
               />
             </View>
           </View>

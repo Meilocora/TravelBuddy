@@ -1,7 +1,11 @@
-import { ReactElement } from 'react';
-import { MinorStage } from '../../models';
-import { StyleSheet, Text, View } from 'react-native';
+import { ReactElement, useState } from 'react';
+import { Icons, MinorStage, StackParamList } from '../../models';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
+import { formatAmount } from '../../utils';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import IconButton from '../UI/IconButton';
 
 interface AccommodationBoxProps {
   minorStage: MinorStage;
@@ -10,30 +14,80 @@ interface AccommodationBoxProps {
 const AccommodationBox: React.FC<AccommodationBoxProps> = ({
   minorStage,
 }): ReactElement => {
-  // TODO: Make this separate ... header: Accommodation an then Name (Price), Link for Maps and if booked (Ionicon Bookmark?)
-  // TODO: Let user open this, then fontsize of header increases and border shows up?!
-  // if (minorStage.accommodation.place !== '') {
-  //   elementDetailInfo.push(
-  //     {
-  //       title: 'Accommodation',
-  //       value: minorStage.accommodation.place,
-  //       link: minorStage.accommodation.link,
-  //     },
-  //     {
-  //       title: 'Price',
-  //       value: formatAmount(minorStage.accommodation.costs),
-  //     },
-  //     {
-  //       title: 'Booked',
-  //       value: minorStage.accommodation.booked ? 'Yes' : 'No',
-  //     }
-  //   );
-  // }
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
+  function handleShowLocation() {
+    navigation.navigate('ShowMap', {
+      title: minorStage.accommodation.place,
+      lat: minorStage.accommodation.latitude!,
+      lng: minorStage.accommodation.longitude!,
+      colorScheme: 'complementary',
+    });
+  }
+
+  let elementCounter = 2;
+  if (minorStage.accommodation.costs > 0) {
+    elementCounter += 1;
+  }
+  if (minorStage.accommodation.latitude && minorStage.accommodation.longitude) {
+    elementCounter += 1;
+  }
+
+  const elementWith = `${100 / elementCounter}%`;
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
+        {/* TODO: This should be a link, when link is given */}
+        {/* TODO: Change design of link in Transportelement */}
         <Text style={styles.title}>Accommodation</Text>
+      </View>
+
+      <View style={styles.row}>
+        <View style={{ width: `${100 / elementCounter}%` }}>
+          <Text style={styles.subtitle}>Place</Text>
+          <Text style={styles.content}>{minorStage.accommodation.place}</Text>
+        </View>
+        {minorStage.accommodation.costs > 0 && (
+          <View style={{ width: `${100 / elementCounter}%` }}>
+            <Text style={styles.subtitle}>Price</Text>
+            <Text style={styles.content}>
+              {formatAmount(minorStage.accommodation.costs)}
+            </Text>
+          </View>
+        )}
+        <View style={{ width: `${100 / elementCounter}%` }}>
+          <Text style={styles.subtitle}>Booked</Text>
+          <Text style={styles.content}>
+            {minorStage.accommodation.booked ? (
+              <IconButton
+                icon={Icons.checkmarkOutline}
+                onPress={() => {}}
+                containerStyle={styles.icon}
+                color={GlobalStyles.colors.complementary500}
+              />
+            ) : (
+              <IconButton
+                icon={Icons.remove}
+                onPress={() => {}}
+                containerStyle={styles.icon}
+                color={GlobalStyles.colors.complementary500}
+              />
+            )}
+          </Text>
+        </View>
+        {minorStage.accommodation.latitude &&
+          minorStage.accommodation.longitude && (
+            <View style={{ width: `${100 / elementCounter}%` }}>
+              <IconButton
+                icon={Icons.location}
+                onPress={handleShowLocation}
+                color={GlobalStyles.colors.complementary500}
+                containerStyle={styles.button}
+                size={30}
+              />
+            </View>
+          )}
       </View>
     </View>
   );
@@ -52,7 +106,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: '50%',
     top: -12,
-    transform: [{ translateX: -55 }],
+    transform: [{ translateX: -60 }],
     backgroundColor: GlobalStyles.colors.complementary100,
     paddingHorizontal: 10,
   },
@@ -60,6 +114,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: GlobalStyles.colors.gray500,
+  },
+  row: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: GlobalStyles.colors.gray500,
+    textAlign: 'center',
+  },
+  content: {
+    fontSize: 14,
+    color: GlobalStyles.colors.gray500,
+    textAlign: 'center',
+  },
+  button: {
+    marginHorizontal: 'auto',
+  },
+  icon: {
+    paddingVertical: 0,
   },
 });
 

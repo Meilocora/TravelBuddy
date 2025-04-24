@@ -7,7 +7,12 @@ import { StyleSheet, View, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ReactElement, useEffect, useState } from 'react';
 
-import { Icons, MapLocation, StackParamList } from '../../../models';
+import {
+  ColorScheme,
+  Icons,
+  MapLocation,
+  StackParamList,
+} from '../../../models';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../IconButton';
 import { GlobalStyles } from '../../../constants/styles';
@@ -16,12 +21,14 @@ interface LocationPickerProps {
   pickedLocation?: MapLocation;
   onPickLocation: (location: MapLocation) => void;
   iconColor?: string;
+  colorScheme?: ColorScheme;
 }
 
 const LocationPicker: React.FC<LocationPickerProps> = ({
   pickedLocation,
   onPickLocation,
   iconColor,
+  colorScheme = ColorScheme.primary,
 }): ReactElement => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
@@ -55,6 +62,13 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     return true;
   }
 
+  let iconStandardColor = GlobalStyles.colors.primary100;
+  if (colorScheme === ColorScheme.complementary) {
+    iconStandardColor = GlobalStyles.colors.complementary100;
+  } else if (colorScheme === ColorScheme.accent) {
+    iconStandardColor = GlobalStyles.colors.accent100;
+  }
+
   async function pickOnMapHandler() {
     const hasPermission = await verifyPermissions();
 
@@ -82,12 +96,13 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       },
       onResetLocation: handleResetLocation,
       hasLocation: hasInitialLocation,
+      colorScheme: colorScheme,
     });
   }
 
   function handleResetLocation() {
     setHasInitialLocation(false);
-    onPickLocation({ title: undefined, lat: undefined, lng: undefined });
+    onPickLocation({ title: '', lat: undefined, lng: undefined });
   }
 
   return (
@@ -101,7 +116,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
           iconColor
             ? iconColor
             : hasInitialLocation
-            ? GlobalStyles.colors.primary100
+            ? iconStandardColor
             : 'white'
         }
       />

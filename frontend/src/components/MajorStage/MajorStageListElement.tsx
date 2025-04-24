@@ -172,6 +172,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
             <ElementComment content={`${startDate} - ${endDate}`} />
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
+              // TODO: Completly rewrite this component into a new one like TransportationElement
               <AdditionalInfoBox
                 onPressEdit={handleEditTransportation}
                 title='Transportation'

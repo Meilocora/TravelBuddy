@@ -52,15 +52,16 @@ class MinorStageValidation(Validation):
             minorStage['scheduled_start_time']['isValid'] = False
         
         if minorStage['accommodation_place']['value'] != "":
-            try: 
-                minorStage['accommodation_latitude']['value']
-                minorStage['accommodation_longitude']['value']
-            except KeyError:
-                minorStage['accommodation_place']['errors'].append(f", Select a location on the map")
-                minorStage['accommodation_place']['isValid'] = False
-                minorStage['accommodation_latitude']['isValid'] = False
-            else: 
-                pass     
+            # TODO: This really wanted? Maybe better to let the user just take a name and dont add location
+            # try: 
+            #     minorStage['accommodation_latitude']['value']
+            #     minorStage['accommodation_longitude']['value']
+            # except KeyError:
+            #     minorStage['accommodation_place']['errors'].append(f", Select a location on the map")
+            #     minorStage['accommodation_place']['isValid'] = False
+            #     minorStage['accommodation_latitude']['isValid'] = False
+            # else: 
+            #     pass     
             
             acc_place_val = MinorStageValidation().validate_string(minorStage['accommodation_place']['value'], max_length=50)
             if acc_place_val:

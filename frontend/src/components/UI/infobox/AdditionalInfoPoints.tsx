@@ -9,7 +9,7 @@ interface AdditionalInfoPointsProps {
   openInfoBox: boolean;
   link?: string;
 }
-// TODO: Completely rewoerk this => also add icons to let user see the location at the map
+// TODO: Completely rewoerk this like in TransportationElement => also add icons to let user see the location at the map
 
 const AdditionalInfoPoints: React.FC<AdditionalInfoPointsProps> = ({
   additionalInfo,

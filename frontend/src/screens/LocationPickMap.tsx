@@ -25,6 +25,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     lat: route.params.initialLat,
     lng: route.params.initialLng,
   };
+  const initialColorScheme = route.params.colorScheme || ColorScheme.primary;
 
   const [hasLocation, setHasLocation] = useState(route.params.hasLocation);
   const [region, setRegion] = useState<Region>({
@@ -82,9 +83,17 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     navigation.goBack();
   }
 
+  let mainColor = GlobalStyles.colors.primary700;
+  if (initialColorScheme === ColorScheme.complementary) {
+    mainColor = GlobalStyles.colors.complementary700;
+  } else if (initialColorScheme === ColorScheme.accent) {
+    mainColor = GlobalStyles.colors.accent700;
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Pick a Location',
+      headerStyle: { backgroundColor: mainColor },
     });
   }, []);
 
@@ -132,7 +141,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
         )}
       </MapView>
       <View style={styles.buttonContainer}>
-        <Button colorScheme={ColorScheme.primary} onPress={handleResetPlace}>
+        <Button colorScheme={initialColorScheme} onPress={handleResetPlace}>
           Reset Location
         </Button>
       </View>

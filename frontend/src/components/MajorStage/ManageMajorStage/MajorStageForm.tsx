@@ -370,7 +370,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
                     inputChangedHandler('done', !inputs.done.value)
                   }
                   uncheckedColor={GlobalStyles.colors.gray200}
-                  color={GlobalStyles.colors.primary100}
+                  color={GlobalStyles.colors.accent100}
                 />
               </View>
             )}
