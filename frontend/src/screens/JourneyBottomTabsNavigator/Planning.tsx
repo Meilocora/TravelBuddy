@@ -14,6 +14,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../../components/UI/IconButton';
 import Popup from '../../components/UI/Popup';
 import { JourneyContext } from '../../store/journey-context';
+import { fetchMajorStagesById } from '../../utils/http';
+import { MajorStageContext } from '../../store/majorStage-context.';
+import InfoText from '../../components/UI/InfoText';
+import ErrorOverlay from '../../components/UI/ErrorOverlay';
 
 interface PlanningProps {
   navigation: NativeStackNavigationProp<
@@ -30,12 +34,16 @@ const Planning: React.FC<PlanningProps> = ({
   route,
   navigation,
 }): ReactElement => {
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
   let { journeyId } = route.params;
   const journeyCtx = useContext(JourneyContext);
-  const journeyName = journeyCtx.journeys.find(
+  const journey = journeyCtx.journeys.find(
     (journey) => journey.id === journeyId
-  )?.name;
+  );
+  const majorStageCtx = useContext(MajorStageContext);
 
   useEffect(() => {
     function activatePopup() {
@@ -47,8 +55,29 @@ const Planning: React.FC<PlanningProps> = ({
     activatePopup();
   }, [route.params]);
 
+  useEffect(() => {
+    async function getMajorStages() {
+      setIsFetching(true);
+      const response = await fetchMajorStagesById(journeyId);
+
+      if (!response.error) {
+        majorStageCtx.setMajorStages(response.majorStages || []);
+      } else {
+        setError(response.error);
+      }
+      setIsFetching(false);
+    }
+
+    getMajorStages();
+  }, [refresh]);
+
   function handleClosePopup() {
     setPopupText(null);
+  }
+
+  function handlePressReload() {
+    setError(null);
+    setRefresh((prev) => prev + 1);
   }
 
   function handleAddMajorStage() {
@@ -60,7 +89,7 @@ const Planning: React.FC<PlanningProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: journeyName,
+      title: journey?.name,
       headerRight: () => (
         <IconButton
           icon={Icons.add}
@@ -70,7 +99,32 @@ const Planning: React.FC<PlanningProps> = ({
         />
       ),
     });
-  }, [navigation, journeyName]);
+  }, [navigation, journey]);
+
+  let content;
+
+  if (isFetching) {
+    content = <InfoText content='Loading Major Stages...' />;
+  } else if (majorStageCtx.majorStages.length === 0 && !error) {
+    content = <InfoText content='No Major Stages found!' />;
+  } else {
+    content = (
+      <MajorStageList
+        journey={journey!}
+        majorStages={majorStageCtx.majorStages}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorOverlay
+        message={error}
+        onPress={handlePressReload}
+        buttonText='Reload'
+      />
+    );
+  }
 
   return (
     <View style={styles.root}>
@@ -81,7 +135,7 @@ const Planning: React.FC<PlanningProps> = ({
           colorScheme={ColorScheme.accent}
         />
       )}
-      <MajorStageList journeyId={journeyId!} />
+      {content}
     </View>
   );
 };

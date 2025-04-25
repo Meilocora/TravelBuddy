@@ -22,6 +22,10 @@ import { GlobalStyles } from '../../../constants/styles';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import MinorStageList from '../../../components/MinorStage/MinorStageList';
+import { fetchMinorStagesById } from '../../../utils';
+import { MinorStageContext } from '../../../store/minorStage-context';
+import InfoText from '../../../components/UI/InfoText';
+import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 
 interface MinorStagesProps {
   navigation: NativeStackNavigationProp<
@@ -35,13 +39,18 @@ const MinorStages: React.FC<MinorStagesProps> = ({
   route,
   navigation,
 }): ReactElement => {
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
   let { majorStageId, journeyId } = route.params;
 
   const majorStageCtx = useContext(MajorStageContext);
-  const majorStageTitle = majorStageCtx.majorStages.find(
+  const majorStage = majorStageCtx.majorStages.find(
     (majorStage) => majorStage.id === majorStageId
-  )?.title;
+  );
+
+  const minorStageCtx = useContext(MinorStageContext);
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
@@ -69,8 +78,29 @@ const MinorStages: React.FC<MinorStagesProps> = ({
     activatePopup();
   }, [route.params]);
 
+  useEffect(() => {
+    async function getMinorStages() {
+      setIsFetching(true);
+      const response = await fetchMinorStagesById(majorStage!.id);
+
+      if (!response.error) {
+        minorStageCtx.setMinorStages(response.minorStages || []);
+      } else {
+        setError(response.error);
+      }
+      setIsFetching(false);
+    }
+
+    getMinorStages();
+  }, [refresh, majorStageId]);
+
   function handleClosePopup() {
     setPopupText(null);
+  }
+
+  function handlePressReload() {
+    setError(null);
+    setRefresh((prev) => prev + 1);
   }
 
   function handleAddMinorStage() {
@@ -82,7 +112,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: majorStageTitle,
+      title: majorStage?.title,
       headerRight: () => (
         <IconButton
           icon={Icons.add}
@@ -103,7 +133,32 @@ const MinorStages: React.FC<MinorStagesProps> = ({
       ),
       headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
     });
-  }, [navigation, majorStageTitle]);
+  }, [navigation, majorStage]);
+
+  let content;
+
+  if (isFetching) {
+    content = <InfoText content='Loading Minor Stages...' />;
+  } else if (minorStageCtx.minorStages.length === 0 && !error) {
+    content = <InfoText content='No Minor Stages found!' />;
+  } else {
+    content = (
+      <MinorStageList
+        majorStage={majorStage!}
+        minorStages={minorStageCtx.minorStages}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorOverlay
+        message={error}
+        onPress={handlePressReload}
+        buttonText='Reload'
+      />
+    );
+  }
 
   return (
     <>
@@ -116,7 +171,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
             colorScheme={ColorScheme.complementary}
           />
         )}
-        <MinorStageList majorStageId={majorStageId} />
+        {content}
       </View>
     </>
   );

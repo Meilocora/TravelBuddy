@@ -8,51 +8,17 @@ import InfoText from '../UI/InfoText';
 import { useFocusEffect } from '@react-navigation/native';
 import InfoCurtain from '../UI/InfoCurtain';
 import { JourneyContext } from '../../store/journey-context';
-import { ColorScheme } from '../../models';
+import { ColorScheme, Journey, MajorStage } from '../../models';
 
 interface MajorStageListProps {
-  journeyId: number;
+  journey: Journey;
+  majorStages: MajorStage[];
 }
 
 const MajorStageList: React.FC<MajorStageListProps> = ({
-  journeyId,
+  journey,
+  majorStages,
 }): ReactElement => {
-  const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const journeyCtx = useContext(JourneyContext);
-  const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
-  const majorStageCtx = useContext(MajorStageContext);
-
-  const getMajorStages = useCallback(async (journeyId: number) => {
-    setIsFetching(true);
-    const response = await fetchMajorStagesById(journeyId);
-    if (!response.error) {
-      majorStageCtx.setMajorStages(response.majorStages || []);
-    } else {
-      setError(response.error);
-    }
-    setIsFetching(false);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getMajorStages(journeyId);
-    }, [journeyId, getMajorStages])
-  );
-
-  if (isFetching) {
-    return <InfoText content='Loading...' />;
-  }
-
-  if (majorStageCtx.majorStages.length === 0) {
-    return <InfoText content='No major stages found!' />;
-  }
-
-  if (error) {
-    return <InfoText content={error} />;
-  }
-
   return (
     <>
       {journey?.description && (
@@ -62,10 +28,10 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
         />
       )}
       <FlatList
-        data={majorStageCtx.majorStages}
+        data={majorStages}
         renderItem={({ item, index }) => (
           <MajorStageListElement
-            journeyId={journeyId}
+            journeyId={journey.id}
             majorStage={item}
             index={index}
           />

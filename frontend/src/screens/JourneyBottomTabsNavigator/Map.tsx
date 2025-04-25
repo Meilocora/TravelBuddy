@@ -39,38 +39,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setSelectedLocation({ lat: lat, lng: lng });
   }
 
-  // prevents unnecessary rerender cycles for the function
-  const savePickedLocationHandler = useCallback(() => {
-    if (!selectedLocation) {
-      Alert.alert(
-        'No location picked!',
-        'You have to pick a location by tapping on the map first!'
-      );
-      return;
-    }
-
-    // navigation.navigate("AddPlace", {
-    //   pickedLat: selectedLocation.lat,
-    //   pickedLng: selectedLocation.lng,
-    // });
-  }, [navigation, selectedLocation]);
-
-  useLayoutEffect(() => {
-    if (initialLocation) {
-      return;
-    }
-    navigation.setOptions({
-      headerRight: ({ tintColor }) => (
-        <IconButton
-          icon={Icons.save}
-          size={24}
-          color={tintColor}
-          onPress={savePickedLocationHandler}
-        />
-      ),
-    });
-  }, [navigation, savePickedLocationHandler, initialLocation]);
-
   const exampleLink =
     'https://www.google.de/maps/place/Hotelpension+Moosh%C3%A4usl+Hebertshausen/@48.2666063,11.536995';
 
