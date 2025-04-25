@@ -386,12 +386,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                     lng: inputs.departure_longitude.value,
                     title: inputs.place_of_departure.value,
                   }
-                : // : {
-                  //     lat: undefined,
-                  //     lng: undefined,
-                  //     title: inputs.place_of_departure.value,
-                  //   }
-                  undefined
+                : undefined
             }
           />
         </View>

@@ -1,6 +1,8 @@
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { MapLocation } from './map';
 import { ColorScheme } from './ui';
+import { Journey } from './journey';
+import { MajorStage } from './major_stage';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
@@ -42,7 +44,7 @@ export type MajorStageStackParamList = {
 export type JourneyBottomTabsParamsList = {
   Planning: { journeyId: number; popupText?: string };
   Overview: undefined;
-  Map: { initialLat?: number; initialLng?: number };
+  Map: undefined;
   MajorStageStackNavigator: NavigatorScreenParams<MajorStageStackParamList>;
 };
 

@@ -1,31 +1,16 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { Marker } from 'react-native-maps';
-import { parseMapsLink } from '../../utils';
 
 interface MapsMarkerProps {
-  lat?: number;
-  lng?: number;
-  mapsLink?: string;
+  lat: number;
+  lng: number;
 }
 
-const MapsMarker: React.FC<MapsMarkerProps> = ({
-  lat,
-  lng,
-  mapsLink,
-}): ReactElement => {
+const MapsMarker: React.FC<MapsMarkerProps> = ({ lat, lng }): ReactElement => {
   let selectedLocation = {
     lat: lat ? lat : undefined,
     lng: lng ? lng : undefined,
   };
-
-  if (mapsLink) {
-    const { lat, lng } = parseMapsLink(mapsLink);
-
-    selectedLocation = {
-      lat: lat,
-      lng: lng,
-    };
-  }
 
   return (
     <Marker
