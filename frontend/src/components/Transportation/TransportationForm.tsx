@@ -206,27 +206,61 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   }
 
   function handleDeparturePickLocation(location: MapLocation) {
+    if (location.title) {
+      setInputs((currInputs) => {
+        return {
+          ...currInputs,
+          place_of_departure: {
+            value: location.title!,
+            isValid: true,
+            errors: [],
+          },
+        };
+      });
+    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        place_of_departure: {
-          value: location.title!,
+        departure_latitude: {
+          value: location.lat,
           isValid: true,
           errors: [],
         },
-        departure_latitude: { value: location.lat, isValid: true, errors: [] },
-        departure_longitude: { value: location.lng, isValid: true, errors: [] },
+        departure_longitude: {
+          value: location.lng,
+          isValid: true,
+          errors: [],
+        },
       };
     });
   }
 
   function handleArrivalPickLocation(location: MapLocation) {
+    if (location.title) {
+      setInputs((currInputs) => {
+        return {
+          ...currInputs,
+          place_of_arrival: {
+            value: location.title!,
+            isValid: true,
+            errors: [],
+          },
+        };
+      });
+    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        place_of_arrival: { value: location.title!, isValid: true, errors: [] },
-        arrival_latitude: { value: location.lat, isValid: true, errors: [] },
-        arrival_longitude: { value: location.lng, isValid: true, errors: [] },
+        arrival_latitude: {
+          value: location.lat,
+          isValid: true,
+          errors: [],
+        },
+        arrival_longitude: {
+          value: location.lng,
+          isValid: true,
+          errors: [],
+        },
       };
     });
   }
@@ -352,7 +386,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                     lng: inputs.departure_longitude.value,
                     title: inputs.place_of_departure.value,
                   }
-                : undefined
+                : // : {
+                  //     lat: undefined,
+                  //     lng: undefined,
+                  //     title: inputs.place_of_departure.value,
+                  //   }
+                  undefined
             }
           />
         </View>

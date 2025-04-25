@@ -13,7 +13,7 @@ const ElementComment: React.FC<ElementCommentProps> = ({
 
 const styles = StyleSheet.create({
   comment: {
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
   },

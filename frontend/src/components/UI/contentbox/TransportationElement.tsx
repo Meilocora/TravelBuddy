@@ -13,7 +13,6 @@ import Link from '../Link';
 import TextLink from '../TextLink';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { GlobalStyles } from '../../../constants/styles';
 
 interface TransportElementInfopointProps {
   subtitle: string;
@@ -21,11 +20,9 @@ interface TransportElementInfopointProps {
   location?: MapLocation;
 }
 
-const TransportElementInfopoint: React.FC<TransportElementInfopointProps> = ({
-  subtitle,
-  data,
-  location,
-}) => {
+export const TransportElementInfopoint: React.FC<
+  TransportElementInfopointProps
+> = ({ subtitle, data, location }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
@@ -45,10 +42,10 @@ const TransportElementInfopoint: React.FC<TransportElementInfopointProps> = ({
             onPress={handleShowLocation}
             textStyle={infoPointStyles.locationLink}
           >
-            {subtitle}:{' '}
+            {subtitle}:
           </TextLink>
         ) : (
-          <Text style={infoPointStyles.subtitle}>{subtitle}: </Text>
+          <Text style={infoPointStyles.subtitle}>{subtitle}:</Text>
         )}
       </View>
       <View style={infoPointStyles.data}>
@@ -62,6 +59,7 @@ const infoPointStyles = StyleSheet.create({
   innerContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    marginVertical: 3,
   },
   subtitleContainer: {
     flexDirection: 'row',
@@ -77,7 +75,7 @@ const infoPointStyles = StyleSheet.create({
     overflow: 'hidden',
   },
   locationLink: {
-    color: GlobalStyles.colors.complementary600,
+    color: 'blue',
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },

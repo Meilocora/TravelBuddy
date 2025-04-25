@@ -162,13 +162,19 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     planningNavigation.navigate('Planning', { journeyId: journeyId });
   }
 
-  function confirmHandler({ status, error, majorStage }: ConfirmHandlerProps) {
+  async function confirmHandler({
+    status,
+    error,
+    majorStage,
+  }: ConfirmHandlerProps) {
     if (isEditing) {
       if (error) {
         setError(error);
         return;
       } else if (majorStage && status === 200) {
         majorStageCtx.updateMajorStage(majorStage);
+        await majorStageCtx.refetchMajorStages(journeyId);
+        await journeyCtx.refetchJourneys();
         resetValues();
         const popupText = `"${majorStage.title}" successfully updated!`;
         planningNavigation.navigate('Planning', {
@@ -182,6 +188,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         return;
       } else if (majorStage && status === 201) {
         majorStageCtx.addMajorStage(majorStage);
+        await majorStageCtx.refetchMajorStages(journeyId);
+        await journeyCtx.refetchJourneys();
         resetValues();
         const popupText = `"${majorStage.title}" successfully created!`;
         planningNavigation.navigate('Planning', {

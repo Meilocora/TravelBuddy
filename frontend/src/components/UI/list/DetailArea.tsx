@@ -4,9 +4,11 @@ import { View } from 'react-native';
 
 import ElementDetail from './ElementDetail';
 import { generateRandomString } from '../../../utils/generator';
+import { Icons } from '../../../models';
 
 export interface ElementDetailInfo {
-  title: string;
+  title?: string;
+  icon?: Icons;
   value: string;
   textStyle?: TextStyle;
   link?: string;
@@ -29,6 +31,7 @@ const DetailArea: React.FC<DetailProps> = ({
         <ElementDetail
           key={generateRandomString()}
           title={info.title}
+          icon={info.icon}
           value={info.value}
           style={detailStyle}
           textStyle={info.textStyle}

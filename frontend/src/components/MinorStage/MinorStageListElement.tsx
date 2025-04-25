@@ -59,11 +59,11 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
 
   const elementDetailInfo: ElementDetailInfo[] = [
     {
-      title: 'Duration',
+      icon: Icons.duration,
       value: `${durationInDays} days`,
     },
     {
-      title: 'Costs',
+      icon: Icons.currency,
       value: `${moneyPlanned} / ${moneyAvailable}`,
       textStyle: minorStage.costs.money_exceeded
         ? { color: GlobalStyles.colors.error200, fontWeight: 'bold' }

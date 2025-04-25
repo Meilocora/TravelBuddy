@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,20 +11,18 @@ import {
 } from '../../models';
 import {
   formatAmount,
-  formatCountdown,
   formatDateString,
   formatDurationToDays,
-  formatDateTimeString,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
-import DetailArea from '../UI/list/DetailArea';
+import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
-import AdditionalInfoBox from '../UI/infobox/AdditionalInfoBox';
 import Button from '../UI/Button';
 import { LinearGradient } from 'expo-linear-gradient';
+import TransportationBox from './TransportationBox';
 
 interface MajorStageListElementProps {
   journeyId: number;
@@ -37,7 +35,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   majorStage,
   index,
 }): ReactElement => {
-  const [showMinorStages, setShowMinorStages] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
 
@@ -52,60 +49,31 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 
   const title = `#${index + 1} ${majorStage.title}`;
 
-  const elementDetailInfo = [
+  const elementDetailInfo: ElementDetailInfo[] = [
     {
-      title: 'Duration',
+      icon: Icons.duration,
       value: `${durationInDays} days`,
     },
-    { title: 'Costs', value: `${moneyPlanned} / ${moneyAvailable}` },
-    { title: 'Country', value: majorStage.country },
+    {
+      icon: Icons.currency,
+      value: `${moneyPlanned} / ${moneyAvailable}`,
+      textStyle: majorStage.costs.money_exceeded
+        ? { color: GlobalStyles.colors.error200 }
+        : undefined,
+    },
+    { icon: Icons.country, value: majorStage.country },
   ];
-
-  // TODO: Red color, when budget exceeded
 
   if (majorStage.minorStagesIds) {
     elementDetailInfo.push({
       title: 'Minor Stages',
       value: majorStage.minorStagesIds.length.toString(),
     });
-  }
-
-  let mainTransportationInfo: { title: string; value: string } = {
-    title: '',
-    value: '',
-  };
-  let additionalInfo: { title: string; value: string }[] = [];
-
-  if (majorStage.transportation) {
-    const transportStartDate = formatDateTimeString(
-      majorStage.transportation.start_time
-    );
-    const transportEndDate = formatDateTimeString(
-      majorStage.transportation!.arrival_time
-    );
-    const transportCosts = formatAmount(
-      majorStage.transportation.transportation_costs
-    );
-
-    mainTransportationInfo = {
-      title: 'Time until departure: ',
-      value: formatCountdown(majorStage.transportation.start_time),
-    };
-
-    additionalInfo = [
-      {
-        title: 'Departure: ',
-        value: `${transportStartDate} at ${majorStage.transportation?.place_of_departure}`,
-      },
-      {
-        title: 'Arrival: ',
-        value: `${transportEndDate} at ${majorStage.transportation?.place_of_arrival}`,
-      },
-      {
-        title: 'Details: ',
-        value: `${majorStage.transportation?.type} (${transportCosts})`,
-      },
-    ];
+  } else {
+    elementDetailInfo.push({
+      title: 'Minor Stages',
+      value: '0',
+    });
   }
 
   function handleOnPress() {
@@ -172,13 +140,9 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
             <ElementComment content={`${startDate} - ${endDate}`} />
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
-              // TODO: Completly rewrite this component into a new one like TransportationElement
-              <AdditionalInfoBox
+              <TransportationBox
+                transportation={majorStage.transportation}
                 onPressEdit={handleEditTransportation}
-                title='Transportation'
-                info={mainTransportationInfo}
-                additionalInfo={additionalInfo}
-                link={majorStage.transportation?.link}
               />
             )}
             {!majorStage.transportation && (

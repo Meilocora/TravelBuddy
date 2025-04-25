@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { ReactElement } from 'react';
+import { ReactElement, useContext } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -14,8 +14,10 @@ import {
 import CustomProgressBar from '../UI/CustomProgressBar';
 import { StackParamList } from '../../models';
 import ElementTitle from '../UI/list/ElementTitle';
-import DetailArea from '../UI/list/DetailArea';
+import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
+import ElementComment from '../UI/list/ElementComment';
+import { MajorStageContext } from '../../store/majorStage-context.';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -24,6 +26,7 @@ interface JourneyListElementProps {
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
 }): ReactElement => {
+  const majorStageCtx = useContext(MajorStageContext);
   const moneyAvailable = formatAmount(journey.costs.budget);
   const moneyPlanned = formatAmount(journey.costs.spent_money);
   const startDate = formatDateString(journey.scheduled_start_time);
@@ -32,18 +35,31 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_start_time,
     journey.scheduled_end_time
   );
+  let majorStagesCounter = 0;
+  let minorStagesCounter = 0;
+  if (journey.majorStagesIds) {
+    majorStagesCounter = journey.majorStagesIds.length;
+    for (const id of journey.majorStagesIds) {
+      const majorStage = majorStageCtx.majorStages.find(
+        (stage) => stage.id === id
+      );
+      if (majorStage?.minorStagesIds) {
+        minorStagesCounter += majorStage.minorStagesIds.length;
+      }
+    }
+  }
 
-  const elementDetailInfo = [
-    { title: 'Duration', value: `${durationInDays} days` },
+  const elementDetailInfo: ElementDetailInfo[] = [
+    { icon: Icons.duration, value: `${durationInDays} days` },
     {
-      title: 'Costs',
+      icon: Icons.currency,
       value: `${moneyPlanned} / ${moneyAvailable}`,
       textStyle: journey.costs.money_exceeded
         ? { color: GlobalStyles.colors.error200 }
         : undefined,
     },
-    { title: 'Start Date', value: startDate },
-    { title: 'End Date', value: endDate },
+    { title: 'Major Stages', value: majorStagesCounter.toString() },
+    { title: 'Minor Stages', value: minorStagesCounter.toString() },
   ];
 
   const progress = formatProgress(
@@ -68,10 +84,11 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     navigationBottomTabs.navigate('ManageJourney', { journeyId: journey.id });
   }
 
-  // TODO: Add major- and minor stages z.b. 3/5
   // TODO: Highlight current Country
   // TODO: Add Countdown till journey starts
   // TODO: Journey should start automatically, when start date is reached
+  // TODO: Blend out the past journeys (show with new button)
+  // TODO: Give active journey a different borderColor
 
   return (
     <View style={styles.outerContainer}>
@@ -87,13 +104,13 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
               <ElementTitle>{journey.name}</ElementTitle>
-              {/* // TODO: Start and End Date should be below the title */}
               <IconButton
                 icon={Icons.edit}
                 color={GlobalStyles.colors.primary500}
                 onPress={handleEdit}
               />
             </View>
+            <ElementComment content={`${startDate} - ${endDate}`} />
             <DetailArea
               elementDetailInfo={elementDetailInfo}
               areaStyle={styles.detailArea}

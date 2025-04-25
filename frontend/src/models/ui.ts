@@ -34,6 +34,9 @@ export enum Icons {
   locate = 'locate-outline',
   map = 'map-outline',
   mapFilled = 'map',
+  duration = 'hourglass-outline',
+  place = 'home-outline',
+  country = 'flag',
 }
 
 export enum ButtonMode {

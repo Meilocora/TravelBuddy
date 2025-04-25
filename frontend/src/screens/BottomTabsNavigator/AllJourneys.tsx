@@ -62,7 +62,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
       } else {
         setError(response.error);
       }
-      // TODO: Fetch everything usefull over here
       countryCtx.refetchCustomCountries();
       setIsFetching(false);
     }

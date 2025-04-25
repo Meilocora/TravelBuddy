@@ -1,11 +1,12 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { Icons, MinorStage, StackParamList } from '../../models';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
 import { formatAmount } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
+import TextLink from '../UI/TextLink';
 
 interface AccommodationBoxProps {
   minorStage: MinorStage;
@@ -38,19 +39,37 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        {/* TODO: This should be a link, when link is given */}
-        {/* TODO: Change design of link in Transportelement */}
         <Text style={styles.title}>Accommodation</Text>
       </View>
-
       <View style={styles.row}>
         <View style={{ width: `${100 / elementCounter}%` }}>
-          <Text style={styles.subtitle}>Place</Text>
-          <Text style={styles.content}>{minorStage.accommodation.place}</Text>
+          {/* <Text style={styles.subtitle}>Place</Text> */}
+          <IconButton
+            icon={Icons.place}
+            onPress={() => {}}
+            color='black'
+            containerStyle={styles.icon}
+          />
+          {minorStage.accommodation.link ? (
+            <TextLink
+              link={minorStage.accommodation.link}
+              textStyle={styles.link}
+            >
+              {minorStage.accommodation.place}
+            </TextLink>
+          ) : (
+            <Text style={styles.content}>{minorStage.accommodation.place}</Text>
+          )}
         </View>
         {minorStage.accommodation.costs > 0 && (
           <View style={{ width: `${100 / elementCounter}%` }}>
-            <Text style={styles.subtitle}>Price</Text>
+            {/* <Text style={styles.subtitle}>Price</Text> */}
+            <IconButton
+              icon={Icons.currency}
+              onPress={() => {}}
+              color='black'
+              containerStyle={styles.icon}
+            />
             <Text style={styles.content}>
               {formatAmount(minorStage.accommodation.costs)}
             </Text>
@@ -132,11 +151,17 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.gray500,
     textAlign: 'center',
   },
+  link: {
+    fontSize: 14,
+    color: 'blue',
+    textDecorationLine: 'underline',
+  },
   button: {
     marginHorizontal: 'auto',
   },
   icon: {
     paddingVertical: 0,
+    marginHorizontal: 'auto',
   },
 });
 
