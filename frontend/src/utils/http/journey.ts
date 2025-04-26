@@ -119,3 +119,34 @@ export const deleteJourney = async (
     return { status: 500, error: 'Could not delete journey!' };
   }
 };
+
+interface FetchJourneysMinorStagesQtyProps {
+  minorStagesQty?: number;
+  status: number;
+  error?: string;
+}
+
+export const fetchJourneysMinorStagesQty = async (
+  journeyId: number
+): Promise<FetchJourneysMinorStagesQtyProps> => {
+  try {
+    const response: AxiosResponse<FetchJourneysMinorStagesQtyProps> =
+      await api.get(`${prefix}/get-journeys-minor-stages-qty/${journeyId}`);
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    const { minorStagesQty, status } = response.data;
+
+    if (!minorStagesQty) {
+      return { status };
+    }
+
+    return { minorStagesQty, status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not fetch quantity of minor stages!' };
+  }
+};

@@ -5,6 +5,8 @@ import { fetchJourneys } from '../utils/http';
 
 interface JourneyContextType {
   journeys: Journey[];
+  selectedJourneyId?: number;
+  setSelectedJourneyId: (id: number) => void;
   setJourneys: (journeys: Journey[]) => void;
   addJourney: (journey: Journey) => void;
   deleteJourney: (journeyId: number) => void;
@@ -14,6 +16,8 @@ interface JourneyContextType {
 
 export const JourneyContext = createContext<JourneyContextType>({
   journeys: [],
+  selectedJourneyId: undefined,
+  setSelectedJourneyId: () => {},
   setJourneys: () => {},
   addJourney: () => {},
   deleteJourney: () => {},
@@ -27,6 +31,9 @@ export default function JourneyContextProvider({
   children: React.ReactNode;
 }) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [selectedJourneyId, setSelectedJourneyId] = useState<
+    number | undefined
+  >(undefined);
 
   function addJourney(journey: Journey) {
     setJourneys((prevJourneys) => [...prevJourneys, journey]);
@@ -55,6 +62,8 @@ export default function JourneyContextProvider({
 
   const value = {
     journeys,
+    selectedJourneyId,
+    setSelectedJourneyId,
     setJourneys,
     addJourney,
     deleteJourney,

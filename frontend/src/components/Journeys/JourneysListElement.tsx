@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -18,6 +18,9 @@ import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
 import ElementComment from '../UI/list/ElementComment';
 import { MajorStageContext } from '../../store/majorStage-context.';
+import { JourneyContext } from '../../store/journey-context';
+import { fetchJourneysMinorStagesQty } from '../../utils/http';
+import { set } from 'zod';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -26,7 +29,9 @@ interface JourneyListElementProps {
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
 }): ReactElement => {
+  const journeyCtx = useContext(JourneyContext);
   const majorStageCtx = useContext(MajorStageContext);
+  const [minorStagesQty, setMinorStagesQty] = useState<number>(0);
   const moneyAvailable = formatAmount(journey.costs.budget);
   const moneyPlanned = formatAmount(journey.costs.spent_money);
   const startDate = formatDateString(journey.scheduled_start_time);
@@ -36,18 +41,24 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_end_time
   );
   let majorStagesCounter = 0;
-  let minorStagesCounter = 0;
   if (journey.majorStagesIds) {
     majorStagesCounter = journey.majorStagesIds.length;
     for (const id of journey.majorStagesIds) {
       const majorStage = majorStageCtx.majorStages.find(
         (stage) => stage.id === id
       );
-      if (majorStage?.minorStagesIds) {
-        minorStagesCounter += majorStage.minorStagesIds.length;
-      }
     }
   }
+
+  useEffect(() => {
+    async function fetchMinorStagesQty() {
+      const response = await fetchJourneysMinorStagesQty(journey.id);
+      if (response.status === 200) {
+        setMinorStagesQty(response.minorStagesQty!);
+      }
+    }
+    fetchMinorStagesQty();
+  }, []);
 
   const elementDetailInfo: ElementDetailInfo[] = [
     { icon: Icons.duration, value: `${durationInDays} days` },
@@ -59,7 +70,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
         : undefined,
     },
     { title: 'Major Stages', value: majorStagesCounter.toString() },
-    { title: 'Minor Stages', value: minorStagesCounter.toString() },
+    { title: 'Minor Stages', value: minorStagesQty.toString() },
   ];
 
   const progress = formatProgress(
@@ -71,6 +82,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     useNavigation<NavigationProp<StackParamList>>();
 
   function handleOnPress() {
+    journeyCtx.setSelectedJourneyId(journey.id);
     navigationJourneyBottomTabs.navigate('JourneyBottomTabsNavigator', {
       screen: 'Planning',
       params: { journeyId: journey.id },

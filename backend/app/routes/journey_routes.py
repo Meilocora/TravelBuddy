@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import Journey, Costs, Spendings, MajorStage, CustomCountry, JourneysCustomCountriesLink
+from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
@@ -248,3 +248,20 @@ def delete_journey(current_user, journeyId):
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    
+    
+@journey_bp.route('/get-journeys-minor-stages-qty/<int:journeyId>', methods=['GET'])
+@token_required
+def get_journeys_minor_stages_qty(current_user, journeyId):
+    major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId)).scalars().all()
+        
+    if not major_stages:
+        return jsonify({'status': 200, 'minorStagesQty': 0})
+    
+    minorStagesQty = 0
+    for major_stage in major_stages:
+        minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=major_stage.id)).scalars().all()
+        minorStagesQty += len(minor_stages)
+    return jsonify({'status': 200, 'minorStagesQty': minorStagesQty})
+        
+    
