@@ -1,13 +1,8 @@
-import { ReactElement, useState, useContext, useCallback } from 'react';
+import { ReactElement } from 'react';
 import { FlatList } from 'react-native';
 
-import { fetchMajorStagesById } from '../../utils/http';
-import { MajorStageContext } from '../../store/majorStage-context.';
 import MajorStageListElement from './MajorStageListElement';
-import InfoText from '../UI/InfoText';
-import { useFocusEffect } from '@react-navigation/native';
 import InfoCurtain from '../UI/InfoCurtain';
-import { JourneyContext } from '../../store/journey-context';
 import { ColorScheme, Journey, MajorStage } from '../../models';
 
 interface MajorStageListProps {

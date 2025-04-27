@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import {
   Keyboard,
   Pressable,
@@ -12,25 +12,22 @@ import OutsidePressHandler from 'react-native-outside-press';
 import ListItem from '../UI/search/ListItem';
 import { generateRandomString } from '../../utils';
 import Button from '../UI/Button';
-import { ButtonMode, ColorScheme, TransportationType } from '../../models';
-import Input from '../UI/form/Input';
+import { ButtonMode, ColorScheme } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 
 interface MapTypeSelectorProps {
   onChangeMapType: (mapType: string) => void;
-  defaultType: string;
+  value: string;
+  mapScopeList: string[];
 }
 
 const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
   onChangeMapType,
-  defaultType,
+  value,
+  mapScopeList,
 }): ReactElement => {
   const [openSelection, setOpenSelection] = useState(false);
-  const [transportType, setTransportType] = useState<string>('');
-
-  useEffect(() => {
-    setTransportType(defaultType);
-  }, [defaultType]);
+  const mapScopeChoice = mapScopeList.filter((item) => item !== value);
 
   function handleOpenModal() {
     setOpenSelection(true);
@@ -42,7 +39,6 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
   }
 
   function handlePressListElement(item: string) {
-    setTransportType(item);
     setOpenSelection(false);
     onChangeMapType(item);
   }
@@ -53,42 +49,40 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
 
   return (
     <View style={styles.root}>
-      {openSelection && (
-        <OutsidePressHandler
-          onOutsidePress={handlePressOutside}
-          style={styles.selectionContainer}
-        >
-          <View style={styles.listContainer}>
-            <ScrollView style={styles.list}>
-              {Object.values(TransportationType).map((item: string) => (
-                <ListItem
-                  key={generateRandomString()}
-                  onPress={handlePressListElement.bind(item)}
-                  containerStyles={
-                    item === transportType ? styles.chosenType : {}
-                  }
-                  textStyles={item === transportType ? styles.chosenText : {}}
-                >
-                  {item}
-                </ListItem>
-              ))}
-            </ScrollView>
-            <Button
-              colorScheme={ColorScheme.neutral}
-              mode={ButtonMode.flat}
-              onPress={handleCloseModal}
-              style={styles.button}
-            >
-              Dismiss
-            </Button>
-          </View>
-        </OutsidePressHandler>
-      )}
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Pressable onPress={handleOpenModal}>
-            <Text>{transportType}</Text>
-          </Pressable>
+        <View style={styles.innerContainer}>
+          <View style={styles.row}>
+            <Text style={styles.subtitle}>Scope:</Text>
+            <Pressable onPress={handleOpenModal} style={styles.headerContainer}>
+              <Text style={styles.header}>{value}</Text>
+            </Pressable>
+          </View>
+          {openSelection && (
+            <OutsidePressHandler onOutsidePress={handlePressOutside}>
+              <View style={styles.listContainer}>
+                <ScrollView style={styles.list}>
+                  {mapScopeChoice.map((item: string) => (
+                    <ListItem
+                      key={generateRandomString()}
+                      onPress={handlePressListElement.bind(item)}
+                      textStyles={styles.listItemText}
+                      containerStyles={styles.listItemContainer}
+                    >
+                      {item}
+                    </ListItem>
+                  ))}
+                </ScrollView>
+                <Button
+                  colorScheme={ColorScheme.neutral}
+                  mode={ButtonMode.flat}
+                  onPress={handleCloseModal}
+                  style={styles.button}
+                >
+                  Dismiss
+                </Button>
+              </View>
+            </OutsidePressHandler>
+          )}
         </View>
       </View>
     </View>
@@ -97,64 +91,73 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
 
 const styles = StyleSheet.create({
   root: {
-    alignItems: 'center',
-  },
-  outerContainer: {
     flex: 1,
+    alignItems: 'center',
+    position: 'absolute',
+    top: 10,
+    left: '7%',
   },
   container: {
-    position: 'absolute',
     zIndex: 1,
-    flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  innerContainer: {
     alignItems: 'center',
-    maxWidth: '50%',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 5,
   },
   headerContainer: {
-    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderWidth: 1,
   },
   header: {
     textAlign: 'center',
-    fontSize: 20,
-    color: GlobalStyles.colors.gray50,
+    fontSize: 16,
   },
   errorText: {
     fontSize: 16,
     color: GlobalStyles.colors.error200,
     fontStyle: 'italic',
   },
-  selectionContainer: {
-    position: 'absolute',
-    top: '100%',
-    width: '50%',
-    maxHeight: 200,
-    zIndex: 1,
-  },
   listContainer: {
-    marginHorizontal: 10,
-    backgroundColor: GlobalStyles.colors.gray700,
-    borderColor: GlobalStyles.colors.gray100,
+    marginTop: 5,
+    backgroundColor: 'rgba(55, 55, 55, 0.8)',
+    borderColor: GlobalStyles.colors.gray500,
     borderWidth: 1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     zIndex: 1,
+    maxWidth: 150,
+    maxHeight: 200,
   },
   list: {
     paddingHorizontal: 5,
     borderBottomWidth: 1,
-    borderBottomColor: GlobalStyles.colors.gray100,
+    borderBottomColor: GlobalStyles.colors.gray500,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
-  chosenType: {
-    backgroundColor: GlobalStyles.colors.accent200,
+  listItemContainer: {
+    backgroundColor: GlobalStyles.colors.gray500,
   },
-  chosenText: {
+  listItemText: {
+    fontSize: 16,
     color: GlobalStyles.colors.gray50,
-    fontWeight: 'bold',
   },
   button: {
     marginHorizontal: 'auto',
+    color: GlobalStyles.colors.gray500,
   },
 });
 

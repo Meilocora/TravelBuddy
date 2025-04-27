@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink
+from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
 
@@ -264,4 +264,111 @@ def get_journeys_minor_stages_qty(current_user, journeyId):
         minorStagesQty += len(minor_stages)
     return jsonify({'status': 200, 'minorStagesQty': minorStagesQty})
         
-    
+
+@journey_bp.route('/get-journeys-locations/<int:journeyId>', methods=['GET'])
+@token_required
+def get_journeys_locations(current_user, journeyId):
+    try: 
+        major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId)).scalars().all()
+        if not major_stages:
+            return jsonify({'status': 200})
+        
+        locations = []
+        majorStageNames = []
+        for major_stage in major_stages:
+            majorStageNames.append(major_stage.title)
+            major_stage_transportation = db.session.execute(db.select(Transportation).filter_by(major_stage_id=major_stage.id)).scalars().first()
+            if major_stage_transportation:
+                if major_stage_transportation.departure_latitude and major_stage_transportation.departure_longitude:
+                    locations.append({
+                        'stageType': 'majorStage',
+                        'belonging': major_stage.title,
+                        'locationType': 'transportation_departure',
+                        'data': {
+                            'name': major_stage_transportation.place_of_departure,
+                            'latitude': major_stage_transportation.departure_latitude if major_stage_transportation.departure_latitude else None,
+                            'longitude': major_stage_transportation.departure_longitude if major_stage_transportation.departure_longitude else None,
+                        }
+                    })   
+                if major_stage_transportation.arrival_latitude and major_stage_transportation.arrival_longitude: 
+                    locations.append({
+                        'stageType': 'majorStage',
+                        'belonging': major_stage.title,
+                        'locationType': 'transportation_arrival',
+                        'data': {
+                            'name': major_stage_transportation.place_of_arrival,
+                            'latitude': major_stage_transportation.arrival_latitude if major_stage_transportation.arrival_latitude else None,
+                            'longitude': major_stage_transportation.arrival_longitude if major_stage_transportation.arrival_longitude else None,
+                        }
+                    })
+                
+            minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=major_stage.id)).scalars().all()
+            if minor_stages:
+                for minor_stage in minor_stages:
+                    minor_stage_transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
+                    if minor_stage_transportation:
+                        if minor_stage_transportation.departure_latitude and minor_stage_transportation.departure_longitude:
+                                locations.append({
+                                    'stageType': 'minorStage',
+                                    'belonging': minor_stage.title,
+                                    'locationType': 'transportation_departure',
+                                    'data': {
+                                        'name': minor_stage_transportation.place_of_departure,
+                                        'latitude': minor_stage_transportation.departure_latitude if minor_stage_transportation.departure_latitude else None,
+                                        'longitude': minor_stage_transportation.departure_longitude if minor_stage_transportation.departure_longitude else None,
+                                    }
+                                })
+                        if minor_stage_transportation.arrival_latitude and minor_stage_transportation.arrival_longitude:
+                            locations.append({
+                                'stageType': 'minorStage',
+                                'belonging': minor_stage.title,
+                                'locationType': 'transportation_arrival',
+                                'data': {
+                                    'name': minor_stage_transportation.place_of_arrival,
+                                    'latitude': minor_stage_transportation.arrival_latitude if minor_stage_transportation.arrival_latitude else None,
+                                    'longitude': minor_stage_transportation.arrival_longitude if minor_stage_transportation.arrival_longitude else None,
+                                }
+                            })
+                    minor_stage_accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
+                    if minor_stage_accommodation.latitude and minor_stage_accommodation.longitude:
+                        locations.append({
+                            'stageType': 'minorStage',
+                            'belonging': minor_stage.title,
+                            'locationType': 'accommodation',
+                            'data': {
+                                'name': minor_stage_accommodation.place,
+                                'latitude': minor_stage_accommodation.latitude if minor_stage_accommodation.latitude else None,
+                                'longitude': minor_stage_accommodation.longitude if minor_stage_accommodation.longitude else None,
+                            }
+                        })
+                    activities = db.session.execute(db.select(Activity).filter_by(minor_stage_id=minor_stage.id)).scalars().all()
+                    if activities:
+                        for activity in activities:
+                            if activity.latitude and activity.longitude:
+                                locations.append({
+                                    'stageType': 'minorStage',
+                                    'belonging': minor_stage.title,
+                                    'locationType': 'activity',
+                                    'data': {
+                                        'name': activity.place,
+                                        'latitude': activity.latitude if activity.latitude else None,
+                                        'longitude': activity.longitude if activity.longitude else None,
+                                    }
+                                })
+                    places_to_visit = db.session.execute(db.select(PlaceToVisit).filter_by(minor_stage_id=minor_stage.id)).scalars().all()
+                    if places_to_visit:
+                        for place_to_visit in places_to_visit: 
+                            if place_to_visit.latitude and place_to_visit.longitude:
+                                locations.append({
+                                    'stageType': 'minorStage',
+                                    'belonging': minor_stage.title,
+                                    'locationType': 'placeToVisit',
+                                    'data': {
+                                        'name': place_to_visit.name,
+                                        'latitude': place_to_visit.latitude if place_to_visit.latitude else None,
+                                        'longitude': place_to_visit.longitude if place_to_visit.longitude else None,
+                                    }
+                                })
+        return jsonify({'status': 200, 'locations': locations, 'majorStageNames': majorStageNames})
+    except Exception as e:
+        return jsonify({'error': str(e)}, 500)

@@ -31,7 +31,9 @@ const ListItem: React.FC<ListItemProps> = ({
       ]}
       android_ripple={{ color: GlobalStyles.colors.gray100 }}
     >
-      <Text style={[styles.text, textStyles && textStyles]}>{children}</Text>
+      <Text style={[styles.text, textStyles && textStyles]} numberOfLines={1}>
+        {children}
+      </Text>
     </Pressable>
   );
 };

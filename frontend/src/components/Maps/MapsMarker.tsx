@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Marker } from 'react-native-maps';
 
 interface MapsMarkerProps {
+  name?: string;
   lat: number;
   lng: number;
 }

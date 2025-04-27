@@ -1,7 +1,14 @@
 import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { Journey, JourneyFormValues } from '../../models';
+import {
+  Accommodation,
+  Activity,
+  Journey,
+  JourneyFormValues,
+  PlaceToVisit,
+  Transportation,
+} from '../../models';
 import api from './api';
 
 interface FetchJourneysProps {
@@ -148,5 +155,56 @@ export const fetchJourneysMinorStagesQty = async (
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch quantity of minor stages!' };
+  }
+};
+
+interface LocationData {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Location {
+  stageType: 'majorStage' | 'minorStage';
+  belonging: string;
+  locationType:
+    | 'transportation_departure'
+    | 'transportation_arrival'
+    | 'accommodation'
+    | 'activity'
+    | 'placeToVisit';
+  data: LocationData;
+}
+
+interface FetchJourneysLocationsProps {
+  locations?: Location[];
+  majorStageNames?: string[];
+  status: number;
+  error?: string;
+}
+
+export const fetchJourneysLocations = async (
+  journeyId: number
+): Promise<FetchJourneysLocationsProps> => {
+  try {
+    const response: AxiosResponse<FetchJourneysLocationsProps> = await api.get(
+      `${prefix}/get-journeys-locations/${journeyId}`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    const { locations, majorStageNames, status } = response.data;
+
+    if (!locations) {
+      return { status };
+    }
+
+    return { locations, majorStageNames, status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not fetch locations!' };
   }
 };

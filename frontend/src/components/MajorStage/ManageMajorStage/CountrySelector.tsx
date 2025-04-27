@@ -17,7 +17,6 @@ import ListItem from '../../UI/search/ListItem';
 import Input from '../../UI/form/Input';
 import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
-import { BlurView } from 'expo-blur';
 import { JourneyContext } from '../../../store/journey-context';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import { useFocusEffect } from '@react-navigation/native';
