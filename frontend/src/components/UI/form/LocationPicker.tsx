@@ -40,19 +40,19 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     }
   }, [pickedLocation]);
 
-  const [locationPermissionInfotmation, requestPermission] =
+  const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
 
   async function verifyPermissions() {
     if (
-      locationPermissionInfotmation!.status === PermissionStatus.UNDETERMINED
+      locationPermissionInformation!.status === PermissionStatus.UNDETERMINED
     ) {
       const permissionResponse = await requestPermission();
 
       return permissionResponse.granted;
     }
 
-    if (locationPermissionInfotmation!.status === PermissionStatus.DENIED) {
+    if (locationPermissionInformation!.status === PermissionStatus.DENIED) {
       Alert.alert(
         'Insufficient Permissions!',
         'You need to grant location permissions to use this app.'

@@ -57,7 +57,7 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
               <Text style={styles.header}>{value}</Text>
             </Pressable>
           </View>
-          {openSelection && (
+          {openSelection && mapScopeChoice.length > 0 && (
             <OutsidePressHandler onOutsidePress={handlePressOutside}>
               <View style={styles.listContainer}>
                 <ScrollView style={styles.list}>
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
   },
   listItemContainer: {
     backgroundColor: GlobalStyles.colors.gray500,
+    marginVertical: 3,
   },
   listItemText: {
     fontSize: 16,

@@ -1,5 +1,6 @@
 import { GOOGLE_API_KEY } from '@env';
 import { LatLng, Region } from 'react-native-maps';
+
 import { Location } from './http';
 
 export function getMapPreview({ latitude, longitude }: LatLng) {

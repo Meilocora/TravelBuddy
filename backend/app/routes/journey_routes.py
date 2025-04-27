@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import db
+from sqlalchemy import desc
 from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.journey_validation import JourneyValidation
 from app.routes.route_protection import token_required
@@ -11,7 +12,7 @@ journey_bp = Blueprint('journey', __name__)
 def get_journeys(current_user):
     try:
         # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(Journey.scheduled_start_time))
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(desc(Journey.scheduled_start_time)))
         journeys = result.scalars().all()
         
         # Fetch costs and major_stages for each journey

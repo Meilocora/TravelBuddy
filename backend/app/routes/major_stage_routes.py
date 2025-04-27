@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.routes.util import calculate_journey_costs
+from sqlalchemy import desc
 from db import db
 from app.routes.route_protection import token_required
 from app.models import Costs, Journey, Spendings, MajorStage, Transportation, MinorStage
@@ -12,7 +13,7 @@ major_stage_bp = Blueprint('major_stage', __name__)
 def get_major_stages(current_user, journeyId):
     try:
         # Get all the major stages from the database
-        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
+        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(desc(MajorStage.scheduled_start_time)))
         majorStages = result.scalars().all()
         
         # Fetch costs, transportation and minor_stages for each major_stage

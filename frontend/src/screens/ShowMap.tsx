@@ -36,6 +36,8 @@ const ShowMap: React.FC<ShowMapProps> = ({
     headerstyle = { backgroundColor: GlobalStyles.colors.accent700 };
   }
 
+  // TODO: Add funtionality for routeplanning via google maps
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Map',

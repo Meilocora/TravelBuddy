@@ -1,17 +1,10 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {
-  ReactElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { ReactElement, useCallback, useContext, useState } from 'react';
 import { Text, View, StyleSheet, Alert } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
+import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
 
 import { Icons, JourneyBottomTabsParamsList, MapLocation } from '../../models';
-import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
 import IconButton from '../../components/UI/IconButton';
 import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
@@ -19,8 +12,8 @@ import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { getRegionForLocations } from '../../utils/location';
-import { map } from 'zod';
 import { generateRandomString } from '../../utils';
+import { getCurrentPositionAsync } from 'expo-location';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -44,15 +37,24 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       // Fetch data when the screen comes into focus
       async function getLocations() {
         const response = await fetchJourneysLocations(journeyId);
-        if (!response.error) {
+        if (!response.error && response.locations) {
           setLocations(response.locations!);
           setShownLocations(response.locations!);
           setMapScopeList((prevValues) => [
             ...prevValues,
             ...response.majorStageNames!,
           ]);
-        } else {
+        } else if (response.error) {
           setError(response.error);
+        } else {
+          // TODO: Try again => see location.ts and LocationPicker.tsx
+          // const currentRegion = await getCurrentPosition();
+          // setRegion({
+          //   latitude: currentRegion?.latitude || 0,
+          //   longitude: currentRegion?.longitude || 0,
+          //   latitudeDelta: 0.0922,
+          //   longitudeDelta: 0.0421,
+          // });
         }
         setIsFetching(false);
       }
@@ -89,7 +91,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
-  // locationType = ['accommodation', 'activity', 'transportation_departure', 'transportation_arrival', 'place'] <== find symbols for each of them
   // TODO: User should be able to select and unselect MajorStages
   // TODO: Add list of places for the user to jump to
   // TODO: Make component, that draws a <Polyline /> or <MapViewDirections /> between locations

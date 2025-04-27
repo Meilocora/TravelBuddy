@@ -105,11 +105,12 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
   }
 
   function handlePickLocation(location: MapLocation) {
+    console.log(location);
     if (location.title) {
       setInputs((currInputs) => {
         return {
           ...currInputs,
-          accommodation_place: {
+          name: {
             value: location.title!,
             isValid: true,
             errors: [],
@@ -120,12 +121,12 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        accommodation_latitude: {
+        latitude: {
           value: location.lat,
           isValid: true,
           errors: [],
         },
-        accommodation_longitude: {
+        longitude: {
           value: location.lng,
           isValid: true,
           errors: [],

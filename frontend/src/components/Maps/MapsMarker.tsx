@@ -13,6 +13,8 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ lat, lng }): ReactElement => {
     lng: lng ? lng : undefined,
   };
 
+  // locationType = ['accommodation', 'activity', 'transportation_departure', 'transportation_arrival', 'place'] <== find symbols for each of them
+
   return (
     <Marker
       title='Picked Location'

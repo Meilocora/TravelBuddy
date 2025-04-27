@@ -20,7 +20,6 @@ import ElementComment from '../UI/list/ElementComment';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysMinorStagesQty } from '../../utils/http';
-import { set } from 'zod';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -53,7 +52,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   useEffect(() => {
     async function fetchMinorStagesQty() {
       const response = await fetchJourneysMinorStagesQty(journey.id);
-      if (response.status === 200) {
+      if (response.status === 200 && response.minorStagesQty) {
         setMinorStagesQty(response.minorStagesQty!);
       }
     }
