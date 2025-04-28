@@ -93,7 +93,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         // reset journeyId in navigation params for BottomTab
         navigation.setParams({ journeyId: undefined });
       };
-    }, [])
+    }, [selectedJourney])
   );
 
   async function deleteJourneyHandler() {

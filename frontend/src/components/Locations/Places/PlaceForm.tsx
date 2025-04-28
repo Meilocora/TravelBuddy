@@ -105,7 +105,6 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
   }
 
   function handlePickLocation(location: MapLocation) {
-    console.log(location);
     if (location.title) {
       setInputs((currInputs) => {
         return {

@@ -311,7 +311,7 @@ def get_journeys_locations(current_user, journeyId):
                         if minor_stage_transportation.departure_latitude and minor_stage_transportation.departure_longitude:
                                 locations.append({
                                     'stageType': 'minorStage',
-                                    'belonging': minor_stage.title,
+                                    'belonging': major_stage.title,
                                     'locationType': 'transportation_departure',
                                     'data': {
                                         'name': minor_stage_transportation.place_of_departure,
@@ -322,7 +322,7 @@ def get_journeys_locations(current_user, journeyId):
                         if minor_stage_transportation.arrival_latitude and minor_stage_transportation.arrival_longitude:
                             locations.append({
                                 'stageType': 'minorStage',
-                                'belonging': minor_stage.title,
+                                'belonging': major_stage.title,
                                 'locationType': 'transportation_arrival',
                                 'data': {
                                     'name': minor_stage_transportation.place_of_arrival,
@@ -334,7 +334,7 @@ def get_journeys_locations(current_user, journeyId):
                     if minor_stage_accommodation.latitude and minor_stage_accommodation.longitude:
                         locations.append({
                             'stageType': 'minorStage',
-                            'belonging': minor_stage.title,
+                            'belonging': major_stage.title,
                             'locationType': 'accommodation',
                             'data': {
                                 'name': minor_stage_accommodation.place,
@@ -348,7 +348,7 @@ def get_journeys_locations(current_user, journeyId):
                             if activity.latitude and activity.longitude:
                                 locations.append({
                                     'stageType': 'minorStage',
-                                    'belonging': minor_stage.title,
+                                    'belonging': major_stage.title,
                                     'locationType': 'activity',
                                     'data': {
                                         'name': activity.place,
@@ -362,7 +362,7 @@ def get_journeys_locations(current_user, journeyId):
                             if place_to_visit.latitude and place_to_visit.longitude:
                                 locations.append({
                                     'stageType': 'minorStage',
-                                    'belonging': minor_stage.title,
+                                    'belonging': major_stage.title,
                                     'locationType': 'placeToVisit',
                                     'data': {
                                         'name': place_to_visit.name,

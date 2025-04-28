@@ -79,15 +79,26 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
 
   function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
+
     if (mapType !== 'Journey') {
       const filteredLocations = locations.filter(
         (location) => location.belonging === mapType
       );
+      const relevantLocations = filteredLocations.filter(
+        (location) =>
+          location.locationType === 'transportation_departure' ||
+          location.locationType === 'transportation_arrival'
+      );
       setShownLocations(filteredLocations);
-      setRegion(getRegionForLocations(filteredLocations));
+      return setRegion(getRegionForLocations(relevantLocations));
     } else {
+      const relevantLocations = locations.filter(
+        (location) =>
+          location.locationType !== 'transportation_departure' &&
+          location.locationType !== 'transportation_arrival'
+      );
       setShownLocations(locations); // Show all locations for 'Journey'
-      setRegion(getRegionForLocations(locations));
+      return setRegion(getRegionForLocations(relevantLocations));
     }
   }
 

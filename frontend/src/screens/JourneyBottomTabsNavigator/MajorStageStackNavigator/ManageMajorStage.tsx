@@ -1,5 +1,6 @@
 import React, {
   ReactElement,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -7,7 +8,11 @@ import React, {
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -78,6 +83,33 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     country: selectedMajorStage?.country || '',
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      // JourneyValues set, when screen is focused
+      setMajorStageValues({
+        title: selectedMajorStage?.title || '',
+        done: selectedMajorStage?.done || false,
+        scheduled_start_time: selectedMajorStage?.scheduled_start_time
+          ? formatDateString(selectedMajorStage.scheduled_start_time)
+          : null,
+        scheduled_end_time: selectedMajorStage?.scheduled_end_time
+          ? formatDateString(selectedMajorStage.scheduled_end_time)
+          : null,
+        additional_info: selectedMajorStage?.additional_info || '',
+        budget: selectedMajorStage?.costs.budget || 0,
+        spent_money: selectedMajorStage?.costs.spent_money || 0,
+        country: selectedMajorStage?.country || '',
+      });
+
+      return () => {
+        // Clean up function, when screen is unfocused
+        resetValues();
+        // reset majorStageId in navigation paramms
+        navigation.setParams({ majorStageId: undefined });
+      };
+    }, [selectedMajorStage])
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'center',
@@ -96,24 +128,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       ),
     });
   }, [navigation, isEditing]);
-
-  // Redefine majorStageValues, when selectedMajorStage changes
-  useEffect(() => {
-    setMajorStageValues({
-      title: selectedMajorStage?.title || '',
-      done: selectedMajorStage?.done || false,
-      scheduled_start_time: selectedMajorStage?.scheduled_start_time
-        ? formatDateString(selectedMajorStage.scheduled_start_time)
-        : null,
-      scheduled_end_time: selectedMajorStage?.scheduled_end_time
-        ? formatDateString(selectedMajorStage.scheduled_end_time)
-        : null,
-      additional_info: selectedMajorStage?.additional_info || '',
-      budget: selectedMajorStage?.costs.budget || 0,
-      spent_money: selectedMajorStage?.costs.spent_money || 0,
-      country: selectedMajorStage?.country || '',
-    });
-  }, [selectedMajorStage]);
 
   async function deleteMajorStageHandler() {
     try {

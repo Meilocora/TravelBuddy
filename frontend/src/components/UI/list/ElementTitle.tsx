@@ -10,12 +10,16 @@ const ElementTitle: React.FC<ElementTitleProps> = ({
   children,
   style,
 }): ReactElement => {
-  return <Text style={[styles.title, style]}>{children}</Text>;
+  return (
+    <Text style={[styles.title, style]} numberOfLines={1}>
+      {children}
+    </Text>
+  );
 };
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
   },

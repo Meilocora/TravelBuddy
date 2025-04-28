@@ -167,7 +167,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       setInputs((currInputs) => {
         return {
           ...currInputs,
-          accommodation_place: {
+          place: {
             value: location.title!,
             isValid: true,
             errors: [],
@@ -178,12 +178,12 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     setInputs((currInputs) => {
       return {
         ...currInputs,
-        accommodation_latitude: {
+        latitude: {
           value: location.lat,
           isValid: true,
           errors: [],
         },
-        accommodation_longitude: {
+        longitude: {
           value: location.lng,
           isValid: true,
           errors: [],

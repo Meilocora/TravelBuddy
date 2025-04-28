@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flex: 1,
-    width: '90%',
+    width: '85%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',

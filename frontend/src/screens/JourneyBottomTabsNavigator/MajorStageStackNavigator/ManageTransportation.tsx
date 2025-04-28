@@ -1,7 +1,17 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ReactElement, useContext, useLayoutEffect, useState } from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { StyleSheet, View } from 'react-native';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -42,6 +52,9 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   navigation,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
+  const [selectedTransportation, setSelectedTransportation] = useState<
+    Transportation | undefined
+  >(undefined);
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
@@ -53,16 +66,29 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     route.params;
   let isEditing = !!transportationId;
 
-  let selectedTransportation: Transportation | undefined;
-  if (minorStageId) {
-    selectedTransportation = minorStageCtx.minorStages.find(
-      (minorStage) => minorStage.id === minorStageId
-    )!.transportation;
-  } else if (majorStageId) {
-    selectedTransportation = majorStageCtx.majorStages.find(
-      (majorStage) => majorStage.id === majorStageId
-    )!.transportation;
-  }
+  useFocusEffect(
+    useCallback(() => {
+      // selectedTransportation set, when screen is focused
+      if (minorStageId) {
+        setSelectedTransportation(
+          minorStageCtx.minorStages.find(
+            (minorStage) => minorStage.id === minorStageId
+          )!.transportation
+        );
+      } else if (majorStageId) {
+        setSelectedTransportation(
+          majorStageCtx.majorStages.find(
+            (majorStage) => majorStage.id === majorStageId
+          )!.transportation
+        );
+      }
+
+      return () => {
+        // Clean up function, when screen is unfocused
+        setSelectedTransportation(undefined);
+      };
+    }, [selectedTransportation])
+  );
 
   useLayoutEffect(() => {
     planningNavigation.setOptions({
