@@ -44,6 +44,12 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
             ...prevValues,
             ...response.majorStageNames!,
           ]);
+          const relevantLocations = locations.filter(
+            (location) =>
+              location.locationType !== 'transportation_departure' &&
+              location.locationType !== 'transportation_arrival'
+          );
+          setRegion(getRegionForLocations(relevantLocations));
         } else if (response.error) {
           setError(response.error);
         } else {
@@ -86,8 +92,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       );
       const relevantLocations = filteredLocations.filter(
         (location) =>
-          location.locationType === 'transportation_departure' ||
-          location.locationType === 'transportation_arrival'
+          location.locationType !== 'transportation_departure' &&
+          location.locationType !== 'transportation_arrival'
       );
       setShownLocations(filteredLocations);
       return setRegion(getRegionForLocations(relevantLocations));
@@ -129,12 +135,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         {shownLocations.map((location) => {
           const locationData = location.data;
           return (
-            <MapsMarker
-              key={generateRandomString()}
-              lat={locationData.latitude}
-              lng={locationData.longitude}
-              name={locationData.name}
-            />
+            <MapsMarker key={generateRandomString()} location={location} />
           );
         })}
       </MapView>

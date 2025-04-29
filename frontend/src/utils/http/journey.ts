@@ -8,6 +8,7 @@ import {
   JourneyFormValues,
   PlaceToVisit,
   Transportation,
+  TransportationType,
 } from '../../models';
 import api from './api';
 
@@ -173,6 +174,7 @@ export interface Location {
     | 'accommodation'
     | 'activity'
     | 'placeToVisit';
+  transportationType?: TransportationType;
   data: LocationData;
 }
 

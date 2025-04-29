@@ -54,7 +54,9 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
           <View style={styles.row}>
             <Text style={styles.subtitle}>Scope:</Text>
             <Pressable onPress={handleOpenModal} style={styles.headerContainer}>
-              <Text style={styles.header}>{value}</Text>
+              <Text style={styles.header} numberOfLines={1}>
+                {value}
+              </Text>
             </Pressable>
           </View>
           {openSelection && mapScopeChoice.length > 0 && (
@@ -107,12 +109,14 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    maxWidth: 250,
   },
   subtitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 5,
+    textAlign: 'left',
   },
   headerContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -122,7 +126,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   header: {
-    textAlign: 'center',
+    textAlign: 'left',
     fontSize: 16,
   },
   errorText: {

@@ -1,27 +1,28 @@
 import { ReactElement } from 'react';
 import { Marker } from 'react-native-maps';
+import { Location } from '../../utils/http';
 
 interface MapsMarkerProps {
-  name?: string;
-  lat: number;
-  lng: number;
+  location: Location;
 }
 
-const MapsMarker: React.FC<MapsMarkerProps> = ({ lat, lng }): ReactElement => {
-  let selectedLocation = {
-    lat: lat ? lat : undefined,
-    lng: lng ? lng : undefined,
-  };
+const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
+  const { stageType, belonging, locationType, transportationType, data } =
+    location;
 
   // locationType = ['accommodation', 'activity', 'transportation_departure', 'transportation_arrival', 'place'] <== find symbols for each of them
 
+  // const icon = {require('./YOUR_MARKER.png')}
+  // https://www.flaticon.com/search?word=bus
+
   return (
     <Marker
-      title='Picked Location'
+      title={data.name}
       coordinate={{
-        latitude: selectedLocation.lat!,
-        longitude: selectedLocation.lng!,
+        latitude: data.latitude,
+        longitude: data.longitude,
       }}
+      // icon={require('../../../assets/bus.png')}
     />
   );
 };
