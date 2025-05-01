@@ -156,7 +156,7 @@ class Validation:
   
   
   def validate_transportation_type(self, type:str):
-    if type not in ['Bus', 'Car', 'Ferry', 'Plane', 'Train', 'Other']:
+    if type not in ['Bus', 'Car', 'Boat', 'Plane', 'Train', 'Other']:
       self.error_list.append('Invalid transportation type')      
     
     return self.__return_feedback()

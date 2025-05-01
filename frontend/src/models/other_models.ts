@@ -78,7 +78,7 @@ export interface TransportationFormValues {
 export enum TransportationType {
   bus = 'Bus',
   car = 'Car',
-  ferry = 'Ferry',
+  boat = 'Boat',
   plane = 'Plane',
   train = 'Train',
   other = 'Other',
