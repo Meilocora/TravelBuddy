@@ -285,6 +285,7 @@ def get_journeys_locations(current_user, journeyId):
                         'stageType': 'majorStage',
                         'belonging': major_stage.title,
                         'locationType': 'transportation_departure',
+                        'transportationType': major_stage_transportation.type.lower(),
                         'data': {
                             'name': major_stage_transportation.place_of_departure,
                             'latitude': major_stage_transportation.departure_latitude if major_stage_transportation.departure_latitude else None,
@@ -296,6 +297,7 @@ def get_journeys_locations(current_user, journeyId):
                         'stageType': 'majorStage',
                         'belonging': major_stage.title,
                         'locationType': 'transportation_arrival',
+                        'transportationType': major_stage_transportation.type.lower(),
                         'data': {
                             'name': major_stage_transportation.place_of_arrival,
                             'latitude': major_stage_transportation.arrival_latitude if major_stage_transportation.arrival_latitude else None,
@@ -313,6 +315,7 @@ def get_journeys_locations(current_user, journeyId):
                                     'stageType': 'minorStage',
                                     'belonging': major_stage.title,
                                     'locationType': 'transportation_departure',
+                                    'transportationType': minor_stage_transportation.type.lower(),
                                     'data': {
                                         'name': minor_stage_transportation.place_of_departure,
                                         'latitude': minor_stage_transportation.departure_latitude if minor_stage_transportation.departure_latitude else None,
@@ -324,6 +327,7 @@ def get_journeys_locations(current_user, journeyId):
                                 'stageType': 'minorStage',
                                 'belonging': major_stage.title,
                                 'locationType': 'transportation_arrival',
+                                'transportationType': minor_stage_transportation.type.lower(),
                                 'data': {
                                     'name': minor_stage_transportation.place_of_arrival,
                                     'latitude': minor_stage_transportation.arrival_latitude if minor_stage_transportation.arrival_latitude else None,

@@ -18,11 +18,12 @@ interface TransportElementInfopointProps {
   subtitle: string;
   data: string;
   location?: MapLocation;
+  colorScheme: 'accent' | 'complementary';
 }
 
 export const TransportElementInfopoint: React.FC<
   TransportElementInfopointProps
-> = ({ subtitle, data, location }) => {
+> = ({ subtitle, data, location, colorScheme }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
@@ -30,7 +31,7 @@ export const TransportElementInfopoint: React.FC<
       title: location?.title,
       lat: location?.lat!,
       lng: location?.lng!,
-      colorScheme: 'complementary',
+      colorScheme: colorScheme,
     });
   }
 
@@ -146,6 +147,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
           subtitle={infoPoint.subtitle}
           data={infoPoint.data}
           location={infoPoint.location}
+          colorScheme='complementary'
         />
       ))}
       {transportation.link && (

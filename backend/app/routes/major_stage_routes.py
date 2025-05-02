@@ -52,7 +52,11 @@ def get_major_stages(current_user, journeyId):
                     'start_time': transportation.start_time,
                     'arrival_time': transportation.arrival_time,
                     'place_of_departure': transportation.place_of_departure,
+                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
+                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
                     'place_of_arrival': transportation.place_of_arrival,
+                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
+                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }

@@ -44,7 +44,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
             ...prevValues,
             ...response.majorStageNames!,
           ]);
-          const relevantLocations = locations.filter(
+          const relevantLocations = response.locations.filter(
             (location) =>
               location.locationType !== 'transportation_departure' &&
               location.locationType !== 'transportation_arrival'
@@ -109,6 +109,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   }
 
   // TODO: User should be able to select and unselect MajorStages
+  // TODO: Make dynamic ColroScheme for different MinorStages / MajorStages depending on mapScope
   // TODO: Add list of places for the user to jump to
   // TODO: Make component, that draws a <Polyline /> or <MapViewDirections /> between locations
 

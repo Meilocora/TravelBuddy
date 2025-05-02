@@ -109,6 +109,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
               subtitle={infoPoint.subtitle}
               data={infoPoint.data}
               location={infoPoint.location}
+              colorScheme='accent'
             />
           ))}
         {transportation.link && (

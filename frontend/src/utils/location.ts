@@ -26,6 +26,7 @@ export function getRegionForLocations(locations: Location[]): Region {
   if (locations.length === 0) {
     // Default region if no locations are available
     return {
+      // TODO: Use users location here
       latitude: 48.1483601,
       longitude: 11.5400113,
       latitudeDelta: 0.1,
