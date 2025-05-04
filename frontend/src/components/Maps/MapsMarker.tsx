@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
-import { Marker } from 'react-native-maps';
+import { ReactElement, useRef } from 'react';
+import { MapMarker, Marker } from 'react-native-maps';
 import { View } from 'react-native';
 
 import { Location } from '../../utils/http';
@@ -42,6 +42,7 @@ const width = 40;
 
 interface MapsMarkerProps {
   location: Location;
+  // TODO: fill? = 'black'
 }
 
 // TODO: Change so it also can be used for ShowMap Screen
@@ -49,6 +50,8 @@ interface MapsMarkerProps {
 const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   const { stageType, belonging, locationType, transportationType, data } =
     location;
+
+  const markerRef = useRef<MapMarker>(null);
 
   // Construct the icon key
   let iconKey: string = locationType;
@@ -61,6 +64,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
 
   return (
     <Marker
+      ref={markerRef}
       title={data.name}
       coordinate={{
         latitude: data.latitude,

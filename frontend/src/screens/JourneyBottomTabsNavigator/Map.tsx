@@ -1,11 +1,10 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useCallback, useContext, useState } from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
-import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
+import MapView, { Region } from 'react-native-maps';
 
-import { Icons, JourneyBottomTabsParamsList, MapLocation } from '../../models';
-import IconButton from '../../components/UI/IconButton';
+import { JourneyBottomTabsParamsList } from '../../models';
 import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
 import { JourneyContext } from '../../store/journey-context';
@@ -13,7 +12,6 @@ import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { getRegionForLocations } from '../../utils/location';
 import { generateRandomString } from '../../utils';
-import { getCurrentPositionAsync } from 'expo-location';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -108,10 +106,10 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
-  // TODO: User should be able to select and unselect MajorStages
+  // TODO: Delete this
+  const userLocation = { latitude: 13, longitude: 100 };
+
   // TODO: Make dynamic ColroScheme for different MinorStages / MajorStages depending on mapScope
-  // TODO: Add list of places for the user to jump to
-  // TODO: Make component, that draws a <Polyline /> or <MapViewDirections /> between locations
 
   return (
     <View style={styles.root}>
@@ -134,7 +132,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         onPress={() => {}}
       >
         {shownLocations.map((location) => {
-          const locationData = location.data;
           return (
             <MapsMarker key={generateRandomString()} location={location} />
           );
@@ -150,6 +147,11 @@ const styles = StyleSheet.create({
   },
   map: {
     height: '100%',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: '90%',
+    left: '80%',
   },
 });
 

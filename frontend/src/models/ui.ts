@@ -37,6 +37,7 @@ export enum Icons {
   duration = 'hourglass-outline',
   place = 'home-outline',
   country = 'flag',
+  compass = 'compass-outline',
 }
 
 export enum ButtonMode {
