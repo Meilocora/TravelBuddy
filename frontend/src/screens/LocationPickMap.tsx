@@ -145,7 +145,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           Reset Location
         </Button>
       </View>
-      {/* TODO: Rework this to use a better approach for positioning the title */}
+      {/* TODO: Use MapsMarker here instead */}
       {title && (
         <View
           style={[

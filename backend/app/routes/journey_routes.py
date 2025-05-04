@@ -282,7 +282,6 @@ def get_journeys_locations(current_user, journeyId):
             if major_stage_transportation:
                 if major_stage_transportation.departure_latitude and major_stage_transportation.departure_longitude:
                     locations.append({
-                        'stageType': 'majorStage',
                         'belonging': major_stage.title,
                         'locationType': 'transportation_departure',
                         'transportationType': major_stage_transportation.type.lower(),
@@ -294,7 +293,6 @@ def get_journeys_locations(current_user, journeyId):
                     })   
                 if major_stage_transportation.arrival_latitude and major_stage_transportation.arrival_longitude: 
                     locations.append({
-                        'stageType': 'majorStage',
                         'belonging': major_stage.title,
                         'locationType': 'transportation_arrival',
                         'transportationType': major_stage_transportation.type.lower(),
@@ -312,7 +310,7 @@ def get_journeys_locations(current_user, journeyId):
                     if minor_stage_transportation:
                         if minor_stage_transportation.departure_latitude and minor_stage_transportation.departure_longitude:
                                 locations.append({
-                                    'stageType': 'minorStage',
+                                    'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'transportation_departure',
                                     'transportationType': minor_stage_transportation.type.lower(),
@@ -324,7 +322,7 @@ def get_journeys_locations(current_user, journeyId):
                                 })
                         if minor_stage_transportation.arrival_latitude and minor_stage_transportation.arrival_longitude:
                             locations.append({
-                                'stageType': 'minorStage',
+                                'minorStageName': minor_stage.title,
                                 'belonging': major_stage.title,
                                 'locationType': 'transportation_arrival',
                                 'transportationType': minor_stage_transportation.type.lower(),
@@ -337,7 +335,7 @@ def get_journeys_locations(current_user, journeyId):
                     minor_stage_accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
                     if minor_stage_accommodation.latitude and minor_stage_accommodation.longitude:
                         locations.append({
-                            'stageType': 'minorStage',
+                            'minorStageName': minor_stage.title,
                             'belonging': major_stage.title,
                             'locationType': 'accommodation',
                             'data': {
@@ -351,7 +349,7 @@ def get_journeys_locations(current_user, journeyId):
                         for activity in activities:
                             if activity.latitude and activity.longitude:
                                 locations.append({
-                                    'stageType': 'minorStage',
+                                    'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'activity',
                                     'data': {
@@ -365,7 +363,7 @@ def get_journeys_locations(current_user, journeyId):
                         for place_to_visit in places_to_visit: 
                             if place_to_visit.latitude and place_to_visit.longitude:
                                 locations.append({
-                                    'stageType': 'minorStage',
+                                    'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'placeToVisit',
                                     'data': {

@@ -42,14 +42,19 @@ const width = 40;
 
 interface MapsMarkerProps {
   location: Location;
-  // TODO: fill? = 'black'
 }
 
-// TODO: Change so it also can be used for ShowMap Screen
-
 const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
-  const { stageType, belonging, locationType, transportationType, data } =
-    location;
+  const {
+    minorStageName,
+    belonging,
+    locationType,
+    transportationType,
+    data,
+    color,
+  } = location;
+
+  // TODO: Add description aswell if there is one
 
   const markerRef = useRef<MapMarker>(null);
 
@@ -73,7 +78,11 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
     >
       <View style={{ zIndex: 10 }}>
         {IconComponent && (
-          <IconComponent width={width} height={heigth} fill='black' />
+          <IconComponent
+            width={width}
+            height={heigth}
+            fill={color || 'black'}
+          />
         )}
       </View>
     </Marker>

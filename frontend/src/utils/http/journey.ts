@@ -166,7 +166,7 @@ interface LocationData {
 }
 
 export interface Location {
-  stageType: 'majorStage' | 'minorStage';
+  minorStageName?: string;
   belonging: string;
   locationType:
     | 'transportation_departure'
@@ -176,6 +176,7 @@ export interface Location {
     | 'placeToVisit';
   transportationType?: TransportationType;
   data: LocationData;
+  color?: string;
 }
 
 interface FetchJourneysLocationsProps {

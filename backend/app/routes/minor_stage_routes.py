@@ -174,7 +174,7 @@ def create_minor_stage(current_user, majorStageId):
 def update_minor_stage(current_user, majorStageId, minorStageId):
     try:
         minor_stage = request.get_json()
-        result = db.session.execute(db.select(MinorStage).filter(MinorStage.major_stage_id!=minorStageId, MinorStage.major_stage_id==majorStageId))
+        result = db.session.execute(db.select(MinorStage).filter(MinorStage.id!=minorStageId, MinorStage.major_stage_id==majorStageId))
         existing_minor_stages = result.scalars().all()
         
         existing_minor_stages_costs = []

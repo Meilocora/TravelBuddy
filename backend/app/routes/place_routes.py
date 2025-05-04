@@ -32,6 +32,7 @@ def get_places(current_user):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+    
 @place_bp.route('/get-available-places-by-country/<int:minorStageId>/<string:countryName>', methods=['GET'])
 @token_required
 def get_places_by_country(current_user, minorStageId, countryName):
@@ -61,6 +62,7 @@ def get_places_by_country(current_user, minorStageId, countryName):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+    
 @place_bp.route('/create-place', methods=['POST'])
 @token_required
 def create_place(current_user):
@@ -68,13 +70,13 @@ def create_place(current_user):
         place = request.get_json()
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
-    
-    print(place)
-    
+        
     response, isValid = PlaceValidation.validate_place(place=place)
-    
+    print(response)
     if not isValid:
         return jsonify({'placeFormValues': response, 'status': 400})
+    
+
     
     try:
         # Create a new place

@@ -15,6 +15,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   majorStage,
   minorStages,
 }): ReactElement => {
+  // TODO: This must be differentiated by the minorStages aswell!
   const [contentState, setContentState] = useState({
     activeHeader: 'transport',
   });

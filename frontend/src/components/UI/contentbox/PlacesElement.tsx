@@ -28,6 +28,8 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   const majorStage = majorStageCtx.majorStages.find((stage) =>
     stage.minorStagesIds?.includes(minorStage.id)
   );
+
+  // TODO: Error, when new minorStage is added... country of undefined?!
   const countryName = majorStage!.country;
 
   const minorStageCtx = useContext(MinorStageContext);

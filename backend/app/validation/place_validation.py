@@ -32,7 +32,7 @@ class PlaceValidation(Validation):
             pass            
             
             
-        if PlaceValidation().validate_string(place['name']['value'], min_length=3, max_length=25):
+        if PlaceValidation().validate_string(place['name']['value'], min_length=3, max_length=50):
             place['name']['errors'].append(f", {PlaceValidation().validate_string(place['name']['value'], 3, 50)}")
             place['name']['isValid'] = False
             

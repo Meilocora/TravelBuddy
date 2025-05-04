@@ -1,9 +1,4 @@
-import {
-  getCurrentPositionAsync,
-  useForegroundPermissions,
-  PermissionStatus,
-} from 'expo-location';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ReactElement, useEffect, useState } from 'react';
 
@@ -16,6 +11,10 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../IconButton';
 import { GlobalStyles } from '../../../constants/styles';
+import {
+  getCurrentLocation,
+  useLocationPermissions,
+} from '../../../utils/location';
 
 interface LocationPickerProps {
   pickedLocation?: MapLocation;
@@ -32,6 +31,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 }): ReactElement => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
+  const { verifyPermissions } = useLocationPermissions();
   const [hasInitialLocation, setHasInitialLocation] = useState(false);
 
   useEffect(() => {
@@ -39,28 +39,6 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       setHasInitialLocation(true);
     }
   }, [pickedLocation]);
-
-  const [locationPermissionInformation, requestPermission] =
-    useForegroundPermissions();
-
-  async function verifyPermissions() {
-    if (
-      locationPermissionInformation!.status === PermissionStatus.UNDETERMINED
-    ) {
-      const permissionResponse = await requestPermission();
-
-      return permissionResponse.granted;
-    }
-
-    if (locationPermissionInformation!.status === PermissionStatus.DENIED) {
-      Alert.alert(
-        'Insufficient Permissions!',
-        'You need to grant location permissions to use this app.'
-      );
-      return false;
-    }
-    return true;
-  }
 
   let iconStandardColor = GlobalStyles.colors.primary100;
   if (colorScheme === ColorScheme.complementary) {
@@ -79,9 +57,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     let latitude: number;
     let longitude: number;
     if (!pickedLocation) {
-      const location = await getCurrentPositionAsync();
-      latitude = location.coords.latitude!;
-      longitude = location.coords.longitude!;
+      const location = await getCurrentLocation();
+      latitude = location.latitude!;
+      longitude = location.longitude!;
     } else {
       latitude = pickedLocation.lat!;
       longitude = pickedLocation.lng!;

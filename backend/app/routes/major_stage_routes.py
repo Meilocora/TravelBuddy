@@ -21,7 +21,6 @@ def get_major_stages(current_user, journeyId):
         for majorStage in majorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
             costs = costs_result.scalars().first()
-            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
             
             transportation_result = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStage.id))
             transportation = transportation_result.scalars().first()
@@ -60,10 +59,6 @@ def get_major_stages(current_user, journeyId):
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }
-            
-            # TODO: Maybe allow spendings for majorStages aswell?
-            if spendings is not None:
-                major_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
             
             if minorStages is not None:
                 major_stage_data['minorStagesIds'] = [minorStage.id for minorStage in minorStages]

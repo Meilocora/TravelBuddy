@@ -10,7 +10,7 @@ import MapTypeSelector from '../../components/Maps/MapTypeSelector';
 import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
-import { getRegionForLocations } from '../../utils/location';
+import { addColor, getRegionForLocations } from '../../utils/location';
 import { generateRandomString } from '../../utils';
 
 interface MapProps {
@@ -37,7 +37,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         const response = await fetchJourneysLocations(journeyId);
         if (!response.error && response.locations) {
           setLocations(response.locations!);
-          setShownLocations(response.locations!);
+          const coloredLocations = addColor(response.locations!, mapScope);
+          setShownLocations(coloredLocations);
           setMapScopeList((prevValues) => [
             ...prevValues,
             ...response.majorStageNames!,
@@ -47,18 +48,9 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
               location.locationType !== 'transportation_departure' &&
               location.locationType !== 'transportation_arrival'
           );
-          setRegion(getRegionForLocations(relevantLocations));
+          setRegion(await getRegionForLocations(relevantLocations));
         } else if (response.error) {
           setError(response.error);
-        } else {
-          // TODO: Try again => see location.ts and LocationPicker.tsx
-          // const currentRegion = await getCurrentPosition();
-          // setRegion({
-          //   latitude: currentRegion?.latitude || 0,
-          //   longitude: currentRegion?.longitude || 0,
-          //   latitudeDelta: 0.0922,
-          //   longitudeDelta: 0.0421,
-          // });
         }
         setIsFetching(false);
       }
@@ -81,7 +73,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setRefresh((prev) => prev + 1);
   }
 
-  function handleChangeMapType(mapType: string) {
+  async function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
 
     if (mapType !== 'Journey') {
@@ -93,23 +85,24 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           location.locationType !== 'transportation_departure' &&
           location.locationType !== 'transportation_arrival'
       );
-      setShownLocations(filteredLocations);
-      return setRegion(getRegionForLocations(relevantLocations));
+      const coloredLocations = addColor(filteredLocations, mapType);
+      setShownLocations(coloredLocations);
+
+      return setRegion(await getRegionForLocations(relevantLocations));
     } else {
       const relevantLocations = locations.filter(
         (location) =>
           location.locationType !== 'transportation_departure' &&
           location.locationType !== 'transportation_arrival'
       );
-      setShownLocations(locations); // Show all locations for 'Journey'
-      return setRegion(getRegionForLocations(relevantLocations));
+      const coloredLocations = addColor(locations, mapType);
+      setShownLocations(coloredLocations); // Show all locations for 'Journey'
+
+      return setRegion(await getRegionForLocations(relevantLocations));
     }
   }
 
-  // TODO: Delete this
-  const userLocation = { latitude: 13, longitude: 100 };
-
-  // TODO: Make dynamic ColroScheme for different MinorStages / MajorStages depending on mapScope
+  // TODO: List of places to jump to
 
   return (
     <View style={styles.root}>
