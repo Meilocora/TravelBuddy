@@ -9,7 +9,7 @@ import {
 
 import ElementTitle from '../UI/list/ElementTitle';
 import { GlobalStyles } from '../../constants/styles';
-import { Icons, Transportation } from '../../models';
+import { Icons, Transportation, TransportationType } from '../../models';
 import IconButton from '../UI/IconButton';
 import TransportationElement, {
   TransportElementInfopoint,
@@ -110,6 +110,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
               data={infoPoint.data}
               location={infoPoint.location}
               colorScheme='accent'
+              transportationType={transportation.type as TransportationType}
             />
           ))}
         {transportation.link && (

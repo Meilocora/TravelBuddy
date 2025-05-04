@@ -165,15 +165,22 @@ interface LocationData {
   longitude: number;
 }
 
+export enum LocationType {
+  transportation_departure = 'transportation_departure',
+  transportation_arrival = 'transportation_arrival',
+  accommodation = 'accommodation',
+  activity = 'activity',
+  placeToVisit = 'placeToVisit',
+}
+
 export interface Location {
   minorStageName?: string;
+  description?: string;
+  // TODO:
+  // link?: string
+  // id?: number
   belonging: string;
-  locationType:
-    | 'transportation_departure'
-    | 'transportation_arrival'
-    | 'accommodation'
-    | 'activity'
-    | 'placeToVisit';
+  locationType: LocationType;
   transportationType?: TransportationType;
   data: LocationData;
   color?: string;

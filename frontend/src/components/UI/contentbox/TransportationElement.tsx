@@ -6,6 +6,7 @@ import {
   MapLocation,
   StackParamList,
   Transportation,
+  TransportationType,
 } from '../../../models';
 import Button from '../Button';
 import { formatAmount, formatDateTimeString } from '../../../utils';
@@ -13,24 +14,35 @@ import Link from '../Link';
 import TextLink from '../TextLink';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Location, LocationType } from '../../../utils/http';
 
 interface TransportElementInfopointProps {
   subtitle: string;
   data: string;
   location?: MapLocation;
   colorScheme: 'accent' | 'complementary';
+  transportationType: TransportationType;
 }
 
 export const TransportElementInfopoint: React.FC<
   TransportElementInfopointProps
-> = ({ subtitle, data, location, colorScheme }) => {
+> = ({ subtitle, data, location, colorScheme, transportationType }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
+    const mapLocation: Location = {
+      belonging: 'Undefined',
+      locationType:
+        `transportation_${subtitle.toLowerCase()}` as unknown as LocationType,
+      data: {
+        name: location?.title!,
+        latitude: location?.lat!,
+        longitude: location?.lng!,
+      },
+      transportationType: transportationType,
+    };
     navigation.navigate('ShowMap', {
-      title: location?.title,
-      lat: location?.lat!,
-      lng: location?.lng!,
+      location: mapLocation,
       colorScheme: colorScheme,
     });
   }
@@ -148,6 +160,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
           data={infoPoint.data}
           location={infoPoint.location}
           colorScheme='complementary'
+          transportationType={transportation.type as TransportationType}
         />
       ))}
       {transportation.link && (

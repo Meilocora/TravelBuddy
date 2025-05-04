@@ -21,10 +21,12 @@ import AccommodationBox from './AccommodationBox';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
-  contentState: { activeHeader: string };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{ activeHeader: string }>
-  >;
+  // contentState: { activeHeader: string };
+  // setContentState: React.Dispatch<
+  // React.SetStateAction<{ activeHeader: string }>
+  // >;
+  contentState: string;
+  setContentState: (minorStageId: number, activeHeader: string) => void;
 }
 
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({

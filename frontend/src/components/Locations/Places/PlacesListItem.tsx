@@ -13,7 +13,11 @@ import {
   toggleVisitedPlace,
 } from '../../../utils/http/place_to_visit';
 import { CustomCountryContext } from '../../../store/custom-country-context';
-import { fetchCustomCountries } from '../../../utils/http';
+import {
+  fetchCustomCountries,
+  Location,
+  LocationType,
+} from '../../../utils/http';
 
 interface PlacesListItemProps {
   place: PlaceToVisit;
@@ -83,10 +87,18 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
   }
 
   function handleShowLocation() {
+    const location: Location = {
+      belonging: 'Undefined',
+      locationType: LocationType.placeToVisit,
+      data: {
+        name: place.name,
+        latitude: place.latitude,
+        longitude: place.longitude,
+      },
+    };
+
     navigation.navigate('ShowMap', {
-      title: place.name,
-      lat: place.latitude!,
-      lng: place.longitude!,
+      location: location,
       colorScheme: majorStageId ? 'complementary' : 'primary',
     });
   }

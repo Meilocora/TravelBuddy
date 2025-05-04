@@ -11,10 +11,12 @@ interface ContenBoxProps {
   minorStage: MinorStage;
   majorStageId: number;
   journeyId: number;
-  contentState: { activeHeader: string };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{ activeHeader: string }>
-  >;
+  // contentState: { activeHeader: string };
+  // setContentState: React.Dispatch<
+  //   React.SetStateAction<{ activeHeader: string }>
+  // >;
+  contentState: string;
+  setContentState: (minorStageId: number, activeHeader: string) => void;
 }
 
 const ContentBox: React.FC<ContenBoxProps> = ({
@@ -29,7 +31,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
       duration: 500,
       update: { type: 'spring', springDamping: 0.7 },
     });
-    setContentState({ activeHeader: header.toLowerCase() });
+    setContentState(minorStage.id, header?.toLowerCase());
   };
 
   let contentHeaders = ['Transport', 'Places', 'Activities', 'Spendings'];
@@ -44,7 +46,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
               title={header}
               key={generateRandomString()}
               headerStyle={
-                contentState.activeHeader === header.toLowerCase()
+                contentState[minorStage.id] === header.toLowerCase()
                   ? styles.activeHeader
                   : {}
               }

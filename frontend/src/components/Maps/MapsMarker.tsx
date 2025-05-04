@@ -2,7 +2,7 @@ import { ReactElement, useRef } from 'react';
 import { MapMarker, Marker } from 'react-native-maps';
 import { View } from 'react-native';
 
-import { Location } from '../../utils/http';
+import { Location, LocationType } from '../../utils/http';
 import ActivityIcon from '../../../assets/activity.svg';
 import AccommodationIcon from '../../../assets/accommodation.svg';
 import PlaceToVisitIcon from '../../../assets/placeToVisit.svg';
@@ -47,6 +47,7 @@ interface MapsMarkerProps {
 const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   const {
     minorStageName,
+    description,
     belonging,
     locationType,
     transportationType,
@@ -54,18 +55,17 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
     color,
   } = location;
 
-  // TODO: Add description aswell if there is one
-
   const markerRef = useRef<MapMarker>(null);
 
   // Construct the icon key
   let iconKey: string = locationType;
-  if (locationType.startsWith('transportation')) {
-    iconKey = `${locationType}_${transportationType}`;
+  if (locationType.toString().startsWith('transportation')) {
+    iconKey = `${locationType}_${transportationType?.toLowerCase()}`;
   }
-
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
+
+  // TODO: Add edit link to the form + add link of given
 
   return (
     <Marker
@@ -75,6 +75,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
         latitude: data.latitude,
         longitude: data.longitude,
       }}
+      description={description}
     >
       <View style={{ zIndex: 10 }}>
         {IconComponent && (

@@ -352,6 +352,7 @@ def get_journeys_locations(current_user, journeyId):
                                     'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'activity',
+                                    'description': activity.description if len(activity.description) > 0 else None,
                                     'data': {
                                         'name': activity.place,
                                         'latitude': activity.latitude if activity.latitude else None,
@@ -366,6 +367,7 @@ def get_journeys_locations(current_user, journeyId):
                                     'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'placeToVisit',
+                                    'description': place_to_visit.description if len(place_to_visit.description) > 0 else None,
                                     'data': {
                                         'name': place_to_visit.name,
                                         'latitude': place_to_visit.latitude if place_to_visit.latitude else None,

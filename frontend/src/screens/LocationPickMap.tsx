@@ -97,8 +97,6 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     });
   }, []);
 
-  const { width, height } = Dimensions.get('window');
-
   return (
     <View style={styles.container}>
       {showModal && (
@@ -133,6 +131,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
       >
         {initialLocation && hasLocation && (
           <Marker
+            title={title}
             coordinate={{
               latitude: region.latitude,
               longitude: region.longitude,
@@ -145,21 +144,6 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           Reset Location
         </Button>
       </View>
-      {/* TODO: Use MapsMarker here instead */}
-      {title && (
-        <View
-          style={[
-            styles.titleContainer,
-            {
-              top: height / 2,
-              left: width / 2 - title.length * 5,
-              transform: [{ translateY: -height / 25 }],
-            },
-          ]}
-        >
-          <Text style={styles.titleText}>{title}</Text>
-        </View>
-      )}
     </View>
   );
 };
@@ -187,22 +171,7 @@ const styles = StyleSheet.create({
   modal: {
     marginTop: '25%',
   },
-  titleContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    zIndex: 1,
-    position: 'absolute',
-    backgroundColor: GlobalStyles.colors.gray700,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 15,
-  },
-  titleText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-  },
+
   buttonContainer: {
     position: 'absolute',
     bottom: 10,

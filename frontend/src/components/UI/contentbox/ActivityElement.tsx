@@ -23,6 +23,7 @@ import IconButton from '../IconButton';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { formatAmount, generateRandomString } from '../../../utils';
+import { Location, LocationType } from '../../../utils/http';
 
 interface ActivityListElementProps {
   activity: Activity;
@@ -40,10 +41,18 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
+    const location: Location = {
+      belonging: 'Undefined',
+      locationType: LocationType.activity,
+      data: {
+        name: activity.place,
+        latitude: activity.latitude!,
+        longitude: activity.longitude!,
+      },
+    };
+
     navigation.navigate('ShowMap', {
-      title: activity.place,
-      lat: activity.latitude!,
-      lng: activity.longitude!,
+      location: location,
       colorScheme: 'complementary',
     });
   }

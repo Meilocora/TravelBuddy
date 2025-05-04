@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
 import TextLink from '../UI/TextLink';
+import { Location, LocationType } from '../../utils/http';
 
 interface AccommodationBoxProps {
   minorStage: MinorStage;
@@ -18,10 +19,18 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
+    const location: Location = {
+      belonging: 'Undefined',
+      locationType: LocationType.accommodation,
+      data: {
+        name: minorStage.accommodation.place,
+        latitude: minorStage.accommodation.latitude,
+        longitude: minorStage.accommodation.longitude,
+      },
+    };
+
     navigation.navigate('ShowMap', {
-      title: minorStage.accommodation.place,
-      lat: minorStage.accommodation.latitude!,
-      lng: minorStage.accommodation.longitude!,
+      location: location,
       colorScheme: 'complementary',
     });
   }

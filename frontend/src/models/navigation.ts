@@ -3,6 +3,7 @@ import { MapLocation } from './map';
 import { ColorScheme } from './ui';
 import { Journey } from './journey';
 import { MajorStage } from './major_stage';
+import { Location } from '../utils/http';
 
 export type BottomTabsParamList = {
   AllJourneys: undefined | { popupText?: string };
@@ -69,9 +70,7 @@ export type StackParamList = {
     colorScheme?: ColorScheme;
   };
   ShowMap: {
-    title?: string;
-    lat: number;
-    lng: number;
+    location: Location;
     colorScheme: string;
   };
 };
