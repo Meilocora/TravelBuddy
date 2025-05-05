@@ -19,8 +19,6 @@ interface MainContentProps {
   journeyId: number;
   majorStageId: number;
   minorStage: MinorStage;
-  // contentState: { activeHeader: string };
-  contentState: string;
 }
 
 interface ContentElementProps {
@@ -38,7 +36,6 @@ const MainContent: React.FC<MainContentProps> = ({
   journeyId,
   majorStageId,
   minorStage,
-  contentState,
 }): ReactElement => {
   const minorStageCtx = useContext(MinorStageContext);
   const navigation =
@@ -149,12 +146,12 @@ const MainContent: React.FC<MainContentProps> = ({
     },
   ];
 
-  // const displayedContent = content.find(
-  //   (content) => content.title === contentState.activeHeader
-  // );
-  const displayedContent = content.find(
-    (content) => content.title === contentState[minorStage.id]
-  );
+  let displayedContent: Content | undefined;
+  if (minorStage.id === minorStageCtx.activeHeader.minorStageId) {
+    displayedContent = content.find(
+      (content) => content.title === minorStageCtx.activeHeader.header
+    );
+  }
 
   return <View style={styles.container}>{displayedContent?.element}</View>;
 };

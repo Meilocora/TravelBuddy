@@ -3,9 +3,16 @@ import { createContext, useState } from 'react';
 import { MinorStage } from '../models';
 import { fetchMinorStagesById } from '../utils';
 
+interface ActiveHeader {
+  minorStageId?: number;
+  header?: string;
+}
+
 interface MinorStageContextType {
   minorStages: MinorStage[];
   setMinorStages: (minorStages: MinorStage[]) => void;
+  activeHeader: ActiveHeader;
+  setActiveHeaderHandler: (minorStageId: number, header: string) => void;
   addMinorStage: (minorStage: MinorStage) => void;
   deleteMinorStage: (minorStageId: number) => void;
   updateMinorStage: (minorStages: MinorStage) => void;
@@ -17,6 +24,8 @@ interface MinorStageContextType {
 export const MinorStageContext = createContext<MinorStageContextType>({
   minorStages: [],
   setMinorStages: () => {},
+  activeHeader: {},
+  setActiveHeaderHandler(minorStageId, header) {},
   addMinorStage: () => {},
   deleteMinorStage: () => {},
   updateMinorStage: () => {},
@@ -31,6 +40,14 @@ export default function MinorStageContextProvider({
   children: React.ReactNode;
 }) {
   const [minorStages, setMinorStages] = useState<MinorStage[]>([]);
+  const [activeHeader, setActiveHeader] = useState<ActiveHeader>({
+    minorStageId: undefined,
+    header: undefined,
+  });
+
+  function setActiveHeaderHandler(minorStageId: number, header: string) {
+    setActiveHeader({ minorStageId, header });
+  }
 
   function addMinorStage(minorStage: MinorStage) {
     setMinorStages((prevMinorStages) => [...prevMinorStages, minorStage]);
@@ -99,6 +116,8 @@ export default function MinorStageContextProvider({
   const value = {
     minorStages,
     setMinorStages,
+    activeHeader,
+    setActiveHeaderHandler,
     addMinorStage,
     deleteMinorStage,
     updateMinorStage,

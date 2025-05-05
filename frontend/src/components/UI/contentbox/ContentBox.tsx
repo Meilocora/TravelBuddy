@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useContext } from 'react';
 import { View, StyleSheet, LayoutAnimation } from 'react-native';
 
 import { MinorStage } from '../../../models';
@@ -6,32 +6,27 @@ import ContentHeader from './ContentHeader';
 import { GlobalStyles } from '../../../constants/styles';
 import MainContent from './MainContent';
 import { generateRandomString } from '../../../utils/generator';
+import { MinorStageContext } from '../../../store/minorStage-context';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
   majorStageId: number;
   journeyId: number;
-  // contentState: { activeHeader: string };
-  // setContentState: React.Dispatch<
-  //   React.SetStateAction<{ activeHeader: string }>
-  // >;
-  contentState: string;
-  setContentState: (minorStageId: number, activeHeader: string) => void;
 }
 
 const ContentBox: React.FC<ContenBoxProps> = ({
   journeyId,
   majorStageId,
   minorStage,
-  contentState,
-  setContentState,
 }): ReactElement => {
+  const minorStageCtx = useContext(MinorStageContext);
+
   const handleOnPressHeader = (header: string) => {
     LayoutAnimation.configureNext({
       duration: 500,
       update: { type: 'spring', springDamping: 0.7 },
     });
-    setContentState(minorStage.id, header?.toLowerCase());
+    minorStageCtx.setActiveHeaderHandler(minorStage.id, header.toLowerCase());
   };
 
   let contentHeaders = ['Transport', 'Places', 'Activities', 'Spendings'];
@@ -46,7 +41,8 @@ const ContentBox: React.FC<ContenBoxProps> = ({
               title={header}
               key={generateRandomString()}
               headerStyle={
-                contentState[minorStage.id] === header.toLowerCase()
+                minorStageCtx.activeHeader.minorStageId === minorStage.id &&
+                minorStageCtx.activeHeader.header === header.toLowerCase()
                   ? styles.activeHeader
                   : {}
               }
@@ -58,7 +54,6 @@ const ContentBox: React.FC<ContenBoxProps> = ({
         journeyId={journeyId}
         majorStageId={majorStageId}
         minorStage={minorStage}
-        contentState={contentState}
       />
     </>
   );

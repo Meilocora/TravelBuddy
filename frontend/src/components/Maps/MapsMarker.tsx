@@ -2,7 +2,7 @@ import { ReactElement, useRef } from 'react';
 import { MapMarker, Marker } from 'react-native-maps';
 import { View } from 'react-native';
 
-import { Location, LocationType } from '../../utils/http';
+import { Location } from '../../utils/http';
 import ActivityIcon from '../../../assets/activity.svg';
 import AccommodationIcon from '../../../assets/accommodation.svg';
 import PlaceToVisitIcon from '../../../assets/placeToVisit.svg';
@@ -65,7 +65,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
 
-  // TODO: Add edit link to the form + add link of given
+  // TODO: Add edit link to the form (OR Link to the component!) + add link of given
 
   return (
     <Marker

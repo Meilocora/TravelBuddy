@@ -21,18 +21,10 @@ import AccommodationBox from './AccommodationBox';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
-  // contentState: { activeHeader: string };
-  // setContentState: React.Dispatch<
-  // React.SetStateAction<{ activeHeader: string }>
-  // >;
-  contentState: string;
-  setContentState: (minorStageId: number, activeHeader: string) => void;
 }
 
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   minorStage,
-  contentState,
-  setContentState,
 }): ReactElement => {
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
@@ -104,8 +96,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
         journeyId={journeyId}
         majorStageId={majorStageId}
         minorStage={minorStage}
-        contentState={contentState}
-        setContentState={setContentState}
       />
     </View>
   );

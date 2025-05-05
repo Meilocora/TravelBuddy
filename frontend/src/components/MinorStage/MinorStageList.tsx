@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import MinorStageListElement from './MinorStageListElement';
@@ -15,21 +15,6 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   majorStage,
   minorStages,
 }): ReactElement => {
-  // TODO: This must be differentiated by the minorStages aswell!
-  // const [contentState, setContentState] = useState({
-  //   activeHeader: 'transport',
-  // });
-
-  const [contentState, setContentState] = useState<Record<number, string>>({});
-
-  // Function to update the activeHeader for a specific minorStage
-  const updateContentState = (minorStageId: number, activeHeader: string) => {
-    setContentState((prevState) => ({
-      ...prevState,
-      [minorStageId]: activeHeader,
-    }));
-  };
-
   return (
     <>
       {majorStage?.additional_info && (
@@ -45,12 +30,6 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
           <MinorStageListElement
             key={generateRandomString()}
             minorStage={item}
-            // contentState={contentState}
-            // setContentState={setContentState}
-            contentState={contentState[item.id] || 'transport'}
-            setContentState={(minorStageId: number, activeHeader: string) =>
-              updateContentState(minorStageId, activeHeader)
-            }
           />
         )}
         keyExtractor={(item) => item.id.toString()}
