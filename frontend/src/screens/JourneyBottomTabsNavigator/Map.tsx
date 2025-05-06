@@ -12,6 +12,7 @@ import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { addColor, getRegionForLocations } from '../../utils/location';
 import { generateRandomString } from '../../utils';
+import MapLocationList from '../../components/Maps/MapLocationList';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -102,8 +103,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
-  // TODO: List of places to jump to
-
   return (
     <View style={styles.root}>
       {error && (
@@ -118,11 +117,14 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         value={mapScope}
         mapScopeList={mapScopeList}
       />
+      <MapLocationList locations={shownLocations} />
       <MapView
         style={styles.map}
         initialRegion={region!}
         region={region!}
         onPress={() => {}}
+        showsUserLocation
+        showsMyLocationButton
       >
         {shownLocations.map((location) => {
           return (

@@ -176,9 +176,6 @@ export enum LocationType {
 export interface Location {
   minorStageName?: string;
   description?: string;
-  // TODO:
-  // link?: string
-  // id?: number
   belonging: string;
   locationType: LocationType;
   transportationType?: TransportationType;

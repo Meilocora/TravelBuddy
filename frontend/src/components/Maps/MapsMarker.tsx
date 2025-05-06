@@ -65,8 +65,6 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
 
-  // TODO: Add edit link to the form (OR Link to the component!) + add link of given
-
   return (
     <Marker
       ref={markerRef}

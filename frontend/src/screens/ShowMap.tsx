@@ -42,8 +42,6 @@ const ShowMap: React.FC<ShowMapProps> = ({
     });
   }, []);
 
-  console.log(location);
-
   return (
     <View style={styles.container}>
       <MapView
@@ -51,6 +49,8 @@ const ShowMap: React.FC<ShowMapProps> = ({
         region={region}
         onPress={() => {}}
         style={styles.map}
+        showsUserLocation
+        showsMyLocationButton
       >
         <MapsMarker location={location} />
       </MapView>
