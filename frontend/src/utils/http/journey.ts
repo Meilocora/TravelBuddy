@@ -174,12 +174,12 @@ export enum LocationType {
 }
 
 export interface Location {
-  minorStageName?: string;
-  description?: string;
   belonging: string;
   locationType: LocationType;
-  transportationType?: TransportationType;
   data: LocationData;
+  minorStageName?: string;
+  description?: string;
+  transportationType?: TransportationType;
   color?: string;
 }
 

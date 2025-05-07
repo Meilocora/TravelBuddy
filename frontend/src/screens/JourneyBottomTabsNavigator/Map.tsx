@@ -74,6 +74,15 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setRefresh((prev) => prev + 1);
   }
 
+  function handlePressListElement(location: Location) {
+    setRegion({
+      latitude: location.data.latitude,
+      longitude: location.data.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.04,
+    });
+  }
+
   async function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
 
@@ -117,7 +126,11 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         value={mapScope}
         mapScopeList={mapScopeList}
       />
-      <MapLocationList locations={shownLocations} />
+      <MapLocationList
+        locations={shownLocations}
+        mapScope={mapScope}
+        onPress={handlePressListElement}
+      />
       <MapView
         style={styles.map}
         initialRegion={region!}

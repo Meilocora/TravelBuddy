@@ -1,62 +1,81 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { Location } from '../../utils/http';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { generateRandomString } from '../../utils';
+import { Dimensions, ScrollView, StyleSheet } from 'react-native';
+import MapLocationListElement from './MapLocationListElement';
+import Animated, { SlideInLeft, SlideOutLeft } from 'react-native-reanimated';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 interface MapLocationListProps {
   locations: Location[];
+  mapScope: string;
+  onPress: (location: Location) => void;
 }
 
 const MapLocationList: React.FC<MapLocationListProps> = ({
   locations,
+  mapScope,
+  onPress,
 }): ReactElement => {
-  const uniqueLocations = locations
-    .filter((location, index, self) => {
-      return (
-        self.findIndex((loc) => loc.data.name === location.data.name) === index
-      );
-    })
-    .sort((a, b) => a.data.name.localeCompare(b.data.name));
+  const [selectedLocation, setSelectedLocation] = useState<
+    string | undefined
+  >();
 
-  function onPressListElement() {
-    // TODO: setRegion to lat & lng of locations
+  const isFocused = useIsFocused();
+
+  useFocusEffect(() => {
+    if (!isFocused) {
+      setSelectedLocation(undefined); // Reset only when the screen loses focus
+    }
+  });
+
+  const uniqueLocations = locations.filter((location, index, self) => {
+    return (
+      self.findIndex((loc) => loc.data.name === location.data.name) === index
+    );
+  });
+
+  const screenHeight = Dimensions.get('window').height;
+
+  function handlePressListElement(location: Location) {
+    setSelectedLocation(location.data.name);
+    onPress(location);
   }
 
-  // TODO: Sort by:
-  //  belonging OR if scope = majorStage => minorStageName
-  //  locationType => transport_departure, transport_arrival, accommodation, placeToVisit, activity
-  // TODO: Add little icon next to name
   // TODO: make button, that shows the names
 
   return (
-    <ScrollView style={styles.container}>
-      {uniqueLocations.map((location) => (
-        <View key={generateRandomString()} style={styles.textContainer}>
-          <Text
-            style={[styles.text, { color: location.color }]}
-            numberOfLines={1}
-          >
-            {location.data.name}
-          </Text>
-        </View>
-      ))}
-    </ScrollView>
+    <Animated.View
+      entering={SlideInLeft}
+      exiting={SlideOutLeft}
+      style={[styles.container, { maxHeight: screenHeight * 0.75 }]}
+    >
+      <ScrollView>
+        {uniqueLocations.map((location) => (
+          <MapLocationListElement
+            location={location}
+            onPress={handlePressListElement}
+            selected={selectedLocation === location.data.name}
+          />
+        ))}
+      </ScrollView>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
     position: 'absolute',
     top: '10%',
-    left: '5%',
     zIndex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderColor: 'black',
+    borderWidth: 1,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
   },
-  textContainer: {
-    maxWidth: 150,
-  },
-  text: {},
 });
 
 export default MapLocationList;
