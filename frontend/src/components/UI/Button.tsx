@@ -1,5 +1,12 @@
 import { ReactElement } from 'react';
-import { Pressable, View, Text, StyleSheet, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 import { ButtonMode, ColorScheme } from '../../models';
@@ -10,6 +17,7 @@ interface ButtonProps {
   mode?: ButtonMode;
   colorScheme: ColorScheme;
   style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -18,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   style,
   mode = ButtonMode.default,
   colorScheme,
+  textStyle,
 }): ReactElement => {
   let schemeStyles = primaryStyles;
 
@@ -50,6 +59,7 @@ const Button: React.FC<ButtonProps> = ({
             style={[
               generalStyles.buttonText,
               mode === 'flat' && schemeStyles.flatText,
+              textStyle,
             ]}
           >
             {children}

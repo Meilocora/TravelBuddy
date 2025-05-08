@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     left: '7%',
   },
   container: {
-    zIndex: 1,
+    zIndex: 2,
     flexDirection: 'row',
   },
   innerContainer: {
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    zIndex: 1,
     maxWidth: 150,
     maxHeight: 200,
   },

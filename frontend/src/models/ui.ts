@@ -1,6 +1,7 @@
 export enum Icons {
   add = 'add',
   listCircle = 'list-circle',
+  listCircleOutline = 'list-circle-outline',
   person = 'person',
   cameraOutline = 'camera-outline',
   calendarOutline = 'calendar-outline',
