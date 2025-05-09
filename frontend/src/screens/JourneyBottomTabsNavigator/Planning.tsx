@@ -27,9 +27,6 @@ interface PlanningProps {
   route: RouteProp<JourneyBottomTabsParamsList, 'Planning'>;
 }
 
-// TODO: Tell user when there are gaps between major stages
-// TODO: Hide stages, that are already over (and make visible by button)
-
 const Planning: React.FC<PlanningProps> = ({
   route,
   navigation,

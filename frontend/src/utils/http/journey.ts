@@ -1,15 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import {
-  Accommodation,
-  Activity,
-  Journey,
-  JourneyFormValues,
-  PlaceToVisit,
-  Transportation,
-  TransportationType,
-} from '../../models';
+import { Journey, JourneyFormValues, TransportationType } from '../../models';
 import api from './api';
 
 interface FetchJourneysProps {

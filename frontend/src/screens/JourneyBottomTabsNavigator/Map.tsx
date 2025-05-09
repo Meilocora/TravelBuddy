@@ -1,18 +1,33 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ReactElement, useCallback, useContext, useState } from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { LatLng, Region } from 'react-native-maps';
+import MapViewDirections, {
+  MapViewDirectionsMode,
+} from 'react-native-maps-directions';
 
-import { JourneyBottomTabsParamsList } from '../../models';
+import { ColorScheme, JourneyBottomTabsParamsList } from '../../models';
 import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
 import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
-import { addColor, getRegionForLocations } from '../../utils/location';
+import {
+  addColor,
+  getCurrentLocation,
+  getRegionForLocations,
+} from '../../utils/location';
 import { generateRandomString } from '../../utils';
 import MapLocationList from '../../components/Maps/MapLocationList';
+import { GOOGLE_API_KEY } from '@env';
+import Popup from '../../components/UI/Popup';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -28,8 +43,24 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [shownLocations, setShownLocations] = useState<Location[]>([]);
   const [region, setRegion] = useState<Region | null>(null);
+  const [directionDestination, setDirectionDestination] =
+    useState<LatLng | null>(null);
+  const [userLocation, setUserLocation] = useState<LatLng | null>(null);
+  const [directionsMode, setDirectionsMode] =
+    useState<MapViewDirectionsMode>('WALKING');
+  const [popupText, setPopupText] = useState<string | undefined>();
+
   const journeyCtx = useContext(JourneyContext);
   const journeyId = journeyCtx.selectedJourneyId!;
+
+  useEffect(() => {
+    async function fetchUserLocation() {
+      const currentLocation = await getCurrentLocation();
+      setUserLocation(currentLocation);
+    }
+
+    fetchUserLocation();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -81,10 +112,23 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       latitudeDelta: 0.1,
       longitudeDelta: 0.04,
     });
+    setDirectionDestination({
+      latitude: location.data.latitude,
+      longitude: location.data.longitude,
+    });
+  }
+
+  function handleChangeDirectionsMode(mode: MapViewDirectionsMode) {
+    setDirectionsMode(mode);
+  }
+
+  function handleClosePopup() {
+    setPopupText(undefined);
   }
 
   async function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
+    setDirectionDestination(null);
 
     if (mapType !== 'Journey') {
       const filteredLocations = locations.filter(
@@ -114,6 +158,13 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
 
   return (
     <View style={styles.root}>
+      {popupText && (
+        <Popup
+          content={popupText}
+          onClose={handleClosePopup}
+          colorScheme={ColorScheme.accent}
+        />
+      )}
       {error && (
         <ErrorOverlay
           message={error}
@@ -129,6 +180,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       <MapLocationList
         locations={shownLocations}
         mapScope={mapScope}
+        mode={directionsMode}
+        setMode={handleChangeDirectionsMode}
         onPress={handlePressListElement}
       />
       <MapView
@@ -139,6 +192,19 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         showsUserLocation
         showsMyLocationButton
       >
+        {directionDestination && userLocation && (
+          <MapViewDirections
+            apikey={GOOGLE_API_KEY}
+            origin={userLocation}
+            // origin={{ latitude: 21.0277717, longitude: 105.8215235 }}
+            destination={directionDestination}
+            strokeWidth={4}
+            strokeColor='blue'
+            precision='high'
+            mode={directionsMode}
+            onError={() => setPopupText('No route found...')}
+          />
+        )}
         {shownLocations.map((location) => {
           return (
             <MapsMarker key={generateRandomString()} location={location} />

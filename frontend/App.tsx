@@ -58,6 +58,7 @@ import ShowMap from './src/screens/ShowMap';
 // TODO: Implement diagramms for costs in Overview
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: UserProfile => track data... Nr. of journeys etc.
+// TODO: Overview => Diagramms and Statistics
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

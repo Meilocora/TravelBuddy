@@ -39,6 +39,9 @@ export enum Icons {
   place = 'home-outline',
   country = 'flag',
   compass = 'compass-outline',
+  walk = 'walk',
+  bicycle = 'bicycle',
+  car = 'car',
 }
 
 export enum ButtonMode {
