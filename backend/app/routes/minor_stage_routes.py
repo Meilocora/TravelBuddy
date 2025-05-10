@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
+from sqlalchemy import desc
+
 from app.routes.route_protection import token_required
 from app.models import Costs, Spendings, MajorStage, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.minor_stage_validation import MinorStageValidation
@@ -12,7 +14,7 @@ minor_stage_bp = Blueprint('minor_stage', __name__)
 def get_minor_stages(current_user, majorStageId):
     try:
         # Get all the minor stages from the database
-        result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId).order_by(MinorStage.scheduled_start_time))
+        result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId).order_by(desc(MinorStage.scheduled_start_time)))
         minorStages = result.scalars().all()
                 
         # Fetch costs, transportation, accommodation, activities and places_to_visit for each minor_stage
@@ -20,7 +22,7 @@ def get_minor_stages(current_user, majorStageId):
         for minorStage in minorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(minor_stage_id=minorStage.id))
             costs = costs_result.scalars().first()
-            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id).order_by(Spendings.date)).scalars().all()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id).order_by(desc(Spendings.date))).scalars().all()
             
             transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minorStage.id)).scalars().first()
             accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minorStage.id)).scalars().first()          

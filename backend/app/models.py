@@ -2,6 +2,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, ForeignKey, Float
 from db import db
 
+# TODO: Change date and time in alle tables into real Dateobjects
+
 class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'extend_existing': True}

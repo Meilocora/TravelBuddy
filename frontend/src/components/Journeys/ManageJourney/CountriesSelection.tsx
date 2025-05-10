@@ -15,6 +15,7 @@ import ListItem from '../../UI/search/ListItem';
 import { FetchCustomCountryResponseProps } from '../../../utils/http/custom_country';
 import Button from '../../UI/Button';
 import { BottomTabsParamList, ButtonMode, ColorScheme } from '../../../models';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface CountriesSelectionProps {
   onFetchRequest: (
@@ -73,22 +74,24 @@ const CountriesSelection = ({
   if (fetchedData.length > 0) {
     content = (
       <ScrollView style={styles.list}>
-        {fetchedData.map((item) => (
-          <ListItem
-            key={generateRandomString()}
-            onPress={handlePressListElement.bind(item)}
+        <OutsidePressHandler onOutsidePress={onCloseModal}>
+          {fetchedData.map((item) => (
+            <ListItem
+              key={generateRandomString()}
+              onPress={handlePressListElement.bind(item)}
+            >
+              {item}
+            </ListItem>
+          ))}
+          <Button
+            colorScheme={ColorScheme.neutral}
+            mode={ButtonMode.flat}
+            onPress={onCloseModal}
+            style={styles.button}
           >
-            {item}
-          </ListItem>
-        ))}
-        <Button
-          colorScheme={ColorScheme.neutral}
-          mode={ButtonMode.flat}
-          onPress={onCloseModal}
-          style={styles.button}
-        >
-          Dismiss
-        </Button>
+            Dismiss
+          </Button>
+        </OutsidePressHandler>
       </ScrollView>
     );
   } else {

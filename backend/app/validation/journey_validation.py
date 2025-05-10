@@ -35,16 +35,16 @@ class JourneyValidation(Validation):
                 journey['scheduled_end_time']['errors'].append(f", {end_val}")
                 journey['scheduled_end_time']['isValid'] = False
                 
-            
-        start_val = JourneyValidation().validate_date(journey['scheduled_start_time']['value'])
-        if start_val:
-            journey['scheduled_start_time']['errors'].append(f", {start_val}")
-            journey['scheduled_start_time']['isValid'] = False
+        # TODO: Reactivate this
+        # start_val = JourneyValidation().validate_date(journey['scheduled_start_time']['value'])
+        # if start_val:
+        #     journey['scheduled_start_time']['errors'].append(f", {start_val}")
+        #     journey['scheduled_start_time']['isValid'] = False
         
-        end_val = JourneyValidation().validate_date(journey['scheduled_end_time']['value'])
-        if end_val:
-            journey['scheduled_end_time']['errors'].append(f", {end_val}")
-            journey['scheduled_end_time']['isValid'] = False
+        # end_val = JourneyValidation().validate_date(journey['scheduled_end_time']['value'])
+        # if end_val:
+        #     journey['scheduled_end_time']['errors'].append(f", {end_val}")
+        #     journey['scheduled_end_time']['isValid'] = False
             
         start_end_val = JourneyValidation().compare_dates(journey['scheduled_start_time']['value'], journey['scheduled_end_time']['value'])
         if start_end_val:

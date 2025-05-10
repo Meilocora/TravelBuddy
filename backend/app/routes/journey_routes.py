@@ -10,11 +10,11 @@ journey_bp = Blueprint('journey', __name__)
 @journey_bp.route('/get-journeys', methods=['GET'])
 @token_required
 def get_journeys(current_user):
-    try:
+    try:    
         # Get all the journeys from the database
         result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(desc(Journey.scheduled_start_time)))
         journeys = result.scalars().all()
-        
+                
         # Fetch costs and major_stages for each journey
         journeys_list = []
         for journey in journeys:
