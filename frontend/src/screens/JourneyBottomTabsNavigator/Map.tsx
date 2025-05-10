@@ -156,6 +156,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
+  // Add additional component, that lets user edit location and have a look at the component (should be at bottom, sliding up)
+
   return (
     <View style={styles.root}>
       {popupText && (

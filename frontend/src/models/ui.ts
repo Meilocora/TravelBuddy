@@ -42,6 +42,7 @@ export enum Icons {
   walk = 'walk',
   bicycle = 'bicycle',
   car = 'car',
+  settings = 'settings-outline',
 }
 
 export enum ButtonMode {
