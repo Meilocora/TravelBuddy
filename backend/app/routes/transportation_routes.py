@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
+from app.routes.util import parseDateTime, formatDateTimeToString
 from app.models import Costs, Journey, MajorStage, MinorStage, Transportation
 from app.validation.transportation_validation import TransportationValidation
 from app.routes.util import calculate_journey_costs
@@ -28,8 +29,8 @@ def create_major_stage_transportation(current_user, majorStageId):
         # Create a new transportation
         new_transportation = Transportation(
             type=transportation['type']['value'],
-            start_time=transportation['start_time']['value'],
-            arrival_time=transportation['arrival_time']['value'],
+            start_time=parseDateTime(transportation['start_time']['value']),
+            arrival_time=parseDateTime(transportation['arrival_time']['value']),
             place_of_departure=transportation['place_of_departure']['value'],
             departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
             departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
@@ -48,8 +49,8 @@ def create_major_stage_transportation(current_user, majorStageId):
         # build response transportation object for the frontend
         response_transportation = {'id': new_transportation.id,
                                     'type': new_transportation.type,
-                                    'start_time': new_transportation.start_time,
-                                    'arrival_time': new_transportation.arrival_time,
+                                    'start_time': formatDateTimeToString(new_transportation.start_time),
+                                    'arrival_time': formatDateTimeToString(new_transportation.arrival_time),
                                     'place_of_departure': new_transportation.place_of_departure,
                                     'departure_latitude': new_transportation.departure_latitude if new_transportation.departure_latitude else None,
                                     'departure_longitude': new_transportation.departure_longitude if new_transportation.departure_longitude else None,
@@ -85,8 +86,8 @@ def create_minor_stage_transportation(current_user, minorStageId):
         # Create a new transportation
         new_transportation = Transportation(
             type=transportation['type']['value'],
-            start_time=transportation['start_time']['value'],
-            arrival_time=transportation['arrival_time']['value'],
+            start_time=parseDateTime(transportation['start_time']['value']),
+            arrival_time=parseDateTime(transportation['arrival_time']['value']),
             place_of_departure=transportation['place_of_departure']['value'],
             departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
             departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
@@ -105,8 +106,8 @@ def create_minor_stage_transportation(current_user, minorStageId):
         # build response transportation object for the frontend
         response_transportation = {'id': new_transportation.id,
                                     'type': new_transportation.type,
-                                    'start_time': new_transportation.start_time,
-                                    'arrival_time': new_transportation.arrival_time,
+                                    'start_time': formatDateTimeToString(new_transportation.start_time),
+                                    'arrival_time': formatDateTimeToString(new_transportation.arrival_time),
                                     'place_of_departure': new_transportation.place_of_departure,
                                     'departure_latitude': new_transportation.departure_latitude if new_transportation.departure_latitude else None,
                                     'departure_longitude': new_transportation.departure_longitude if new_transportation.departure_longitude else None,
@@ -142,8 +143,8 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
     try:
         # Update old transportation
         old_transportation.type = new_transportation['type']['value']
-        old_transportation.start_time = new_transportation['start_time']['value']
-        old_transportation.arrival_time = new_transportation['arrival_time']['value']
+        old_transportation.start_time = parseDateTime(new_transportation['start_time']['value'])
+        old_transportation.arrival_time = parseDateTime(new_transportation['arrival_time']['value'])
         old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
         old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
         old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)
@@ -196,8 +197,8 @@ def update_minor_stage_transportation(current_user, minorStageId, transportation
     try:
         # Update old transportation
         old_transportation.type = new_transportation['type']['value']
-        old_transportation.start_time = new_transportation['start_time']['value']
-        old_transportation.arrival_time = new_transportation['arrival_time']['value']
+        old_transportation.start_time = parseDateTime(new_transportation['start_time']['value'])
+        old_transportation.arrival_time = parseDateTime(new_transportation['arrival_time']['value'])
         old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
         old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
         old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)

@@ -89,3 +89,8 @@ export interface Validable<T> {
   isValid: boolean;
   errors: string[];
 }
+
+export enum StageFilter {
+  'current',
+  'all',
+}

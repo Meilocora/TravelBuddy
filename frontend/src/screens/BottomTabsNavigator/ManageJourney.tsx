@@ -132,7 +132,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 200) {
-        journeyCtx.updateJourney(journey);
+        journeyCtx.refetchJourneys();
         const popupText = 'Journey successfully updated!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }
@@ -141,7 +141,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 201) {
-        journeyCtx.addJourney(journey);
+        journeyCtx.refetchJourneys();
         const popupText = 'Journey successfully created!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }

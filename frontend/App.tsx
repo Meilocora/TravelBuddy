@@ -52,9 +52,11 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 
+// TODO: Implement a way to track the current journey, majorStage, minorStage
+// => build backend check for current stages?
+
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
-// TODO: Implement a way to track the current journey, majorStage, minorStage
 // TODO: Implement diagramms for costs in Overview
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: UserProfile => track data... Nr. of journeys etc.

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from db import db
-from sqlalchemy import desc
+from app.routes.route_protection import token_required
+from app.routes.util import parseDate, formatDateToString
 from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.journey_validation import JourneyValidation
-from app.routes.route_protection import token_required
 
 journey_bp = Blueprint('journey', __name__)
 
@@ -12,7 +12,7 @@ journey_bp = Blueprint('journey', __name__)
 def get_journeys(current_user):
     try:    
         # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(desc(Journey.scheduled_start_time)))
+        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(Journey.scheduled_start_time))
         journeys = result.scalars().all()
                 
         # Fetch costs and major_stages for each journey
@@ -34,10 +34,10 @@ def get_journeys(current_user):
                     'budget': costs.budget,
                     'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
-                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
+                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in spendings]
                 },
-                'scheduled_start_time': journey.scheduled_start_time,
-                'scheduled_end_time': journey.scheduled_end_time,
+                'scheduled_start_time': formatDateToString(journey.scheduled_start_time),
+                'scheduled_end_time': formatDateToString(journey.scheduled_end_time),
                 'countries': journey.countries,
                 'done': journey.done,
                 'majorStagesIds': [majorStage.id for majorStage in majorStages]
@@ -70,8 +70,8 @@ def create_journey(current_user):
         new_journey = Journey(
             name=journey['name']['value'],
             description=journey['description']['value'],
-            scheduled_start_time=journey['scheduled_start_time']['value'],
-            scheduled_end_time=journey['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(journey['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(journey['scheduled_end_time']['value']),
             countries=journey['countries']['value'],
             done=False,
             user_id=current_user
@@ -114,8 +114,8 @@ def create_journey(current_user):
                     'spent_money': costs.spent_money,
                     'money_exceeded': costs.money_exceeded,
                 },
-                'scheduled_start_time': new_journey.scheduled_start_time,
-                'scheduled_end_time': new_journey.scheduled_end_time,
+                'scheduled_start_time': formatDateToString(new_journey.scheduled_start_time),
+                'scheduled_end_time': formatDateToString(new_journey.scheduled_end_time),
                 'countries': new_journey.countries,
                 'done': new_journey.done,
                 'majorStagesIds': []}
@@ -186,8 +186,8 @@ def update_journey(current_user, journeyId):
         db.session.execute(db.update(Journey).where(Journey.id == journeyId).values(
             name=journey['name']['value'],
             description=journey['description']['value'],
-            scheduled_start_time=journey['scheduled_start_time']['value'],
-            scheduled_end_time=journey['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(journey['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(journey['scheduled_end_time']['value']),
             countries=journey['countries']['value'],
         ))
         db.session.commit()
@@ -217,7 +217,7 @@ def update_journey(current_user, journeyId):
                 'majorStagesIds': majorStagesIds}
         
         if journey_spendings:
-            response_journey['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in journey_spendings]
+            response_journey['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in journey_spendings]
         
         return jsonify({'journey': response_journey,'status': 200})
     except Exception as e:

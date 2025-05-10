@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
+from app.routes.util import parseDate, formatDateToString
 from app.models import Costs, Journey,  MinorStage, MajorStage, Spendings
 from app.validation.spending_validation import SpendingValidation
 from app.routes.util import calculate_journey_costs
@@ -30,7 +31,7 @@ def create_spending(current_user, minorStageId):
         new_spending = Spendings(
             name=spending['name']['value'],
             amount=spending['amount']['value'],
-            date=spending['date']['value'],
+            date=parseDate(spending['date']['value']),
             category=spending['category']['value'],
             costs_id=minor_stage.costs.id
         )
@@ -43,7 +44,7 @@ def create_spending(current_user, minorStageId):
         response_spending = {'id': new_spending.id,
                                 'name': new_spending.name,
                                 'amount': new_spending.amount,
-                                'date': new_spending.date,
+                                'date': formatDateToString(new_spending.date),
                                 'category': new_spending.category}
         
         return jsonify({'spending': response_spending, 'backendJourneyId': journey.id, 'status': 201})
@@ -74,7 +75,7 @@ def update_spending(current_user, minorStageId, spendingId):
         # Update old spending
         old_spending.name = new_spending['name']['value']
         old_spending.amount = new_spending['amount']['value']
-        old_spending.date = new_spending['date']['value']
+        old_spending.date = parseDate(new_spending['date']['value'])
         old_spending.category = new_spending['category']['value']
         db.session.commit()
         

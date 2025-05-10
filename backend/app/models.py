@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Boolean, ForeignKey, Float
+from sqlalchemy import Integer, String, Boolean, ForeignKey, Float, DateTime
 from db import db
-
-# TODO: Change date and time in alle tables into real Dateobjects
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -25,8 +23,8 @@ class Journey(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
-    scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
+    scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     countries: Mapped[str] = mapped_column(String, nullable=False)
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
@@ -99,8 +97,8 @@ class MajorStage(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(40), nullable=False)
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
-    scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
+    scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     additional_info: Mapped[str] = mapped_column(String, nullable=True)
     country: Mapped[str] = mapped_column(String, nullable=False)
 
@@ -121,8 +119,8 @@ class MinorStage(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(40), nullable=False)
-    scheduled_start_time: Mapped[str] = mapped_column(String(10), nullable=False)
-    scheduled_end_time: Mapped[str] = mapped_column(String(10), nullable=False)
+    scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     done: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Define relationships to children
@@ -169,7 +167,7 @@ class Spendings(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    date: Mapped[str] = mapped_column(String, nullable=False)
+    date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     category: Mapped[str] = mapped_column(String, nullable=False)
 
     # Foreign keys to the parents
@@ -185,8 +183,8 @@ class Transportation(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     type: Mapped[str] = mapped_column(String, nullable=False)
-    start_time: Mapped[str] = mapped_column(String, nullable=False)
-    arrival_time: Mapped[str] = mapped_column(String, nullable=False)
+    start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    arrival_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     place_of_departure: Mapped[str] = mapped_column(String, nullable=False)
     departure_latitude: Mapped[float] = mapped_column(Float, nullable=True)
     departure_longitude: Mapped[float] = mapped_column(Float, nullable=True)

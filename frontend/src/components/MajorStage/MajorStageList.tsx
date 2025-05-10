@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { FlatList } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import MajorStageListElement from './MajorStageListElement';
 import InfoCurtain from '../UI/InfoCurtain';
@@ -25,11 +26,13 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
       <FlatList
         data={majorStages}
         renderItem={({ item, index }) => (
-          <MajorStageListElement
-            journeyId={journey.id}
-            majorStage={item}
-            index={index}
-          />
+          <Animated.View entering={FadeInDown.delay(index * 200).duration(500)}>
+            <MajorStageListElement
+              journeyId={journey.id}
+              majorStage={item}
+              index={index}
+            />
+          </Animated.View>
         )}
       />
     </>

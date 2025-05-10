@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 import re
 
 class Validation:
@@ -85,11 +85,11 @@ class Validation:
       return self.__return_feedback()
     
     
-  def check_for_overlap(self, new_date: str, existing_start_date: str, existing_end_date: str, overlap_journey_name: str, mode: str) -> bool:
+  def check_for_overlap(self, new_date: str, existing_start_date: date, existing_end_date: date, overlap_journey_name: str, mode: str) -> bool:
     try:
       new_date = datetime.strptime(new_date, '%d.%m.%Y')
-      existing_start_date = datetime.strptime(existing_start_date, '%d.%m.%Y')
-      existing_end_date = datetime.strptime(existing_end_date, '%d.%m.%Y')
+      print(type(new_date))
+      print(type(existing_start_date))
     except (TypeError , ValueError):
       self.error_list.append('Error with overlap check occured')
     else:

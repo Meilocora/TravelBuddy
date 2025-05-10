@@ -1,5 +1,22 @@
+from datetime import datetime
 from db import db
 from app.models import Costs, Spendings, Transportation, MajorStage, MinorStage, Accommodation, Activity
+
+def parseDate(dateString: str): 
+    return datetime.strptime(dateString, '%d.%m.%Y')
+
+
+def parseDateTime(dateTimeString: str):
+    return datetime.strptime(dateTimeString, '%d.%m.%Y %H:%M')
+
+
+def formatDateToString(date: datetime):
+    return datetime.strftime(date, '%d.%m.%Y')
+
+
+def formatDateTimeToString(dateTime: datetime):
+    return datetime.strftime(dateTime, '%d.%m.%Y %H:%M')
+
 
 def calculate_minor_stage_costs(minor_stage_costs):
     spent_money = 0

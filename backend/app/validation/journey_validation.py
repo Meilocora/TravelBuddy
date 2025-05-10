@@ -1,6 +1,7 @@
 from datetime import datetime
 from db import db
 from app.validation.validation import Validation
+from app.routes.util import parseDate
 
 class JourneyValidation(Validation):
   def __init__(self):

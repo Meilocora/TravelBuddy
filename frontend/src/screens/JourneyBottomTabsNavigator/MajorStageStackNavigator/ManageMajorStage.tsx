@@ -186,7 +186,8 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 200) {
-        majorStageCtx.updateMajorStage(majorStage);
+        // TODO: This really needed?
+        // majorStageCtx.updateMajorStage(majorStage);
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
         resetValues();
@@ -201,7 +202,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 201) {
-        majorStageCtx.addMajorStage(majorStage);
+        // majorStageCtx.addMajorStage(majorStage);
         await majorStageCtx.refetchMajorStages(journeyId);
         await journeyCtx.refetchJourneys();
         resetValues();

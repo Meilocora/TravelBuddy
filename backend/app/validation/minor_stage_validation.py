@@ -36,15 +36,16 @@ class MinorStageValidation(Validation):
                 minorStage['scheduled_end_time']['errors'].append(f", {end_val}")
                 minorStage['scheduled_end_time']['isValid'] = False
             
-        start_val = MinorStageValidation().validate_date(minorStage['scheduled_start_time']['value'])
-        if start_val:
-            minorStage['scheduled_start_time']['errors'].append(f", {start_val}")
-            minorStage['scheduled_start_time']['isValid'] = False
+         # TODO: Reactivate this
+        # start_val = MinorStageValidation().validate_date(minorStage['scheduled_start_time']['value'])
+        # if start_val:
+        #     minorStage['scheduled_start_time']['errors'].append(f", {start_val}")
+        #     minorStage['scheduled_start_time']['isValid'] = False
         
-        end_val = MinorStageValidation().validate_date(minorStage['scheduled_end_time']['value'])
-        if end_val:
-            minorStage['scheduled_end_time']['errors'].append(f", {end_val}")
-            minorStage['scheduled_end_time']['isValid'] = False
+        # end_val = MinorStageValidation().validate_date(minorStage['scheduled_end_time']['value'])
+        # if end_val:
+        #     minorStage['scheduled_end_time']['errors'].append(f", {end_val}")
+        #     minorStage['scheduled_end_time']['isValid'] = False
             
         start_end_val = MinorStageValidation().compare_dates(minorStage['scheduled_start_time']['value'], minorStage['scheduled_end_time']['value'])
         if start_end_val:

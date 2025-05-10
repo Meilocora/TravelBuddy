@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
-from sqlalchemy import desc
-
 from app.routes.route_protection import token_required
+from app.routes.util import parseDate, formatDateToString, parseDateTime, formatDateTimeToString
 from app.models import Costs, Spendings, MajorStage, MinorStage, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.minor_stage_validation import MinorStageValidation
 from app.routes.util import calculate_journey_costs
@@ -14,7 +13,7 @@ minor_stage_bp = Blueprint('minor_stage', __name__)
 def get_minor_stages(current_user, majorStageId):
     try:
         # Get all the minor stages from the database
-        result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId).order_by(desc(MinorStage.scheduled_start_time)))
+        result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId).order_by(MinorStage.scheduled_start_time))
         minorStages = result.scalars().all()
                 
         # Fetch costs, transportation, accommodation, activities and places_to_visit for each minor_stage
@@ -22,7 +21,7 @@ def get_minor_stages(current_user, majorStageId):
         for minorStage in minorStages:
             costs_result = db.session.execute(db.select(Costs).filter_by(minor_stage_id=minorStage.id))
             costs = costs_result.scalars().first()
-            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id).order_by(desc(Spendings.date))).scalars().all()
+            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id).order_by(Spendings.date)).scalars().all()
             
             transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minorStage.id)).scalars().first()
             accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minorStage.id)).scalars().first()          
@@ -33,8 +32,8 @@ def get_minor_stages(current_user, majorStageId):
             minor_stage_data = {
                 'id': minorStage.id,
                 'title': minorStage.title,
-                'scheduled_start_time': minorStage.scheduled_start_time,
-                'scheduled_end_time': minorStage.scheduled_end_time,
+                'scheduled_start_time': formatDateToString(minorStage.scheduled_start_time),
+                'scheduled_end_time': formatDateToString(minorStage.scheduled_end_time),
                 'done': minorStage.done,
                 'costs': {
                     'budget': costs.budget,
@@ -55,8 +54,8 @@ def get_minor_stages(current_user, majorStageId):
                 minor_stage_data['transportation'] = {
                     'id': transportation.id,
                     'type': transportation.type,
-                    'start_time': transportation.start_time,
-                    'arrival_time': transportation.arrival_time,
+                    'start_time': formatDateTimeToString(transportation.start_time),
+                    'arrival_time': formatDateTimeToString(transportation.arrival_time),
                     'place_of_departure': transportation.place_of_departure,
                     'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
                     'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
@@ -68,7 +67,7 @@ def get_minor_stages(current_user, majorStageId):
                 }
                 
             if spendings is not None:
-                minor_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
+                minor_stage_data['costs']['spendings'] = [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in spendings]
                         
             if activities is not None:
                 minor_stage_data['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'latitude': activity.latitude, 'longitude': activity.longitude ,'link': activity.link} for activity in activities]
@@ -113,8 +112,8 @@ def create_minor_stage(current_user, majorStageId):
         new_minor_stage = MinorStage(
             title=minor_stage['title']['value'],
             done=False,
-            scheduled_start_time=minor_stage['scheduled_start_time']['value'],
-            scheduled_end_time=minor_stage['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(minor_stage['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
             major_stage_id=majorStageId
         )
         db.session.add(new_minor_stage)
@@ -149,8 +148,8 @@ def create_minor_stage(current_user, majorStageId):
         response_minor_stage = {'id': new_minor_stage.id,
                                 'title': new_minor_stage.title,
                                 'done': new_minor_stage.done,
-                                'scheduled_start_time': new_minor_stage.scheduled_start_time,
-                                'scheduled_end_time': new_minor_stage.scheduled_end_time,
+                                'scheduled_start_time': formatDateToString(new_minor_stage.scheduled_start_time),
+                                'scheduled_end_time': formatDateToString(new_minor_stage.scheduled_end_time),
                                 'costs': {
                                     'budget': costs.budget,
                                     'spent_money': costs.spent_money,
@@ -209,8 +208,8 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         db.session.execute(db.update(MinorStage).where(MinorStage.id == minorStageId).values(
             title=minor_stage['title']['value'],
             done=minor_stage['done']['value'],
-            scheduled_start_time=minor_stage['scheduled_start_time']['value'],
-            scheduled_end_time=minor_stage['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(minor_stage['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
         ))
         db.session.commit()
                 
@@ -261,8 +260,8 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         if transportation is not None:
             response_minor_stage['transportation'] = {
                   'type': transportation.type,
-                    'start_time': transportation.start_time,
-                    'arrival_time': transportation.arrival_time,
+                    'start_time': formatDateTimeToString(transportation.start_time),
+                    'arrival_time': formatDateTimeToString(transportation.arrival_time),
                     'place_of_departure': transportation.place_of_departure,
                     'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
                     'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
@@ -274,7 +273,7 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
                 }
                 
         if spendings is not None:
-            response_minor_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in spendings]
+            response_minor_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in spendings]
             
         if activities is not None:
             response_minor_stage['activities'] = [{'id': activity.id, 'name': activity.name, 'description': activity.description, 'costs': activity.costs, 'booked': activity.booked, 'place': activity.place, 'latitude': activity.latitude, 'longitude': activity.longitude ,'link': activity.link} for activity in activities]

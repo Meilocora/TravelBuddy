@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app.routes.util import calculate_journey_costs
-from sqlalchemy import desc
 from db import db
 from app.routes.route_protection import token_required
+from app.routes.util import parseDate, formatDateToString, parseDateTime, formatDateTimeToString
 from app.models import Costs, Journey, Spendings, MajorStage, Transportation, MinorStage
 from app.validation.major_stage_validation import MajorStageValidation
 
@@ -13,7 +13,7 @@ major_stage_bp = Blueprint('major_stage', __name__)
 def get_major_stages(current_user, journeyId):
     try:
         # Get all the major stages from the database
-        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(desc(MajorStage.scheduled_start_time)))
+        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
         majorStages = result.scalars().all()
         
         # Fetch costs, transportation and minor_stages for each major_stage
@@ -34,8 +34,8 @@ def get_major_stages(current_user, journeyId):
                 'title': majorStage.title,
                 'country': majorStage.country,
                 'done': majorStage.done,
-                'scheduled_start_time': majorStage.scheduled_start_time,
-                'scheduled_end_time': majorStage.scheduled_end_time,
+                'scheduled_start_time': formatDateToString(majorStage.scheduled_start_time),
+                'scheduled_end_time': formatDateToString(majorStage.scheduled_end_time),
                 'additional_info': majorStage.additional_info,
                 'costs': {
                     'budget': costs.budget,
@@ -48,8 +48,8 @@ def get_major_stages(current_user, journeyId):
                 major_stage_data['transportation'] = {
                     'id': transportation.id,
                     'type': transportation.type,
-                    'start_time': transportation.start_time,
-                    'arrival_time': transportation.arrival_time,
+                    'start_time': formatDateTimeToString(transportation.start_time),
+                    'arrival_time': formatDateTimeToString(transportation.arrival_time),
                     'place_of_departure': transportation.place_of_departure,
                     'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
                     'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
@@ -97,8 +97,8 @@ def create_major_stage(current_user, journeyId):
         new_major_stage = MajorStage(
             title=major_stage['title']['value'],
             done=False,
-            scheduled_start_time=major_stage['scheduled_start_time']['value'],
-            scheduled_end_time=major_stage['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(major_stage['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(major_stage['scheduled_end_time']['value']),
             additional_info=major_stage['additional_info']['value'],
             country=major_stage['country']['value'],
             journey_id=journeyId
@@ -120,8 +120,8 @@ def create_major_stage(current_user, journeyId):
         response_major_stage = {'id': new_major_stage.id,
                                 'title': new_major_stage.title,
                                 'done': new_major_stage.done,
-                                'scheduled_start_time': new_major_stage.scheduled_start_time,
-                                'scheduled_end_time': new_major_stage.scheduled_end_time,
+                                'scheduled_start_time': formatDateToString(new_major_stage.scheduled_start_time),
+                                'scheduled_end_time': formatDateToString(new_major_stage.scheduled_end_time),
                                 'additional_info': new_major_stage.additional_info,
                                 'country': new_major_stage.country,
                                 'costs': {
@@ -181,8 +181,8 @@ def update_major_stage(current_user, journeyId, majorStageId):
         db.session.execute(db.update(MajorStage).where(MajorStage.id == majorStageId).values(
             title=major_stage['title']['value'],
             done=major_stage['done']['value'],
-            scheduled_start_time=major_stage['scheduled_start_time']['value'],
-            scheduled_end_time=major_stage['scheduled_end_time']['value'],
+            scheduled_start_time=parseDate(major_stage['scheduled_start_time']['value']),
+            scheduled_end_time=parseDate(major_stage['scheduled_end_time']['value']),
             additional_info=major_stage['additional_info']['value'],
             country=major_stage['country']['value']
         ))
@@ -211,13 +211,13 @@ def update_major_stage(current_user, journeyId, majorStageId):
                                 'minorStagesIds': minorStagesIds}
         
         if major_stage_spendings:
-            response_major_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': spending.date, 'category': spending.category} for spending in major_stage_spendings]
+            response_major_stage['costs']['spendings'] = [{'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in major_stage_spendings]
         
         if transportation is not None:
             response_major_stage['transportation'] = {
                 'type': transportation.type,
-                'start_time': transportation.start_time,
-                'arrival_time': transportation.arrival_time,
+                'start_time': formatDateTimeToString(transportation.start_time),
+                'arrival_time': formatDateTimeToString(transportation.arrival_time),
                 'place_of_departure': transportation.place_of_departure,
                 'place_of_arrival': transportation.place_of_arrival,
                 'transportation_costs': transportation.transportation_costs,
