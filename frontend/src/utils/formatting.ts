@@ -94,6 +94,12 @@ export function formatCountdown(startDate: string): string {
   return `${days}d ${hours}h ${minutes}m`;
 }
 
+export function formatCountdownDays(startDate: string) {
+  const today = formatDate(new Date());
+  const daysLeft = formatDurationToDays(today, startDate);
+  return daysLeft;
+}
+
 export function formatProgress(startDate: string, endDate: string): Float {
   const today = new Date();
   const startDateObject = parseDate(startDate);
@@ -113,19 +119,4 @@ export function formatProgress(startDate: string, endDate: string): Float {
 
 export function formatStringToList(string: string): string[] {
   return string.split(',').map((item) => item.trim());
-}
-
-export function parseMapsLink(mapsLink: string): MapLocation {
-  const latLng =
-    mapsLink.split('@')[1].split(',')[0] +
-    ',' +
-    mapsLink.split('@')[1].split(',')[1];
-  const lat = parseFloat(latLng.split(',')[0]);
-  const lng = parseFloat(latLng.split(',')[1]);
-
-  return { lat, lng };
-}
-
-export function formatMapsLink(location: MapLocation): string {
-  return `https://www.google.com/maps/@${location.lat},${location.lng}`;
 }

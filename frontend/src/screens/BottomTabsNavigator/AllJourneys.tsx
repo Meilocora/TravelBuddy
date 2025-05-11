@@ -1,9 +1,9 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import JourneysList from '../../components/Journeys/JourneysList';
-import { fetchCountries, fetchJourneys } from '../../utils/http';
+import { fetchJourneys } from '../../utils/http';
 import { StyleSheet } from 'react-native';
 import { JourneyContext } from '../../store/journey-context';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';

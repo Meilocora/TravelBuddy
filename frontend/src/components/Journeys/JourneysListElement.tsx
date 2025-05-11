@@ -10,6 +10,7 @@ import {
   formatDateString,
   formatDurationToDays,
   formatProgress,
+  parseDate,
 } from '../../utils';
 import CustomProgressBar from '../UI/CustomProgressBar';
 import { StackParamList } from '../../models';
@@ -23,10 +24,12 @@ import { fetchJourneysMinorStagesQty } from '../../utils/http';
 
 interface JourneyListElementProps {
   journey: Journey;
+  onDelete: (journeyId: number) => void;
 }
 
 const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
+  onDelete,
 }): ReactElement => {
   const journeyCtx = useContext(JourneyContext);
   const majorStageCtx = useContext(MajorStageContext);
@@ -48,6 +51,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
       );
     }
   }
+
+  const isOver = parseDate(journey.scheduled_end_time) < new Date();
 
   useEffect(() => {
     async function fetchMinorStagesQty() {
@@ -72,11 +77,6 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     { title: 'Minor Stages', value: minorStagesQty.toString() },
   ];
 
-  const progress = formatProgress(
-    journey.scheduled_start_time,
-    journey.scheduled_end_time
-  );
-
   const navigationJourneyBottomTabs =
     useNavigation<NavigationProp<StackParamList>>();
 
@@ -96,13 +96,12 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   }
 
   // TODO: Highlight current Country
-  // TODO: Add Countdown till journey starts
-  // TODO: Journey should start automatically, when start date is reached
-  // TODO: Blend out the past journeys (show with new button)
-  // TODO: Give active journey a different borderColor
+  // TODO: Highlight active journey
 
   return (
-    <View style={styles.outerContainer}>
+    <View
+      style={[styles.outerContainer, isOver && styles.inactiveOuterContainer]}
+    >
       <LinearGradient
         colors={['#ced4da', '#5b936c']}
         style={{ height: '100%' }}
@@ -115,20 +114,33 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
               <ElementTitle>{journey.name}</ElementTitle>
-              <IconButton
-                icon={Icons.edit}
-                color={GlobalStyles.colors.primary500}
-                onPress={handleEdit}
-              />
+              {!isOver ? (
+                <IconButton
+                  icon={Icons.edit}
+                  color={GlobalStyles.colors.primary500}
+                  onPress={handleEdit}
+                />
+              ) : (
+                <IconButton
+                  icon={Icons.delete}
+                  color={GlobalStyles.colors.gray500}
+                  onPress={() => onDelete(journey.id)}
+                />
+              )}
             </View>
             <ElementComment content={`${startDate} - ${endDate}`} />
             <DetailArea
               elementDetailInfo={elementDetailInfo}
-              areaStyle={styles.detailArea}
+              areaStyle={
+                !isOver ? styles.detailArea : styles.inactiveDetailArea
+              }
             />
             <Text style={styles.countriesList}>{journey.countries!}</Text>
           </View>
-          {/* <CustomProgressBar progress={progress} /> */}
+          <CustomProgressBar
+            startDate={journey.scheduled_start_time}
+            endDate={journey.scheduled_end_time}
+          />
         </Pressable>
       </LinearGradient>
     </View>
@@ -151,6 +163,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
   },
+  inactiveOuterContainer: {
+    borderColor: GlobalStyles.colors.gray400,
+  },
   pressed: {
     opacity: 0.5,
   },
@@ -172,6 +187,10 @@ const styles = StyleSheet.create({
   detailArea: {
     borderTopWidth: 2,
     borderTopColor: GlobalStyles.colors.primary500,
+  },
+  inactiveDetailArea: {
+    borderTopWidth: 2,
+    borderTopColor: GlobalStyles.colors.gray400,
   },
 });
 

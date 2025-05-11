@@ -11,9 +11,7 @@ import ElementTitle from '../UI/list/ElementTitle';
 import { GlobalStyles } from '../../constants/styles';
 import { Icons, Transportation, TransportationType } from '../../models';
 import IconButton from '../UI/IconButton';
-import TransportationElement, {
-  TransportElementInfopoint,
-} from '../UI/contentbox/TransportationElement';
+import { TransportElementInfopoint } from '../UI/contentbox/TransportationElement';
 import {
   formatAmount,
   formatCountdown,
@@ -23,11 +21,13 @@ import Link from '../UI/Link';
 
 interface TransportationBoxProps {
   transportation: Transportation;
+  majorStageIsOver: boolean;
   onPressEdit: () => void;
 }
 
 const TransportationBox: React.FC<TransportationBoxProps> = ({
   transportation,
+  majorStageIsOver,
   onPressEdit,
 }): ReactElement => {
   const [openInfoBox, setOpenInfoBox] = useState(false);
@@ -77,7 +77,12 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
   ];
 
   return (
-    <View style={styles.outerContainer}>
+    <View
+      style={[
+        styles.outerContainer,
+        majorStageIsOver && styles.inactiveOuterContainer,
+      ]}
+    >
       <Pressable
         onPress={handleOpenInfoBox}
         android_ripple={{ color: GlobalStyles.colors.accent200 }}
@@ -93,14 +98,16 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
               Time until departure: {countdown}
             </Text>
           </View>
-          <View style={styles.buttonContainer}>
-            <IconButton
-              icon={Icons.edit}
-              color={GlobalStyles.colors.accent800}
-              onPress={onPressEdit}
-              style={styles.button}
-            />
-          </View>
+          {!majorStageIsOver && (
+            <View style={styles.buttonContainer}>
+              <IconButton
+                icon={Icons.edit}
+                color={GlobalStyles.colors.accent800}
+                onPress={onPressEdit}
+                style={styles.button}
+              />
+            </View>
+          )}
         </View>
         {openInfoBox &&
           infoPointsData.map((infoPoint, index) => (
@@ -135,6 +142,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     overflow: 'hidden',
     backgroundColor: GlobalStyles.colors.accent100,
+  },
+  inactiveOuterContainer: {
+    borderColor: GlobalStyles.colors.gray500,
+    backgroundColor: GlobalStyles.colors.gray100,
   },
   innerContainer: {
     marginHorizontal: 10,

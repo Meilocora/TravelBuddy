@@ -29,6 +29,8 @@ export const TransportElementInfopoint: React.FC<
 > = ({ subtitle, data, location, colorScheme, transportationType }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
+  // TODO: Also Add Duration
+
   function handleShowLocation() {
     const mapLocation: Location = {
       belonging: 'Undefined',

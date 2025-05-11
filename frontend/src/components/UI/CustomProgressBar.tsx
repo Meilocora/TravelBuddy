@@ -3,15 +3,26 @@ import { StyleSheet, View, Text } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 
 import { GlobalStyles } from '../../constants/styles';
+import {
+  formatCountdown,
+  formatCountdownDays,
+  formatProgress,
+} from '../../utils';
 
 interface CustomProgressBarProps {
-  progress: number;
+  startDate: string;
+  endDate: string;
 }
 
 const CustomProgressBar: React.FC<CustomProgressBarProps> = ({
-  progress,
+  startDate,
+  endDate,
 }): ReactElement => {
+  const progress = formatProgress(startDate, endDate);
   const prettyProgress = (progress * 100).toFixed(2) + '%';
+  const isOver = progress === 1;
+
+  const countdown = formatCountdownDays(startDate);
 
   return (
     <View style={styles.progressBarContainer}>
@@ -19,9 +30,17 @@ const CustomProgressBar: React.FC<CustomProgressBarProps> = ({
         progress={progress}
         color={GlobalStyles.colors.primary800}
         style={styles.progressBar}
-        fillStyle={{ backgroundColor: GlobalStyles.colors.primary100 }}
+        fillStyle={{
+          backgroundColor: isOver
+            ? GlobalStyles.colors.gray300
+            : GlobalStyles.colors.primary100,
+        }}
       />
-      <Text style={styles.text}>{prettyProgress}</Text>
+      {progress !== 0 ? (
+        <Text style={styles.text}>{prettyProgress}</Text>
+      ) : (
+        <Text style={styles.text}>Starts in {countdown} days.</Text>
+      )}
     </View>
   );
 };
@@ -30,7 +49,7 @@ const styles = StyleSheet.create({
   progressBarContainer: {
     flex: 1,
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 6,
   },
   progressBar: {
     height: 10,

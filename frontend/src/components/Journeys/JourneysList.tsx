@@ -1,19 +1,15 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import {
-  ButtonMode,
-  ColorScheme,
-  Icons,
-  Journey,
-  StageFilter,
-} from '../../models';
+import { Icons, Journey, StageFilter } from '../../models';
 import JourneyListElement from './JourneysListElement';
 import { parseDate } from '../../utils';
-import Button from '../UI/Button';
 import IconButton from '../UI/IconButton';
 import FilterSettings from '../UI/FilterSettings';
+import { deleteJourney } from '../../utils/http';
+import { JourneyContext } from '../../store/journey-context';
+import Modal from '../UI/Modal';
 
 interface JourneysListProps {
   journeys: Journey[];
@@ -23,31 +19,68 @@ const JourneysList: React.FC<JourneysListProps> = ({
   journeys,
 }): ReactElement => {
   const [filter, setFilter] = useState<StageFilter>(StageFilter.current);
-  const [openModal, setOpenModal] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [deleteJourneyId, setDeleteJourneyId] = useState<number | null>(null);
 
-  // Filter journeys based on the filter and current time
+  const journeyCtx = useContext(JourneyContext);
   const now = new Date();
-  const currentJourneys = journeys.filter((journey) => {
-    return parseDate(journey.scheduled_end_time) >= now; // Only include journeys that haven't ended
+  const shownJourneys = journeys.filter((journey) => {
+    if (filter === StageFilter.current) {
+      return parseDate(journey.scheduled_end_time) >= now; // Only include journeys that haven't ended
+    }
+    return true; // Include all journeys for other filters
   });
 
-  // TODO: Implement button to also see old journeys
-  // TODO: Display old journeys grey'ish
-  // TODO: Old journeys should not be editable
+  function handleSetFilter(filter: StageFilter) {
+    setFilter(filter);
+    setOpenModal(false);
+  }
+
+  function handlePressDelete(journeyId: number) {
+    setOpenDeleteModal(true);
+    setDeleteJourneyId(journeyId);
+  }
+
+  function closeDeleteModal() {
+    setOpenDeleteModal(false);
+    setDeleteJourneyId(null);
+  }
+
+  async function handleDelete() {
+    const { error, status } = await deleteJourney(deleteJourneyId!);
+    if (!error && status === 200) {
+      journeyCtx.deleteJourney(deleteJourneyId!);
+    }
+  }
 
   return (
     <View style={styles.container}>
+      {openDeleteModal && (
+        <Modal
+          title='Are you sure?'
+          content={`The Journey and all it's Major and Minor Stages will be deleted permanently!`}
+          onConfirm={handleDelete}
+          onCancel={closeDeleteModal}
+        />
+      )}
       <View style={styles.buttonContainer}>
-        <IconButton icon={Icons.settings} onPress={() => {}} />
+        <IconButton
+          icon={Icons.settings}
+          onPress={() => setOpenModal((prevValue) => !prevValue)}
+        />
       </View>
-      {openModal && <FilterSettings />}
+      {openModal && (
+        <FilterSettings filter={filter} setFilter={handleSetFilter} />
+      )}
       <FlatList
-        data={currentJourneys}
+        style={{ marginBottom: 50 }}
+        data={shownJourneys}
         renderItem={({ item, index }) => (
           <Animated.View
             entering={FadeInDown.delay(index * 200).duration(1000)}
           >
-            <JourneyListElement journey={item} />
+            <JourneyListElement journey={item} onDelete={handlePressDelete} />
           </Animated.View>
         )}
       />

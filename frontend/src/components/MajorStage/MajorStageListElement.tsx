@@ -13,6 +13,7 @@ import {
   formatAmount,
   formatDateString,
   formatDurationToDays,
+  parseDate,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,17 +24,20 @@ import ElementComment from '../UI/list/ElementComment';
 import Button from '../UI/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 import TransportationBox from './TransportationBox';
+import CustomProgressBar from '../UI/CustomProgressBar';
 
 interface MajorStageListElementProps {
   journeyId: number;
   majorStage: MajorStage;
   index: number;
+  onDelete: (majorStageId: number) => void;
 }
 
 const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   journeyId,
   majorStage,
   index,
+  onDelete,
 }): ReactElement => {
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
@@ -48,6 +52,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   );
 
   const title = `#${index + 1} ${majorStage.title}`;
+  const isOver = parseDate(majorStage.scheduled_end_time) < new Date();
 
   const elementDetailInfo: ElementDetailInfo[] = [
     {
@@ -117,8 +122,12 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     });
   }
 
+  // TODO: Highlight active major stage
+
   return (
-    <View style={styles.outerContainer}>
+    <View
+      style={[styles.outerContainer, isOver && styles.inactiveOuterContainer]}
+    >
       <LinearGradient
         colors={['#f1dfcf', '#b8a671']}
         style={{ height: '100%' }}
@@ -131,21 +140,30 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
               <ElementTitle>{title}</ElementTitle>
-              <IconButton
-                icon={Icons.edit}
-                color={GlobalStyles.colors.accent800}
-                onPress={handleEdit}
-              />
+              {!isOver ? (
+                <IconButton
+                  icon={Icons.edit}
+                  color={GlobalStyles.colors.accent800}
+                  onPress={handleEdit}
+                />
+              ) : (
+                <IconButton
+                  icon={Icons.delete}
+                  color={GlobalStyles.colors.gray500}
+                  onPress={() => onDelete(majorStage.id)}
+                />
+              )}
             </View>
             <ElementComment content={`${startDate} - ${endDate}`} />
             <DetailArea elementDetailInfo={elementDetailInfo} />
             {majorStage.transportation && (
               <TransportationBox
+                majorStageIsOver={isOver}
                 transportation={majorStage.transportation}
                 onPressEdit={handleEditTransportation}
               />
             )}
-            {!majorStage.transportation && (
+            {!majorStage.transportation && !isOver && (
               <Button
                 onPress={handleAddTransportation}
                 mode={ButtonMode.flat}
@@ -155,6 +173,10 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
               </Button>
             )}
           </View>
+          <CustomProgressBar
+            startDate={majorStage.scheduled_start_time}
+            endDate={majorStage.scheduled_end_time}
+          />
         </Pressable>
       </LinearGradient>
     </View>
@@ -176,6 +198,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+  },
+  inactiveOuterContainer: {
+    borderColor: GlobalStyles.colors.gray400,
   },
   pressed: {
     opacity: 0.5,
