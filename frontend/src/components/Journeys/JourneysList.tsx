@@ -1,6 +1,6 @@
 import { ReactElement, useContext, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 import { Icons, Journey, StageFilter } from '../../models';
 import JourneyListElement from './JourneysListElement';
@@ -52,6 +52,7 @@ const JourneysList: React.FC<JourneysListProps> = ({
     if (!error && status === 200) {
       journeyCtx.deleteJourney(deleteJourneyId!);
     }
+    setOpenDeleteModal(false);
   }
 
   return (
@@ -67,18 +68,18 @@ const JourneysList: React.FC<JourneysListProps> = ({
       <View style={styles.buttonContainer}>
         <IconButton
           icon={Icons.settings}
-          onPress={() => setOpenModal((prevValue) => !prevValue)}
+          onPress={() => setOpenModal(!openModal)}
         />
       </View>
       {openModal && (
         <FilterSettings filter={filter} setFilter={handleSetFilter} />
       )}
       <FlatList
-        style={{ marginBottom: 50 }}
         data={shownJourneys}
         renderItem={({ item, index }) => (
           <Animated.View
             entering={FadeInDown.delay(index * 200).duration(1000)}
+            exiting={FadeOutDown}
           >
             <JourneyListElement journey={item} onDelete={handlePressDelete} />
           </Animated.View>

@@ -52,10 +52,13 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 
+// TODO: combine contexts into one
+// TODO: Rework Map screen based on the new context
 // TODO: Implement a way to track the current journey, majorStage, minorStage
 // => build backend check for current stages?
 // Implement elements that show the next transportation, current Minor Stage, current Accommodation
 
+// TODO: Fix custom progress bar
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: Implement diagramms for costs in Overview

@@ -22,7 +22,7 @@ import { GlobalStyles } from '../../../constants/styles';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MajorStageContext } from '../../../store/majorStage-context.';
 import MinorStageList from '../../../components/MinorStage/MinorStageList';
-import { fetchMinorStagesById } from '../../../utils';
+import { fetchMinorStagesById, parseDate } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
 import InfoText from '../../../components/UI/InfoText';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
@@ -49,6 +49,8 @@ const MinorStages: React.FC<MinorStagesProps> = ({
   const majorStage = majorStageCtx.majorStages.find(
     (majorStage) => majorStage.id === majorStageId
   );
+
+  const isOver = parseDate(majorStage!.scheduled_end_time) < new Date();
 
   const minorStageCtx = useContext(MinorStageContext);
 
@@ -111,28 +113,49 @@ const MinorStages: React.FC<MinorStagesProps> = ({
   }
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: majorStage?.title,
-      headerRight: () => (
-        <IconButton
-          icon={Icons.add}
-          onPress={handleAddMinorStage}
-          color={'white'}
-          size={32}
-        />
-      ),
-      headerLeft: ({ tintColor }) => (
-        <IconButton
-          color={tintColor}
-          size={24}
-          icon={Icons.arrowBack}
-          onPress={() => {
-            planningNavigation.navigate('Planning', { journeyId: journeyId! });
-          }}
-        />
-      ),
-      headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
-    });
+    if (!isOver) {
+      navigation.setOptions({
+        title: majorStage?.title,
+        headerRight: () => (
+          <IconButton
+            icon={Icons.add}
+            onPress={handleAddMinorStage}
+            color={'white'}
+            size={32}
+          />
+        ),
+        headerLeft: ({ tintColor }) => (
+          <IconButton
+            color={tintColor}
+            size={24}
+            icon={Icons.arrowBack}
+            onPress={() => {
+              planningNavigation.navigate('Planning', {
+                journeyId: journeyId!,
+              });
+            }}
+          />
+        ),
+        headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
+      });
+    } else {
+      navigation.setOptions({
+        title: majorStage?.title,
+        headerLeft: ({ tintColor }) => (
+          <IconButton
+            color={tintColor}
+            size={24}
+            icon={Icons.arrowBack}
+            onPress={() => {
+              planningNavigation.navigate('Planning', {
+                journeyId: journeyId!,
+              });
+            }}
+          />
+        ),
+        headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
+      });
+    }
   }, [navigation, majorStage]);
 
   let content;

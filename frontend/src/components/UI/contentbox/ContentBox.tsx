@@ -7,6 +7,7 @@ import { GlobalStyles } from '../../../constants/styles';
 import MainContent from './MainContent';
 import { generateRandomString } from '../../../utils/generator';
 import { MinorStageContext } from '../../../store/minorStage-context';
+import { parseDate } from '../../../utils';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
@@ -20,6 +21,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
   minorStage,
 }): ReactElement => {
   const minorStageCtx = useContext(MinorStageContext);
+  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
   const handleOnPressHeader = (header: string) => {
     LayoutAnimation.configureNext({
@@ -33,7 +35,12 @@ const ContentBox: React.FC<ContenBoxProps> = ({
 
   return (
     <>
-      <View style={styles.contentHeaderContainer}>
+      <View
+        style={[
+          styles.contentHeaderContainer,
+          isOver && styles.inactiveContentHeaderContainer,
+        ]}
+      >
         {contentHeaders.map((header) => {
           return (
             <ContentHeader
@@ -69,6 +76,9 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     borderBottomWidth: 2,
     borderBottomColor: GlobalStyles.colors.complementary200,
+  },
+  inactiveContentHeaderContainer: {
+    borderBottomColor: GlobalStyles.colors.gray200,
   },
   activeHeader: {
     color: GlobalStyles.colors.complementary800,

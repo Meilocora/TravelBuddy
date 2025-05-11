@@ -62,6 +62,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
     if (!error && status === 200) {
       minorStageCtx.deleteMinorStage(deleteMinorStageId!);
     }
+    setOpenDeleteModal(false);
   }
 
   return (
@@ -112,7 +113,6 @@ const styles = StyleSheet.create({
   listContainer: {
     width: '100%',
     marginHorizontal: 'auto',
-    marginBottom: 50,
   },
   buttonContainer: {
     flexDirection: 'row',

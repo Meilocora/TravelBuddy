@@ -173,10 +173,10 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
               </Button>
             )}
           </View>
-          <CustomProgressBar
+          {/* <CustomProgressBar
             startDate={majorStage.scheduled_start_time}
             endDate={majorStage.scheduled_end_time}
-          />
+          /> */}
         </Pressable>
       </LinearGradient>
     </View>

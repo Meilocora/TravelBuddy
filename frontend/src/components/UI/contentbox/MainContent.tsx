@@ -14,6 +14,7 @@ import {
 import { MinorStageContext } from '../../../store/minorStage-context';
 import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
+import { parseDate } from '../../../utils';
 
 interface MainContentProps {
   journeyId: number;
@@ -40,6 +41,8 @@ const MainContent: React.FC<MainContentProps> = ({
   const minorStageCtx = useContext(MinorStageContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
+
+  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
   function handleAddTransportation() {
     navigation.navigate('ManageTransportation', {
@@ -109,6 +112,7 @@ const MainContent: React.FC<MainContentProps> = ({
           transportation={minorStage.transportation}
           handleAdd={handleAddTransportation}
           handleEdit={handleEditTransportation}
+          minorStageIsOver={isOver}
         />
       ),
     },

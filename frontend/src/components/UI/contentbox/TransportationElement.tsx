@@ -100,24 +100,28 @@ interface TransportationElementProps {
   transportation: Transportation | undefined;
   handleAdd: () => void;
   handleEdit: (id: number) => void;
+  minorStageIsOver?: boolean;
 }
 
 const TransportationElement: React.FC<TransportationElementProps> = ({
   transportation,
   handleAdd,
   handleEdit,
+  minorStageIsOver,
 }) => {
   if (transportation === undefined) {
     return (
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>No transportation found.</Text>
-        <Button
-          onPress={handleAdd}
-          colorScheme={ColorScheme.complementary}
-          mode={ButtonMode.flat}
-        >
-          Add Transportation
-        </Button>
+        {!minorStageIsOver && (
+          <Button
+            onPress={handleAdd}
+            colorScheme={ColorScheme.complementary}
+            mode={ButtonMode.flat}
+          >
+            Add Transportation
+          </Button>
+        )}
       </View>
     );
   }
@@ -168,14 +172,16 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
       {transportation.link && (
         <Link link={transportation.link} style={styles.link} />
       )}
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={() => handleEdit(transportation.id)}
-          colorScheme={ColorScheme.complementary}
-        >
-          Edit
-        </Button>
-      </View>
+      {!minorStageIsOver && (
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={() => handleEdit(transportation.id)}
+            colorScheme={ColorScheme.complementary}
+          >
+            Edit
+          </Button>
+        </View>
+      )}
     </View>
   );
 };

@@ -53,6 +53,9 @@ export default function JourneyContextProvider({
     );
   }
 
+  // TODO: This should fetch all the users data
+  // Change backend, so all data is fetched with one route
+  // change models, so a journey includes all majorStages and minorStages
   async function refetchJourneys(): Promise<void> {
     const response = await fetchJourneys();
     if (response.journeys) {

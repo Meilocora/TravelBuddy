@@ -20,7 +20,7 @@ const CustomProgressBar: React.FC<CustomProgressBarProps> = ({
 }): ReactElement => {
   const progress = formatProgress(startDate, endDate);
   const prettyProgress = (progress * 100).toFixed(2) + '%';
-  const isOver = progress === 1;
+  const isOver = progress >= 1;
 
   const countdown = formatCountdownDays(startDate);
 
@@ -36,7 +36,7 @@ const CustomProgressBar: React.FC<CustomProgressBarProps> = ({
             : GlobalStyles.colors.primary100,
         }}
       />
-      {progress !== 0 ? (
+      {progress > 0 ? (
         <Text style={styles.text}>{prettyProgress}</Text>
       ) : (
         <Text style={styles.text}>Starts in {countdown} days.</Text>

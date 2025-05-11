@@ -22,19 +22,21 @@ import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../IconButton';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { formatAmount, generateRandomString } from '../../../utils';
+import { formatAmount, generateRandomString, parseDate } from '../../../utils';
 import { Location, LocationType } from '../../../utils/http';
 
 interface ActivityListElementProps {
   activity: Activity;
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
+  isOver: boolean;
 }
 
 const ActivityListElement: React.FC<ActivityListElementProps> = ({
   activity,
   handleEdit,
   handleDelete,
+  isOver,
 }) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -77,12 +79,14 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
                 containerStyle={listElementStyles.button}
               />
             )}
-            <IconButton
-              icon={Icons.editFilled}
-              onPress={handleEdit.bind(null, activity.id!)}
-              color={GlobalStyles.colors.edit}
-              containerStyle={listElementStyles.button}
-            />
+            {!isOver && (
+              <IconButton
+                icon={Icons.editFilled}
+                onPress={handleEdit.bind(null, activity.id!)}
+                color={GlobalStyles.colors.edit}
+                containerStyle={listElementStyles.button}
+              />
+            )}
             <IconButton
               icon={Icons.remove}
               onPress={handleDelete.bind(null, activity.id!)}
@@ -214,6 +218,7 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
   handleDelete,
 }) => {
   const screenHeight = Dimensions.get('window').height;
+  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
   return (
     <View style={styles.container}>
@@ -229,18 +234,21 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
               handleEdit={handleEdit}
               handleDelete={handleDelete}
               key={generateRandomString()}
+              isOver={isOver}
             />
           ))}
         </ScrollView>
       )}
       <View style={styles.buttonContainer}>
-        <Button
-          onPress={handleAdd}
-          colorScheme={ColorScheme.complementary}
-          mode={ButtonMode.flat}
-        >
-          Add Activity
-        </Button>
+        {!isOver && (
+          <Button
+            onPress={handleAdd}
+            colorScheme={ColorScheme.complementary}
+            mode={ButtonMode.flat}
+          >
+            Add Activity
+          </Button>
+        )}
       </View>
     </View>
   );

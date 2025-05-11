@@ -66,9 +66,9 @@ export function formatDurationToDays(
   const startDateObject = parseDate(startDate);
   const endDateObject = parseDate(endDate);
 
-  return (
+  return Math.round(
     (endDateObject.getTime() - startDateObject.getTime()) /
-    (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
   );
 }
 
@@ -113,6 +113,7 @@ export function formatProgress(startDate: string, endDate: string): Float {
     const totalDuration = formatDurationToDays(startDate, endDate);
     const daysPassed = formatDurationToDays(startDate, formatDate(today));
 
+    const progress = daysPassed / totalDuration;
     return parseFloat((daysPassed / totalDuration).toFixed(2));
   }
 }

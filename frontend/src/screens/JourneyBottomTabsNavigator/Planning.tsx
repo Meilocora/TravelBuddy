@@ -18,6 +18,7 @@ import { fetchMajorStagesById } from '../../utils/http';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import InfoText from '../../components/UI/InfoText';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
+import { parseDate } from '../../utils';
 
 interface PlanningProps {
   navigation: NativeStackNavigationProp<
@@ -41,6 +42,7 @@ const Planning: React.FC<PlanningProps> = ({
     (journey) => journey.id === journeyId
   );
   const majorStageCtx = useContext(MajorStageContext);
+  const isOver = parseDate(journey!.scheduled_end_time) < new Date();
 
   useEffect(() => {
     function activatePopup() {
@@ -85,17 +87,23 @@ const Planning: React.FC<PlanningProps> = ({
   }
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: journey?.name,
-      headerRight: () => (
-        <IconButton
-          icon={Icons.add}
-          onPress={handleAddMajorStage}
-          color={'white'}
-          size={32}
-        />
-      ),
-    });
+    if (!isOver) {
+      navigation.setOptions({
+        title: journey?.name,
+        headerRight: () => (
+          <IconButton
+            icon={Icons.add}
+            onPress={handleAddMajorStage}
+            color={'white'}
+            size={32}
+          />
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        title: journey?.name,
+      });
+    }
   }, [navigation, journey]);
 
   let content;

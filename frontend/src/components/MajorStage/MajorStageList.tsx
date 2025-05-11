@@ -63,6 +63,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
     if (!error && status === 200) {
       majorStageCtx.deleteMajorStage(deleteMajorStageId!);
     }
+    setOpenDeleteModal(false);
   }
 
   return (
@@ -91,7 +92,6 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
         />
       )}
       <FlatList
-        style={{ marginBottom: 50 }}
         data={shownMajorStages}
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(index * 200).duration(500)}>

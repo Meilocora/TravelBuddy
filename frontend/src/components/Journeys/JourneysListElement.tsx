@@ -137,10 +137,10 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
             />
             <Text style={styles.countriesList}>{journey.countries!}</Text>
           </View>
-          <CustomProgressBar
+          {/* <CustomProgressBar
             startDate={journey.scheduled_start_time}
             endDate={journey.scheduled_end_time}
-          />
+          /> */}
         </Pressable>
       </LinearGradient>
     </View>

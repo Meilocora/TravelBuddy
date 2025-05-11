@@ -112,10 +112,10 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
         majorStageId={majorStageId}
         minorStage={minorStage}
       />
-      <CustomProgressBar
+      {/* <CustomProgressBar
         startDate={minorStage.scheduled_start_time}
         endDate={minorStage.scheduled_end_time}
-      />
+      /> */}
     </View>
   );
 };
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   },
   inactiveContainer: {
     borderColor: GlobalStyles.colors.gray400,
+    backgroundColor: GlobalStyles.colors.gray100,
   },
   headerContainer: {
     flex: 1,

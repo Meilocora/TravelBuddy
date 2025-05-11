@@ -7,7 +7,7 @@ import Button from '../Button';
 import PlacesSelection from '../../MinorStage/ManageMinorStage/PlacesSelection';
 import { fetchavailablePlacesByCountry } from '../../../utils/http';
 import PlacesListItem from '../../Locations/Places/PlacesListItem';
-import { generateRandomString } from '../../../utils';
+import { generateRandomString, parseDate } from '../../../utils';
 import { MinorStageContext } from '../../../store/minorStage-context';
 
 interface PlacesElementProps {
@@ -30,6 +30,8 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   );
   const countryName = majorStage!.country;
   const minorStageCtx = useContext(MinorStageContext);
+
+  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
   let defaultPlacesNames: string[] = [];
   if (minorStage.placesToVisit) {
@@ -72,13 +74,15 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
       )}
 
       <View style={styles.buttonContainer}>
-        <Button
-          onPress={handleToggleSelection}
-          colorScheme={ColorScheme.complementary}
-          mode={ButtonMode.flat}
-        >
-          Add Place
-        </Button>
+        {!isOver && (
+          <Button
+            onPress={handleToggleSelection}
+            colorScheme={ColorScheme.complementary}
+            mode={ButtonMode.flat}
+          >
+            Add Place
+          </Button>
+        )}
       </View>
       {openSelection && (
         <PlacesSelection
