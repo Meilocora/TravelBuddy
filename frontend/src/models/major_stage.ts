@@ -1,3 +1,5 @@
+import { CustomCountry } from './custom_country';
+import { MinorStage } from './minor_stage';
 import { Costs, Transportation, Validable } from './other_models';
 
 export interface MajorStage {
@@ -7,10 +9,12 @@ export interface MajorStage {
   scheduled_start_time: string;
   scheduled_end_time: string;
   additional_info: string;
-  country: string;
+  country: CustomCountry;
+  // country: string;
   costs: Costs;
   transportation?: Transportation;
-  minorStagesIds?: number[];
+  minorStages?: MinorStage[];
+  // minorStagesIds?: number[];
 }
 
 export interface MajorStageValues {

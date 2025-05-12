@@ -1,3 +1,5 @@
+import { CustomCountry } from './custom_country';
+import { MajorStage } from './major_stage';
 import { Costs, Validable } from './other_models';
 
 export interface Journey {
@@ -7,9 +9,11 @@ export interface Journey {
   scheduled_start_time: string;
   scheduled_end_time: string;
   done: boolean;
-  majorStagesIds?: number[];
+  majorStages?: MajorStage[];
+  // majorStagesIds?: number[];
   costs: Costs;
-  countries: string;
+  countries: CustomCountry[];
+  // countries: string;
 }
 
 export interface JourneyValues {

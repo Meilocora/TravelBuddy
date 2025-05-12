@@ -12,6 +12,30 @@ interface FetchJourneysProps {
 
 const prefix = `${BACKEND_URL}/journey`;
 
+export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
+  try {
+    const response: AxiosResponse<FetchJourneysProps> = await api.get(
+      `${prefix}/get-stages-data`
+    );
+
+    // Error from backend
+    if (response.data.error) {
+      return { status: response.data.status, error: response.data.error };
+    }
+
+    const { journeys, status } = response.data;
+
+    if (!journeys) {
+      return { status };
+    }
+
+    return { journeys, status };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not fetch userdata!' };
+  }
+};
+
 export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(

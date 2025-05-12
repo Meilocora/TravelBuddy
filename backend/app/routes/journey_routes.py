@@ -4,9 +4,21 @@ from app.routes.route_protection import token_required
 from app.routes.util import parseDate, formatDateToString
 from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.journey_validation import JourneyValidation
+from app.routes.db_util import fetch_journeys
 
 journey_bp = Blueprint('journey', __name__)
 
+@journey_bp.route('/get-stages-data', methods=['GET'])
+@token_required
+def get_stages_data(current_user):
+    journeys_list = fetch_journeys(current_user=current_user)
+    
+    if not isinstance(journeys_list, Exception):    
+        return jsonify({'journeys': journeys_list, 'status': 200})
+    else:
+        return jsonify({'error': str(journeys_list)}, 500)
+
+############################### TODO: Evaluate if any of the following is still needed #############################
 @journey_bp.route('/get-journeys', methods=['GET'])
 @token_required
 def get_journeys(current_user):
