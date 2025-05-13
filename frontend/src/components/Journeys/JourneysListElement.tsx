@@ -21,6 +21,7 @@ import ElementComment from '../UI/list/ElementComment';
 import { MajorStageContext } from '../../store/majorStage-context.';
 import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysMinorStagesQty } from '../../utils/http';
+import { StagesContext } from '../../store/stages-context';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -31,9 +32,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   journey,
   onDelete,
 }): ReactElement => {
-  const journeyCtx = useContext(JourneyContext);
-  const majorStageCtx = useContext(MajorStageContext);
-  const [minorStagesQty, setMinorStagesQty] = useState<number>(0);
+  const stagesCtx = useContext(StagesContext);
+
   const moneyAvailable = formatAmount(journey.costs.budget);
   const moneyPlanned = formatAmount(journey.costs.spent_money);
   const startDate = formatDateString(journey.scheduled_start_time);
@@ -42,27 +42,26 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_start_time,
     journey.scheduled_end_time
   );
-  let majorStagesCounter = 0;
-  if (journey.majorStagesIds) {
-    majorStagesCounter = journey.majorStagesIds.length;
-    for (const id of journey.majorStagesIds) {
-      const majorStage = majorStageCtx.majorStages.find(
-        (stage) => stage.id === id
-      );
+  const majorStagesQty = journey.majorStages?.length || 0;
+  let minorStagesQty = 0;
+  if (journey.majorStages) {
+    for (const majorStage of journey.majorStages) {
+      minorStagesQty += majorStage.minorStages?.length || 0;
     }
   }
 
   const isOver = parseDate(journey.scheduled_end_time) < new Date();
 
-  useEffect(() => {
-    async function fetchMinorStagesQty() {
-      const response = await fetchJourneysMinorStagesQty(journey.id);
-      if (response.status === 200 && response.minorStagesQty) {
-        setMinorStagesQty(response.minorStagesQty!);
-      }
-    }
-    fetchMinorStagesQty();
-  }, []);
+  // TODO: This backend route not needed anymore!
+  // useEffect(() => {
+  //   async function fetchMinorStagesQty() {
+  //     const response = await fetchJourneysMinorStagesQty(journey.id);
+  //     if (response.status === 200 && response.minorStagesQty) {
+  //       setMinorStagesQty(response.minorStagesQty!);
+  //     }
+  //   }
+  //   fetchMinorStagesQty();
+  // }, []);
 
   const elementDetailInfo: ElementDetailInfo[] = [
     { icon: Icons.duration, value: `${durationInDays} days` },
@@ -73,7 +72,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
         ? { color: GlobalStyles.colors.error200 }
         : undefined,
     },
-    { title: 'Major Stages', value: majorStagesCounter.toString() },
+    { title: 'Major Stages', value: majorStagesQty.toString() },
     { title: 'Minor Stages', value: minorStagesQty.toString() },
   ];
 
@@ -81,7 +80,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     useNavigation<NavigationProp<StackParamList>>();
 
   function handleOnPress() {
-    journeyCtx.setSelectedJourneyId(journey.id);
+    stagesCtx.setSelectedJourneyId(journey.id);
     navigationJourneyBottomTabs.navigate('JourneyBottomTabsNavigator', {
       screen: 'Planning',
       params: { journeyId: journey.id },
@@ -135,7 +134,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
                 !isOver ? styles.detailArea : styles.inactiveDetailArea
               }
             />
-            <Text style={styles.countriesList}>{journey.countries!}</Text>
+            {/* <Text style={styles.countriesList}>{journey.countries!}</Text> */}
           </View>
           {/* <CustomProgressBar
             startDate={journey.scheduled_start_time}

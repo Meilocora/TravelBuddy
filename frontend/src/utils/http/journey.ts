@@ -32,7 +32,7 @@ export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
     return { journeys, status };
   } catch (error) {
     // Error from frontend
-    return { status: 500, error: 'Could not fetch userdata!' };
+    return { status: 500, error: 'Could not fetch data!' };
   }
 };
 

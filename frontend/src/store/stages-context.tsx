@@ -5,8 +5,7 @@ import { fetchJourneys, fetchStagesData } from '../utils/http';
 
 interface StagesContextType {
   journeys: Journey[];
-  // setJourneys: (journeys: Journey[]) => void;
-  fetchUserData: () => Promise<void>;
+  fetchUserData: () => Promise<void | string>;
   addJourney: (journey: Journey) => void;
   deleteJourney: (journeyId: number) => void;
   updateJourney: (journey: Journey) => void;
@@ -36,7 +35,6 @@ interface StagesContextType {
 
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
-  // setJourneys: () => {},
   fetchUserData: async () => {},
   addJourney: () => {},
   deleteJourney: () => {},
@@ -45,7 +43,7 @@ export const StagesContext = createContext<StagesContextType>({
   setSelectedJourneyId: () => {},
 });
 
-export default function JourneyContextProvider({
+export default function StagesContextProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -73,20 +71,19 @@ export default function JourneyContextProvider({
     );
   }
 
-  // TODO: This should fetch all the users data
-  // Change backend, so all data is fetched with one route
-  // change models, so a journey includes all majorStages and minorStages
-  async function fetchUserData(): Promise<void> {
+  async function fetchUserData(): Promise<void | string> {
     const response = await fetchStagesData();
+
     if (response.journeys) {
       setJourneys(response.journeys);
+    } else {
+      return response.error;
     }
   }
 
   const value = {
     journeys,
     fetchUserData,
-    // setJourneys,
     addJourney,
     deleteJourney,
     updateJourney,

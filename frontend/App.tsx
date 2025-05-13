@@ -51,6 +51,7 @@ import ManageActivity from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageSpending';
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
+import StagesContextProvider from './src/store/stages-context';
 
 // TODO: combine contexts into one
 // TODO: Rework Map screen based on the new context
@@ -300,68 +301,70 @@ const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
 
   return (
-    <JourneyContextProvider>
-      <CustomCountryContextProvider>
-        <PlaceContextProvider>
-          <MajorStageContextProvider>
-            <MinorStageContextProvider>
-              <Stack.Navigator
-                screenOptions={() => ({
-                  headerTintColor: 'white',
-                  headerStyle: {
-                    backgroundColor: GlobalStyles.colors.primary500,
-                  },
-                  headerTitleAlign: 'center',
-                  headerShadowVisible: false,
-                  animationEnabled: false,
-                })}
-              >
-                <Stack.Screen
-                  name='BottomTabsNavigator'
-                  component={BottomTabsNavigator}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='UserProfile'
-                  component={UserProfile}
-                  options={{
-                    title: `${authCtx.username}'s Profile`,
-                    headerRight: ({ tintColor }) => (
-                      <IconButton
-                        color={tintColor}
-                        size={24}
-                        icon={Icons.logout}
-                        onPress={() => {
-                          authCtx.logout();
-                        }}
-                      />
-                    ),
-                  }}
-                />
-                <Stack.Screen
-                  name='JourneyBottomTabsNavigator'
-                  component={JourneyBottomTabsNavigator}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='ManageCustomCountry'
-                  component={ManageCustomCountry}
-                />
-                <Stack.Screen
-                  name='ManagePlaceToVisit'
-                  component={ManagePlaceToVisit}
-                />
-                <Stack.Screen
-                  name='LocationPickMap'
-                  component={LocationPickMap}
-                />
-                <Stack.Screen name='ShowMap' component={ShowMap} />
-              </Stack.Navigator>
-            </MinorStageContextProvider>
-          </MajorStageContextProvider>
-        </PlaceContextProvider>
-      </CustomCountryContextProvider>
-    </JourneyContextProvider>
+    <StagesContextProvider>
+      <JourneyContextProvider>
+        <CustomCountryContextProvider>
+          <PlaceContextProvider>
+            <MajorStageContextProvider>
+              <MinorStageContextProvider>
+                <Stack.Navigator
+                  screenOptions={() => ({
+                    headerTintColor: 'white',
+                    headerStyle: {
+                      backgroundColor: GlobalStyles.colors.primary500,
+                    },
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    animationEnabled: false,
+                  })}
+                >
+                  <Stack.Screen
+                    name='BottomTabsNavigator'
+                    component={BottomTabsNavigator}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name='UserProfile'
+                    component={UserProfile}
+                    options={{
+                      title: `${authCtx.username}'s Profile`,
+                      headerRight: ({ tintColor }) => (
+                        <IconButton
+                          color={tintColor}
+                          size={24}
+                          icon={Icons.logout}
+                          onPress={() => {
+                            authCtx.logout();
+                          }}
+                        />
+                      ),
+                    }}
+                  />
+                  <Stack.Screen
+                    name='JourneyBottomTabsNavigator'
+                    component={JourneyBottomTabsNavigator}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name='ManageCustomCountry'
+                    component={ManageCustomCountry}
+                  />
+                  <Stack.Screen
+                    name='ManagePlaceToVisit'
+                    component={ManagePlaceToVisit}
+                  />
+                  <Stack.Screen
+                    name='LocationPickMap'
+                    component={LocationPickMap}
+                  />
+                  <Stack.Screen name='ShowMap' component={ShowMap} />
+                </Stack.Navigator>
+              </MinorStageContextProvider>
+            </MajorStageContextProvider>
+          </PlaceContextProvider>
+        </CustomCountryContextProvider>
+      </JourneyContextProvider>
+    </StagesContextProvider>
   );
 };
 

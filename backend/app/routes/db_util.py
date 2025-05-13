@@ -31,10 +31,14 @@ def fetch_journeys(current_user):
                 },
                 'scheduled_start_time': formatDateToString(journey.scheduled_start_time),
                 'scheduled_end_time': formatDateToString(journey.scheduled_end_time),
-                # TODO: This must be a real customCountry
-                'countries': journey.countries,
                 'done': journey.done,
             }
+            
+            custom_countries = fetch_custom_countries(current_user=current_user, journeyId=journey.id)
+            if not isinstance(custom_countries, Exception):
+                journey_data['countries'] = custom_countries
+            else:
+                return custom_countries
             
             if majorStages is not None:
                 major_stages_list = fetch_major_stages(journey.id)
@@ -46,6 +50,49 @@ def fetch_journeys(current_user):
             journeys_list.append(journey_data)
         
         return journeys_list
+    except Exception as e:
+        return e
+
+
+def fetch_custom_countries(current_user, journeyId):
+    try:        
+        links = db.session.execute(db.select(JourneysCustomCountriesLink).filter_by(journey_id=journeyId)).scalars().all()
+        countryIds = [link.custom_country_id for link in links]
+                
+        custom_countries = []
+        
+        for countryId in countryIds:
+            custom_country = CustomCountry.query.filter_by(id=countryId).order_by(CustomCountry.name).first()
+            custom_countries.append(custom_country)
+        
+        response_custom_countries = []
+        
+        for custom_country in custom_countries:    
+            places_to_visit = []   
+            placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
+            if placesToVisit is not None: 
+                places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
+                places_to_visit += places
+            
+            response_custom_countries.append({'id': custom_country.id,
+                                              'name': custom_country.name,
+                                              'code': custom_country.code,
+                                              'timezones': custom_country.timezones.split(',') if custom_country.timezones else None, 
+                                              'currencies': custom_country.currencies.split(',') if custom_country.currencies else None,
+                                              'languages': custom_country.languages.split(',') if custom_country.languages else None,
+                                              'capital': custom_country.capital,
+                                              'population': custom_country.population,
+                                              'region': custom_country.region,
+                                              'subregion': custom_country.subregion,
+                                              'wiki_link': custom_country.wiki_link, 
+                                              'visited': custom_country.visited,
+                                              'visum_regulations': custom_country.visum_regulations,
+                                                'best_time_to_visit': custom_country.best_time_to_visit,
+                                                'general_information': custom_country.general_information,
+                                                'placesToVisit': places_to_visit
+                                              })
+        
+        return response_custom_countries
     except Exception as e:
         return e
 

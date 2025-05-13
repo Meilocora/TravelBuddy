@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { View } from 'react-native';
 
 import JourneysList from '../../components/Journeys/JourneysList';
-import { fetchJourneys } from '../../utils/http';
+import { fetchJourneys, fetchStagesData } from '../../utils/http';
 import { StyleSheet } from 'react-native';
 import { JourneyContext } from '../../store/journey-context';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
@@ -13,6 +13,7 @@ import Popup from '../../components/UI/Popup';
 import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
 import { CustomCountryContext } from '../../store/custom-country-context';
+import { StagesContext } from '../../store/stages-context';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -29,8 +30,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   const [popupText, setPopupText] = useState<string | null>();
 
   const authCtx = useContext(AuthContext);
-  const journeyCtx = useContext(JourneyContext);
-  const countryCtx = useContext(CustomCountryContext);
+  const stagesCtx = useContext(StagesContext);
 
   useEffect(() => {
     function activatePopup() {
@@ -53,20 +53,19 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }, [authCtx]);
 
   useEffect(() => {
-    async function getJourneys() {
+    async function getData() {
       setIsFetching(true);
-      const response = await fetchJourneys();
+      const backendError = await stagesCtx.fetchUserData();
 
-      if (!response.error) {
-        journeyCtx.setJourneys(response.journeys || []);
-      } else {
-        setError(response.error);
+      console.log(backendError);
+
+      if (backendError) {
+        setError(backendError);
       }
-      countryCtx.refetchCustomCountries();
       setIsFetching(false);
     }
 
-    getJourneys();
+    getData();
   }, [refresh]);
 
   function handleClosePopup() {
@@ -82,10 +81,10 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
   if (isFetching) {
     content = <InfoText content='Loading Journeys...' />;
-  } else if (journeyCtx.journeys.length === 0 && !error) {
+  } else if (stagesCtx.journeys.length === 0 && !error) {
     content = <InfoText content='No Journeys found!' />;
   } else {
-    content = <JourneysList journeys={journeyCtx.journeys} />;
+    content = <JourneysList />;
   }
 
   if (error) {

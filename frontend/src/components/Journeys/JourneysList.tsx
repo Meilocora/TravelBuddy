@@ -2,30 +2,25 @@ import { ReactElement, useContext, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
-import { Icons, Journey, StageFilter } from '../../models';
+import { Icons, StageFilter } from '../../models';
 import JourneyListElement from './JourneysListElement';
 import { parseDate } from '../../utils';
 import IconButton from '../UI/IconButton';
 import FilterSettings from '../UI/FilterSettings';
 import { deleteJourney } from '../../utils/http';
-import { JourneyContext } from '../../store/journey-context';
 import Modal from '../UI/Modal';
+import { StagesContext } from '../../store/stages-context';
 
-interface JourneysListProps {
-  journeys: Journey[];
-}
-
-const JourneysList: React.FC<JourneysListProps> = ({
-  journeys,
-}): ReactElement => {
+const JourneysList: React.FC = ({}): ReactElement => {
   const [filter, setFilter] = useState<StageFilter>(StageFilter.current);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [deleteJourneyId, setDeleteJourneyId] = useState<number | null>(null);
 
-  const journeyCtx = useContext(JourneyContext);
+  const stagesCtx = useContext(StagesContext);
+
   const now = new Date();
-  const shownJourneys = journeys.filter((journey) => {
+  const shownJourneys = stagesCtx.journeys.filter((journey) => {
     if (filter === StageFilter.current) {
       return parseDate(journey.scheduled_end_time) >= now; // Only include journeys that haven't ended
     }
@@ -50,7 +45,7 @@ const JourneysList: React.FC<JourneysListProps> = ({
   async function handleDelete() {
     const { error, status } = await deleteJourney(deleteJourneyId!);
     if (!error && status === 200) {
-      journeyCtx.deleteJourney(deleteJourneyId!);
+      stagesCtx.deleteJourney(deleteJourneyId!);
     }
     setOpenDeleteModal(false);
   }

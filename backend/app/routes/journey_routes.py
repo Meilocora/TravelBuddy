@@ -10,9 +10,9 @@ journey_bp = Blueprint('journey', __name__)
 
 @journey_bp.route('/get-stages-data', methods=['GET'])
 @token_required
-def get_stages_data(current_user):
+def get_stages_data(current_user): 
     journeys_list = fetch_journeys(current_user=current_user)
-    
+        
     if not isinstance(journeys_list, Exception):    
         return jsonify({'journeys': journeys_list, 'status': 200})
     else:
