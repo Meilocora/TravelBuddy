@@ -9,6 +9,9 @@ interface StagesContextType {
   addJourney: (journey: Journey) => void;
   deleteJourney: (journeyId: number) => void;
   updateJourney: (journey: Journey) => void;
+  findJourney: (journeyId: number) => Journey | undefined;
+  findMajorStage: (majorStageId: number) => MajorStage | undefined;
+
   selectedJourneyId?: number;
   setSelectedJourneyId: (id: number) => void;
 
@@ -39,6 +42,9 @@ export const StagesContext = createContext<StagesContextType>({
   addJourney: () => {},
   deleteJourney: () => {},
   updateJourney: () => {},
+  findJourney: () => undefined,
+  findMajorStage: () => undefined,
+
   selectedJourneyId: undefined,
   setSelectedJourneyId: () => {},
 });
@@ -52,6 +58,16 @@ export default function StagesContextProvider({
   const [selectedJourneyId, setSelectedJourneyId] = useState<
     number | undefined
   >(undefined);
+
+  async function fetchUserData(): Promise<void | string> {
+    const response = await fetchStagesData();
+
+    if (response.journeys) {
+      setJourneys(response.journeys);
+    } else {
+      return response.error;
+    }
+  }
 
   function addJourney(journey: Journey) {
     setJourneys((prevJourneys) => [...prevJourneys, journey]);
@@ -71,13 +87,29 @@ export default function StagesContextProvider({
     );
   }
 
-  async function fetchUserData(): Promise<void | string> {
-    const response = await fetchStagesData();
+  function findJourney(journeyId: number) {
+    const journey = journeys.find((journey) => journey.id === journeyId);
+    return journey;
+  }
 
-    if (response.journeys) {
-      setJourneys(response.journeys);
+  function findMajorStage(majorStageId: number) {
+    if (majorStageId === 0) {
+      return undefined;
+    }
+
+    if (Array.isArray(journeys)) {
+      for (const key in journeys) {
+        const journey = journeys[key];
+
+        const majorStage = journey.majorStages?.find(
+          (majorStage) => majorStage.id === majorStageId
+        );
+        if (majorStage) {
+          return majorStage;
+        }
+      }
     } else {
-      return response.error;
+      return;
     }
   }
 
@@ -87,6 +119,8 @@ export default function StagesContextProvider({
     addJourney,
     deleteJourney,
     updateJourney,
+    findJourney,
+    findMajorStage,
     selectedJourneyId,
     setSelectedJourneyId,
   };

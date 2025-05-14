@@ -10,15 +10,15 @@ import {
   Journey,
   Icons,
 } from '../../models';
-import { JourneyContext } from '../../store/journey-context';
 import JourneyForm from '../../components/Journeys/ManageJourney/JourneyForm';
 import IconButton from '../../components/UI/IconButton';
 import { GlobalStyles } from '../../constants/styles';
-import { formatDateString } from '../../utils';
+import { formatCountrynamesToString, formatDateString } from '../../utils';
 import { deleteJourney } from '../../utils/http';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Modal from '../../components/UI/Modal';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
+import { StagesContext } from '../../store/stages-context';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;
@@ -38,13 +38,13 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const journeyCtx = useContext(JourneyContext);
+  const stagesCtx = useContext(StagesContext);
   const editedJourneyId = route.params?.journeyId;
   let isEditing = !!editedJourneyId;
 
-  const selectedJourney = journeyCtx.journeys.find(
-    (journey) => journey.id === editedJourneyId
-  );
+  const selectedJourney = stagesCtx.findJourney(editedJourneyId!);
+
+  console.log(selectedJourney);
 
   // Empty, when no default values provided
   const [journeyValues, setJourneyValues] = useState<JourneyValues>({
@@ -58,7 +58,9 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
       : null,
     budget: selectedJourney?.costs.budget || 0,
     spent_money: selectedJourney?.costs.spent_money || 0,
-    countries: selectedJourney?.countries || '',
+    countries: selectedJourney?.countries
+      ? formatCountrynamesToString(selectedJourney!.countries)
+      : '',
   });
 
   useFocusEffect(
@@ -75,7 +77,9 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
           : null,
         budget: selectedJourney?.costs.budget || 0,
         spent_money: selectedJourney?.costs.spent_money || 0,
-        countries: selectedJourney?.countries || '',
+        countries: selectedJourney?.countries
+          ? formatCountrynamesToString(selectedJourney!.countries)
+          : '',
       });
 
       return () => {
@@ -100,7 +104,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     try {
       const { error, status } = await deleteJourney(editedJourneyId!);
       if (!error && status === 200) {
-        journeyCtx.deleteJourney(editedJourneyId!);
+        stagesCtx.deleteJourney(editedJourneyId!);
         const popupText = 'Journey successfully deleted!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       } else {
@@ -132,7 +136,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 200) {
-        journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = 'Journey successfully updated!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }
@@ -141,7 +145,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 201) {
-        journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = 'Journey successfully created!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }

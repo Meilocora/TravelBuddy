@@ -1,7 +1,7 @@
 import 'react-native-get-random-values';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactElement, useLayoutEffect, useState } from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';

@@ -11,12 +11,12 @@ import {
   MajorStage,
   StageFilter,
 } from '../../models';
-import { MajorStageContext } from '../../store/majorStage-context.';
 import { parseDate } from '../../utils';
 import { deleteMajorStage } from '../../utils/http';
 import Modal from '../UI/Modal';
 import IconButton from '../UI/IconButton';
 import FilterSettings from '../UI/FilterSettings';
+import { StagesContext } from '../../store/stages-context';
 
 interface MajorStageListProps {
   journey: Journey;
@@ -34,7 +34,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
     null
   );
 
-  const majorStageCtx = useContext(MajorStageContext);
+  const stagesCtx = useContext(StagesContext);
   const now = new Date();
   const shownMajorStages = majorStages.filter((majorStage) => {
     if (filter === StageFilter.current) {
@@ -61,7 +61,7 @@ const MajorStageList: React.FC<MajorStageListProps> = ({
   async function handleDelete() {
     const { error, status } = await deleteMajorStage(deleteMajorStageId!);
     if (!error && status === 200) {
-      majorStageCtx.deleteMajorStage(deleteMajorStageId!);
+      stagesCtx.fetchUserData();
     }
     setOpenDeleteModal(false);
   }

@@ -12,7 +12,8 @@ import { PlaceContext } from '../store/place-context';
 import PlaceForm from '../components/Locations/Places/PlaceForm';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
 import { CustomCountryContext } from '../store/custom-country-context';
-import { MinorStageContext } from '../store/minorStage-context';
+import { StagesContext } from '../store/stages-context';
+// import { MinorStageContext } from '../store/minorStage-context';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -32,7 +33,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   const [error, setError] = useState<string | null>(null);
   const customCountryCtx = useContext(CustomCountryContext);
   const placeCtx = useContext(PlaceContext);
-  const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
 
   const majorStageId = route.params?.majorStageId;
   const placeId = route.params?.placeId;
@@ -68,9 +69,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         return;
       } else if (place && status === 200) {
         placeCtx.updatePlace(place);
-        customCountryCtx.refetchCustomCountries();
+        customCountryCtx.fetchUsersCustomCountries();
         if (majorStageId) {
-          await minorStageCtx.refetchMinorStages(majorStageId);
+          stagesCtx.fetchUserData();
         }
         navigation.goBack();
       }
@@ -80,7 +81,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         return;
       } else if (place && status === 201) {
         placeCtx.addPlace(place);
-        customCountryCtx.refetchCustomCountries();
+        customCountryCtx.fetchUsersCustomCountries();
         navigation.goBack();
       }
     }
@@ -92,7 +93,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
       return;
     } else if (response.status === 200) {
       placeCtx.deletePlace(placeId);
-      customCountryCtx.refetchCustomCountries();
+      customCountryCtx.fetchUsersCustomCountries();
       navigation.goBack();
     }
   }

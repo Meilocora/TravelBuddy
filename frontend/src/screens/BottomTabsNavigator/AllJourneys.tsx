@@ -3,16 +3,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { View } from 'react-native';
 
 import JourneysList from '../../components/Journeys/JourneysList';
-import { fetchJourneys, fetchStagesData } from '../../utils/http';
 import { StyleSheet } from 'react-native';
-import { JourneyContext } from '../../store/journey-context';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { BottomTabsParamList } from '../../models';
 import { RouteProp } from '@react-navigation/native';
 import Popup from '../../components/UI/Popup';
 import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
-import { CustomCountryContext } from '../../store/custom-country-context';
 import { StagesContext } from '../../store/stages-context';
 
 interface AllJourneysProps {
@@ -56,8 +53,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     async function getData() {
       setIsFetching(true);
       const backendError = await stagesCtx.fetchUserData();
-
-      console.log(backendError);
 
       if (backendError) {
         setError(backendError);

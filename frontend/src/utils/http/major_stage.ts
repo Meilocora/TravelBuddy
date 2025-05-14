@@ -12,6 +12,7 @@ interface FetchMajorStageProps {
   error?: string;
 }
 
+// TODO: Delete?!
 export const fetchMajorStagesById = async (
   id: number
 ): Promise<FetchMajorStageProps> => {

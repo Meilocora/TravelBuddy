@@ -5,20 +5,18 @@ import { fetchCustomCountries } from '../utils/http/custom_country';
 
 interface CustomCountryContextType {
   customCountries: CustomCountry[];
-  setCustomCountries: (customCountries: CustomCountry[]) => void;
+  fetchUsersCustomCountries: () => Promise<void | string>;
   addCustomCountry: (customCountry: CustomCountry) => void;
   deleteCustomCountry: (customCountryId: number) => void;
   updateCustomCountry: (customCountry: CustomCountry) => void;
-  refetchCustomCountries: () => Promise<void>;
 }
 
 export const CustomCountryContext = createContext<CustomCountryContextType>({
   customCountries: [],
-  setCustomCountries: () => {},
+  fetchUsersCustomCountries: async () => {},
   addCustomCountry: () => {},
   deleteCustomCountry: () => {},
   updateCustomCountry: () => {},
-  refetchCustomCountries: async () => {},
 });
 
 export default function CustomCountryContextProvider({
@@ -53,20 +51,23 @@ export default function CustomCountryContextProvider({
     );
   }
 
-  async function refetchCustomCountries(): Promise<void> {
+  async function fetchUsersCustomCountries(): Promise<void | string> {
     const response = await fetchCustomCountries();
+
     if (response.data) {
       setCustomCountries(response.data);
+    }
+    {
+      return response.error;
     }
   }
 
   const value = {
     customCountries,
-    setCustomCountries,
+    fetchUsersCustomCountries,
     addCustomCountry,
     deleteCustomCountry,
     updateCustomCountry,
-    refetchCustomCountries,
   };
 
   return (

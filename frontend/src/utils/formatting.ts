@@ -1,5 +1,5 @@
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
-import { MapLocation } from '../models';
+import { CustomCountry } from '../models';
 
 export function formatAmount(amount: number): string {
   return new Intl.NumberFormat('de-DE', {
@@ -120,4 +120,20 @@ export function formatProgress(startDate: string, endDate: string): Float {
 
 export function formatStringToList(string: string): string[] {
   return string.split(',').map((item) => item.trim());
+}
+
+export function formatCountrynamesToString(
+  customCountries: CustomCountry[] | CustomCountry
+) {
+  let nameList: string[] = [];
+
+  if (Array.isArray(customCountries)) {
+    for (const key in customCountries) {
+      const country = customCountries[key];
+      nameList.push(country.name);
+    }
+    return nameList.join(', ');
+  } else {
+    return customCountries.name;
+  }
 }

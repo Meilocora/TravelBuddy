@@ -16,9 +16,8 @@ import { formatAmount, formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
 import CountrySelector from './CountrySelector';
-import { JourneyContext } from '../../../store/journey-context';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import { createMajorStage, updateMajorStage } from '../../../utils/http';
+import { StagesContext } from '../../../store/stages-context';
 
 type InputValidationResponse = {
   majorStage?: MajorStage;
@@ -46,15 +45,14 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   editMajorStageId,
   journeyId,
 }): ReactElement => {
-  const journeyCtx = useContext(JourneyContext);
-  const journey = journeyCtx.journeys.find((j) => j.id === journeyId);
+  const stagesCtx = useContext(StagesContext);
+  const journey = stagesCtx.findJourney(journeyId);
   const minStartDate = journey!.scheduled_start_time;
   const maxEndDate = journey!.scheduled_end_time;
 
   let maxAvailableMoney = journey!.costs.budget;
-  const majorStageCtx = useContext(MajorStageContext);
-  const majorStages = majorStageCtx.majorStages;
-  majorStages.forEach((ms) => {
+  const majorStages = journey!.majorStages;
+  majorStages?.forEach((ms) => {
     maxAvailableMoney -= ms.costs.budget;
   });
 
@@ -193,9 +191,8 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
 
     let response: InputValidationResponse;
     if (isEditing) {
-      const former_country = majorStageCtx.majorStages.find(
-        (ms) => ms.id === editMajorStageId
-      )?.country;
+      const former_country = stagesCtx.findMajorStage(editMajorStageId!)!
+        .country.name;
 
       if (!updateConfirmed && inputs.country.value !== former_country) {
         setChangeCountry(true);

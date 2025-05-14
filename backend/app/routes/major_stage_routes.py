@@ -8,6 +8,8 @@ from app.validation.major_stage_validation import MajorStageValidation
 
 major_stage_bp = Blueprint('major_stage', __name__)
 
+
+# TODO: Delete?
 @major_stage_bp.route('/get-major-stages/<int:journeyId>', methods=['GET'])
 @token_required
 def get_major_stages(current_user, journeyId):

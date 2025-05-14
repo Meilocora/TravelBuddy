@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import CustomCountries from '../../components/Locations/CustomCountries';
 import { CustomCountryContext } from '../../store/custom-country-context';
-import { fetchCustomCountries } from '../../utils/http/custom_country';
 import { RouteProp } from '@react-navigation/native';
 import { BottomTabsParamList } from '../../models';
 import Popup from '../../components/UI/Popup';
@@ -18,8 +17,7 @@ const Locations: React.FC<LocationsProps> = ({ route }): ReactElement => {
 
   useEffect(() => {
     async function getCustomCountries() {
-      const { data } = await fetchCustomCountries();
-      customCountryCtx.setCustomCountries(data || []);
+      customCountryCtx.fetchUsersCustomCountries();
     }
 
     getCustomCountries();

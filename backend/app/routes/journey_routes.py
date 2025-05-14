@@ -261,21 +261,6 @@ def delete_journey(current_user, journeyId):
         return jsonify({'status': 200})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
-    
-    
-@journey_bp.route('/get-journeys-minor-stages-qty/<int:journeyId>', methods=['GET'])
-@token_required
-def get_journeys_minor_stages_qty(current_user, journeyId):
-    major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId)).scalars().all()
-        
-    if not major_stages:
-        return jsonify({'status': 200, 'minorStagesQty': 0})
-    
-    minorStagesQty = 0
-    for major_stage in major_stages:
-        minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=major_stage.id)).scalars().all()
-        minorStagesQty += len(minor_stages)
-    return jsonify({'status': 200, 'minorStagesQty': minorStagesQty})
         
 
 @journey_bp.route('/get-journeys-locations/<int:journeyId>', methods=['GET'])

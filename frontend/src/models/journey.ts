@@ -10,10 +10,8 @@ export interface Journey {
   scheduled_end_time: string;
   done: boolean;
   majorStages?: MajorStage[];
-  // majorStagesIds?: number[];
   costs: Costs;
   countries: CustomCountry[];
-  // countries: string;
 }
 
 export interface JourneyValues {

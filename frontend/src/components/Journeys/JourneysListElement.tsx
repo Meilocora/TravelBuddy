@@ -7,9 +7,11 @@ import { BottomTabsParamList, Icons, Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
+  formatCountrynamesToString,
   formatDateString,
   formatDurationToDays,
   formatProgress,
+  generateRandomString,
   parseDate,
 } from '../../utils';
 import CustomProgressBar from '../UI/CustomProgressBar';
@@ -18,9 +20,6 @@ import ElementTitle from '../UI/list/ElementTitle';
 import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
 import ElementComment from '../UI/list/ElementComment';
-import { MajorStageContext } from '../../store/majorStage-context.';
-import { JourneyContext } from '../../store/journey-context';
-import { fetchJourneysMinorStagesQty } from '../../utils/http';
 import { StagesContext } from '../../store/stages-context';
 
 interface JourneyListElementProps {
@@ -49,19 +48,8 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
       minorStagesQty += majorStage.minorStages?.length || 0;
     }
   }
-
+  const countries = formatCountrynamesToString(journey.countries);
   const isOver = parseDate(journey.scheduled_end_time) < new Date();
-
-  // TODO: This backend route not needed anymore!
-  // useEffect(() => {
-  //   async function fetchMinorStagesQty() {
-  //     const response = await fetchJourneysMinorStagesQty(journey.id);
-  //     if (response.status === 200 && response.minorStagesQty) {
-  //       setMinorStagesQty(response.minorStagesQty!);
-  //     }
-  //   }
-  //   fetchMinorStagesQty();
-  // }, []);
 
   const elementDetailInfo: ElementDetailInfo[] = [
     { icon: Icons.duration, value: `${durationInDays} days` },
@@ -134,7 +122,9 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
                 !isOver ? styles.detailArea : styles.inactiveDetailArea
               }
             />
-            {/* <Text style={styles.countriesList}>{journey.countries!}</Text> */}
+            <Text key={generateRandomString()} style={styles.country}>
+              {countries}
+            </Text>
           </View>
           {/* <CustomProgressBar
             startDate={journey.scheduled_start_time}
@@ -179,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-  countriesList: {
+  country: {
     marginVertical: 8,
     fontStyle: 'italic',
   },

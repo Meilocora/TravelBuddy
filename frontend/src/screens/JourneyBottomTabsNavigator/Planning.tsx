@@ -13,12 +13,10 @@ import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../../components/UI/IconButton';
 import Popup from '../../components/UI/Popup';
-import { JourneyContext } from '../../store/journey-context';
-import { fetchMajorStagesById } from '../../utils/http';
-import { MajorStageContext } from '../../store/majorStage-context.';
 import InfoText from '../../components/UI/InfoText';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { parseDate } from '../../utils';
+import { StagesContext } from '../../store/stages-context';
 
 interface PlanningProps {
   navigation: NativeStackNavigationProp<
@@ -37,11 +35,9 @@ const Planning: React.FC<PlanningProps> = ({
   const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
   let { journeyId } = route.params;
-  const journeyCtx = useContext(JourneyContext);
-  const journey = journeyCtx.journeys.find(
-    (journey) => journey.id === journeyId
-  );
-  const majorStageCtx = useContext(MajorStageContext);
+  const stagesCtx = useContext(StagesContext);
+  const journey = stagesCtx.findJourney(journeyId);
+
   const isOver = parseDate(journey!.scheduled_end_time) < new Date();
 
   useEffect(() => {
@@ -53,22 +49,6 @@ const Planning: React.FC<PlanningProps> = ({
 
     activatePopup();
   }, [route.params]);
-
-  useEffect(() => {
-    async function getMajorStages() {
-      setIsFetching(true);
-      const response = await fetchMajorStagesById(journeyId);
-
-      if (!response.error) {
-        majorStageCtx.setMajorStages(response.majorStages || []);
-      } else {
-        setError(response.error);
-      }
-      setIsFetching(false);
-    }
-
-    getMajorStages();
-  }, [refresh]);
 
   function handleClosePopup() {
     setPopupText(null);
@@ -110,14 +90,11 @@ const Planning: React.FC<PlanningProps> = ({
 
   if (isFetching) {
     content = <InfoText content='Loading Major Stages...' />;
-  } else if (majorStageCtx.majorStages.length === 0 && !error) {
+  } else if (journey!.majorStages?.length === 0 && !error) {
     content = <InfoText content='No Major Stages found!' />;
-  } else {
+  } else if (journey?.majorStages) {
     content = (
-      <MajorStageList
-        journey={journey!}
-        majorStages={majorStageCtx.majorStages}
-      />
+      <MajorStageList journey={journey} majorStages={journey.majorStages} />
     );
   }
 

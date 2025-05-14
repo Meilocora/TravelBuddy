@@ -66,13 +66,13 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
         ? { color: GlobalStyles.colors.error200 }
         : undefined,
     },
-    { icon: Icons.country, value: majorStage.country },
+    { icon: Icons.country, value: majorStage.country.name },
   ];
 
-  if (majorStage.minorStagesIds) {
+  if (majorStage.minorStages) {
     elementDetailInfo.push({
       title: 'Minor Stages',
-      value: majorStage.minorStagesIds.length.toString(),
+      value: majorStage.minorStages.length.toString(),
     });
   } else {
     elementDetailInfo.push({

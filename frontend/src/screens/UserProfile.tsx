@@ -9,6 +9,7 @@ interface UserProfileProps {
   route: UserProfileRouteProp;
 }
 
+// TODO:
 // Countries Visited
 // Journeys completed / planned
 // MajorStages completed / planned

@@ -23,7 +23,6 @@ import {
   Icons,
   MajorStageStackParamList,
 } from '../../../models';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import { formatDateString } from '../../../utils';
 import Modal from '../../../components/UI/Modal';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
@@ -31,7 +30,7 @@ import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../../components/UI/IconButton';
 import MajorStageForm from '../../../components/MajorStage/ManageMajorStage/MajorStageForm';
 import { deleteMajorStage } from '../../../utils/http';
-import { JourneyContext } from '../../../store/journey-context';
+import { StagesContext } from '../../../store/stages-context';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<
@@ -57,15 +56,12 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
 
-  const journeyCtx = useContext(JourneyContext);
-  const majorStageCtx = useContext(MajorStageContext);
+  const stagesCtx = useContext(StagesContext);
   const editedMajorStageId = route.params?.majorStageId;
   const journeyId = route.params.journeyId;
   let isEditing = !!editedMajorStageId;
 
-  const selectedMajorStage = majorStageCtx.majorStages.find(
-    (majorStage) => majorStage.id === editedMajorStageId
-  );
+  const selectedMajorStage = stagesCtx.findMajorStage(editedMajorStageId || 0);
 
   // Empty, when no default values provided
   const [majorStageValues, setMajorStageValues] = useState<MajorStageValues>({
@@ -80,7 +76,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     additional_info: selectedMajorStage?.additional_info || '',
     budget: selectedMajorStage?.costs.budget || 0,
     spent_money: selectedMajorStage?.costs.spent_money || 0,
-    country: selectedMajorStage?.country || '',
+    country: selectedMajorStage ? selectedMajorStage.country.name : '',
   });
 
   useFocusEffect(
@@ -98,7 +94,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         additional_info: selectedMajorStage?.additional_info || '',
         budget: selectedMajorStage?.costs.budget || 0,
         spent_money: selectedMajorStage?.costs.spent_money || 0,
-        country: selectedMajorStage?.country || '',
+        country: selectedMajorStage ? selectedMajorStage.country.name : '',
       });
 
       return () => {
@@ -133,8 +129,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     try {
       const { error, status } = await deleteMajorStage(editedMajorStageId!);
       if (!error && status === 200) {
-        majorStageCtx.deleteMajorStage(editedMajorStageId!);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = `Major Stage successfully deleted!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
@@ -186,10 +181,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 200) {
-        // TODO: This really needed?
-        // majorStageCtx.updateMajorStage(majorStage);
-        await majorStageCtx.refetchMajorStages(journeyId);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         resetValues();
         const popupText = `"${majorStage.title}" successfully updated!`;
         planningNavigation.navigate('Planning', {
@@ -202,9 +194,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 201) {
-        // majorStageCtx.addMajorStage(majorStage);
-        await majorStageCtx.refetchMajorStages(journeyId);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         resetValues();
         const popupText = `"${majorStage.title}" successfully created!`;
         planningNavigation.navigate('Planning', {
