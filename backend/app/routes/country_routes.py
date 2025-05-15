@@ -66,52 +66,6 @@ def get_custom_countries(current_user):
         return jsonify({'error': str(e), 'status': 500})
     
 
-@country_bp.route('/get-custom-countries-by-journey/<int:journeyId>', methods=['GET'])
-@token_required
-def get_custom_countries_by_journey(current_user, journeyId):
-    try:        
-        result = db.session.execute(db.select(JourneysCustomCountriesLink).filter_by(journey_id=journeyId))
-        link_result = result.scalars().all()
-        countryIds = [link.custom_country_id for link in link_result]
-        
-        custom_countries = []
-        
-        for countryId in countryIds:
-            custom_country = CustomCountry.query.filter_by(id=countryId).order_by(CustomCountry.name).first()
-            custom_countries.append(custom_country)
-        
-        response_custom_countries = []
-        
-        for custom_country in custom_countries:    
-            places_to_visit = []   
-            placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
-            if placesToVisit: 
-                places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
-                places_to_visit += places
-            
-            response_custom_countries.append({'id': custom_country.id,
-                                              'name': custom_country.name,
-                                              'code': custom_country.code,
-                                              'timezones': custom_country.timezones.split(',') if custom_country.timezones else None, 
-                                              'currencies': custom_country.currencies.split(',') if custom_country.currencies else None,
-                                              'languages': custom_country.languages.split(',') if custom_country.languages else None,
-                                              'capital': custom_country.capital,
-                                              'population': custom_country.population,
-                                              'region': custom_country.region,
-                                              'subregion': custom_country.subregion,
-                                              'wiki_link': custom_country.wiki_link, 
-                                              'visited': custom_country.visited,
-                                              'visum_regulations': custom_country.visum_regulations,
-                                                'best_time_to_visit': custom_country.best_time_to_visit,
-                                                'general_information': custom_country.general_information,
-                                                'placesToVisit': places_to_visit
-                                              })
-        
-        return jsonify({'customCountries': response_custom_countries, 'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e), 'status': 500})
-
-
 @country_bp.route('/create-custom-country', methods=['POST'])
 @token_required
 def create_custom_country(current_user):

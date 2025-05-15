@@ -6,71 +6,7 @@ from app.routes.util import parseDate, formatDateToString, parseDateTime, format
 from app.models import Costs, Journey, Spendings, MajorStage, Transportation, MinorStage
 from app.validation.major_stage_validation import MajorStageValidation
 
-major_stage_bp = Blueprint('major_stage', __name__)
-
-
-# TODO: Delete?
-@major_stage_bp.route('/get-major-stages/<int:journeyId>', methods=['GET'])
-@token_required
-def get_major_stages(current_user, journeyId):
-    try:
-        # Get all the major stages from the database
-        result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
-        majorStages = result.scalars().all()
-        
-        # Fetch costs, transportation and minor_stages for each major_stage
-        major_stages_list = []
-        for majorStage in majorStages:
-            costs_result = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStage.id))
-            costs = costs_result.scalars().first()
-            
-            transportation_result = db.session.execute(db.select(Transportation).filter_by(major_stage_id=majorStage.id))
-            transportation = transportation_result.scalars().first()
-            
-            minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStage.id))
-            minorStages = minorStages_result.scalars().all()
-                        
-            # Append the whole major stage, that matches the model from frontend to the list
-            major_stage_data = {
-                'id': majorStage.id,
-                'title': majorStage.title,
-                'country': majorStage.country,
-                'done': majorStage.done,
-                'scheduled_start_time': formatDateToString(majorStage.scheduled_start_time),
-                'scheduled_end_time': formatDateToString(majorStage.scheduled_end_time),
-                'additional_info': majorStage.additional_info,
-                'costs': {
-                    'budget': costs.budget,
-                    'spent_money': costs.spent_money,
-                    'money_exceeded': costs.money_exceeded,
-                }
-            }
-            
-            if transportation is not None:
-                major_stage_data['transportation'] = {
-                    'id': transportation.id,
-                    'type': transportation.type,
-                    'start_time': formatDateTimeToString(transportation.start_time),
-                    'arrival_time': formatDateTimeToString(transportation.arrival_time),
-                    'place_of_departure': transportation.place_of_departure,
-                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
-                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
-                    'place_of_arrival': transportation.place_of_arrival,
-                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
-                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
-                    'transportation_costs': transportation.transportation_costs,
-                    'link': transportation.link,
-                }
-            
-            if minorStages is not None:
-                major_stage_data['minorStagesIds'] = [minorStage.id for minorStage in minorStages]
-                
-            major_stages_list.append(major_stage_data)
-        
-        return jsonify({'majorStages': major_stages_list, 'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
-    
+major_stage_bp = Blueprint('major_stage', __name__)   
 
 @major_stage_bp.route('/create-major-stage/<int:journeyId>', methods=['POST'])
 @token_required

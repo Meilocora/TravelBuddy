@@ -6,39 +6,6 @@ import api from './api';
 
 const prefix = `${BACKEND_URL}/major_stage`;
 
-interface FetchMajorStageProps {
-  majorStages?: MajorStage[];
-  status: number;
-  error?: string;
-}
-
-// TODO: Delete?!
-export const fetchMajorStagesById = async (
-  id: number
-): Promise<FetchMajorStageProps> => {
-  try {
-    const response: AxiosResponse<FetchMajorStageProps> = await api.get(
-      `${prefix}/get-major-stages/${id}`
-    );
-
-    // Error from backend
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    const { majorStages, status } = response.data;
-
-    if (!majorStages) {
-      return { status };
-    }
-
-    return { majorStages, status };
-  } catch (error) {
-    // Error from frontend
-    return { status: 500, error: 'Could not fetch major stages!' };
-  }
-};
-
 interface ManageMajorStageProps {
   majorStage?: MajorStage;
   majorStageFormValues?: MajorStageFormValues;

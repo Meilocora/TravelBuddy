@@ -10,11 +10,9 @@ export interface MajorStage {
   scheduled_end_time: string;
   additional_info: string;
   country: CustomCountry;
-  // country: string;
   costs: Costs;
   transportation?: Transportation;
   minorStages?: MinorStage[];
-  // minorStagesIds?: number[];
 }
 
 export interface MajorStageValues {

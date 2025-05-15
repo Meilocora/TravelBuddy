@@ -33,7 +33,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
     null
   );
 
-  const minorStageCtx = useContext(MinorStageContext);
+  // const minorStageCtx = useContext(MinorStageContext);
   const now = new Date();
   const shownMinorStages = minorStages.filter((minorStage) => {
     if (filter === StageFilter.current) {

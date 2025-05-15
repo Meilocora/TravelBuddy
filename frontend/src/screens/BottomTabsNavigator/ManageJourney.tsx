@@ -44,8 +44,6 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 
   const selectedJourney = stagesCtx.findJourney(editedJourneyId!);
 
-  console.log(selectedJourney);
-
   // Empty, when no default values provided
   const [journeyValues, setJourneyValues] = useState<JourneyValues>({
     name: selectedJourney?.name || '',

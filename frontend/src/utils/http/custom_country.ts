@@ -111,27 +111,6 @@ export const fetchCustomCountries =
     }
   };
 
-export const fetchJourneysCustomCountries = async (
-  journeyId?: number
-): Promise<FetchCustomCountryResponseProps> => {
-  try {
-    const response: AxiosResponse<FetchCustomCountryProps> = await api.get(
-      `${prefix}/get-custom-countries-by-journey/${journeyId}`
-    );
-
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    return {
-      data: response.data.customCountries,
-      status: response.data.status,
-    };
-  } catch (error) {
-    return { status: 500, error: 'Could not fetch custom countries!' };
-  }
-};
-
 export interface UpdateCustomCountryProps {
   customCountryFormValues?: CustomCountryFormValues;
   customCountryId?: number;

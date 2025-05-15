@@ -18,14 +18,12 @@ import {
 import { RouteProp } from '@react-navigation/native';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 import { GlobalStyles } from '../../../constants/styles';
-import { MajorStageContext } from '../../../store/majorStage-context.';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import { deleteMinorStage, formatDateString } from '../../../utils';
-import { JourneyContext } from '../../../store/journey-context';
 import Modal from '../../../components/UI/Modal';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import IconButton from '../../../components/UI/IconButton';
 import MinorStageForm from '../../../components/MinorStage/ManageMinorStage/MinorStageForm';
+import { StagesContext } from '../../../store/stages-context';
 
 interface ManageMinorStageProps {
   navigation: NativeStackNavigationProp<
@@ -48,9 +46,8 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  const journeyCtx = useContext(JourneyContext);
-  const majorStageCtx = useContext(MajorStageContext);
-  const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
+
   const {
     journeyId,
     majorStageId,
@@ -58,9 +55,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
   } = route.params;
   let isEditing = !!editedMinorStageId;
 
-  const selectedMinorStage = minorStageCtx.minorStages.find(
-    (minorStage) => minorStage.id === editedMinorStageId
-  );
+  const selectedMinorStage = stagesCtx.findMinorStage(editedMinorStageId || 0);
 
   // Empty, when no default values provided
   const [minorStageValues, setMinorStageValues] = useState<MinorStageValues>({
@@ -122,10 +117,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     try {
       const { error, status } = await deleteMinorStage(editedMinorStageId!);
       if (!error && status === 200) {
-        minorStageCtx.deleteMinorStage(editedMinorStageId!);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(journeyId);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = `Minor Stage successfully deleted!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
@@ -182,10 +174,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 200) {
-        await minorStageCtx.refetchMinorStages(majorStageId);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(journeyId);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = `"${minorStage.title}" successfully updated!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
@@ -199,10 +188,7 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 201) {
-        await minorStageCtx.refetchMinorStages(majorStageId);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(journeyId);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         const popupText = `"${minorStage.title}" successfully created!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,

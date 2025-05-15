@@ -11,6 +11,7 @@ interface StagesContextType {
   updateJourney: (journey: Journey) => void;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
+  findMinorStage: (minorStageId: number) => MinorStage | undefined;
 
   selectedJourneyId?: number;
   setSelectedJourneyId: (id: number) => void;
@@ -44,6 +45,7 @@ export const StagesContext = createContext<StagesContextType>({
   updateJourney: () => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
+  findMinorStage: () => undefined,
 
   selectedJourneyId: undefined,
   setSelectedJourneyId: () => {},
@@ -113,6 +115,25 @@ export default function StagesContextProvider({
     }
   }
 
+  function findMinorStage(minorStageId: number) {
+    if (minorStageId === 0) {
+      return undefined;
+    }
+
+    for (const journey of journeys) {
+      for (const majorStage of journey.majorStages || []) {
+        const minorStage = majorStage.minorStages?.find(
+          (minorStage) => minorStage.id === minorStageId
+        );
+        if (minorStage) {
+          return minorStage;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
   const value = {
     journeys,
     fetchUserData,
@@ -121,6 +142,7 @@ export default function StagesContextProvider({
     updateJourney,
     findJourney,
     findMajorStage,
+    findMinorStage,
     selectedJourneyId,
     setSelectedJourneyId,
   };

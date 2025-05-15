@@ -2,7 +2,6 @@ import React, { ReactElement, useCallback, useContext, useState } from 'react';
 import {
   Dimensions,
   Keyboard,
-  LayoutAnimation,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,15 +11,13 @@ import {
 
 import { GlobalStyles } from '../../../constants/styles';
 import { ButtonMode, ColorScheme } from '../../../models';
-import { fetchJourneysCustomCountries } from '../../../utils/http/custom_country';
 import ListItem from '../../UI/search/ListItem';
 import Input from '../../UI/form/Input';
 import { generateRandomString } from '../../../utils';
 import Button from '../../UI/Button';
-import { JourneyContext } from '../../../store/journey-context';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import { useFocusEffect } from '@react-navigation/native';
 import OutsidePressHandler from 'react-native-outside-press';
+import { StagesContext } from '../../../store/stages-context';
 
 interface CountrySelectorProps {
   onChangeCountry: (countryName: string) => void;
@@ -40,15 +37,11 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
   const [isInvalid, setIsInvalid] = useState<boolean>(invalid);
   const [openSelection, setOpenSelection] = useState(false);
   const [countryName, setCountryName] = useState<string>('');
-  const [fetchedData, setFetchedData] = useState<string[]>([]);
+  const [selectableCountries, setSelectableCountries] = useState<string[]>([]);
   const [chosenCountries, setChosenCountries] = useState<string[]>([]);
 
-  const journeyCtx = useContext(JourneyContext);
-  const majorStageCtx = useContext(MajorStageContext);
-
-  const journey = journeyCtx.journeys.find(
-    (journey) => journey.id === journeyId
-  );
+  const stagesCtx = useContext(StagesContext);
+  const journey = stagesCtx.findJourney(journeyId);
 
   function handleOpenModal() {
     setOpenSelection(true);
@@ -62,36 +55,28 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
   useFocusEffect(
     useCallback(() => {
       // Fetch data when the screen comes into focus
-      async function fetchData() {
-        const { data } = await fetchJourneysCustomCountries(journeyId);
-        if (data) {
-          let names = data.map((item) => item.name);
+      function assignCountries() {
+        const countriesList = Array.from(
+          new Set(journey!.majorStages?.map((stage) => stage.country.name))
+        );
+        setChosenCountries(countriesList || []);
 
-          let countriesList: string[] = [];
-          journey!.majorStagesIds!.forEach((id) => {
-            countriesList.push(
-              majorStageCtx.majorStages.find(
-                (majorStage) => majorStage.id === id
-              )?.country!
-            );
-          });
-          setChosenCountries(countriesList);
+        const journeyCountries = journey!.countries!.map(
+          (country) => country.name
+        );
+        const leftOverCountries = journeyCountries?.filter(
+          (country) => !countriesList.includes(country)
+        );
 
-          if (countriesList) {
-            names = names.filter((item) => !countriesList.includes(item));
-          }
-
-          LayoutAnimation.linear();
-          setFetchedData(names);
-        }
+        setSelectableCountries(leftOverCountries || []);
       }
 
-      fetchData();
+      assignCountries();
 
       return () => {
         // Cleanup function to reset all states when the screen goes out of focus
         setCountryName('');
-        setFetchedData([]);
+        setSelectableCountries([]);
         setChosenCountries([]);
         setOpenSelection(false);
         setIsInvalid(false);
@@ -113,7 +98,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
       }
     });
 
-    setFetchedData((prevValues) => {
+    setSelectableCountries((prevValues) => {
       const reducedCountries = prevValues.filter((element) => element !== item);
       if (prevCountry) {
         return [...reducedCountries, prevCountry];
@@ -136,8 +121,8 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
         >
           <View style={styles.listContainer}>
             <ScrollView style={styles.list} nestedScrollEnabled={true}>
-              {fetchedData.length > 0 &&
-                fetchedData.map((item) => (
+              {selectableCountries.length > 0 &&
+                selectableCountries.map((item) => (
                   <ListItem
                     key={generateRandomString()}
                     onPress={handlePressListElement.bind(item)}

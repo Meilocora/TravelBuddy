@@ -20,12 +20,11 @@ import Popup from '../../../components/UI/Popup';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 import { GlobalStyles } from '../../../constants/styles';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import MinorStageList from '../../../components/MinorStage/MinorStageList';
-import { fetchMinorStagesById, parseDate } from '../../../utils';
-import { MinorStageContext } from '../../../store/minorStage-context';
+import { parseDate } from '../../../utils';
 import InfoText from '../../../components/UI/InfoText';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
+import { StagesContext } from '../../../store/stages-context';
 
 interface MinorStagesProps {
   navigation: NativeStackNavigationProp<
@@ -45,14 +44,9 @@ const MinorStages: React.FC<MinorStagesProps> = ({
   const [popupText, setPopupText] = useState<string | null>();
   let { majorStageId, journeyId } = route.params;
 
-  const majorStageCtx = useContext(MajorStageContext);
-  const majorStage = majorStageCtx.majorStages.find(
-    (majorStage) => majorStage.id === majorStageId
-  );
-
+  const stagesCtx = useContext(StagesContext);
+  const majorStage = stagesCtx.findMajorStage(majorStageId);
   const isOver = parseDate(majorStage!.scheduled_end_time) < new Date();
-
-  const minorStageCtx = useContext(MinorStageContext);
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
@@ -79,22 +73,6 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
     activatePopup();
   }, [route.params]);
-
-  useEffect(() => {
-    async function getMinorStages() {
-      setIsFetching(true);
-      const response = await fetchMinorStagesById(majorStage!.id);
-
-      if (!response.error) {
-        minorStageCtx.setMinorStages(response.minorStages || []);
-      } else {
-        setError(response.error);
-      }
-      setIsFetching(false);
-    }
-
-    getMinorStages();
-  }, [refresh, majorStageId]);
 
   function handleClosePopup() {
     setPopupText(null);
@@ -162,13 +140,13 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   if (isFetching) {
     content = <InfoText content='Loading Minor Stages...' />;
-  } else if (minorStageCtx.minorStages.length === 0 && !error) {
+  } else if (majorStage!.minorStages?.length === 0 && !error) {
     content = <InfoText content='No Minor Stages found!' />;
   } else {
     content = (
       <MinorStageList
         majorStage={majorStage!}
-        minorStages={minorStageCtx.minorStages}
+        minorStages={majorStage?.minorStages!}
       />
     );
   }

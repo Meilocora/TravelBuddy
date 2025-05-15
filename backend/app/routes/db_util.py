@@ -41,7 +41,7 @@ def fetch_journeys(current_user):
                 return custom_countries
             
             if majorStages is not None:
-                major_stages_list = fetch_major_stages(journey.id)
+                major_stages_list = fetch_major_stages(current_user, journey.id)
                 if not isinstance(major_stages_list, Exception):
                   journey_data['majorStages'] = major_stages_list
                 else:
@@ -97,7 +97,7 @@ def fetch_custom_countries(current_user, journeyId):
         return e
 
 
-def fetch_major_stages(journeyId):
+def fetch_major_stages(current_user, journeyId):
     try:
         # Get all the major stages from the database
         result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId).order_by(MajorStage.scheduled_start_time))
@@ -130,6 +130,12 @@ def fetch_major_stages(journeyId):
                 }
             }
             
+            custom_country = fetch_custom_country(current_user=current_user, countryName=majorStage.country)
+            if not isinstance(custom_country, Exception):
+                major_stage_data['country'] = custom_country
+            else:
+                return custom_country
+            
             if transportation is not None:
                 major_stage_data['transportation'] = {
                     'id': transportation.id,
@@ -158,6 +164,39 @@ def fetch_major_stages(journeyId):
         return major_stages_list
     except Exception as e:
         return e
+    
+def fetch_custom_country(current_user, countryName):
+    try:        
+        custom_country = db.session.execute(db.select(CustomCountry).filter_by(user_id=current_user, name=countryName)).scalars().first()
+        
+        places_to_visit = []   
+        placesToVisit = PlaceToVisit.query.filter_by(custom_country_id=custom_country.id).all()
+        if placesToVisit is not None: 
+            places = [{'id': place.id, 'name': place.name, 'description': place.description, 'visited': place.visited, 'favorite': place.favorite, 'link': place.link} for place in placesToVisit]
+            places_to_visit += places
+            
+        response_custom_country = {'id': custom_country.id,
+                                            'name': custom_country.name,
+                                            'code': custom_country.code,
+                                            'timezones': custom_country.timezones.split(',') if custom_country.timezones else None, 
+                                            'currencies': custom_country.currencies.split(',') if custom_country.currencies else None,
+                                            'languages': custom_country.languages.split(',') if custom_country.languages else None,
+                                            'capital': custom_country.capital,
+                                            'population': custom_country.population,
+                                            'region': custom_country.region,
+                                            'subregion': custom_country.subregion,
+                                            'wiki_link': custom_country.wiki_link, 
+                                            'visited': custom_country.visited,
+                                            'visum_regulations': custom_country.visum_regulations,
+                                            'best_time_to_visit': custom_country.best_time_to_visit,
+                                            'general_information': custom_country.general_information,
+                                            'placesToVisit': places_to_visit
+                                            }
+        
+        return response_custom_country
+    except Exception as e:
+        return e
+      
       
 def fetch_minor_stages(majorStageId):
     try:

@@ -14,11 +14,9 @@ import { GlobalStyles } from '../../../constants/styles';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import IconButton from '../../../components/UI/IconButton';
-import { MinorStageContext } from '../../../store/minorStage-context';
-import { MajorStageContext } from '../../../store/majorStage-context.';
-import { JourneyContext } from '../../../store/journey-context';
 import { deleteSpending } from '../../../utils/http/spending';
 import SpendingForm from '../../../components/MinorStage/ManageSpending/SpendingForm';
+import { StagesContext } from '../../../store/stages-context';
 
 interface ManageSpendingProps {
   navigation: NativeStackNavigationProp<
@@ -41,19 +39,18 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
 
-  const minorStageCtx = useContext(MinorStageContext);
-  const majorStageCtx = useContext(MajorStageContext);
-  const journeyCtx = useContext(JourneyContext);
+  const stagesCtx = useContext(StagesContext);
 
-  const { minorStageId, spendingId, majorStageId } = route.params;
+  const { minorStageId, spendingId } = route.params;
+  const minorStage = stagesCtx.findMinorStage(minorStageId);
   const isEditing = !!spendingId;
 
   let selectedSpending: Spending | undefined;
 
   if (spendingId) {
-    selectedSpending = minorStageCtx.minorStages
-      .find((minorStage) => minorStage.id === minorStageId)!
-      .costs.spendings!.find((spending) => spending.id === spendingId);
+    selectedSpending = minorStage?.costs.spendings?.find(
+      (spending) => spending.id === spendingId
+    );
   }
 
   useLayoutEffect(() => {
@@ -88,10 +85,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         spendingId!
       );
       if (!error && status === 200) {
-        await minorStageCtx.refetchMinorStages(minorStageId);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(backendJourneyId!);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         navigation.goBack();
       } else {
         setError(error!);
@@ -122,10 +116,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         setError(error);
         return;
       } else if (spending && status === 200) {
-        await minorStageCtx.refetchMinorStages(majorStageId);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(backendJourneyId!);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         navigation.goBack();
         resetValues();
       }
@@ -134,10 +125,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         setError(error);
         return;
       } else if (spending && status === 201) {
-        await minorStageCtx.refetchMinorStages(majorStageId);
-        // Refetch Journeys and MajorStages in case the costs have changed
-        await majorStageCtx.refetchMajorStages(backendJourneyId!);
-        await journeyCtx.refetchJourneys();
+        stagesCtx.fetchUserData();
         navigation.goBack();
         resetValues();
       }

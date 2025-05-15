@@ -21,15 +21,13 @@ import {
   MajorStageStackParamList,
   Transportation,
 } from '../../../models';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import IconButton from '../../../components/UI/IconButton';
 import TransportationForm from '../../../components/Transportation/TransportationForm';
-import { MinorStageContext } from '../../../store/minorStage-context';
-import { JourneyContext } from '../../../store/journey-context';
 import { deleteTransportation } from '../../../utils/http';
 import { GlobalStyles } from '../../../constants/styles';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
+import { StagesContext } from '../../../store/stages-context';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -59,9 +57,8 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
 
-  const journeyCtx = useContext(JourneyContext);
-  const minorStageCtx = useContext(MinorStageContext);
-  const majorStageCtx = useContext(MajorStageContext);
+  const stagesCtx = useContext(StagesContext);
+
   let { journeyId, majorStageId, minorStageId, transportationId } =
     route.params;
   let isEditing = !!transportationId;
@@ -71,15 +68,11 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       // selectedTransportation set, when screen is focused
       if (minorStageId) {
         setSelectedTransportation(
-          minorStageCtx.minorStages.find(
-            (minorStage) => minorStage.id === minorStageId
-          )!.transportation
+          stagesCtx.findMinorStage(minorStageId)?.transportation
         );
       } else if (majorStageId) {
         setSelectedTransportation(
-          majorStageCtx.majorStages.find(
-            (majorStage) => majorStage.id === majorStageId
-          )!.transportation
+          stagesCtx.findMajorStage(majorStageId)?.transportation
         );
       }
 
@@ -125,17 +118,14 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       );
       if (!error && status === 200) {
         if (majorStageId) {
-          await majorStageCtx.refetchMajorStages(journeyId!);
-          await journeyCtx.refetchJourneys();
+          stagesCtx.fetchUserData();
           const popupText = `Transportation successfully deleted!`;
           planningNavigation.navigate('Planning', {
             journeyId: journeyId!,
             popupText: popupText,
           });
         } else if (minorStageId) {
-          await minorStageCtx.refetchMinorStages(backendMajorStageId!);
-          await majorStageCtx.refetchMajorStages(journeyId!);
-          await journeyCtx.refetchJourneys();
+          stagesCtx.fetchUserData();
           const popupText = `Transportation successfully deleted!`;
           navigation.navigate('MinorStages', {
             journeyId: journeyId!,
@@ -172,26 +162,17 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       (transportation && status === 201)
     ) {
       if (mode === 'major') {
-        await majorStageCtx.refetchMajorStages(journeyId!);
-        await journeyCtx.refetchJourneys();
-        const majorStageTitle = majorStageCtx.majorStages.find(
-          (majorStage) => majorStage.id === majorStageId
-        )!.title;
-
+        stagesCtx.fetchUserData();
+        const majorStageTitle = stagesCtx.findMajorStage(majorStageId!)?.title;
         const popupText = `"${majorStageTitle}" successfully updated!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId!,
           popupText: popupText,
         });
       } else if (mode === 'minor') {
-        await minorStageCtx.refetchMinorStages(backendMajorStageId!);
-        await majorStageCtx.refetchMajorStages(journeyId!);
-        await journeyCtx.refetchJourneys();
-
-        const minorStage = minorStageCtx.minorStages.find(
-          (minorStage) => minorStage.id === minorStageId
-        )!;
-        const popupText = `"${minorStage.title}" successfully updated!`;
+        stagesCtx.fetchUserData();
+        const minorStage = stagesCtx.findMinorStage(minorStageId!);
+        const popupText = `"${minorStage!.title}" successfully updated!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId!,
           majorStageId: backendMajorStageId!,

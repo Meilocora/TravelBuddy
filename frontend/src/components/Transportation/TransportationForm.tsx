@@ -15,15 +15,14 @@ import Input from '../UI/form/Input';
 import { parseDate } from '../../utils';
 import Button from '../UI/Button';
 import { GlobalStyles } from '../../constants/styles';
-import { MajorStageContext } from '../../store/majorStage-context.';
 import DateTimePicker from '../UI/form/DateTimePicker';
 import TransportTypeSelector from './TransportTypeSelector';
 import {
   createTransportation,
   updateTransportation,
 } from '../../utils/http/transportation';
-import { MinorStageContext } from '../../store/minorStage-context';
 import LocationPicker from '../UI/form/LocationPicker';
+import { StagesContext } from '../../store/stages-context';
 
 type InputValidationResponse = {
   transportation?: Transportation;
@@ -56,13 +55,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   let stage: MajorStage | MinorStage;
   let minStartDate: Date;
   let maxStartDate: Date;
+  const stagesCtx = useContext(StagesContext);
 
   if (majorStageId !== undefined) {
-    const majorStageCtx = useContext(MajorStageContext);
-    stage = majorStageCtx.majorStages.find((ms) => ms.id === majorStageId)!;
+    stage = stagesCtx.findMajorStage(majorStageId)!;
   } else {
-    const minorStageCtx = useContext(MinorStageContext);
-    stage = minorStageCtx.minorStages.find((ms) => ms.id === minorStageId)!;
+    stage = stagesCtx.findMinorStage(minorStageId!)!;
   }
 
   minStartDate = parseDate(stage!.scheduled_start_time);
@@ -333,7 +331,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   return (
     <View style={styles.formContainer}>
       {'country' in stage ? (
-        <Text style={styles.header}>Destination: "{stage!.country}"</Text>
+        <Text style={styles.header}>Destination: "{stage!.country || ''}"</Text>
       ) : (
         <Text style={styles.header}>Origin: "{stage!.title}"</Text>
       )}

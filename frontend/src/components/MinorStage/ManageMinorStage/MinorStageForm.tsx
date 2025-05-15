@@ -21,9 +21,8 @@ import {
   updateMinorStage,
 } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
-import { MajorStageContext } from '../../../store/majorStage-context.';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import LocationPicker from '../../UI/form/LocationPicker';
+import { StagesContext } from '../../../store/stages-context';
 
 type InputValidationResponse = {
   minorStage?: MinorStage;
@@ -51,19 +50,15 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   editMinorStageId,
   majorStageId,
 }): ReactElement => {
-  const majorStageCtx = useContext(MajorStageContext);
-  const majorStage = majorStageCtx.majorStages.find(
-    (ms) => ms.id === majorStageId
-  );
+  const stagesCtx = useContext(StagesContext);
+  const majorStage = stagesCtx.findMajorStage(majorStageId);
 
   const minStartDate = majorStage!.scheduled_start_time;
   const maxEndDate = majorStage!.scheduled_end_time;
-
   let maxAvailableMoney = majorStage!.costs.budget;
 
-  const minorStageCtx = useContext(MinorStageContext);
-  const minorStages = minorStageCtx.minorStages;
-  minorStages.forEach((ms) => {
+  const minorStages = majorStage!.minorStages;
+  minorStages?.forEach((ms) => {
     maxAvailableMoney -= ms.costs.budget;
   });
 
