@@ -36,30 +36,6 @@ export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
   }
 };
 
-export const fetchJourneys = async (): Promise<FetchJourneysProps> => {
-  try {
-    const response: AxiosResponse<FetchJourneysProps> = await api.get(
-      `${prefix}/get-journeys`
-    );
-
-    // Error from backend
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    const { journeys, status } = response.data;
-
-    if (!journeys) {
-      return { status };
-    }
-
-    return { journeys, status };
-  } catch (error) {
-    // Error from frontend
-    return { status: 500, error: 'Could not fetch journeys!' };
-  }
-};
-
 interface ManageJourneyProps {
   journey?: Journey;
   journeyFormValues?: JourneyFormValues;
@@ -159,6 +135,7 @@ export enum LocationType {
 }
 
 export interface Location {
+  id?: number;
   belonging: string;
   locationType: LocationType;
   data: LocationData;

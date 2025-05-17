@@ -28,6 +28,7 @@ import MapLocationList from '../../components/Maps/MapLocationList';
 import { GOOGLE_API_KEY } from '@env';
 import Popup from '../../components/UI/Popup';
 import { StagesContext } from '../../store/stages-context';
+import MapLocationElement from '../../components/Maps/MapLocationElement/MapLocationElement';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -49,6 +50,9 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const [directionsMode, setDirectionsMode] =
     useState<MapViewDirectionsMode>('WALKING');
   const [popupText, setPopupText] = useState<string | undefined>();
+  const [pressedLocation, setPressedLocation] = useState<
+    Location | undefined
+  >();
 
   const stagesCtx = useContext(StagesContext);
   const journeyId = stagesCtx.selectedJourneyId!;
@@ -116,6 +120,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       latitude: location.data.latitude,
       longitude: location.data.longitude,
     });
+    setPressedLocation(location);
   }
 
   function handleChangeDirectionsMode(mode: MapViewDirectionsMode) {
@@ -198,6 +203,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           <MapViewDirections
             apikey={GOOGLE_API_KEY}
             origin={userLocation}
+            // TODO: Remove this:
             // origin={{ latitude: 21.0277717, longitude: 105.8215235 }}
             destination={directionDestination}
             strokeWidth={4}
@@ -213,6 +219,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           );
         })}
       </MapView>
+      {pressedLocation && <MapLocationElement location={pressedLocation} />}
     </View>
   );
 };

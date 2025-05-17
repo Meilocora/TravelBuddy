@@ -35,8 +35,6 @@ const Link: React.FC<LinkProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    // TODO: Does something break when this is removed?
-    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

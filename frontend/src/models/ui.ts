@@ -43,6 +43,7 @@ export enum Icons {
   bicycle = 'bicycle',
   car = 'car',
   settings = 'settings-outline',
+  goTo = 'arrow-forward-circle',
 }
 
 export enum ButtonMode {

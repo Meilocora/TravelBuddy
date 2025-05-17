@@ -54,9 +54,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
         <OutsidePressHandler onOutsidePress={handlePressOutside}>
           <RNDateTimePicker
             value={value ? parseDate(value) : new Date()}
-            // TODO: Reactivate later
-            // minimumDate={minimumDate || new Date()}
-            // maximumDate={maximumDate || undefined}
+            minimumDate={minimumDate || new Date()}
+            maximumDate={maximumDate || undefined}
             mode='date'
             display='calendar'
             onChange={(event, selectedDate) => {

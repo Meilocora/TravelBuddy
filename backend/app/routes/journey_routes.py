@@ -17,48 +17,7 @@ def get_stages_data(current_user):
         return jsonify({'journeys': journeys_list, 'status': 200})
     else:
         return jsonify({'error': str(journeys_list)}, 500)
-
-############################### TODO: Evaluate if any of the following is still needed #############################
-@journey_bp.route('/get-journeys', methods=['GET'])
-@token_required
-def get_journeys(current_user):
-    try:    
-        # Get all the journeys from the database
-        result = db.session.execute(db.select(Journey).filter_by(user_id=current_user).order_by(Journey.scheduled_start_time))
-        journeys = result.scalars().all()
-                
-        # Fetch costs and major_stages for each journey
-        journeys_list = []
-        for journey in journeys:
-            costs_result = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id))
-            costs = costs_result.scalars().first()
-            spendings = db.session.execute(db.select(Spendings).filter_by(costs_id=costs.id)).scalars().all()
-            
-            majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journey.id))
-            majorStages = majorStages_result.scalars().all()
-            
-            # Append the whole journey, that matches the model from frontend to the list
-            journeys_list.append({
-                'id': journey.id,
-                'name': journey.name,
-                'description': journey.description,
-                'costs': {
-                    'budget': costs.budget,
-                    'spent_money': costs.spent_money,
-                    'money_exceeded': costs.money_exceeded,
-                    'spendings': [{'id': spending.id, 'name': spending.name, 'amount': spending.amount, 'date': formatDateToString(spending.date), 'category': spending.category} for spending in spendings]
-                },
-                'scheduled_start_time': formatDateToString(journey.scheduled_start_time),
-                'scheduled_end_time': formatDateToString(journey.scheduled_end_time),
-                'countries': journey.countries,
-                'done': journey.done,
-                'majorStagesIds': [majorStage.id for majorStage in majorStages]
-            })    
         
-        return jsonify({'journeys': journeys_list, 'status': 200})
-    except Exception as e:
-        return jsonify({'error': str(e)}, 500)
-    
     
 @journey_bp.route('/create-journey', methods=['POST'])
 @token_required
@@ -279,6 +238,7 @@ def get_journeys_locations(current_user, journeyId):
             if major_stage_transportation:
                 if major_stage_transportation.departure_latitude and major_stage_transportation.departure_longitude:
                     locations.append({
+                        'id': major_stage_transportation.id,
                         'belonging': major_stage.title,
                         'locationType': 'transportation_departure',
                         'transportationType': major_stage_transportation.type.lower(),
@@ -290,6 +250,7 @@ def get_journeys_locations(current_user, journeyId):
                     })   
                 if major_stage_transportation.arrival_latitude and major_stage_transportation.arrival_longitude: 
                     locations.append({
+                        'id': major_stage_transportation.id,
                         'belonging': major_stage.title,
                         'locationType': 'transportation_arrival',
                         'transportationType': major_stage_transportation.type.lower(),
@@ -307,6 +268,7 @@ def get_journeys_locations(current_user, journeyId):
                     if minor_stage_transportation:
                         if minor_stage_transportation.departure_latitude and minor_stage_transportation.departure_longitude:
                                 locations.append({
+                                    'id': minor_stage_transportation.id,
                                     'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'transportation_departure',
@@ -319,6 +281,7 @@ def get_journeys_locations(current_user, journeyId):
                                 })
                         if minor_stage_transportation.arrival_latitude and minor_stage_transportation.arrival_longitude:
                             locations.append({
+                                'id': minor_stage_transportation.id,
                                 'minorStageName': minor_stage.title,
                                 'belonging': major_stage.title,
                                 'locationType': 'transportation_arrival',
@@ -332,6 +295,7 @@ def get_journeys_locations(current_user, journeyId):
                     minor_stage_accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
                     if minor_stage_accommodation.latitude and minor_stage_accommodation.longitude:
                         locations.append({
+                            'id': minor_stage.id,
                             'minorStageName': minor_stage.title,
                             'belonging': major_stage.title,
                             'locationType': 'accommodation',
@@ -346,6 +310,7 @@ def get_journeys_locations(current_user, journeyId):
                         for activity in activities:
                             if activity.latitude and activity.longitude:
                                 locations.append({
+                                    'id': activity.id,
                                     'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'activity',
@@ -361,6 +326,7 @@ def get_journeys_locations(current_user, journeyId):
                         for place_to_visit in places_to_visit: 
                             if place_to_visit.latitude and place_to_visit.longitude:
                                 locations.append({
+                                    'id': place_to_visit.id,
                                     'minorStageName': minor_stage.title,
                                     'belonging': major_stage.title,
                                     'locationType': 'placeToVisit',

@@ -1,6 +1,13 @@
 import { createContext, useState } from 'react';
 
-import { Journey, MajorStage, MinorStage } from '../models';
+import {
+  Activity,
+  Journey,
+  MajorStage,
+  MinorStage,
+  PlaceToVisit,
+  Transportation,
+} from '../models';
 import { fetchStagesData } from '../utils/http';
 
 interface ActiveHeader {
@@ -16,6 +23,18 @@ interface StagesContextType {
   findMinorStage: (minorStageId: number) => MinorStage | undefined;
   findMajorStagesJourney: (majorStageId: number) => Journey | undefined;
   findMinorStagesMajorStage: (minorStageId: number) => MajorStage | undefined;
+  findActivity: (
+    minorStageName: string,
+    activityId: number
+  ) => { minorStageId: number; activity: Activity | undefined } | undefined;
+  findPlaceToVisit: (
+    minorStageName: string,
+    placeId: number
+  ) => PlaceToVisit | undefined;
+  findTransportation: (
+    majorStageName: string,
+    minorStageName?: string
+  ) => Transportation | undefined;
   selectedJourneyId?: number;
   setSelectedJourneyId: (id: number) => void;
   activeHeader: ActiveHeader;
@@ -30,6 +49,9 @@ export const StagesContext = createContext<StagesContextType>({
   findMinorStage: () => undefined,
   findMajorStagesJourney: () => undefined,
   findMinorStagesMajorStage: () => undefined,
+  findActivity: () => undefined,
+  findPlaceToVisit: () => undefined,
+  findTransportation: () => undefined,
   selectedJourneyId: undefined,
   setSelectedJourneyId: () => {},
   activeHeader: {},
@@ -145,6 +167,61 @@ export default function StagesContextProvider({
     return undefined;
   }
 
+  function findActivity(minorStageName: string, activityId: number) {
+    for (const journey of journeys) {
+      for (const majorStage of journey.majorStages || []) {
+        const minorStage = majorStage.minorStages?.find(
+          (minorStage) => minorStage.title === minorStageName
+        );
+        if (minorStage) {
+          const activity = minorStage.activities!.find(
+            (activity) => activity.id === activityId
+          );
+          return { minorStageId: minorStage.id, activity };
+        }
+      }
+    }
+  }
+
+  function findPlaceToVisit(minorStageName: string, placeId: number) {
+    for (const journey of journeys) {
+      for (const majorStage of journey.majorStages || []) {
+        const minorStage = majorStage.minorStages?.find(
+          (minorStage) => minorStage.title === minorStageName
+        );
+        if (minorStage) {
+          return minorStage.placesToVisit!.find(
+            (place) => place.id === placeId
+          );
+        }
+      }
+    }
+  }
+
+  function findTransportation(majorStageName: string, minorStageName?: string) {
+    if (!minorStageName) {
+      for (const journey of journeys) {
+        const majorStage = journey.majorStages?.find(
+          (majorStage) => majorStage.title === majorStageName
+        );
+        if (majorStage) {
+          return majorStage.transportation;
+        }
+      }
+    } else {
+      for (const journey of journeys) {
+        for (const majorStage of journey.majorStages || []) {
+          const minorStage = majorStage.minorStages?.find(
+            (minorStage) => minorStage.title === minorStageName
+          );
+          if (minorStage) {
+            return minorStage.transportation;
+          }
+        }
+      }
+    }
+  }
+
   function setActiveHeaderHandler(minorStageId: number, header: string) {
     setActiveHeader({ minorStageId, header });
   }
@@ -157,6 +234,9 @@ export default function StagesContextProvider({
     findMinorStage,
     findMajorStagesJourney,
     findMinorStagesMajorStage,
+    findActivity,
+    findPlaceToVisit,
+    findTransportation,
     selectedJourneyId,
     setSelectedJourneyId,
     activeHeader,

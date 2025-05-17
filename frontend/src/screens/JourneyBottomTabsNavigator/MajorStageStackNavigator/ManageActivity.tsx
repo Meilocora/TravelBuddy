@@ -41,7 +41,6 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
 
   const stagesCtx = useContext(StagesContext);
 
-  // TODO: majorStageId needed?
   const { minorStageId, activityId } = route.params;
   const isEditing = !!activityId;
   const minorStage = stagesCtx.findMinorStage(minorStageId);
