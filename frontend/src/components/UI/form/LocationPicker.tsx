@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ReactElement, useEffect, useState } from 'react';
 
@@ -33,9 +33,11 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   const { verifyPermissions } = useLocationPermissions();
   const [hasInitialLocation, setHasInitialLocation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (pickedLocation) {
+      setIsLoading(false);
       setHasInitialLocation(true);
     }
   }, [pickedLocation]);
@@ -48,6 +50,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   }
 
   async function pickOnMapHandler() {
+    setIsLoading(true);
     const hasPermission = await verifyPermissions();
 
     if (!hasPermission) {
@@ -85,19 +88,27 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
   return (
     <View style={styles.container}>
-      <IconButton
-        icon={hasInitialLocation ? Icons.map : Icons.mapFilled}
-        onPress={pickOnMapHandler}
-        size={32}
-        containerStyle={styles.button}
-        color={
-          iconColor
-            ? iconColor
-            : hasInitialLocation
-            ? iconStandardColor
-            : 'white'
-        }
-      />
+      {isLoading ? (
+        <ActivityIndicator
+          size='large'
+          color={iconStandardColor}
+          style={styles.button}
+        />
+      ) : (
+        <IconButton
+          icon={hasInitialLocation ? Icons.map : Icons.mapFilled}
+          onPress={pickOnMapHandler}
+          size={32}
+          containerStyle={styles.button}
+          color={
+            iconColor
+              ? iconColor
+              : hasInitialLocation
+              ? iconStandardColor
+              : 'white'
+          }
+        />
+      )}
     </View>
   );
 };

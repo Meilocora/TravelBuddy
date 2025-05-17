@@ -13,9 +13,9 @@ import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { formatAmount } from '../../../utils';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import { createActivity, updateActivity } from '../../../utils/http';
 import LocationPicker from '../../UI/form/LocationPicker';
+import { StagesContext } from '../../../store/stages-context';
 
 type InputValidationResponse = {
   activity?: Activity;
@@ -44,10 +44,8 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
   editActivityId,
   minorStageId,
 }): ReactElement => {
-  const minorStageCtx = useContext(MinorStageContext);
-  const minorStage = minorStageCtx.minorStages.find(
-    (minorStage) => minorStage.id === minorStageId
-  );
+  const stagesCtx = useContext(StagesContext);
+  const minorStage = stagesCtx.findMinorStage(minorStageId);
 
   const maxAvailableMoney = Math.max(
     minorStage!.costs.budget - minorStage!.costs.spent_money,

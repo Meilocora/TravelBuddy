@@ -11,6 +11,7 @@ import Popup from '../../components/UI/Popup';
 import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
 import { StagesContext } from '../../store/stages-context';
+import { CustomCountryContext } from '../../store/custom-country-context';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -28,6 +29,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
   const authCtx = useContext(AuthContext);
   const stagesCtx = useContext(StagesContext);
+  const countryCtx = useContext(CustomCountryContext);
 
   useEffect(() => {
     function activatePopup() {
@@ -52,10 +54,13 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   useEffect(() => {
     async function getData() {
       setIsFetching(true);
-      const backendError = await stagesCtx.fetchUserData();
+      const firstBackendError = await stagesCtx.fetchUserData();
+      const secondBackendError = await countryCtx.fetchUsersCustomCountries();
 
-      if (backendError) {
-        setError(backendError);
+      if (firstBackendError) {
+        setError(firstBackendError);
+      } else if (secondBackendError) {
+        setError(secondBackendError);
       }
       setIsFetching(false);
     }

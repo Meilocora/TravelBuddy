@@ -1,8 +1,6 @@
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { MapLocation } from './map';
 import { ColorScheme } from './ui';
-import { Journey } from './journey';
-import { MajorStage } from './major_stage';
 import { Location } from '../utils/http';
 
 export type BottomTabsParamList = {

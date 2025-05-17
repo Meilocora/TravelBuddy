@@ -14,12 +14,11 @@ import {
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import ContentBox from '../UI/contentbox/ContentBox';
-import { JourneyContext } from '../../store/journey-context';
-import { MajorStageContext } from '../../store/majorStage-context.';
 import IconButton from '../UI/IconButton';
 import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import AccommodationBox from './AccommodationBox';
 import CustomProgressBar from '../UI/CustomProgressBar';
+import { StagesContext } from '../../store/stages-context';
 
 interface MinorStageListElementProps {
   minorStage: MinorStage;
@@ -33,17 +32,11 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
-  const journeyCtx = useContext(JourneyContext);
-  const majorStageCtx = useContext(MajorStageContext);
+  const stagesCtx = useContext(StagesContext);
 
-  const majorStage = majorStageCtx.majorStages.find((majorStage) =>
-    majorStage.minorStagesIds!.includes(minorStage.id)
-  );
+  const majorStage = stagesCtx.findMinorStagesMajorStage(minorStage.id);
   const majorStageId = majorStage?.id!;
-
-  const journey = journeyCtx.journeys.find((journey) =>
-    journey.majorStagesIds!.includes(majorStageId)
-  );
+  const journey = stagesCtx.findMajorStagesJourney(majorStage!.id);
   const journeyId = journey?.id!;
 
   const startDate = formatDateString(minorStage.scheduled_start_time);

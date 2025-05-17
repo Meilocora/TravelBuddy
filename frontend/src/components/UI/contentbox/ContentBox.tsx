@@ -6,8 +6,8 @@ import ContentHeader from './ContentHeader';
 import { GlobalStyles } from '../../../constants/styles';
 import MainContent from './MainContent';
 import { generateRandomString } from '../../../utils/generator';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import { parseDate } from '../../../utils';
+import { StagesContext } from '../../../store/stages-context';
 
 interface ContenBoxProps {
   minorStage: MinorStage;
@@ -20,7 +20,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
   majorStageId,
   minorStage,
 }): ReactElement => {
-  const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
   const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
   const handleOnPressHeader = (header: string) => {
@@ -28,7 +28,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
       duration: 500,
       update: { type: 'spring', springDamping: 0.7 },
     });
-    minorStageCtx.setActiveHeaderHandler(minorStage.id, header.toLowerCase());
+    stagesCtx.setActiveHeaderHandler(minorStage.id, header.toLowerCase());
   };
 
   let contentHeaders = ['Transport', 'Places', 'Activities', 'Spendings'];
@@ -48,8 +48,8 @@ const ContentBox: React.FC<ContenBoxProps> = ({
               title={header}
               key={generateRandomString()}
               headerStyle={
-                minorStageCtx.activeHeader.minorStageId === minorStage.id &&
-                minorStageCtx.activeHeader.header === header.toLowerCase()
+                stagesCtx.activeHeader.minorStageId === minorStage.id &&
+                stagesCtx.activeHeader.header === header.toLowerCase()
                   ? styles.activeHeader
                   : {}
               }

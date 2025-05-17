@@ -2,13 +2,12 @@ import { StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
 
 import { useContext, useState } from 'react';
 import { ButtonMode, ColorScheme, MinorStage } from '../../../models';
-import { MajorStageContext } from '../../../store/majorStage-context.';
 import Button from '../Button';
 import PlacesSelection from '../../MinorStage/ManageMinorStage/PlacesSelection';
 import { fetchavailablePlacesByCountry } from '../../../utils/http';
 import PlacesListItem from '../../Locations/Places/PlacesListItem';
 import { generateRandomString, parseDate } from '../../../utils';
-import { MinorStageContext } from '../../../store/minorStage-context';
+import { StagesContext } from '../../../store/stages-context';
 
 interface PlacesElementProps {
   majorStageId: number;
@@ -24,12 +23,9 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   handleDelete,
 }) => {
   const [openSelection, setOpenSelection] = useState(false);
-  const majorStageCtx = useContext(MajorStageContext);
-  const majorStage = majorStageCtx.majorStages.find((stage) =>
-    stage.minorStagesIds?.includes(minorStage.id)
-  );
-  const countryName = majorStage!.country;
-  const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
+  const majorStage = stagesCtx.findMinorStagesMajorStage(minorStage.id);
+  const countryName = majorStage!.country.name;
 
   const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
 
@@ -43,11 +39,11 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   }
 
   function handleToggleFavourite(placeId: number) {
-    minorStageCtx.toggleFavoritePlace(minorStage.id, placeId);
+    stagesCtx.fetchUserData();
   }
 
   function handleToggleVisited(placeId: number) {
-    minorStageCtx.toggleVisitedPlace!(minorStage.id, placeId);
+    stagesCtx.fetchUserData();
   }
 
   const screenHeight = Dimensions.get('window').height;

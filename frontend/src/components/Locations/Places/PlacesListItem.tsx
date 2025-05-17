@@ -8,16 +8,10 @@ import { GlobalStyles } from '../../../constants/styles';
 import Link from '../../UI/Link';
 import { PlaceContext } from '../../../store/place-context';
 import {
-  fetchPlaces,
   toggleFavoritePlace,
   toggleVisitedPlace,
 } from '../../../utils/http/place_to_visit';
-import { CustomCountryContext } from '../../../store/custom-country-context';
-import {
-  fetchCustomCountries,
-  Location,
-  LocationType,
-} from '../../../utils/http';
+import { Location, LocationType } from '../../../utils/http';
 
 interface PlacesListItemProps {
   place: PlaceToVisit;
@@ -36,27 +30,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
 }): ReactElement => {
   const [isOpened, setIsOpened] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const customCountryCtx = useContext(CustomCountryContext);
   const placeCtx = useContext(PlaceContext);
-
-  // Fetch data in case the user navigates to this screen directly from MinorStages Screen
-  useEffect(() => {
-    if (onRemovePlace) {
-      const fetchData = async () => {
-        // Fetch custom countries
-        const { data } = await fetchCustomCountries();
-        customCountryCtx.setCustomCountries(data || []);
-
-        // Fetch places
-        const response = await fetchPlaces();
-        if (!response.error) {
-          placeCtx.setPlacesToVisit(response.places || []);
-        }
-      };
-
-      fetchData();
-    }
-  }, [onRemovePlace]);
 
   async function handleToggleFavorite() {
     const response = await toggleFavoritePlace(place.id);
@@ -197,7 +171,6 @@ const styles = StyleSheet.create({
   detail: {
     color: GlobalStyles.colors.gray200,
     fontSize: 14,
-    // marginLeft: 8,
   },
   row: {
     flexDirection: 'row',

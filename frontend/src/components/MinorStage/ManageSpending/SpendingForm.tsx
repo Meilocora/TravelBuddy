@@ -11,10 +11,10 @@ import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { formatAmount, formatDate, parseDate } from '../../../utils';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import { createSpending, updateSpending } from '../../../utils/http/spending';
 import DatePicker from '../../UI/form/DatePicker';
 import SpendingCategorySelector from './SpendingCategorySelector';
+import { StagesContext } from '../../../store/stages-context';
 
 type InputValidationResponse = {
   spending?: Spending;
@@ -44,10 +44,8 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   minorStageId,
 }): ReactElement => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
-  const minorStageCtx = useContext(MinorStageContext);
-  const minorStage = minorStageCtx.minorStages.find(
-    (minorStage) => minorStage.id === minorStageId
-  );
+  const stagesCtx = useContext(StagesContext);
+  const minorStage = stagesCtx.findMinorStage(minorStageId);
 
   const minStartDate = minorStage!.scheduled_start_time;
   const maxEndDate = minorStage!.scheduled_end_time;

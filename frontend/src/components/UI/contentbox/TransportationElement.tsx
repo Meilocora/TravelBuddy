@@ -1,4 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
   ButtonMode,
@@ -12,8 +14,6 @@ import Button from '../Button';
 import { formatAmount, formatDateTimeString } from '../../../utils';
 import Link from '../Link';
 import TextLink from '../TextLink';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Location, LocationType } from '../../../utils/http';
 
 interface TransportElementInfopointProps {

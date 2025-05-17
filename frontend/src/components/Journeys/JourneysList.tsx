@@ -45,7 +45,7 @@ const JourneysList: React.FC = ({}): ReactElement => {
   async function handleDelete() {
     const { error, status } = await deleteJourney(deleteJourneyId!);
     if (!error && status === 200) {
-      stagesCtx.deleteJourney(deleteJourneyId!);
+      stagesCtx.fetchUserData();
     }
     setOpenDeleteModal(false);
   }

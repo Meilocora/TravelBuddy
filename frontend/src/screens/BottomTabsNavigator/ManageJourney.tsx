@@ -102,7 +102,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     try {
       const { error, status } = await deleteJourney(editedJourneyId!);
       if (!error && status === 200) {
-        stagesCtx.deleteJourney(editedJourneyId!);
+        stagesCtx.fetchUserData();
         const popupText = 'Journey successfully deleted!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       } else {

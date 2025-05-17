@@ -11,11 +11,11 @@ import {
   MinorStage,
   StageFilter,
 } from '../../models';
-import { MinorStageContext } from '../../store/minorStage-context';
 import { deleteMinorStage, parseDate } from '../../utils';
 import Modal from '../UI/Modal';
 import IconButton from '../UI/IconButton';
 import FilterSettings from '../UI/FilterSettings';
+import { StagesContext } from '../../store/stages-context';
 
 interface MinorStageListProps {
   majorStage: MajorStage;
@@ -33,7 +33,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
     null
   );
 
-  // const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
   const now = new Date();
   const shownMinorStages = minorStages.filter((minorStage) => {
     if (filter === StageFilter.current) {
@@ -60,7 +60,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   async function handleDelete() {
     const { error, status } = await deleteMinorStage(deleteMinorStageId!);
     if (!error && status === 200) {
-      minorStageCtx.deleteMinorStage(deleteMinorStageId!);
+      stagesCtx.fetchUserData();
     }
     setOpenDeleteModal(false);
   }

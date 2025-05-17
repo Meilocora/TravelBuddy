@@ -16,7 +16,6 @@ import MapViewDirections, {
 import { ColorScheme, JourneyBottomTabsParamsList } from '../../models';
 import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
-import { JourneyContext } from '../../store/journey-context';
 import { fetchJourneysLocations, Location } from '../../utils/http';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import {
@@ -28,6 +27,7 @@ import { generateRandomString } from '../../utils';
 import MapLocationList from '../../components/Maps/MapLocationList';
 import { GOOGLE_API_KEY } from '@env';
 import Popup from '../../components/UI/Popup';
+import { StagesContext } from '../../store/stages-context';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -50,8 +50,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     useState<MapViewDirectionsMode>('WALKING');
   const [popupText, setPopupText] = useState<string | undefined>();
 
-  const journeyCtx = useContext(JourneyContext);
-  const journeyId = journeyCtx.selectedJourneyId!;
+  const stagesCtx = useContext(StagesContext);
+  const journeyId = stagesCtx.selectedJourneyId!;
 
   useEffect(() => {
     async function fetchUserLocation() {
@@ -156,7 +156,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
-  // Add additional component, that lets user edit location and have a look at the component (should be at bottom, sliding up)
+  // TODO: Add additional component, that lets user edit location and have a look at the component (should be at bottom, sliding up)
 
   return (
     <View style={styles.root}>

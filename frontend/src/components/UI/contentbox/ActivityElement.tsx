@@ -6,6 +6,8 @@ import {
   Dimensions,
   Pressable,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
   Activity,
@@ -20,8 +22,6 @@ import Link from '../Link';
 import { useState } from 'react';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../IconButton';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { formatAmount, generateRandomString, parseDate } from '../../../utils';
 import { Location, LocationType } from '../../../utils/http';
 

@@ -29,8 +29,6 @@ import {
 import ManageJourney from './src/screens/BottomTabsNavigator/ManageJourney';
 import Locations from './src/screens/BottomTabsNavigator/Locations';
 import Planning from './src/screens/JourneyBottomTabsNavigator/Planning';
-import JourneyContextProvider from './src/store/journey-context';
-import MajorStageContextProvider from './src/store/majorStage-context.';
 import Overview from './src/screens/JourneyBottomTabsNavigator/Overview';
 import Map from './src/screens/JourneyBottomTabsNavigator/Map';
 import AuthContextProvider, { AuthContext } from './src/store/auth-context';
@@ -40,7 +38,6 @@ import AuthScreen from './src/screens/Auth/AuthScreen';
 import CustomCountryContextProvider from './src/store/custom-country-context';
 import ManageCustomCountry from './src/screens/ManageCustomCountry';
 import ManagePlaceToVisit from './src/screens/ManagePlaceToVisit';
-import MinorStageContextProvider from './src/store/minorStage-context';
 import PlaceContextProvider from './src/store/place-context';
 import ManageMajorStage from './src/screens/JourneyBottomTabsNavigator/MajorStageStackNavigator/ManageMajorStage';
 import SecondaryGradient from './src/components/UI/LinearGradients/SecondaryGradient';
@@ -302,68 +299,59 @@ const AuthenticatedStack = () => {
 
   return (
     <StagesContextProvider>
-      <JourneyContextProvider>
-        <CustomCountryContextProvider>
-          <PlaceContextProvider>
-            <MajorStageContextProvider>
-              <MinorStageContextProvider>
-                <Stack.Navigator
-                  screenOptions={() => ({
-                    headerTintColor: 'white',
-                    headerStyle: {
-                      backgroundColor: GlobalStyles.colors.primary500,
-                    },
-                    headerTitleAlign: 'center',
-                    headerShadowVisible: false,
-                    animationEnabled: false,
-                  })}
-                >
-                  <Stack.Screen
-                    name='BottomTabsNavigator'
-                    component={BottomTabsNavigator}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name='UserProfile'
-                    component={UserProfile}
-                    options={{
-                      title: `${authCtx.username}'s Profile`,
-                      headerRight: ({ tintColor }) => (
-                        <IconButton
-                          color={tintColor}
-                          size={24}
-                          icon={Icons.logout}
-                          onPress={() => {
-                            authCtx.logout();
-                          }}
-                        />
-                      ),
+      <CustomCountryContextProvider>
+        <PlaceContextProvider>
+          <Stack.Navigator
+            screenOptions={() => ({
+              headerTintColor: 'white',
+              headerStyle: {
+                backgroundColor: GlobalStyles.colors.primary500,
+              },
+              headerTitleAlign: 'center',
+              headerShadowVisible: false,
+              animationEnabled: false,
+            })}
+          >
+            <Stack.Screen
+              name='BottomTabsNavigator'
+              component={BottomTabsNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name='UserProfile'
+              component={UserProfile}
+              options={{
+                title: `${authCtx.username}'s Profile`,
+                headerRight: ({ tintColor }) => (
+                  <IconButton
+                    color={tintColor}
+                    size={24}
+                    icon={Icons.logout}
+                    onPress={() => {
+                      authCtx.logout();
                     }}
                   />
-                  <Stack.Screen
-                    name='JourneyBottomTabsNavigator'
-                    component={JourneyBottomTabsNavigator}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name='ManageCustomCountry'
-                    component={ManageCustomCountry}
-                  />
-                  <Stack.Screen
-                    name='ManagePlaceToVisit'
-                    component={ManagePlaceToVisit}
-                  />
-                  <Stack.Screen
-                    name='LocationPickMap'
-                    component={LocationPickMap}
-                  />
-                  <Stack.Screen name='ShowMap' component={ShowMap} />
-                </Stack.Navigator>
-              </MinorStageContextProvider>
-            </MajorStageContextProvider>
-          </PlaceContextProvider>
-        </CustomCountryContextProvider>
-      </JourneyContextProvider>
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='JourneyBottomTabsNavigator'
+              component={JourneyBottomTabsNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name='ManageCustomCountry'
+              component={ManageCustomCountry}
+            />
+            <Stack.Screen
+              name='ManagePlaceToVisit'
+              component={ManagePlaceToVisit}
+            />
+            <Stack.Screen name='LocationPickMap' component={LocationPickMap} />
+            <Stack.Screen name='ShowMap' component={ShowMap} />
+          </Stack.Navigator>
+        </PlaceContextProvider>
+      </CustomCountryContextProvider>
     </StagesContextProvider>
   );
 };

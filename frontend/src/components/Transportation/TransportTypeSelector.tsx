@@ -97,7 +97,7 @@ const TransportTypeSelector: React.FC<TransportTypeSelectorProps> = ({
               errors={errors}
               mandatory
               textInputConfig={{
-                value: transportType,
+                value: defaultType || transportType,
                 readOnly: true,
                 placeholder: 'Pick Type',
               }}

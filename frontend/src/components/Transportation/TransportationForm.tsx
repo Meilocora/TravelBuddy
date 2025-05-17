@@ -331,7 +331,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   return (
     <View style={styles.formContainer}>
       {'country' in stage ? (
-        <Text style={styles.header}>Destination: "{stage!.country || ''}"</Text>
+        <Text style={styles.header}>
+          Destination: "{stage!.country.name || ''}"
+        </Text>
       ) : (
         <Text style={styles.header}>Origin: "{stage!.title}"</Text>
       )}
@@ -386,6 +388,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                   }
                 : undefined
             }
+            colorScheme={
+              majorStageId ? ColorScheme.accent : ColorScheme.complementary
+            }
           />
         </View>
         <View style={styles.formRow}>
@@ -409,6 +414,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                     title: inputs.place_of_arrival.value,
                   }
                 : undefined
+            }
+            colorScheme={
+              majorStageId ? ColorScheme.accent : ColorScheme.complementary
             }
           />
         </View>

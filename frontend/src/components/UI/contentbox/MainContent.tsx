@@ -11,10 +11,10 @@ import {
   deleteActivity,
   removeMinorStageFromFavoritePlace,
 } from '../../../utils/http';
-import { MinorStageContext } from '../../../store/minorStage-context';
 import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
 import { parseDate } from '../../../utils';
+import { StagesContext } from '../../../store/stages-context';
 
 interface MainContentProps {
   journeyId: number;
@@ -38,7 +38,7 @@ const MainContent: React.FC<MainContentProps> = ({
   majorStageId,
   minorStage,
 }): ReactElement => {
-  const minorStageCtx = useContext(MinorStageContext);
+  const stagesCtx = useContext(StagesContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
 
@@ -61,18 +61,17 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleAddPlace(name: string) {
     await addMinorStageToFavoritePlace(name, minorStage.id);
-    await minorStageCtx.refetchMinorStages(majorStageId);
+    stagesCtx.fetchUserData();
   }
 
   async function handleRemovePlace(name: string) {
     await removeMinorStageFromFavoritePlace(name);
-    await minorStageCtx.refetchMinorStages(majorStageId);
+    stagesCtx.fetchUserData();
   }
 
   function handleAddActivity() {
     navigation.navigate('ManageActivity', {
       minorStageId: minorStage.id,
-      majorStageId: majorStageId,
     });
   }
 
@@ -80,19 +79,17 @@ const MainContent: React.FC<MainContentProps> = ({
     navigation.navigate('ManageActivity', {
       minorStageId: minorStage.id,
       activityId: id,
-      majorStageId: majorStageId,
     });
   }
 
   async function handleDeleteActivity(id: number) {
     await deleteActivity(id);
-    await minorStageCtx.refetchMinorStages(majorStageId);
+    stagesCtx.fetchUserData();
   }
 
   function handleAddSpending() {
     navigation.navigate('ManageSpending', {
       minorStageId: minorStage.id,
-      majorStageId: majorStageId,
     });
   }
 
@@ -100,7 +97,6 @@ const MainContent: React.FC<MainContentProps> = ({
     navigation.navigate('ManageSpending', {
       minorStageId: minorStage.id,
       spendingId: id,
-      majorStageId: majorStageId,
     });
   }
 
@@ -151,9 +147,9 @@ const MainContent: React.FC<MainContentProps> = ({
   ];
 
   let displayedContent: Content | undefined;
-  if (minorStage.id === minorStageCtx.activeHeader.minorStageId) {
+  if (minorStage.id === stagesCtx.activeHeader.minorStageId) {
     displayedContent = content.find(
-      (content) => content.title === minorStageCtx.activeHeader.header
+      (content) => content.title === stagesCtx.activeHeader.header
     );
   }
 

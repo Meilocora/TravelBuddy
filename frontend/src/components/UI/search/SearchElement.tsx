@@ -99,7 +99,6 @@ const SearchElement = <T, U>({
 
   let content: ReactElement | null = null;
 
-  // TODO: Improve Bedingungen
   if (error) {
     content = <ErrorOverlay message={error} onPress={() => setError(null)} />;
   } else if (isLoading && debouncedSearchTerm.length > 1) {

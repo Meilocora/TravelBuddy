@@ -13,7 +13,6 @@ import PlaceForm from '../components/Locations/Places/PlaceForm';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
 import { CustomCountryContext } from '../store/custom-country-context';
 import { StagesContext } from '../store/stages-context';
-// import { MinorStageContext } from '../store/minorStage-context';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;

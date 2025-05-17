@@ -1,54 +1,39 @@
 import { createContext, useState } from 'react';
 
 import { Journey, MajorStage, MinorStage } from '../models';
-import { fetchJourneys, fetchStagesData } from '../utils/http';
+import { fetchStagesData } from '../utils/http';
+
+interface ActiveHeader {
+  minorStageId?: number;
+  header?: string;
+}
 
 interface StagesContextType {
   journeys: Journey[];
   fetchUserData: () => Promise<void | string>;
-  addJourney: (journey: Journey) => void;
-  deleteJourney: (journeyId: number) => void;
-  updateJourney: (journey: Journey) => void;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
   findMinorStage: (minorStageId: number) => MinorStage | undefined;
-
+  findMajorStagesJourney: (majorStageId: number) => Journey | undefined;
+  findMinorStagesMajorStage: (minorStageId: number) => MajorStage | undefined;
   selectedJourneyId?: number;
   setSelectedJourneyId: (id: number) => void;
-
-  // addMajorStage: (journeyId: number, majorStage: MajorStage) => void;
-  // deleteMajorStage: (journeyId: number, majorStageId: number) => void;
-  // updateMajorStage: (journeyId: number, majorStage: MajorStage) => void;
-
-  // addMinorStage: (
-  //   journeyId: number,
-  //   majorStageId: number,
-  //   minorStage: MinorStage
-  // ) => void;
-  // deleteMinorStage: (
-  //   journeyId: number,
-  //   majorStageId: number,
-  //   minorStageId: number
-  // ) => void;
-  // updateMinorStage: (
-  //   journeyId: number,
-  //   majorStageId: number,
-  //   minorStage: MinorStage
-  // ) => void;
+  activeHeader: ActiveHeader;
+  setActiveHeaderHandler: (minorStageId: number, header: string) => void;
 }
 
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
   fetchUserData: async () => {},
-  addJourney: () => {},
-  deleteJourney: () => {},
-  updateJourney: () => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
   findMinorStage: () => undefined,
-
+  findMajorStagesJourney: () => undefined,
+  findMinorStagesMajorStage: () => undefined,
   selectedJourneyId: undefined,
   setSelectedJourneyId: () => {},
+  activeHeader: {},
+  setActiveHeaderHandler(minorStageId, header) {},
 });
 
 export default function StagesContextProvider({
@@ -60,6 +45,10 @@ export default function StagesContextProvider({
   const [selectedJourneyId, setSelectedJourneyId] = useState<
     number | undefined
   >(undefined);
+  const [activeHeader, setActiveHeader] = useState<ActiveHeader>({
+    minorStageId: undefined,
+    header: undefined,
+  });
 
   async function fetchUserData(): Promise<void | string> {
     const response = await fetchStagesData();
@@ -69,24 +58,6 @@ export default function StagesContextProvider({
     } else {
       return response.error;
     }
-  }
-
-  function addJourney(journey: Journey) {
-    setJourneys((prevJourneys) => [...prevJourneys, journey]);
-  }
-
-  function deleteJourney(journeyId: number) {
-    setJourneys((prevJourneys) =>
-      prevJourneys.filter((journey) => journey.id !== journeyId)
-    );
-  }
-
-  function updateJourney(updatedJourney: Journey) {
-    setJourneys((prevJourneys) =>
-      prevJourneys.map((journey) =>
-        journey.id === updatedJourney.id ? updatedJourney : journey
-      )
-    );
   }
 
   function findJourney(journeyId: number) {
@@ -134,17 +105,62 @@ export default function StagesContextProvider({
     return undefined;
   }
 
+  function findMajorStagesJourney(majorStageId: number) {
+    if (majorStageId === 0) {
+      return undefined;
+    }
+
+    if (Array.isArray(journeys)) {
+      for (const key in journeys) {
+        const journey = journeys[key];
+
+        const majorStage = journey.majorStages?.find(
+          (majorStage) => majorStage.id === majorStageId
+        );
+        if (majorStage) {
+          return journey;
+        }
+      }
+    } else {
+      return journeys[0];
+    }
+  }
+
+  function findMinorStagesMajorStage(minorStageId: number) {
+    if (minorStageId === 0) {
+      return undefined;
+    }
+
+    for (const journey of journeys) {
+      for (const majorStage of journey.majorStages || []) {
+        const minorStage = majorStage.minorStages?.find(
+          (minorStage) => minorStage.id === minorStageId
+        );
+        if (minorStage) {
+          return majorStage;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  function setActiveHeaderHandler(minorStageId: number, header: string) {
+    setActiveHeader({ minorStageId, header });
+  }
+
   const value = {
     journeys,
     fetchUserData,
-    addJourney,
-    deleteJourney,
-    updateJourney,
     findJourney,
     findMajorStage,
     findMinorStage,
+    findMajorStagesJourney,
+    findMinorStagesMajorStage,
     selectedJourneyId,
     setSelectedJourneyId,
+    activeHeader,
+    setActiveHeaderHandler,
   };
 
   return (
