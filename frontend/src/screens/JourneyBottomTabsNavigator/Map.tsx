@@ -100,6 +100,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         setLocations([]);
         setMapScopeList(['Journey']); // Reset the list on cleanup
         setMapScope('Journey'); // Reset the map scope to default
+        setPressedLocation(undefined);
       };
     }, [journeyId])
   );
@@ -131,6 +132,10 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setPopupText(undefined);
   }
 
+  function handleCloseMapLocationElement() {
+    setPressedLocation(undefined);
+  }
+
   async function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
     setDirectionDestination(null);
@@ -160,8 +165,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       return setRegion(await getRegionForLocations(relevantLocations));
     }
   }
-
-  // TODO: Add additional component, that lets user edit location and have a look at the component (should be at bottom, sliding up)
 
   return (
     <View style={styles.root}>
@@ -219,7 +222,12 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           );
         })}
       </MapView>
-      {pressedLocation && <MapLocationElement location={pressedLocation} />}
+      {pressedLocation && (
+        <MapLocationElement
+          location={pressedLocation}
+          onClose={handleCloseMapLocationElement}
+        />
+      )}
     </View>
   );
 };

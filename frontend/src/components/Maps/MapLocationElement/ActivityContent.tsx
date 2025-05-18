@@ -3,15 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import {
-  Activity,
-  Icons,
-  JourneyBottomTabsParamsList,
-  MajorStageStackParamList,
-} from '../../../models';
+import { Activity, Icons, JourneyBottomTabsParamsList } from '../../../models';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { StagesContext } from '../../../store/stages-context';
+import { formatAmount } from '../../../utils';
+import TextLink from '../../UI/TextLink';
 
 interface ActivityContentProps {
   minorStageId: number;
@@ -43,7 +40,24 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.textRow}>
-        <Text style={styles.header}>{activity.name}</Text>
+        <View style={[styles.rowElement, { width: '100%' }]}>
+          {!activity.link ? (
+            <Text style={styles.header} ellipsizeMode='tail' numberOfLines={1}>
+              {activity.name}
+            </Text>
+          ) : (
+            <TextLink link={activity.link} textStyle={styles.linkHeader}>
+              {activity.name}
+            </TextLink>
+          )}
+          <IconButton
+            icon={Icons.goTo}
+            onPress={handleGoToActivity}
+            color={'black'}
+            containerStyle={styles.button}
+            size={24}
+          />
+        </View>
       </View>
       {activity.description && (
         <View style={styles.textRow}>
@@ -51,12 +65,35 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
         </View>
       )}
       <View style={styles.textRow}>
-        <IconButton
-          icon={Icons.goTo}
-          onPress={handleGoToActivity}
-          color={GlobalStyles.colors.visited}
-          containerStyle={styles.button}
-        />
+        <View style={styles.rowElement}>
+          <IconButton
+            icon={Icons.location}
+            onPress={() => {}}
+            color='black'
+            containerStyle={styles.icon}
+          />
+          <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
+            {activity.place}
+          </Text>
+        </View>
+        <View style={styles.rowElement}>
+          <IconButton
+            icon={Icons.currency}
+            onPress={() => {}}
+            color='black'
+            containerStyle={styles.icon}
+          />
+          <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
+            {formatAmount(activity.costs)}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.textRow}>
+        <View style={styles.rowElement}>
+          <Text style={styles.text}>
+            {activity.booked ? 'Acvitity booked' : 'Activity not booked'}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -68,12 +105,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     width: '80%',
     maxHeight: '30%',
-    backgroundColor: GlobalStyles.colors.gray200,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'flex-end',
     borderWidth: 2,
     borderColor: GlobalStyles.colors.gray500,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
   textRow: {
     flexDirection: 'row',
@@ -82,20 +119,45 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 5,
   },
+  rowElement: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    width: '50%',
+  },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'black',
+  },
+  linkHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'black',
+    textDecorationLine: 'underline',
   },
   description: {
     marginVertical: 2,
-    color: GlobalStyles.colors.gray200,
     fontSize: 14,
     fontStyle: 'italic',
   },
+  text: {
+    marginVertical: 2,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  icon: {
+    marginVertical: 0,
+    marginHorizontal: 'auto',
+    paddingVertical: 0,
+  },
   button: {
-    marginHorizontal: 0,
+    marginHorizontal: 4,
+    marginVertical: 0,
     paddingHorizontal: 4,
+    paddingVertical: 0,
   },
 });
 

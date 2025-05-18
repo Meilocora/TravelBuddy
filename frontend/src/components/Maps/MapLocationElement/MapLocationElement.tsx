@@ -1,16 +1,29 @@
 import { ReactElement, useContext } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { Location, LocationType } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
 import ActivityContent from './ActivityContent';
+import Animated, {
+  runOnJS,
+  SlideInDown,
+  SlideOutDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 interface MapLocationElementProps {
   location: Location;
+  onClose: () => void;
 }
+
+const DISMISS_THRESHOLD = 100;
 
 const MapLocationElement: React.FC<MapLocationElementProps> = ({
   location,
+  onClose,
 }): ReactElement => {
   const stagesCtx = useContext(StagesContext);
 
@@ -52,7 +65,39 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
     }
   }
 
-  return <View style={styles.container}>{content!}</View>;
+  // Drag-to-dismiss logic
+  // TODO: Use this for ErrorComponent aswell
+  const translateY = useSharedValue(0);
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      if (event.translationY > 0) {
+        translateY.value = event.translationY;
+      }
+    })
+    .onEnd((event) => {
+      if (event.translationY > DISMISS_THRESHOLD) {
+        runOnJS(onClose)();
+      } else {
+        translateY.value = withSpring(0);
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return (
+    <GestureDetector gesture={panGesture}>
+      <Animated.View
+        style={[styles.container, animatedStyle]}
+        entering={SlideInDown}
+        exiting={SlideOutDown}
+      >
+        {content!}
+      </Animated.View>
+    </GestureDetector>
+  );
 };
 
 const styles = StyleSheet.create({
