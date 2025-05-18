@@ -3,20 +3,24 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { Activity, Icons, JourneyBottomTabsParamsList } from '../../../models';
+import {
+  Icons,
+  JourneyBottomTabsParamsList,
+  PlaceToVisit,
+} from '../../../models';
 import IconButton from '../../UI/IconButton';
 import { StagesContext } from '../../../store/stages-context';
-import { formatAmount } from '../../../utils';
 import TextLink from '../../UI/TextLink';
+import { GlobalStyles } from '../../../constants/styles';
 
-interface ActivityContentProps {
+interface PlaceContentProps {
   minorStageId: number;
-  activity: Activity;
+  place: PlaceToVisit;
 }
 
-const ActivityContent: React.FC<ActivityContentProps> = ({
+const PlaceContent: React.FC<PlaceContentProps> = ({
   minorStageId,
-  activity,
+  place,
 }): ReactElement => {
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
@@ -25,8 +29,8 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
   const majorStage = stagesCtx.findMinorStagesMajorStage(minorStageId);
   const journey = stagesCtx.findMajorStagesJourney(majorStage?.id!);
 
-  function handleGoToActivity() {
-    stagesCtx.setActiveHeaderHandler(minorStageId, 'activities');
+  function handleGoToPlace() {
+    stagesCtx.setActiveHeaderHandler(minorStageId, 'places');
     navigation.navigate('MajorStageStackNavigator', {
       screen: 'MinorStages',
       params: {
@@ -40,59 +44,55 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
     <>
       <View style={styles.textRow}>
         <View style={[styles.rowElement, { width: '100%' }]}>
-          {!activity.link ? (
+          {!place.link ? (
             <Text style={styles.header} ellipsizeMode='tail' numberOfLines={1}>
-              {activity.name}
+              {place.name}
             </Text>
           ) : (
-            <TextLink link={activity.link} textStyle={styles.linkHeader}>
-              {activity.name}
+            <TextLink link={place.link} textStyle={styles.linkHeader}>
+              {place.name}
             </TextLink>
           )}
           <IconButton
             icon={Icons.goTo}
-            onPress={handleGoToActivity}
+            onPress={handleGoToPlace}
             color={'black'}
             containerStyle={styles.button}
             size={24}
           />
         </View>
       </View>
-      {activity.description && (
+      {place.description && (
         <View style={styles.textRow}>
-          <Text style={styles.description}>{activity.description}</Text>
+          <Text style={styles.description}>{place.description}</Text>
         </View>
       )}
       <View style={styles.textRow}>
-        <View style={styles.rowElement}>
-          <IconButton
-            icon={Icons.location}
-            onPress={() => {}}
-            color='black'
-            containerStyle={styles.icon}
-          />
-          <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
-            {activity.place}
-          </Text>
-        </View>
-        <View style={styles.rowElement}>
-          <IconButton
-            icon={Icons.currency}
-            onPress={() => {}}
-            color='black'
-            containerStyle={styles.icon}
-          />
-          <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
-            {formatAmount(activity.costs)}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.textRow}>
-        <View style={styles.rowElement}>
-          <Text style={styles.text}>
-            {activity.booked ? 'Acvitity booked' : 'Activity not booked'}
-          </Text>
-        </View>
+        {place.favorite && (
+          <View style={styles.rowElement}>
+            <IconButton
+              icon={Icons.heartFilled}
+              onPress={() => {}}
+              color={GlobalStyles.colors.favorite}
+              containerStyle={styles.button}
+              size={24}
+            />
+            <Text style={styles.text}>Favourite!</Text>
+          </View>
+        )}
+
+        {place.visited && (
+          <View style={styles.rowElement}>
+            <IconButton
+              icon={Icons.checkmarkFilled}
+              onPress={() => {}}
+              color={GlobalStyles.colors.visited}
+              containerStyle={styles.button}
+              size={24}
+            />
+            <Text style={styles.text}>Visited!</Text>
+          </View>
+        )}
       </View>
     </>
   );
@@ -148,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActivityContent;
+export default PlaceContent;

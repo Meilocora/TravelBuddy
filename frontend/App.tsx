@@ -51,19 +51,17 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// TODO: combine contexts into one
-// TODO: Rework Map screen based on the new context
 // TODO: Implement a way to track the current journey, majorStage, minorStage
 // => build backend check for current stages?
 // Implement elements that show the next transportation, current Minor Stage, current Accommodation
 
-// TODO: Fix custom progress bar
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: Implement diagramms for costs in Overview
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
-// TODO: UserProfile => track data... Nr. of journeys etc.
+// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Overview => Diagramms and Statistics
+// TODO: Fix custom progress bar
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

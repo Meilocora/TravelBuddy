@@ -139,6 +139,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   async function handleChangeMapType(mapType: string) {
     setMapScope(mapType);
     setDirectionDestination(null);
+    setPressedLocation(undefined);
 
     if (mapType !== 'Journey') {
       const filteredLocations = locations.filter(
@@ -206,8 +207,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           <MapViewDirections
             apikey={GOOGLE_API_KEY}
             origin={userLocation}
-            // TODO: Remove this:
-            // origin={{ latitude: 21.0277717, longitude: 105.8215235 }}
             destination={directionDestination}
             strokeWidth={4}
             strokeColor='blue'

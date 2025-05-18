@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   runOnJS,
   SlideInDown,
@@ -14,6 +14,9 @@ import { Location, LocationType } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
 import ActivityContent from './ActivityContent';
 import TransportationContent from './TransportationContent';
+import AccommodationContent from './AccommodationContent';
+import { GlobalStyles } from '../../../constants/styles';
+import PlaceContent from './PlaceContent';
 
 interface MapLocationElementProps {
   location: Location;
@@ -31,16 +34,24 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
   let content: ReactElement;
 
   if (location.locationType === LocationType.placeToVisit) {
-    const place = stagesCtx.findPlaceToVisit(
+    const contextResponse = stagesCtx.findPlaceToVisit(
       location.minorStageName!,
       location.id!
     );
-    // TODO: Add placeContent
-    content = <Text>Place To Visit</Text>;
+    content = (
+      <PlaceContent
+        minorStageId={contextResponse?.minorStageId!}
+        place={contextResponse?.place!}
+      />
+    );
   } else if (location.locationType === LocationType.accommodation) {
     const minorStage = stagesCtx.findMinorStage(location.id!);
-    // TODO: Add accommodationContent
-    content = <Text>Minor Stage</Text>;
+    content = (
+      <AccommodationContent
+        minorStageId={minorStage!.id}
+        accommodation={minorStage?.accommodation!}
+      />
+    );
   } else if (location.locationType === LocationType.activity) {
     const contextResponse = stagesCtx.findActivity(
       location.minorStageName!,
@@ -92,25 +103,38 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
   }));
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <Animated.View
-        style={[styles.container, animatedStyle]}
-        entering={SlideInDown}
-        exiting={SlideOutDown}
-      >
-        {content!}
-      </Animated.View>
-    </GestureDetector>
+    <View style={styles.container}>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View
+          style={[styles.innerContainer, animatedStyle]}
+          entering={SlideInDown}
+          exiting={SlideOutDown}
+        >
+          {content!}
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    height: '100%',
+    maxHeight: '30%',
     width: '100%',
+    bottom: 0,
+    marginHorizontal: 'auto',
+  },
+  innerContainer: {
+    zIndex: 1,
+    marginHorizontal: 'auto',
+    width: '80%',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'flex-end',
-    marginBottom: 5,
+    borderWidth: 2,
+    borderColor: GlobalStyles.colors.gray500,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
 });
 

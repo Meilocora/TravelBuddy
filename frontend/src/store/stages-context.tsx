@@ -30,7 +30,7 @@ interface StagesContextType {
   findPlaceToVisit: (
     minorStageName: string,
     placeId: number
-  ) => PlaceToVisit | undefined;
+  ) => { minorStageId: number; place: PlaceToVisit | undefined } | undefined;
   findTransportation: (
     majorStageName: string,
     minorStageName?: string
@@ -196,9 +196,10 @@ export default function StagesContextProvider({
           (minorStage) => minorStage.title === minorStageName
         );
         if (minorStage) {
-          return minorStage.placesToVisit!.find(
+          const place = minorStage.placesToVisit!.find(
             (place) => place.id === placeId
           );
+          return { minorStageId: minorStage.id, place };
         }
       }
     }
