@@ -3,79 +3,90 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { Activity, Icons, JourneyBottomTabsParamsList } from '../../../models';
+import {
+  Icons,
+  JourneyBottomTabsParamsList,
+  Transportation,
+} from '../../../models';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { StagesContext } from '../../../store/stages-context';
-import { formatAmount } from '../../../utils';
+import { formatAmount, formatDateTimeString } from '../../../utils';
 import TextLink from '../../UI/TextLink';
 
-interface ActivityContentProps {
-  minorStageId: number;
-  activity: Activity;
+interface TransportationContentProps {
+  minorStageId?: number;
+  majorStageId?: number;
+  transportation: Transportation;
 }
 
-const ActivityContent: React.FC<ActivityContentProps> = ({
+const TransportationContent: React.FC<TransportationContentProps> = ({
   minorStageId,
-  activity,
+  majorStageId,
+  transportation,
 }): ReactElement => {
   const navigation =
     useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
 
   const stagesCtx = useContext(StagesContext);
-  const majorStage = stagesCtx.findMinorStagesMajorStage(minorStageId);
-  const journey = stagesCtx.findMajorStagesJourney(majorStage?.id!);
 
-  function handleGoToActivity() {
-    stagesCtx.setActiveHeaderHandler(minorStageId, 'activities');
-    navigation.navigate('MajorStageStackNavigator', {
-      screen: 'MinorStages',
-      params: {
-        journeyId: journey!.id,
-        majorStageId: majorStage!.id,
-      },
-    });
+  function handleGoToStage() {
+    if (minorStageId) {
+      const majorStage = stagesCtx.findMinorStagesMajorStage(minorStageId);
+      const journey = stagesCtx.findMajorStagesJourney(majorStage?.id!);
+      stagesCtx.setActiveHeaderHandler(minorStageId, 'transport');
+      navigation.navigate('MajorStageStackNavigator', {
+        screen: 'MinorStages',
+        params: {
+          journeyId: journey!.id,
+          majorStageId: majorStage!.id,
+        },
+      });
+    } else {
+      const journey = stagesCtx.findMajorStagesJourney(majorStageId!);
+      navigation.navigate('Planning', { journeyId: journey?.id! });
+    }
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.textRow}>
         <View style={[styles.rowElement, { width: '100%' }]}>
-          {!activity.link ? (
+          {!transportation.link ? (
             <Text style={styles.header} ellipsizeMode='tail' numberOfLines={1}>
-              {activity.name}
+              Transportation ({transportation.type})
             </Text>
           ) : (
-            <TextLink link={activity.link} textStyle={styles.linkHeader}>
-              {activity.name}
+            <TextLink link={transportation.link} textStyle={styles.linkHeader}>
+              Transportation ({transportation.type})
             </TextLink>
           )}
           <IconButton
             icon={Icons.goTo}
-            onPress={handleGoToActivity}
+            onPress={handleGoToStage}
             color={'black'}
             containerStyle={styles.button}
             size={24}
           />
         </View>
       </View>
-      {activity.description && (
-        <View style={styles.textRow}>
-          <Text style={styles.description}>{activity.description}</Text>
-        </View>
-      )}
       <View style={styles.textRow}>
-        <View style={styles.rowElement}>
-          <IconButton
-            icon={Icons.location}
-            onPress={() => {}}
-            color='black'
-            containerStyle={styles.icon}
-          />
-          <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
-            {activity.place}
-          </Text>
-        </View>
+        <Text style={styles.subtitle}>Departure: </Text>
+        <Text style={[styles.text, { maxWidth: '70%' }]}>
+          {`${formatDateTimeString(transportation.start_time)} at ${
+            transportation.place_of_departure
+          }`}
+        </Text>
+      </View>
+      <View style={styles.textRow}>
+        <Text style={styles.subtitle}>Arrival: </Text>
+        <Text style={[styles.text, { maxWidth: '70%' }]}>
+          {`${formatDateTimeString(transportation.arrival_time)} at ${
+            transportation.place_of_arrival
+          }`}
+        </Text>
+      </View>
+      <View style={styles.textRow}>
         <View style={styles.rowElement}>
           <IconButton
             icon={Icons.currency}
@@ -84,14 +95,7 @@ const ActivityContent: React.FC<ActivityContentProps> = ({
             containerStyle={styles.icon}
           />
           <Text style={styles.text} ellipsizeMode='tail' numberOfLines={1}>
-            {formatAmount(activity.costs)}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.textRow}>
-        <View style={styles.rowElement}>
-          <Text style={styles.text}>
-            {activity.booked ? 'Acvitity booked' : 'Activity not booked'}
+            {formatAmount(transportation.transportation_costs)}
           </Text>
         </View>
       </View>
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     marginHorizontal: 'auto',
     width: '80%',
-    maxHeight: '25%',
+    maxHeight: '30%',
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'flex-end',
     borderWidth: 2,
@@ -143,6 +147,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'italic',
   },
+  subtitle: {
+    fontWeight: 'bold',
+  },
   text: {
     marginVertical: 2,
     fontSize: 14,
@@ -161,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActivityContent;
+export default TransportationContent;

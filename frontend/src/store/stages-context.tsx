@@ -34,7 +34,13 @@ interface StagesContextType {
   findTransportation: (
     majorStageName: string,
     minorStageName?: string
-  ) => Transportation | undefined;
+  ) =>
+    | {
+        minorStageId: number | undefined;
+        majorStageId: number | undefined;
+        transportation: Transportation | undefined;
+      }
+    | undefined;
   selectedJourneyId?: number;
   setSelectedJourneyId: (id: number) => void;
   activeHeader: ActiveHeader;
@@ -205,7 +211,11 @@ export default function StagesContextProvider({
           (majorStage) => majorStage.title === majorStageName
         );
         if (majorStage) {
-          return majorStage.transportation;
+          return {
+            minorStageId: undefined,
+            majorStageId: majorStage.id,
+            transportation: majorStage.transportation,
+          };
         }
       }
     } else {
@@ -215,7 +225,11 @@ export default function StagesContextProvider({
             (minorStage) => minorStage.title === minorStageName
           );
           if (minorStage) {
-            return minorStage.transportation;
+            return {
+              minorStageId: minorStage.id,
+              majorStageId: undefined,
+              transportation: minorStage.transportation,
+            };
           }
         }
       }

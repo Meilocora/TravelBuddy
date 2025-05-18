@@ -1,9 +1,5 @@
 import { ReactElement, useContext } from 'react';
 import { StyleSheet, Text } from 'react-native';
-
-import { Location, LocationType } from '../../../utils/http';
-import { StagesContext } from '../../../store/stages-context';
-import ActivityContent from './ActivityContent';
 import Animated, {
   runOnJS,
   SlideInDown,
@@ -13,6 +9,11 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+
+import { Location, LocationType } from '../../../utils/http';
+import { StagesContext } from '../../../store/stages-context';
+import ActivityContent from './ActivityContent';
+import TransportationContent from './TransportationContent';
 
 interface MapLocationElementProps {
   location: Location;
@@ -34,9 +35,11 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
       location.minorStageName!,
       location.id!
     );
+    // TODO: Add placeContent
     content = <Text>Place To Visit</Text>;
   } else if (location.locationType === LocationType.accommodation) {
     const minorStage = stagesCtx.findMinorStage(location.id!);
+    // TODO: Add accommodationContent
     content = <Text>Minor Stage</Text>;
   } else if (location.locationType === LocationType.activity) {
     const contextResponse = stagesCtx.findActivity(
@@ -53,16 +56,17 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
     location.locationType === LocationType.transportation_arrival ||
     location.locationType === LocationType.transportation_departure
   ) {
-    if (!location.minorStageName) {
-      const transportation = stagesCtx.findTransportation(location.belonging);
-      content = <Text>Major Stage Transportation</Text>;
-    } else if (location.minorStageName) {
-      const transportation = stagesCtx.findTransportation(
-        location.belonging,
-        location.minorStageName
-      );
-      content = <Text>Minor Stage Transportation</Text>;
-    }
+    const contextResponse = stagesCtx.findTransportation(
+      location.belonging,
+      location.minorStageName
+    );
+    content = (
+      <TransportationContent
+        minorStageId={contextResponse?.minorStageId}
+        majorStageId={contextResponse?.majorStageId}
+        transportation={contextResponse?.transportation!}
+      />
+    );
   }
 
   // Drag-to-dismiss logic
@@ -106,6 +110,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     justifyContent: 'flex-end',
+    marginBottom: 5,
   },
 });
 
