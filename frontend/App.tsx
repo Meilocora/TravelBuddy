@@ -57,10 +57,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
-// TODO: Implement diagramms for costs in Overview
-// TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Overview => Diagramms and Statistics
+// TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: Fix custom progress bar
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -105,14 +104,15 @@ const BottomTabsNavigator = () => {
             backgroundColor: GlobalStyles.colors.primary500,
             borderTopWidth: 1,
             borderTopColor: GlobalStyles.colors.accent600,
-            height: 55,
+            height: 60,
             paddingTop: 5,
+            paddingBottom: 5,
           },
           tabBarActiveTintColor: GlobalStyles.colors.accent600,
           tabBarIconStyle: { color: 'white' },
           tabBarLabelStyle: {
             fontSize: 14,
-            marginBottom: 5,
+            // marginTop: 5,
           },
           headerRight: ({ tintColor }) => (
             <IconButton
@@ -197,15 +197,16 @@ const JourneyBottomTabsNavigator = () => {
             backgroundColor: GlobalStyles.colors.accent700,
             borderTopWidth: 1,
             borderTopColor: 'white',
-            height: 55,
+            height: 60,
             paddingTop: 5,
+            paddingBottom: 5,
           },
           tabBarInactiveTintColor: GlobalStyles.colors.gray200,
           tabBarActiveTintColor: 'white',
           tabBarIconStyle: { color: 'white' },
           tabBarLabelStyle: {
             fontSize: 14,
-            marginBottom: 5,
+            // marginBottom: 5,
           },
         })}
       >
