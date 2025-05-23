@@ -12,6 +12,7 @@ export interface MinorStage {
   accommodation: Accommodation;
   activities?: Activity[];
   placesToVisit?: PlaceToVisit[];
+  currentMinorStage?: boolean;
 }
 
 export interface MinorStageValues {

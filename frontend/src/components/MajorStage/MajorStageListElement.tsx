@@ -50,8 +50,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     majorStage.scheduled_start_time,
     majorStage.scheduled_end_time
   );
-
-  const title = `#${index + 1} ${majorStage.title}`;
   const isOver = parseDate(majorStage.scheduled_end_time) < new Date();
 
   const elementDetailInfo: ElementDetailInfo[] = [
@@ -126,7 +124,11 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
 
   return (
     <View
-      style={[styles.outerContainer, isOver && styles.inactiveOuterContainer]}
+      style={[
+        styles.outerContainer,
+        isOver && styles.inactiveOuterContainer,
+        majorStage.currentMajorStage && styles.currentOuterContainer,
+      ]}
     >
       <LinearGradient
         colors={['#f1dfcf', '#b8a671']}
@@ -139,7 +141,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
         >
           <View style={styles.innerContainer}>
             <View style={styles.headerContainer}>
-              <ElementTitle>{title}</ElementTitle>
+              <ElementTitle>{majorStage.title}</ElementTitle>
               {!isOver ? (
                 <IconButton
                   icon={Icons.edit}
@@ -198,6 +200,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+  },
+  currentOuterContainer: {
+    borderColor: 'gold',
   },
   inactiveOuterContainer: {
     borderColor: GlobalStyles.colors.gray400,

@@ -42,10 +42,14 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
     journey.scheduled_end_time
   );
   const majorStagesQty = journey.majorStages?.length || 0;
+  let currentCountry: string;
   let minorStagesQty = 0;
   if (journey.majorStages) {
     for (const majorStage of journey.majorStages) {
       minorStagesQty += majorStage.minorStages?.length || 0;
+      if (majorStage.currentMajorStage) {
+        currentCountry = majorStage.country.name;
+      }
     }
   }
   const countries = formatCountrynamesToString(journey.countries);
@@ -83,11 +87,14 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   }
 
   // TODO: Highlight current Country
-  // TODO: Highlight active journey
 
   return (
     <View
-      style={[styles.outerContainer, isOver && styles.inactiveOuterContainer]}
+      style={[
+        styles.outerContainer,
+        isOver && styles.inactiveOuterContainer,
+        journey.currentJourney && styles.currentOuterContainer,
+      ]}
     >
       <LinearGradient
         colors={['#ced4da', '#5b936c']}
@@ -123,6 +130,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
               }
             />
             <Text key={generateRandomString()} style={styles.country}>
+              {/* TODO: When country === currentCountry change Styling! */}
               {countries}
             </Text>
           </View>
@@ -151,6 +159,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+  },
+  currentOuterContainer: {
+    borderColor: 'gold',
   },
   inactiveOuterContainer: {
     borderColor: GlobalStyles.colors.gray400,

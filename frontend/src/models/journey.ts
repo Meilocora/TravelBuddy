@@ -12,6 +12,7 @@ export interface Journey {
   majorStages?: MajorStage[];
   costs: Costs;
   countries: CustomCountry[];
+  currentJourney?: boolean;
 }
 
 export interface JourneyValues {

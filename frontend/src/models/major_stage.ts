@@ -13,6 +13,7 @@ export interface MajorStage {
   costs: Costs;
   transportation?: Transportation;
   minorStages?: MinorStage[];
+  currentMajorStage?: boolean;
 }
 
 export interface MajorStageValues {

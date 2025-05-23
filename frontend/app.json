@@ -6,6 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "newArchEnabled": true,
+    "androidNavigationBar": {
+      "visible": "immersive"
+    },
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",

@@ -9,6 +9,7 @@ import {
   Transportation,
 } from '../models';
 import { fetchStagesData } from '../utils/http';
+import { parseDate } from '../utils';
 
 interface ActiveHeader {
   minorStageId?: number;
@@ -83,6 +84,7 @@ export default function StagesContextProvider({
 
     if (response.journeys) {
       setJourneys(response.journeys);
+      setCurrentStages();
     } else {
       return response.error;
     }
@@ -239,6 +241,73 @@ export default function StagesContextProvider({
 
   function setActiveHeaderHandler(minorStageId: number, header: string) {
     setActiveHeader({ minorStageId, header });
+  }
+
+  function setCurrentStages() {
+    const currentDate = new Date();
+    for (const journey of journeys) {
+      if (
+        parseDate(journey.scheduled_start_time) <= currentDate &&
+        currentDate <= parseDate(journey.scheduled_end_time)
+      ) {
+        setCurrentJourney(journey.id);
+        for (const majorStage of journey.majorStages || []) {
+          if (
+            parseDate(majorStage.scheduled_start_time) <= currentDate &&
+            currentDate <= parseDate(majorStage.scheduled_end_time)
+          ) {
+            setCurrentMajorStage(majorStage.id);
+            for (const minorStage of majorStage.minorStages || []) {
+              if (
+                parseDate(minorStage.scheduled_start_time) <= currentDate &&
+                currentDate <= parseDate(minorStage.scheduled_end_time)
+              ) {
+                setCurrentMinorStage(minorStage.id);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function setCurrentJourney(journeyId: number) {
+    setJourneys((prevJourneys) =>
+      prevJourneys.map((journey) =>
+        journey.id === journeyId
+          ? { ...journey, currentJourney: true }
+          : { ...journey, currentJourney: false }
+      )
+    );
+  }
+
+  function setCurrentMajorStage(majorStageId: number) {
+    setJourneys((prevJourneys) =>
+      prevJourneys.map((journey) => ({
+        ...journey,
+        majorStages: journey.majorStages?.map((majorStage) =>
+          majorStage.id === majorStageId
+            ? { ...majorStage, currentMajorStage: true }
+            : { ...majorStage, currentMajorStage: false }
+        ),
+      }))
+    );
+  }
+
+  function setCurrentMinorStage(minorStageId: number) {
+    setJourneys((prevJourneys) =>
+      prevJourneys.map((journey) => ({
+        ...journey,
+        majorStages: journey.majorStages?.map((majorStage) => ({
+          ...majorStage,
+          minorStages: majorStage.minorStages?.map((minorStage) =>
+            minorStage.id === minorStageId
+              ? { ...minorStage, currentMinorStage: true }
+              : { ...minorStage, currentMinorStage: false }
+          ),
+        })),
+      }))
+    );
   }
 
   const value = {

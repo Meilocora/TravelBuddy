@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { EventProvider } from 'react-native-outside-press';
+import * as NavigationBar from 'expo-navigation-bar';
 
 import MainGradient from './src/components/UI/LinearGradients/MainGradient';
 import AllJourneys from './src/screens/BottomTabsNavigator/AllJourneys';
@@ -392,6 +393,11 @@ const Root = () => {
 };
 
 export default function App() {
+  // Hide Android NavigationBar
+  useEffect(() => {
+    NavigationBar.setVisibilityAsync('hidden');
+  }, []);
+
   return (
     <EventProvider>
       <StatusBar style='inverted' />

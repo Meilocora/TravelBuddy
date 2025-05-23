@@ -74,7 +74,13 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   // TODO: Highlight active minor stage
 
   return (
-    <View style={[styles.container, isOver && styles.inactiveContainer]}>
+    <View
+      style={[
+        styles.container,
+        isOver && styles.inactiveContainer,
+        minorStage.currentMinorStage && styles.currentOuterContainer,
+      ]}
+    >
       <View style={styles.headerContainer}>
         <View style={styles.titleContainer}>
           <ElementTitle>{minorStage.title}</ElementTitle>
@@ -123,6 +129,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     padding: 10,
     backgroundColor: GlobalStyles.colors.complementary100,
+  },
+  currentOuterContainer: {
+    borderColor: 'gold',
+    borderWidth: 2,
   },
   inactiveContainer: {
     borderColor: GlobalStyles.colors.gray400,
