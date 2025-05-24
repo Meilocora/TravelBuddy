@@ -17,11 +17,11 @@ import {
   MinorStage,
   StackParamList,
 } from '../../../models';
-import Button from '../Button';
-import Link from '../Link';
+import Button from '../../UI/Button';
+import Link from '../../UI/Link';
 import { useState } from 'react';
 import { GlobalStyles } from '../../../constants/styles';
-import IconButton from '../IconButton';
+import IconButton from '../../UI/IconButton';
 import { formatAmount, generateRandomString, parseDate } from '../../../utils';
 import { Location, LocationType } from '../../../utils/http';
 

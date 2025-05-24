@@ -13,7 +13,7 @@ import {
   parseDate,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
-import ContentBox from '../UI/contentbox/ContentBox';
+import ContentBox from './contentbox/ContentBox';
 import IconButton from '../UI/IconButton';
 import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import AccommodationBox from './AccommodationBox';
@@ -70,8 +70,6 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
       minorStageId: minorStage.id,
     });
   }
-
-  // TODO: Highlight active minor stage
 
   return (
     <View

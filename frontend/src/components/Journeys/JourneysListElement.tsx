@@ -21,6 +21,7 @@ import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import IconButton from '../UI/IconButton';
 import ElementComment from '../UI/list/ElementComment';
 import { StagesContext } from '../../store/stages-context';
+import CountryElement from '../UI/CountryElement';
 
 interface JourneyListElementProps {
   journey: Journey;
@@ -52,7 +53,6 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
       }
     }
   }
-  const countries = formatCountrynamesToString(journey.countries);
   const isOver = parseDate(journey.scheduled_end_time) < new Date();
 
   const elementDetailInfo: ElementDetailInfo[] = [
@@ -85,8 +85,6 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   function handleEdit() {
     navigationBottomTabs.navigate('ManageJourney', { journeyId: journey.id });
   }
-
-  // TODO: Highlight current Country
 
   return (
     <View
@@ -129,10 +127,16 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
                 !isOver ? styles.detailArea : styles.inactiveDetailArea
               }
             />
-            <Text key={generateRandomString()} style={styles.country}>
-              {/* TODO: When country === currentCountry change Styling! */}
-              {countries}
-            </Text>
+            <View style={styles.countryRow}>
+              {journey.countries.map((country, index) => (
+                <CountryElement
+                  country={country}
+                  currentCountry={country.name === currentCountry}
+                  isLast={index === journey.countries.length - 1}
+                  key={generateRandomString()}
+                />
+              ))}
+            </View>
           </View>
           {/* <CustomProgressBar
             startDate={journey.scheduled_start_time}
@@ -180,9 +184,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-  country: {
-    marginVertical: 8,
-    fontStyle: 'italic',
+  countryRow: {
+    flexDirection: 'row',
   },
   detailArea: {
     borderTopWidth: 2,

@@ -12,6 +12,7 @@ export interface ElementDetailInfo {
   value: string;
   textStyle?: TextStyle;
   link?: string;
+  onPress?: () => void;
 }
 
 interface DetailProps {
@@ -36,6 +37,7 @@ const DetailArea: React.FC<DetailProps> = ({
           style={detailStyle}
           textStyle={info.textStyle}
           link={info.link}
+          onPress={info.onPress}
         />
       ))}
     </View>

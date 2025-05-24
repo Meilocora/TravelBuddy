@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { View, StyleSheet, LayoutAnimation, ViewBase } from 'react-native';
+import { View, StyleSheet, LayoutAnimation } from 'react-native';
 
 import {
   BottomTabsParamList,

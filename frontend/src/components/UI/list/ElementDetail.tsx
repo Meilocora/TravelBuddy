@@ -1,5 +1,12 @@
 import { ReactElement } from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  Pressable,
+} from 'react-native';
 import TextLink from '../TextLink';
 import { Icons } from '../../../models';
 import IconButton from '../IconButton';
@@ -11,6 +18,7 @@ interface ElementDetailProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   link?: string;
+  onPress?: () => void;
 }
 
 const ElementDetail = ({
@@ -20,6 +28,7 @@ const ElementDetail = ({
   style,
   textStyle,
   link,
+  onPress,
 }: ElementDetailProps): ReactElement => {
   return (
     <View style={[styles.container, style]}>
@@ -36,9 +45,11 @@ const ElementDetail = ({
         />
       ) : undefined}
       {!link && (
-        <Text style={textStyle} numberOfLines={1}>
-          {value}
-        </Text>
+        <Pressable onPress={onPress}>
+          <Text style={textStyle} numberOfLines={1}>
+            {value}
+          </Text>
+        </Pressable>
       )}
       {link && (
         <TextLink link={link} textStyle={textStyle}>

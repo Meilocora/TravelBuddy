@@ -2,8 +2,8 @@ import { StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
 
 import { useContext, useState } from 'react';
 import { ButtonMode, ColorScheme, MinorStage } from '../../../models';
-import Button from '../Button';
-import PlacesSelection from '../../MinorStage/ManageMinorStage/PlacesSelection';
+import Button from '../../UI/Button';
+import PlacesSelection from '../ManageMinorStage/PlacesSelection';
 import { fetchavailablePlacesByCountry } from '../../../utils/http';
 import PlacesListItem from '../../Locations/Places/PlacesListItem';
 import { generateRandomString, parseDate } from '../../../utils';

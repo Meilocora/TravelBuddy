@@ -5,16 +5,23 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ButtonMode,
   ColorScheme,
+  Icons,
   MapLocation,
   StackParamList,
   Transportation,
   TransportationType,
 } from '../../../models';
-import Button from '../Button';
-import { formatAmount, formatDateTimeString } from '../../../utils';
-import Link from '../Link';
-import TextLink from '../TextLink';
+import Button from '../../UI/Button';
+import {
+  formatAmount,
+  formatDateTimeString,
+  formatDuration,
+  parseDateAndTime,
+} from '../../../utils';
+import Link from '../../UI/Link';
+import TextLink from '../../UI/TextLink';
 import { Location, LocationType } from '../../../utils/http';
+import IconButton from '../../UI/IconButton';
 
 interface TransportElementInfopointProps {
   subtitle: string;
@@ -28,8 +35,6 @@ export const TransportElementInfopoint: React.FC<
   TransportElementInfopointProps
 > = ({ subtitle, data, location, colorScheme, transportationType }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-
-  // TODO: Also Add Duration
 
   function handleShowLocation() {
     const mapLocation: Location = {
@@ -157,6 +162,13 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
     },
   ];
 
+  // TODO: Improve styling and also add Duration for MajorStage
+  // TODO: Also add countdown for minorStage
+  const duration = formatDuration(
+    transportation.start_time,
+    transportation.arrival_time
+  );
+
   return (
     <View style={styles.container}>
       {infoPointsData.map((infoPoint, index) => (
@@ -169,9 +181,19 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
           transportationType={transportation.type as TransportationType}
         />
       ))}
-      {transportation.link && (
-        <Link link={transportation.link} style={styles.link} />
-      )}
+      <View style={{ flexDirection: 'row' }}>
+        <IconButton
+          icon={Icons.duration}
+          onPress={() => {}}
+          size={22}
+          style={styles.icon}
+          color='black'
+        />
+        <Text>{duration}</Text>
+        {transportation.link && (
+          <Link link={transportation.link} style={styles.link} />
+        )}
+      </View>
       {!minorStageIsOver && (
         <View style={styles.buttonContainer}>
           <Button
@@ -204,12 +226,18 @@ const styles = StyleSheet.create({
   },
   link: {
     marginHorizontal: 'auto',
+    marginVertical: 0,
+    paddingVertical: 0,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
+  },
+  icon: {
+    marginVertical: 0,
+    paddingVertical: 0,
   },
 });
 

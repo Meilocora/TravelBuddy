@@ -46,6 +46,8 @@ interface StagesContextType {
   setSelectedJourneyId: (id: number) => void;
   activeHeader: ActiveHeader;
   setActiveHeaderHandler: (minorStageId: number, header: string) => void;
+  // findCurrentMinorStage: () => {};
+  // findNextTransportation: () => {};
 }
 
 export const StagesContext = createContext<StagesContextType>({

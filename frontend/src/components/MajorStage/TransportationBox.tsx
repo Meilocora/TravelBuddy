@@ -11,7 +11,7 @@ import ElementTitle from '../UI/list/ElementTitle';
 import { GlobalStyles } from '../../constants/styles';
 import { Icons, Transportation, TransportationType } from '../../models';
 import IconButton from '../UI/IconButton';
-import { TransportElementInfopoint } from '../UI/contentbox/TransportationElement';
+import { TransportElementInfopoint } from '../MinorStage/contentbox/TransportationElement';
 import {
   formatAmount,
   formatCountdown,
@@ -94,9 +94,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
         <View style={styles.mainInfoContainer}>
           <View style={styles.textContainer}>
             <ElementTitle style={styles.title}>Transportation</ElementTitle>
-            <Text style={styles.comment}>
-              Time until departure: {countdown}
-            </Text>
+            <Text style={styles.comment}>Starts in: {countdown}</Text>
           </View>
           {!majorStageIsOver && (
             <View style={styles.buttonContainer}>

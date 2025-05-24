@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import { ButtonMode, ColorScheme, MinorStage, Spending } from '../../../models';
-import Button from '../Button';
+import Button from '../../UI/Button';
 import { GlobalStyles } from '../../../constants/styles';
 import { formatAmount, generateRandomString } from '../../../utils';
 

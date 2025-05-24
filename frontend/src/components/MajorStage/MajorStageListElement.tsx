@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import {
   ButtonMode,
@@ -8,6 +8,7 @@ import {
   Icons,
   JourneyBottomTabsParamsList,
   MajorStage,
+  StackParamList,
 } from '../../models';
 import {
   formatAmount,
@@ -52,6 +53,14 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   );
   const isOver = parseDate(majorStage.scheduled_end_time) < new Date();
 
+  const countryNavigation = useNavigation<NavigationProp<StackParamList>>();
+
+  function handlePressCountryName() {
+    countryNavigation.navigate('ManageCustomCountry', {
+      countryId: majorStage.country.id,
+    });
+  }
+
   const elementDetailInfo: ElementDetailInfo[] = [
     {
       icon: Icons.duration,
@@ -64,7 +73,11 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
         ? { color: GlobalStyles.colors.error200 }
         : undefined,
     },
-    { icon: Icons.country, value: majorStage.country.name },
+    {
+      icon: Icons.country,
+      value: majorStage.country.name,
+      onPress: handlePressCountryName,
+    },
   ];
 
   if (majorStage.minorStages) {
@@ -119,8 +132,6 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
       },
     });
   }
-
-  // TODO: Highlight active major stage
 
   return (
     <View
