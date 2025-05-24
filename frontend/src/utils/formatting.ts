@@ -85,7 +85,9 @@ export function formatCountdown(startDate: string): string {
   const hours = Math.floor(
     (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
   );
-  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))
+    .toString()
+    .padStart(2, '0'); // Always 2 digits
 
   if (days >= 3) {
     return `${days}d`;
@@ -103,12 +105,17 @@ export function formatDuration(startDate: string, endDate: string): string {
   const hours = Math.floor(
     (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
   );
-  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))
+    .toString()
+    .padStart(2, '0'); // Always 2 digits
 
   if (days !== 0) {
-    return `${days}d ${hours}h ${minutes}m`;
+    return `${days}d ${hours}:${minutes}h`;
   } else if (hours !== 0) {
-    return `${hours}h ${minutes}m`;
+    if (minutes === '00') {
+      return `${hours}h`;
+    }
+    return `${hours}:${minutes}h`;
   } else {
     return `${minutes}m`;
   }

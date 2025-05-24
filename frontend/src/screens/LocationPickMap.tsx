@@ -17,6 +17,9 @@ interface LocationPickMapProps {
   route: RouteProp<StackParamList, 'LocationPickMap'>;
 }
 
+// TODO: Add PlacesToVisit that already exist for the country, when adding one to a country
+// TODO: Same for Activities
+
 const LocationPickMap: React.FC<LocationPickMapProps> = ({
   navigation,
   route,

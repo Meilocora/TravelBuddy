@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 import {
   Activity,
@@ -9,7 +9,7 @@ import {
   Transportation,
 } from '../models';
 import { fetchStagesData } from '../utils/http';
-import { parseDate } from '../utils';
+import { parseDate, parseDateAndTime } from '../utils';
 
 interface ActiveHeader {
   minorStageId?: number;
@@ -46,8 +46,9 @@ interface StagesContextType {
   setSelectedJourneyId: (id: number) => void;
   activeHeader: ActiveHeader;
   setActiveHeaderHandler: (minorStageId: number, header: string) => void;
-  // findCurrentMinorStage: () => {};
-  // findNextTransportation: () => {};
+  findNextJourney: () => undefined | Journey;
+  findCurrentMinorStage: () => undefined | MinorStage;
+  findNextTransportation: () => undefined | Transportation;
 }
 
 export const StagesContext = createContext<StagesContextType>({
@@ -65,6 +66,9 @@ export const StagesContext = createContext<StagesContextType>({
   setSelectedJourneyId: () => {},
   activeHeader: {},
   setActiveHeaderHandler(minorStageId, header) {},
+  findNextJourney: () => undefined,
+  findCurrentMinorStage: () => undefined,
+  findNextTransportation: () => undefined,
 });
 
 export default function StagesContextProvider({
@@ -86,7 +90,8 @@ export default function StagesContextProvider({
 
     if (response.journeys) {
       setJourneys(response.journeys);
-      setCurrentStages();
+      // Use a callback to ensure journeys are set before running setCurrentStages
+      setTimeout(() => setCurrentStages(), 0);
     } else {
       return response.error;
     }
@@ -312,6 +317,72 @@ export default function StagesContextProvider({
     );
   }
 
+  function findNextJourney(): undefined | Journey {
+    if (journeys.length === 0) {
+      return undefined;
+    }
+    const currentJourney = journeys.find((journey) => journey.currentJourney);
+    if (currentJourney) {
+      return undefined;
+    }
+    for (const journey of journeys) {
+      if (parseDate(journey.scheduled_start_time) >= new Date()) {
+        return journey;
+      }
+    }
+    return undefined;
+  }
+
+  function findCurrentMinorStage(): undefined | MinorStage {
+    if (journeys.length === 0) {
+      return undefined;
+    }
+    for (const journey of journeys) {
+      if (journey.majorStages) {
+        for (const majorStage of journey.majorStages || []) {
+          if (majorStage.minorStages) {
+            for (const minorStage of majorStage.minorStages || []) {
+              if (minorStage.currentMinorStage) {
+                return minorStage;
+              }
+            }
+          }
+        }
+      }
+    }
+    return undefined;
+  }
+
+  function findNextTransportation(): undefined | Transportation {
+    const now = new Date();
+    const currentJourney = journeys.find((journey) => journey.currentJourney);
+    if (!currentJourney) return undefined;
+
+    const transportations: Transportation[] = [];
+
+    for (const majorStage of currentJourney.majorStages || []) {
+      if (majorStage.transportation) {
+        transportations.push(majorStage.transportation);
+      }
+      for (const minorStage of majorStage.minorStages || []) {
+        if (minorStage.transportation) {
+          transportations.push(minorStage.transportation);
+        }
+      }
+    }
+    const sortedTransportations = transportations.sort(
+      (a, b) =>
+        new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+    );
+
+    for (const transportation of sortedTransportations) {
+      if (parseDateAndTime(transportation.start_time) > now) {
+        return transportation;
+      }
+    }
+    return undefined;
+  }
+
   const value = {
     journeys,
     fetchUserData,
@@ -327,6 +398,9 @@ export default function StagesContextProvider({
     setSelectedJourneyId,
     activeHeader,
     setActiveHeaderHandler,
+    findNextJourney,
+    findCurrentMinorStage,
+    findNextTransportation,
   };
 
   return (

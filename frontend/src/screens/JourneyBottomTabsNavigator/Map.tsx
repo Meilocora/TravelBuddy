@@ -66,6 +66,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     fetchUserLocation();
   }, []);
 
+  // TODO: Rewrite logic for getting the Data of the locations
   useFocusEffect(
     useCallback(() => {
       // Fetch data when the screen comes into focus

@@ -16,6 +16,7 @@ import {
   formatAmount,
   formatCountdown,
   formatDateTimeString,
+  formatDuration,
 } from '../../utils';
 import Link from '../UI/Link';
 
@@ -45,9 +46,14 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
     setOpenInfoBox((prevState) => !prevState);
   };
 
+  const duration = formatDuration(
+    transportation.start_time,
+    transportation.arrival_time
+  );
+
   const infoPointsData = [
     {
-      subtitle: 'Departure',
+      subtitle: 'From',
       data: `${formatDateTimeString(transportation.start_time)} at ${
         transportation.place_of_departure
       }`,
@@ -58,7 +64,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
       },
     },
     {
-      subtitle: 'Arrival',
+      subtitle: 'To',
       data: `${formatDateTimeString(transportation.arrival_time)} at ${
         transportation.place_of_arrival
       }`,
@@ -70,7 +76,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
     },
     {
       subtitle: 'Details',
-      data: `${transportation.type} (${formatAmount(
+      data: `${duration} by ${transportation.type} (${formatAmount(
         transportation.transportation_costs
       )})`,
     },

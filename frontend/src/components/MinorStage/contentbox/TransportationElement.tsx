@@ -5,7 +5,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ButtonMode,
   ColorScheme,
-  Icons,
   MapLocation,
   StackParamList,
   Transportation,
@@ -16,12 +15,10 @@ import {
   formatAmount,
   formatDateTimeString,
   formatDuration,
-  parseDateAndTime,
 } from '../../../utils';
 import Link from '../../UI/Link';
 import TextLink from '../../UI/TextLink';
 import { Location, LocationType } from '../../../utils/http';
-import IconButton from '../../UI/IconButton';
 
 interface TransportElementInfopointProps {
   subtitle: string;
@@ -131,9 +128,14 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
     );
   }
 
+  const duration = formatDuration(
+    transportation.start_time,
+    transportation.arrival_time
+  );
+
   const infoPointsData = [
     {
-      subtitle: 'Departure',
+      subtitle: 'From',
       data: `${formatDateTimeString(transportation.start_time)} at ${
         transportation.place_of_departure
       }`,
@@ -144,7 +146,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
       },
     },
     {
-      subtitle: 'Arrival',
+      subtitle: 'To',
       data: `${formatDateTimeString(transportation.arrival_time)} at ${
         transportation.place_of_arrival
       }`,
@@ -156,18 +158,11 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
     },
     {
       subtitle: 'Details',
-      data: `${transportation.type} (${formatAmount(
+      data: `${duration} by ${transportation.type} (${formatAmount(
         transportation.transportation_costs
       )})`,
     },
   ];
-
-  // TODO: Improve styling and also add Duration for MajorStage
-  // TODO: Also add countdown for minorStage
-  const duration = formatDuration(
-    transportation.start_time,
-    transportation.arrival_time
-  );
 
   return (
     <View style={styles.container}>
@@ -181,19 +176,9 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
           transportationType={transportation.type as TransportationType}
         />
       ))}
-      <View style={{ flexDirection: 'row' }}>
-        <IconButton
-          icon={Icons.duration}
-          onPress={() => {}}
-          size={22}
-          style={styles.icon}
-          color='black'
-        />
-        <Text>{duration}</Text>
-        {transportation.link && (
-          <Link link={transportation.link} style={styles.link} />
-        )}
-      </View>
+      {transportation.link && (
+        <Link link={transportation.link} style={styles.link} />
+      )}
       {!minorStageIsOver && (
         <View style={styles.buttonContainer}>
           <Button
