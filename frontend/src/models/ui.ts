@@ -44,6 +44,7 @@ export enum Icons {
   car = 'car',
   settings = 'settings-outline',
   goTo = 'arrow-forward-circle',
+  arrowLeft = 'chevron-back',
 }
 
 export enum ButtonMode {

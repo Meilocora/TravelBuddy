@@ -12,6 +12,7 @@ import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
 import { StagesContext } from '../../store/stages-context';
 import { CustomCountryContext } from '../../store/custom-country-context';
+import CurrentElementList from '../../components/CurrentElements/CurrentElementList';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -99,6 +100,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 
   return (
     <View style={styles.root}>
+      <CurrentElementList />
       {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
       {content}
     </View>

@@ -16,6 +16,20 @@ interface ActiveHeader {
   header?: string;
 }
 
+interface CurrentShownElements {
+  nextJourney: boolean;
+  currentMinorStage: boolean;
+  currentAccommodation: boolean;
+  nextTransportation: boolean;
+}
+
+export enum Indicators {
+  nextJourney = 'nextJourney',
+  currentMinorStage = 'currentMinorStage',
+  currentAccommodation = 'currentAccommodation',
+  nextTransportation = 'nextTransportation',
+}
+
 interface StagesContextType {
   journeys: Journey[];
   fetchUserData: () => Promise<void | string>;
@@ -46,6 +60,11 @@ interface StagesContextType {
   setSelectedJourneyId: (id: number) => void;
   activeHeader: ActiveHeader;
   setActiveHeaderHandler: (minorStageId: number, header: string) => void;
+  shownCurrentElements: CurrentShownElements;
+  setShownCurrentElementsHandler: (
+    indicator: Indicators,
+    bool: boolean
+  ) => void;
   findNextJourney: () => undefined | Journey;
   findCurrentMinorStage: () => undefined | MinorStage;
   findNextTransportation: () => undefined | Transportation;
@@ -66,6 +85,13 @@ export const StagesContext = createContext<StagesContextType>({
   setSelectedJourneyId: () => {},
   activeHeader: {},
   setActiveHeaderHandler(minorStageId, header) {},
+  shownCurrentElements: {
+    nextJourney: false,
+    currentMinorStage: false,
+    currentAccommodation: false,
+    nextTransportation: false,
+  },
+  setShownCurrentElementsHandler: (indicator: Indicators, bool: boolean) => {},
   findNextJourney: () => undefined,
   findCurrentMinorStage: () => undefined,
   findNextTransportation: () => undefined,
@@ -84,18 +110,33 @@ export default function StagesContextProvider({
     minorStageId: undefined,
     header: undefined,
   });
+  const [shownCurrentElements, setShownCurrentElements] =
+    useState<CurrentShownElements>({
+      nextJourney: true,
+      currentMinorStage: true,
+      currentAccommodation: true,
+      nextTransportation: true,
+    });
+
+  const [shouldSetStages, setShouldSetStages] = useState(false);
 
   async function fetchUserData(): Promise<void | string> {
     const response = await fetchStagesData();
 
     if (response.journeys) {
       setJourneys(response.journeys);
-      // Use a callback to ensure journeys are set before running setCurrentStages
-      setTimeout(() => setCurrentStages(), 0);
+      setShouldSetStages(true); // trigger effect
     } else {
       return response.error;
     }
   }
+
+  useEffect(() => {
+    if (shouldSetStages && journeys.length > 0) {
+      setCurrentStages();
+      setShouldSetStages(false); // prevent loop
+    }
+  }, [shouldSetStages, journeys]);
 
   function findJourney(journeyId: number) {
     const journey = journeys.find((journey) => journey.id === journeyId);
@@ -317,6 +358,18 @@ export default function StagesContextProvider({
     );
   }
 
+  function setShownCurrentElementsHandler(
+    indicator: Indicators,
+    bool: boolean
+  ) {
+    setShownCurrentElements((prevValues) => {
+      return {
+        ...prevValues,
+        [indicator]: bool,
+      };
+    });
+  }
+
   function findNextJourney(): undefined | Journey {
     if (journeys.length === 0) {
       return undefined;
@@ -398,6 +451,8 @@ export default function StagesContextProvider({
     setSelectedJourneyId,
     activeHeader,
     setActiveHeaderHandler,
+    shownCurrentElements,
+    setShownCurrentElementsHandler,
     findNextJourney,
     findCurrentMinorStage,
     findNextTransportation,
