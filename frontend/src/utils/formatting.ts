@@ -72,7 +72,12 @@ export function formatDurationToDays(
   );
 }
 
-export function formatCountdown(startDate: string): string {
+export function formatCountdown(
+  startDate: string | undefined
+): string | undefined {
+  if (!startDate) {
+    return undefined;
+  }
   const today = new Date();
   const startDateObject = parseDateAndTime(startDate);
   const timeDifference = startDateObject.getTime() - today.getTime();
@@ -96,7 +101,13 @@ export function formatCountdown(startDate: string): string {
   return `${days}d ${hours}h ${minutes}m`;
 }
 
-export function formatDuration(startDate: string, endDate: string): string {
+export function formatDuration(
+  startDate: string | undefined,
+  endDate: string | undefined
+): string | undefined {
+  if (!startDate || !endDate) {
+    return undefined;
+  }
   const startDateObject = parseDateAndTime(startDate);
   const endDateObject = parseDateAndTime(endDate);
   const timeDifference = endDateObject.getTime() - startDateObject.getTime();

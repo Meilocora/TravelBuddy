@@ -4,9 +4,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import { Indicators, StagesContext } from '../../store/stages-context';
-import { formatAmount, formatCountdownDays } from '../../utils';
+import {
+  formatAmount,
+  formatCountdown,
+  formatCountdownDays,
+  formatDuration,
+} from '../../utils';
 import CurrentElement from './CurrentElement';
-import { JourneyBottomTabsParamsList, StackParamList } from '../../models';
+import { ColorScheme, StackParamList, TransportationType } from '../../models';
 import { LocationType, Location } from '../../utils/http';
 
 interface CurrentElementListProps {}
@@ -15,8 +20,6 @@ const CurrentElementList: React.FC<
   CurrentElementListProps
 > = (): ReactElement => {
   const journeyNavigation = useNavigation<NavigationProp<StackParamList>>();
-  const minorStageNavigation =
-    useNavigation<NativeStackNavigationProp<JourneyBottomTabsParamsList>>();
   const mapNavigation =
     useNavigation<NativeStackNavigationProp<StackParamList>>();
 
@@ -25,12 +28,18 @@ const CurrentElementList: React.FC<
   const currentJourney = stagesCtx.journeys.find(
     (journey) => journey.currentJourney
   );
+  const nextJourney = stagesCtx.findNextJourney();
+
   const currentMinorStage = stagesCtx.findCurrentMinorStage();
   const currentMajorStage = stagesCtx.findMinorStagesMajorStage(
     currentMinorStage?.id || 1
   );
   const nextTransportation = stagesCtx.findNextTransportation();
-  const nextJourney = stagesCtx.findNextJourney();
+  const connectedStage = stagesCtx.findTransportationsStage(
+    nextTransportation?.id || 0
+  );
+  const transportationStageType =
+    connectedStage && 'country' in connectedStage ? 'accent' : 'complementary';
 
   let content: ReactElement = <Text>No Information</Text>;
 
@@ -43,16 +52,19 @@ const CurrentElementList: React.FC<
   }
 
   function handleGoToMinorStage() {
-    minorStageNavigation.navigate('MajorStageStackNavigator', {
-      screen: 'MinorStages',
+    journeyNavigation.navigate('JourneyBottomTabsNavigator', {
+      screen: 'MajorStageStackNavigator',
       params: {
-        journeyId: currentJourney!.id,
-        majorStageId: currentMinorStage!.id,
+        screen: 'MinorStages',
+        params: {
+          journeyId: currentJourney!.id,
+          majorStageId: currentMajorStage!.id,
+        },
       },
     });
   }
 
-  function handleShowLocation() {
+  function handleShowAccommodation() {
     const location: Location = {
       belonging: 'Undefined',
       locationType: LocationType.accommodation,
@@ -69,6 +81,24 @@ const CurrentElementList: React.FC<
     });
   }
 
+  function handleShowTransportation() {
+    const location: Location = {
+      belonging: 'Undefined',
+      locationType: LocationType.transportation_departure,
+      transportationType: nextTransportation!.type as TransportationType,
+      data: {
+        name: nextTransportation?.type || '',
+        latitude: nextTransportation?.departure_latitude!,
+        longitude: nextTransportation?.departure_longitude!,
+      },
+    };
+
+    mapNavigation.navigate('ShowMap', {
+      location: location,
+      colorScheme: transportationStageType,
+    });
+  }
+
   if (!currentJourney) {
     if (nextJourney) {
       const countDown = formatCountdownDays(nextJourney!.scheduled_start_time);
@@ -80,38 +110,55 @@ const CurrentElementList: React.FC<
           subtitle='Next Journey'
           description={description}
           indicator={Indicators.nextJourney}
-          onPress={() => handleGoToNextJourney}
+          onPress={handleGoToNextJourney}
         />
       );
     }
   } else {
     const duration = formatCountdownDays(currentMinorStage!.scheduled_end_time);
+    const countDownTransportation = formatCountdown(
+      nextTransportation?.start_time
+    );
+    const durationTransportation = formatDuration(
+      nextTransportation?.start_time,
+      nextTransportation?.arrival_time
+    );
     content = (
       <>
         {currentMinorStage && (
           <>
             <CurrentElement
-              title={currentMinorStage!.title}
+              title={`"${currentMinorStage!.title}"`}
               subtitle='Current Minor Stage'
               description={`${
                 currentMajorStage!.country.name
               } for ${duration} days`}
               indicator={Indicators.currentMinorStage}
-              onPress={() => handleGoToMinorStage}
+              onPress={handleGoToMinorStage}
+              colorScheme={ColorScheme.complementary}
             />
             <CurrentElement
-              title={currentMinorStage!.accommodation.place}
+              title={`"${currentMinorStage!.accommodation.place}"`}
               subtitle='Current Accommodation'
               description={formatAmount(currentMinorStage.accommodation.costs)}
               indicator={Indicators.currentAccommodation}
-              onPress={() => handleShowLocation}
+              onPress={handleShowAccommodation}
+              colorScheme={ColorScheme.complementary}
             />
           </>
         )}
+        {nextTransportation && (
+          <CurrentElement
+            title={`${nextTransportation.type} (${durationTransportation})`}
+            subtitle='Next Transportation'
+            description={`In ${countDownTransportation}`}
+            indicator={Indicators.nextTransportation}
+            onPress={handleShowTransportation}
+            colorScheme={transportationStageType as ColorScheme}
+          />
+        )}
       </>
     );
-
-    // TODO: Countdown to next Transportation
   }
 
   return <View style={styles.container}>{content}</View>;

@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-import { Icons } from '../../models';
+import { ColorScheme, Icons } from '../../models';
 import { Indicators, StagesContext } from '../../store/stages-context';
 import { GlobalStyles } from '../../constants/styles';
 import IconButton from '../UI/IconButton';
@@ -20,7 +20,8 @@ interface CurrentElementProps {
   subtitle: string;
   description: string;
   indicator: Indicators;
-  onPress: () => {};
+  colorScheme?: ColorScheme;
+  onPress: () => void;
 }
 
 const DISMISS_THRESHOLD = 70;
@@ -30,9 +31,18 @@ const CurrentElement: React.FC<CurrentElementProps> = ({
   subtitle,
   description,
   indicator,
+  colorScheme = ColorScheme.primary,
   onPress,
 }): ReactElement => {
   const stagesCtx = useContext(StagesContext);
+
+  let elementStyle = { backgroundColor: GlobalStyles.colors.primary100 };
+  if (colorScheme === ColorScheme.complementary) {
+    elementStyle = { backgroundColor: GlobalStyles.colors.complementary100 };
+  }
+  if (colorScheme === ColorScheme.accent) {
+    elementStyle = { backgroundColor: GlobalStyles.colors.accent100 };
+  }
 
   // Drag-to-dismiss logic
   function handleClose() {
@@ -69,13 +79,13 @@ const CurrentElement: React.FC<CurrentElementProps> = ({
       {stagesCtx.shownCurrentElements[indicator] ? (
         <GestureDetector gesture={panGesture}>
           <Animated.View
-            style={[styles.container, animatedStyle]}
+            style={[styles.container, elementStyle, animatedStyle]}
             entering={SlideInRight}
             exiting={SlideOutRight}
           >
             <Pressable
               style={({ pressed }) => pressed && styles.pressed}
-              onPress={() => onPress}
+              onPress={onPress}
               android_ripple={{ color: GlobalStyles.colors.primary100 }}
             >
               <View style={styles.innerContainer}>
@@ -105,11 +115,11 @@ const CurrentElement: React.FC<CurrentElementProps> = ({
           </Animated.View>
         </GestureDetector>
       ) : (
-        <View style={styles.notShownContainer}>
+        <View style={[styles.notShownContainer, elementStyle]}>
           <IconButton
             icon={Icons.arrowLeft}
             onPress={handleOpen}
-            size={30}
+            size={20}
             color='black'
             containerStyle={styles.icon}
           />
@@ -128,7 +138,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 5,
     borderTopLeftRadius: 25,
     borderBottomLeftRadius: 25,
-    backgroundColor: GlobalStyles.colors.gray50,
     overflow: 'hidden',
     width: 200,
     height: 75,
@@ -162,13 +171,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 25,
     backgroundColor: GlobalStyles.colors.gray50,
     justifyContent: 'center',
-    height: 75,
+    height: 30,
     width: 30,
     alignSelf: 'flex-end',
   },
   icon: {
     margin: 0,
-    marginHorizontal: -5,
+    marginHorizontal: 'auto',
     padding: 0,
   },
 });

@@ -81,7 +81,6 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
   }
 
   // Drag-to-dismiss logic
-  // TODO: Use this for ErrorComponent aswell
   const translateY = useSharedValue(0);
 
   const panGesture = Gesture.Pan()

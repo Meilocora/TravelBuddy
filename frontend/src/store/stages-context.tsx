@@ -68,6 +68,9 @@ interface StagesContextType {
   findNextJourney: () => undefined | Journey;
   findCurrentMinorStage: () => undefined | MinorStage;
   findNextTransportation: () => undefined | Transportation;
+  findTransportationsStage: (
+    transportationId: number
+  ) => undefined | MajorStage | MinorStage;
 }
 
 export const StagesContext = createContext<StagesContextType>({
@@ -95,6 +98,7 @@ export const StagesContext = createContext<StagesContextType>({
   findNextJourney: () => undefined,
   findCurrentMinorStage: () => undefined,
   findNextTransportation: () => undefined,
+  findTransportationsStage: () => undefined,
 });
 
 export default function StagesContextProvider({
@@ -117,6 +121,44 @@ export default function StagesContextProvider({
       currentAccommodation: true,
       nextTransportation: true,
     });
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    timers.push(
+      setTimeout(() => {
+        setShownCurrentElements((prev) => ({
+          ...prev,
+          nextJourney: false,
+        }));
+      }, 1000)
+    );
+    timers.push(
+      setTimeout(() => {
+        setShownCurrentElements((prev) => ({
+          ...prev,
+          nextTransportation: false,
+        }));
+      }, 1500)
+    );
+    timers.push(
+      setTimeout(() => {
+        setShownCurrentElements((prev) => ({
+          ...prev,
+          currentAccommodation: false,
+        }));
+      }, 2000)
+    );
+    timers.push(
+      setTimeout(() => {
+        setShownCurrentElements((prev) => ({
+          ...prev,
+          currentMinorStage: false,
+        }));
+      }, 2500)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const [shouldSetStages, setShouldSetStages] = useState(false);
 
@@ -436,6 +478,30 @@ export default function StagesContextProvider({
     return undefined;
   }
 
+  function findTransportationsStage(
+    transportationId: number
+  ): MinorStage | MajorStage | undefined {
+    for (const journey of journeys) {
+      for (const majorStage of journey.majorStages || []) {
+        if (
+          majorStage.transportation &&
+          majorStage.transportation.id === transportationId
+        ) {
+          return majorStage;
+        }
+        for (const minorStage of majorStage.minorStages || []) {
+          if (
+            minorStage.transportation &&
+            minorStage.transportation.id === transportationId
+          ) {
+            return minorStage;
+          }
+        }
+      }
+    }
+    return undefined;
+  }
+
   const value = {
     journeys,
     fetchUserData,
@@ -456,6 +522,7 @@ export default function StagesContextProvider({
     findNextJourney,
     findCurrentMinorStage,
     findNextTransportation,
+    findTransportationsStage,
   };
 
   return (

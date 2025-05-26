@@ -52,8 +52,7 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// TODO: Implement elements that show the next transportation, current Minor Stage, current Accommodation
-
+// TODO: Rewrite Maps screens, so only the stagesCtx is being used
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme

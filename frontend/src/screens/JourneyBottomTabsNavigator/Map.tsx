@@ -67,6 +67,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   }, []);
 
   // TODO: Rewrite logic for getting the Data of the locations
+  // TODO: Visited Places or places from former stages should get opacity
+
   useFocusEffect(
     useCallback(() => {
       // Fetch data when the screen comes into focus
