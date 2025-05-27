@@ -1,6 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { MapMarker, Marker } from 'react-native-maps';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Location } from '../../utils/http';
 import ActivityIcon from '../../../assets/activity.svg';
@@ -45,15 +45,8 @@ interface MapsMarkerProps {
 }
 
 const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
-  const {
-    minorStageName,
-    description,
-    belonging,
-    locationType,
-    transportationType,
-    data,
-    color,
-  } = location;
+  const { description, locationType, transportationType, data, color, done } =
+    location;
 
   const markerRef = useRef<MapMarker>(null);
 
@@ -64,6 +57,8 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   }
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
+
+  console.log(iconKey);
 
   return (
     <Marker
@@ -81,11 +76,18 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
             width={width}
             height={heigth}
             fill={color || 'black'}
+            style={done && styles.iconDone}
           />
         )}
       </View>
     </Marker>
   );
 };
+
+const styles = StyleSheet.create({
+  iconDone: {
+    opacity: 0.5,
+  },
+});
 
 export default MapsMarker;

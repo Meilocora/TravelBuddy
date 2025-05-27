@@ -53,7 +53,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
 
   const infoPointsData = [
     {
-      subtitle: 'From',
+      subtitle: 'Departure',
       data: `${formatDateTimeString(transportation.start_time)} at ${
         transportation.place_of_departure
       }`,
@@ -64,7 +64,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
       },
     },
     {
-      subtitle: 'To',
+      subtitle: 'Arrival',
       data: `${formatDateTimeString(transportation.arrival_time)} at ${
         transportation.place_of_arrival
       }`,

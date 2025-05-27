@@ -113,6 +113,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           containerStyle={styles.modal}
         />
       )}
+      {/* TODO: Error from this component, when trying to edit an existing place */}
       <GooglePlacesAutocomplete
         placeholder='Search for a location'
         fetchDetails={true}

@@ -15,6 +15,7 @@ import {
   formatAmount,
   formatDateTimeString,
   formatDuration,
+  parseDateAndTime,
 } from '../../../utils';
 import Link from '../../UI/Link';
 import TextLink from '../../UI/TextLink';
@@ -26,11 +27,12 @@ interface TransportElementInfopointProps {
   location?: MapLocation;
   colorScheme: 'accent' | 'complementary';
   transportationType: TransportationType;
+  done?: boolean;
 }
 
 export const TransportElementInfopoint: React.FC<
   TransportElementInfopointProps
-> = ({ subtitle, data, location, colorScheme, transportationType }) => {
+> = ({ subtitle, data, location, colorScheme, transportationType, done }) => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   function handleShowLocation() {
@@ -44,6 +46,7 @@ export const TransportElementInfopoint: React.FC<
         longitude: location?.lng!,
       },
       transportationType: transportationType,
+      done: done ? done : false,
     };
     navigation.navigate('ShowMap', {
       location: mapLocation,
@@ -132,10 +135,13 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
     transportation.start_time,
     transportation.arrival_time
   );
+  const doneStart = parseDateAndTime(transportation.start_time) < new Date();
+  const doneArrival =
+    parseDateAndTime(transportation.arrival_time) < new Date();
 
   const infoPointsData = [
     {
-      subtitle: 'From',
+      subtitle: 'Departure',
       data: `${formatDateTimeString(transportation.start_time)} at ${
         transportation.place_of_departure
       }`,
@@ -144,9 +150,10 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
         lat: transportation.departure_latitude,
         lng: transportation.departure_longitude,
       },
+      done: doneStart,
     },
     {
-      subtitle: 'To',
+      subtitle: 'Arrival',
       data: `${formatDateTimeString(transportation.arrival_time)} at ${
         transportation.place_of_arrival
       }`,
@@ -155,6 +162,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
         lat: transportation.arrival_latitude,
         lng: transportation.arrival_longitude,
       },
+      done: doneArrival,
     },
     {
       subtitle: 'Details',

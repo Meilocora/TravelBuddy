@@ -39,7 +39,7 @@ const MapLocationListElement: React.FC<MapLocationListElementProps> = ({
   selected,
   onPress,
 }): ReactElement => {
-  const { locationType, transportationType, color } = location;
+  const { locationType, transportationType, color, done } = location;
 
   // Construct the icon key
   let iconKey: string = locationType;
@@ -59,7 +59,7 @@ const MapLocationListElement: React.FC<MapLocationListElementProps> = ({
           width={width}
           height={heigth}
           fill={color || 'black'}
-          style={styles.icon}
+          style={[styles.icon, done && styles.iconDone]}
         />
       )}
       <Text numberOfLines={1}>{location.data.name}</Text>
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
     alignSelf: 'center',
+  },
+  iconDone: {
+    opacity: 0.5,
   },
 });
 

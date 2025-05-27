@@ -69,6 +69,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
         latitude: place.latitude,
         longitude: place.longitude,
       },
+      done: place.visited,
     };
 
     navigation.navigate('ShowMap', {

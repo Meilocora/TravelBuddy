@@ -52,7 +52,8 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// TODO: Rewrite Maps screens, so only the stagesCtx is being used
+// TODO: Error when, trying to get to LocationPickMap
+
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
@@ -110,7 +111,6 @@ const BottomTabsNavigator = () => {
           tabBarIconStyle: { color: 'white' },
           tabBarLabelStyle: {
             fontSize: 14,
-            // marginTop: 5,
           },
           headerRight: ({ tintColor }) => (
             <IconButton

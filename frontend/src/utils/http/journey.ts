@@ -139,6 +139,7 @@ export interface Location {
   belonging: string;
   locationType: LocationType;
   data: LocationData;
+  done: boolean;
   minorStageName?: string;
   description?: string;
   transportationType?: TransportationType;

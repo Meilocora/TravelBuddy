@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 from db import db
 from app.routes.route_protection import token_required
 from app.routes.util import parseDate, formatDateToString
@@ -225,6 +226,7 @@ def delete_journey(current_user, journeyId):
 @journey_bp.route('/get-journeys-locations/<int:journeyId>', methods=['GET'])
 @token_required
 def get_journeys_locations(current_user, journeyId):
+    currentDate = datetime.now()
     try: 
         major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId)).scalars().all()
         if not major_stages:
@@ -246,7 +248,8 @@ def get_journeys_locations(current_user, journeyId):
                             'name': major_stage_transportation.place_of_departure,
                             'latitude': major_stage_transportation.departure_latitude if major_stage_transportation.departure_latitude else None,
                             'longitude': major_stage_transportation.departure_longitude if major_stage_transportation.departure_longitude else None,
-                        }
+                        },
+                        'done': major_stage_transportation.start_time < currentDate 
                     })   
                 if major_stage_transportation.arrival_latitude and major_stage_transportation.arrival_longitude: 
                     locations.append({
@@ -258,7 +261,8 @@ def get_journeys_locations(current_user, journeyId):
                             'name': major_stage_transportation.place_of_arrival,
                             'latitude': major_stage_transportation.arrival_latitude if major_stage_transportation.arrival_latitude else None,
                             'longitude': major_stage_transportation.arrival_longitude if major_stage_transportation.arrival_longitude else None,
-                        }
+                        },
+                        'done': major_stage_transportation.arrival_time < currentDate 
                     })
                 
             minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=major_stage.id)).scalars().all()
@@ -277,7 +281,8 @@ def get_journeys_locations(current_user, journeyId):
                                         'name': minor_stage_transportation.place_of_departure,
                                         'latitude': minor_stage_transportation.departure_latitude if minor_stage_transportation.departure_latitude else None,
                                         'longitude': minor_stage_transportation.departure_longitude if minor_stage_transportation.departure_longitude else None,
-                                    }
+                                    },
+                                    'done': minor_stage_transportation.start_time < currentDate 
                                 })
                         if minor_stage_transportation.arrival_latitude and minor_stage_transportation.arrival_longitude:
                             locations.append({
@@ -290,7 +295,8 @@ def get_journeys_locations(current_user, journeyId):
                                     'name': minor_stage_transportation.place_of_arrival,
                                     'latitude': minor_stage_transportation.arrival_latitude if minor_stage_transportation.arrival_latitude else None,
                                     'longitude': minor_stage_transportation.arrival_longitude if minor_stage_transportation.arrival_longitude else None,
-                                }
+                                },
+                                'done': minor_stage_transportation.arrival_time < currentDate 
                             })
                     minor_stage_accommodation = db.session.execute(db.select(Accommodation).filter_by(minor_stage_id=minor_stage.id)).scalars().first()
                     if minor_stage_accommodation.latitude and minor_stage_accommodation.longitude:
@@ -303,7 +309,8 @@ def get_journeys_locations(current_user, journeyId):
                                 'name': minor_stage_accommodation.place,
                                 'latitude': minor_stage_accommodation.latitude if minor_stage_accommodation.latitude else None,
                                 'longitude': minor_stage_accommodation.longitude if minor_stage_accommodation.longitude else None,
-                            }
+                            },
+                            'done': minor_stage.scheduled_end_time < currentDate
                         })
                     activities = db.session.execute(db.select(Activity).filter_by(minor_stage_id=minor_stage.id)).scalars().all()
                     if activities:
@@ -319,7 +326,8 @@ def get_journeys_locations(current_user, journeyId):
                                         'name': activity.place,
                                         'latitude': activity.latitude if activity.latitude else None,
                                         'longitude': activity.longitude if activity.longitude else None,
-                                    }
+                                    },
+                                    'done': minor_stage.scheduled_end_time < currentDate
                                 })
                     places_to_visit = db.session.execute(db.select(PlaceToVisit).filter_by(minor_stage_id=minor_stage.id)).scalars().all()
                     if places_to_visit:
@@ -335,7 +343,8 @@ def get_journeys_locations(current_user, journeyId):
                                         'name': place_to_visit.name,
                                         'latitude': place_to_visit.latitude if place_to_visit.latitude else None,
                                         'longitude': place_to_visit.longitude if place_to_visit.longitude else None,
-                                    }
+                                    },
+                                    'done': place_to_visit.visited
                                 })
         return jsonify({'status': 200, 'locations': locations, 'majorStageNames': majorStageNames})
     except Exception as e:

@@ -27,6 +27,7 @@ import { Location, LocationType } from '../../../utils/http';
 
 interface ActivityListElementProps {
   activity: Activity;
+  minorStage: MinorStage;
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
   isOver: boolean;
@@ -34,6 +35,7 @@ interface ActivityListElementProps {
 
 const ActivityListElement: React.FC<ActivityListElementProps> = ({
   activity,
+  minorStage,
   handleEdit,
   handleDelete,
   isOver,
@@ -51,6 +53,7 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
         latitude: activity.latitude!,
         longitude: activity.longitude!,
       },
+      done: parseDate(minorStage.scheduled_end_time) < new Date(),
     };
 
     navigation.navigate('ShowMap', {
@@ -231,6 +234,7 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
           {minorStage.activities!.map((activity) => (
             <ActivityListElement
               activity={activity}
+              minorStage={minorStage}
               handleEdit={handleEdit}
               handleDelete={handleDelete}
               key={generateRandomString()}

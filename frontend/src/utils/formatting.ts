@@ -34,11 +34,14 @@ export function parseDate(dateString: string): Date {
   return new Date(year, month - 1, day); // Months are zero-based in JavaScript Date
 }
 
-export function formatDateString(date: string): string {
+export function formatDateString(date: string | undefined): string | undefined {
+  if (!date) {
+    return undefined;
+  }
   const dateObject = parseDate(date);
-  const day = String(dateObject.getDate()).padStart(2, '0');
-  const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const year = dateObject.getFullYear();
+  const day = String(dateObject!.getDate()).padStart(2, '0');
+  const month = String(dateObject!.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const year = dateObject!.getFullYear();
   return `${day}.${month}.${year}`;
 }
 
@@ -67,7 +70,7 @@ export function formatDurationToDays(
   const endDateObject = parseDate(endDate);
 
   return Math.round(
-    (endDateObject.getTime() - startDateObject.getTime()) /
+    (endDateObject!.getTime() - startDateObject!.getTime()) /
       (1000 * 60 * 60 * 24)
   );
 }
@@ -132,7 +135,10 @@ export function formatDuration(
   }
 }
 
-export function formatCountdownDays(startDate: string) {
+export function formatCountdownDays(startDate: string | undefined) {
+  if (!startDate) {
+    return undefined;
+  }
   const today = formatDate(new Date());
   const daysLeft = formatDurationToDays(today, startDate);
   return daysLeft;
@@ -143,9 +149,9 @@ export function formatProgress(startDate: string, endDate: string): Float {
   const startDateObject = parseDate(startDate);
   const endDateObject = parseDate(endDate);
 
-  if (today < startDateObject) {
+  if (today < startDateObject!) {
     return 0;
-  } else if (today > endDateObject) {
+  } else if (today > endDateObject!) {
     return 1;
   } else {
     const totalDuration = formatDurationToDays(startDate, endDate);

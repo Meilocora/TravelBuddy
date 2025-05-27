@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { Icons, MinorStage, StackParamList } from '../../models';
 import { StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
-import { formatAmount } from '../../utils';
+import { formatAmount, parseDate } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
@@ -27,6 +27,7 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
         latitude: minorStage.accommodation.latitude,
         longitude: minorStage.accommodation.longitude,
       },
+      done: parseDate(minorStage.scheduled_end_time) < new Date(),
     };
 
     navigation.navigate('ShowMap', {
@@ -43,16 +44,18 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
     elementCounter += 1;
   }
 
+  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
   const elementWith = `${100 / elementCounter}%`;
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
+      <View
+        style={isOver ? styles.inactiveTitleContainer : styles.titleContainer}
+      >
         <Text style={styles.title}>Accommodation</Text>
       </View>
       <View style={styles.row}>
         <View style={{ width: `${100 / elementCounter}%` }}>
-          {/* <Text style={styles.subtitle}>Place</Text> */}
           <IconButton
             icon={Icons.place}
             onPress={() => {}}
@@ -72,7 +75,6 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
         </View>
         {minorStage.accommodation.costs > 0 && (
           <View style={{ width: `${100 / elementCounter}%` }}>
-            {/* <Text style={styles.subtitle}>Price</Text> */}
             <IconButton
               icon={Icons.currency}
               onPress={() => {}}
@@ -141,7 +143,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: GlobalStyles.colors.gray500,
+  },
+  inactiveTitleContainer: {
+    position: 'absolute',
+    left: '50%',
+    top: -12,
+    transform: [{ translateX: -60 }],
+    backgroundColor: GlobalStyles.colors.gray100,
+    paddingHorizontal: 10,
   },
   row: {
     marginTop: 10,

@@ -9,6 +9,7 @@ import {
   formatCountdown,
   formatCountdownDays,
   formatDuration,
+  parseDate,
 } from '../../utils';
 import CurrentElement from './CurrentElement';
 import { ColorScheme, StackParamList, TransportationType } from '../../models';
@@ -73,6 +74,9 @@ const CurrentElementList: React.FC<
         latitude: currentMinorStage?.accommodation.latitude!,
         longitude: currentMinorStage?.accommodation.longitude!,
       },
+      done: currentMinorStage
+        ? parseDate(currentMinorStage.scheduled_end_time) < new Date()
+        : false,
     };
 
     mapNavigation.navigate('ShowMap', {
@@ -91,6 +95,9 @@ const CurrentElementList: React.FC<
         latitude: nextTransportation?.departure_latitude!,
         longitude: nextTransportation?.departure_longitude!,
       },
+      done: nextTransportation
+        ? parseDate(nextTransportation.start_time) < new Date()
+        : false,
     };
 
     mapNavigation.navigate('ShowMap', {
@@ -115,7 +122,7 @@ const CurrentElementList: React.FC<
       );
     }
   } else {
-    const duration = formatCountdownDays(currentMinorStage!.scheduled_end_time);
+    const duration = formatCountdownDays(currentMinorStage?.scheduled_end_time);
     const countDownTransportation = formatCountdown(
       nextTransportation?.start_time
     );

@@ -139,7 +139,7 @@ export default function StagesContextProvider({
           ...prev,
           nextTransportation: false,
         }));
-      }, 1500)
+      }, 1200)
     );
     timers.push(
       setTimeout(() => {
@@ -147,7 +147,7 @@ export default function StagesContextProvider({
           ...prev,
           currentAccommodation: false,
         }));
-      }, 2000)
+      }, 1400)
     );
     timers.push(
       setTimeout(() => {
@@ -155,7 +155,7 @@ export default function StagesContextProvider({
           ...prev,
           currentMinorStage: false,
         }));
-      }, 2500)
+      }, 1600)
     );
     return () => timers.forEach(clearTimeout);
   }, []);

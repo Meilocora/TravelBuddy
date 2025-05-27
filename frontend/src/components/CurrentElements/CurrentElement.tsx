@@ -65,6 +65,7 @@ const CurrentElement: React.FC<CurrentElementProps> = ({
     .onEnd((event) => {
       if (event.translationX > DISMISS_THRESHOLD) {
         runOnJS(handleClose)();
+        translateX.value = 0;
       } else {
         translateX.value = withTiming(0);
       }
@@ -146,6 +147,8 @@ const styles = StyleSheet.create({
     opacity: 0.75,
   },
   innerContainer: {
+    height: '100%',
+    width: '100%',
     paddingVertical: 5,
     paddingRight: 10,
     paddingLeft: 30,

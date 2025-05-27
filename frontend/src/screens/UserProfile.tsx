@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { UserProfileRouteProp } from '../models';
 import InfoText from '../components/UI/InfoText';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
+import CurrentElementList from '../components/CurrentElements/CurrentElementList';
 
 interface UserProfileProps {
   route: UserProfileRouteProp;
@@ -21,6 +22,7 @@ const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   return (
     <View style={styles.root}>
       <MainGradient />
+      <CurrentElementList />
       <View>
         <InfoText content='User Profile' />
       </View>

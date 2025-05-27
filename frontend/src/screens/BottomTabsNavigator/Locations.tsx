@@ -6,6 +6,7 @@ import { CustomCountryContext } from '../../store/custom-country-context';
 import { RouteProp } from '@react-navigation/native';
 import { BottomTabsParamList } from '../../models';
 import Popup from '../../components/UI/Popup';
+import CurrentElementList from '../../components/CurrentElements/CurrentElementList';
 
 interface LocationsProps {
   route: RouteProp<BottomTabsParamList, 'Locations'>;
@@ -39,6 +40,7 @@ const Locations: React.FC<LocationsProps> = ({ route }): ReactElement => {
 
   return (
     <View style={styles.root}>
+      <CurrentElementList />
       {popupText && <Popup content={popupText} onClose={handleClosePopup} />}
       <CustomCountries />
     </View>

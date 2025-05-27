@@ -19,9 +19,6 @@ const ShowMap: React.FC<ShowMapProps> = ({
   route,
 }): ReactElement => {
   const location = route.params.location;
-
-  // TODO: Also add Element with data and link here!
-
   const region: Region = {
     latitude: location.data.latitude,
     longitude: location.data.longitude,
