@@ -12,6 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { EventProvider } from 'react-native-outside-press';
 import * as NavigationBar from 'expo-navigation-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useContext, useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import MainGradient from './src/components/UI/LinearGradients/MainGradient';
 import AllJourneys from './src/screens/BottomTabsNavigator/AllJourneys';
@@ -33,8 +36,6 @@ import Planning from './src/screens/JourneyBottomTabsNavigator/Planning';
 import Overview from './src/screens/JourneyBottomTabsNavigator/Overview';
 import Map from './src/screens/JourneyBottomTabsNavigator/Map';
 import AuthContextProvider, { AuthContext } from './src/store/auth-context';
-import { useContext, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthScreen from './src/screens/Auth/AuthScreen';
 import CustomCountryContextProvider from './src/store/custom-country-context';
 import ManageCustomCountry from './src/screens/ManageCustomCountry';
@@ -50,9 +51,10 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// TODO: Error when, trying to get to LocationPickMap
+// TODO: Date is being transformed wrong (+1 month) at Transportationelement
+// TODO: Check forms, that work for major and minor stages (=> reset values!)
+// TODO: No data when editing place from inside minorstage
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry

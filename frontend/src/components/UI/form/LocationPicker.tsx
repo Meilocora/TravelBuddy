@@ -79,6 +79,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       hasLocation: hasInitialLocation,
       colorScheme: colorScheme,
     });
+    setIsLoading(false);
   }
 
   function handleResetLocation() {
@@ -116,10 +117,9 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-end',
-    marginVertical: 'auto',
   },
   button: {
-    marginVertical: '15%',
+    paddingBottom: 10,
   },
 });
 

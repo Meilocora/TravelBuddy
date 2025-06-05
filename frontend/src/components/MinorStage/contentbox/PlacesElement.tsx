@@ -6,7 +6,7 @@ import Button from '../../UI/Button';
 import PlacesSelection from '../ManageMinorStage/PlacesSelection';
 import { fetchavailablePlacesByCountry } from '../../../utils/http';
 import PlacesListItem from '../../Locations/Places/PlacesListItem';
-import { generateRandomString, parseDate } from '../../../utils';
+import { generateRandomString, validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
 
 interface PlacesElementProps {
@@ -27,7 +27,7 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   const majorStage = stagesCtx.findMinorStagesMajorStage(minorStage.id);
   const countryName = majorStage!.country.name;
 
-  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(minorStage.scheduled_end_time);
 
   let defaultPlacesNames: string[] = [];
   if (minorStage.placesToVisit) {

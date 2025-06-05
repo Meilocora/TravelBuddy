@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { Icons, MinorStage, StackParamList } from '../../models';
 import { StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
-import { formatAmount, parseDate } from '../../utils';
+import { formatAmount, parseDate, validateIsOver } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
@@ -44,7 +44,7 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
     elementCounter += 1;
   }
 
-  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(minorStage.scheduled_end_time);
   const elementWith = `${100 / elementCounter}%`;
 
   return (

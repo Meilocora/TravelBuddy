@@ -21,7 +21,7 @@ import ComplementaryGradient from '../../../components/UI/LinearGradients/Comple
 import { GlobalStyles } from '../../../constants/styles';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import MinorStageList from '../../../components/MinorStage/MinorStageList';
-import { parseDate } from '../../../utils';
+import { parseDate, validateIsOver } from '../../../utils';
 import InfoText from '../../../components/UI/InfoText';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import { StagesContext } from '../../../store/stages-context';
@@ -46,7 +46,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   const stagesCtx = useContext(StagesContext);
   const majorStage = stagesCtx.findMajorStage(majorStageId);
-  const isOver = parseDate(majorStage!.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(majorStage!.scheduled_end_time);
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();

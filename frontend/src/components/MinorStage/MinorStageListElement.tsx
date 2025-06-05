@@ -10,7 +10,7 @@ import {
   formatAmount,
   formatDateString,
   formatDurationToDays,
-  parseDate,
+  validateIsOver,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import ContentBox from './contentbox/ContentBox';
@@ -47,7 +47,7 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   );
   const moneyAvailable = formatAmount(minorStage.costs.budget);
   const moneyPlanned = formatAmount(minorStage.costs.spent_money);
-  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(minorStage.scheduled_end_time);
 
   const elementDetailInfo: ElementDetailInfo[] = [
     {

@@ -1,16 +1,22 @@
 import 'react-native-get-random-values';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ReactElement, useLayoutEffect, useState } from 'react';
+import React, { ReactElement, useLayoutEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
-import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView, {
+  LatLng,
+  MapPressEvent,
+  Marker,
+  Region,
+} from 'react-native-maps';
+import GooglePlacesTextInput from 'react-native-google-places-textinput';
 
 import { ColorScheme, StackParamList } from '../models';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
 import { GlobalStyles } from '../constants/styles';
 import Button from '../components/UI/Button';
+import { getPlaceDetails } from '../utils/location';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
@@ -55,17 +61,16 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     setShowModal(true);
   }
 
-  function handleSearchResult(data: any, details: any) {
-    if (details) {
-      const { lat, lng } = details.geometry.location;
+  async function handleSearchResult(place: any) {
+    if (place) {
+      const latLng: LatLng = await getPlaceDetails(place);
       setRegion({
-        latitude: lat,
-        longitude: lng,
+        latitude: latLng.latitude,
+        longitude: latLng.longitude,
         latitudeDelta: 0.1,
         longitudeDelta: 0.04,
       });
-
-      setTitle(details.name);
+      setTitle(place.structuredFormat.mainText.text);
       setHasLocation(true);
       setShowModal(true);
     }
@@ -113,16 +118,12 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           containerStyle={styles.modal}
         />
       )}
-      {/* TODO: Error from this component, when trying to edit an existing place */}
-      <GooglePlacesAutocomplete
-        placeholder='Search for a location'
-        fetchDetails={true}
-        onPress={handleSearchResult}
-        query={{
-          key: GOOGLE_API_KEY,
-          language: 'en',
-        }}
-        styles={{
+      <GooglePlacesTextInput
+        apiKey={GOOGLE_API_KEY}
+        onPlaceSelect={handleSearchResult}
+        placeHolderText='Search for a location'
+        minCharsToFetch={3}
+        style={{
           container: styles.searchContainer,
           textInput: styles.searchInput,
         }}
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     position: 'absolute',
     top: 10,
-    width: '90%',
+    width: '75%',
     alignSelf: 'center',
     zIndex: 1,
   },
@@ -175,7 +176,6 @@ const styles = StyleSheet.create({
   modal: {
     marginTop: '25%',
   },
-
   buttonContainer: {
     position: 'absolute',
     bottom: 10,

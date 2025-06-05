@@ -22,7 +22,12 @@ import Link from '../../UI/Link';
 import { useState } from 'react';
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
-import { formatAmount, generateRandomString, parseDate } from '../../../utils';
+import {
+  formatAmount,
+  generateRandomString,
+  parseDate,
+  validateIsOver,
+} from '../../../utils';
 import { Location, LocationType } from '../../../utils/http';
 
 interface ActivityListElementProps {
@@ -221,7 +226,7 @@ const ActivityElement: React.FC<ActivityElementProps> = ({
   handleDelete,
 }) => {
   const screenHeight = Dimensions.get('window').height;
-  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(minorStage.scheduled_end_time);
 
   return (
     <View style={styles.container}>

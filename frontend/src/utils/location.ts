@@ -1,13 +1,13 @@
 import { GOOGLE_API_KEY } from '@env';
 import { LatLng, Region } from 'react-native-maps';
-
-import { Location } from './http';
+import { Alert } from 'react-native';
 import {
   useForegroundPermissions,
   PermissionStatus,
   getCurrentPositionAsync,
 } from 'expo-location';
-import { Alert } from 'react-native';
+
+import { Location } from './http';
 import { generateColorsSet } from './generator';
 
 export function getMapPreview({ latitude, longitude }: LatLng) {
@@ -27,6 +27,23 @@ export async function getAddress({ latitude, longitude }: LatLng) {
   const address = data.results[0].formatted_address;
 
   return address;
+}
+
+export async function getPlaceDetails(place: any): Promise<LatLng> {
+  const url = `https://places.googleapis.com/v1/places/${place.placeId}?fields=location&key=${GOOGLE_API_KEY}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch address!');
+  }
+
+  const data = await response.json();
+  const latLng = {
+    latitude: data.location.latitude,
+    longitude: data.location.longitude,
+  };
+
+  return latLng;
 }
 
 /**

@@ -6,7 +6,7 @@ import ContentHeader from './ContentHeader';
 import { GlobalStyles } from '../../../constants/styles';
 import MainContent from './MainContent';
 import { generateRandomString } from '../../../utils/generator';
-import { parseDate } from '../../../utils';
+import { validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
 
 interface ContenBoxProps {
@@ -21,7 +21,7 @@ const ContentBox: React.FC<ContenBoxProps> = ({
   minorStage,
 }): ReactElement => {
   const stagesCtx = useContext(StagesContext);
-  const isOver = parseDate(minorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(minorStage.scheduled_end_time);
 
   const handleOnPressHeader = (header: string) => {
     LayoutAnimation.configureNext({

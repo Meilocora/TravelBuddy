@@ -7,12 +7,11 @@ import { BottomTabsParamList, Icons, Journey } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
-  formatCountrynamesToString,
   formatDateString,
   formatDurationToDays,
   formatProgress,
   generateRandomString,
-  parseDate,
+  validateIsOver,
 } from '../../utils';
 import CustomProgressBar from '../UI/CustomProgressBar';
 import { StackParamList } from '../../models';
@@ -53,7 +52,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
       }
     }
   }
-  const isOver = parseDate(journey.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(journey.scheduled_end_time);
 
   const elementDetailInfo: ElementDetailInfo[] = [
     { icon: Icons.duration, value: `${durationInDays} days` },

@@ -14,7 +14,7 @@ import {
   formatAmount,
   formatDateString,
   formatDurationToDays,
-  parseDate,
+  validateIsOver,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -51,7 +51,7 @@ const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
     majorStage.scheduled_start_time,
     majorStage.scheduled_end_time
   );
-  const isOver = parseDate(majorStage.scheduled_end_time) < new Date();
+  const isOver = validateIsOver(majorStage.scheduled_end_time);
 
   const countryNavigation = useNavigation<NavigationProp<StackParamList>>();
 
