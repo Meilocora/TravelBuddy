@@ -67,8 +67,6 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
     location.locationType === LocationType.transportation_arrival ||
     location.locationType === LocationType.transportation_departure
   ) {
-    console.log(location);
-
     const contextResponse = stagesCtx.findTransportation(
       location.belonging,
       location.minorStageName

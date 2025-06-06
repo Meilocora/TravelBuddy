@@ -7,8 +7,9 @@ import {
   getCurrentPositionAsync,
 } from 'expo-location';
 
-import { Location } from './http';
+import { Location, LocationType } from './http';
 import { generateColorsSet } from './generator';
+import { PlaceToVisit } from '../models';
 
 export function getMapPreview({ latitude, longitude }: LatLng) {
   const imagePreviewUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:S%7C${latitude},${longitude}&key=${GOOGLE_API_KEY}`;
@@ -191,4 +192,18 @@ export function addColor(locations: Location[], mapScope: string): Location[] {
       return locations;
     }
   }
+}
+
+export function formatPlaceToLocation(placeToVisit: PlaceToVisit): Location {
+  return {
+    belonging: 'Unknown',
+    locationType: LocationType.placeToVisit,
+    data: {
+      name: placeToVisit.name,
+      latitude: placeToVisit.latitude,
+      longitude: placeToVisit.longitude,
+    },
+    done: placeToVisit.visited,
+    description: placeToVisit.description || '',
+  };
 }

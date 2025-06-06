@@ -59,7 +59,7 @@ export function parseDateAndTime(dateString: string): Date {
   const [datestring, time] = dateString.split(/\s/);
   const [day, month, year] = datestring.split('.').map(Number);
   const [hours, minutes] = time.split(':').map(Number);
-  return new Date(year, month, day, hours, minutes);
+  return new Date(year, month - 1, day, hours, minutes);
 }
 
 export function formatDurationToDays(
@@ -101,7 +101,16 @@ export function formatCountdown(
     return `${days}d`;
   }
 
-  return `${days}d ${hours}h ${minutes}m`;
+  if (days !== 0) {
+    return `${days}d ${hours}:${minutes}h`;
+  } else if (hours !== 0) {
+    if (minutes === '00') {
+      return `${hours}h`;
+    }
+    return `${hours}:${minutes}h`;
+  } else {
+    return `${minutes}m`;
+  }
 }
 
 export function formatDuration(

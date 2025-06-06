@@ -1,10 +1,11 @@
 import { createContext, useState } from 'react';
 
 import { PlaceToVisit } from '../models';
+import { fetchPlaces } from '../utils/http';
 
 interface PlaceContextType {
   placesToVisit: PlaceToVisit[];
-  setPlacesToVisit: (placesToVisit: PlaceToVisit[]) => void;
+  fetchPlacesToVisit: () => Promise<void | string>;
   addPlace: (placeToVisit: PlaceToVisit) => void;
   toggleFavorite: (placeToVisitId: number) => void;
   toggleVisited: (placeToVisitId: number) => void;
@@ -15,7 +16,7 @@ interface PlaceContextType {
 
 export const PlaceContext = createContext<PlaceContextType>({
   placesToVisit: [],
-  setPlacesToVisit: () => {},
+  fetchPlacesToVisit: async () => {},
   addPlace: () => {},
   toggleFavorite: () => {},
   toggleVisited: () => {},
@@ -30,6 +31,16 @@ export default function PlaceContextProvider({
   children: React.ReactNode;
 }) {
   const [placesToVisit, setPlacesToVisit] = useState<PlaceToVisit[]>([]);
+
+  async function fetchPlacesToVisit(): Promise<void | string> {
+    const response = await fetchPlaces();
+
+    if (!response.error) {
+      setPlacesToVisit(response.places || []);
+    } else {
+      return response.error;
+    }
+  }
 
   function addPlace(place: PlaceToVisit) {
     setPlacesToVisit((prevPlaces) => [...prevPlaces, place]);
@@ -74,7 +85,7 @@ export default function PlaceContextProvider({
 
   const value = {
     placesToVisit,
-    setPlacesToVisit,
+    fetchPlacesToVisit,
     addPlace,
     toggleFavorite,
     toggleVisited,

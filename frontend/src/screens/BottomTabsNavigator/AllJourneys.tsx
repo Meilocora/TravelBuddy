@@ -13,6 +13,7 @@ import { AuthContext } from '../../store/auth-context';
 import { StagesContext } from '../../store/stages-context';
 import { CustomCountryContext } from '../../store/custom-country-context';
 import CurrentElementList from '../../components/CurrentElements/CurrentElementList';
+import { PlaceContext } from '../../store/place-context';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -31,6 +32,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   const authCtx = useContext(AuthContext);
   const stagesCtx = useContext(StagesContext);
   const countryCtx = useContext(CustomCountryContext);
+  const placesCtx = useContext(PlaceContext);
 
   useEffect(() => {
     function activatePopup() {
@@ -52,16 +54,21 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     activatePopup();
   }, [authCtx]);
 
+  // Fetch all data here, because the users always starts on this screen
   useEffect(() => {
     async function getData() {
       setIsFetching(true);
-      const firstBackendError = await stagesCtx.fetchUserData();
-      const secondBackendError = await countryCtx.fetchUsersCustomCountries();
+      const stagesBackendError = await stagesCtx.fetchUserData();
+      const countriesBackendError =
+        await countryCtx.fetchUsersCustomCountries();
+      const placesBackendError = await placesCtx.fetchPlacesToVisit();
 
-      if (firstBackendError) {
-        setError(firstBackendError);
-      } else if (secondBackendError) {
-        setError(secondBackendError);
+      if (stagesBackendError) {
+        setError(stagesBackendError);
+      } else if (countriesBackendError) {
+        setError(countriesBackendError);
+      } else if (placesBackendError) {
+        setError(placesBackendError);
       }
       setIsFetching(false);
     }

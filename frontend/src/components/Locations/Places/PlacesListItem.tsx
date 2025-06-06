@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useEffect, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -30,12 +30,12 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
 }): ReactElement => {
   const [isOpened, setIsOpened] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const placeCtx = useContext(PlaceContext);
+  const placesCtx = useContext(PlaceContext);
 
   async function handleToggleFavorite() {
     const response = await toggleFavoritePlace(place.id);
     if (!response.error) {
-      placeCtx.toggleFavorite(place.id);
+      placesCtx.toggleFavorite(place.id);
       onToggleFavorite(place.id);
     }
   }
@@ -43,7 +43,7 @@ const PlacesListItem: React.FC<PlacesListItemProps> = ({
   async function handleToggleVisited() {
     const response = await toggleVisitedPlace(place.id);
     if (!response.error) {
-      placeCtx.toggleVisited(place.id);
+      placesCtx.toggleVisited(place.id);
       onToggleVisited(place.id);
     }
   }

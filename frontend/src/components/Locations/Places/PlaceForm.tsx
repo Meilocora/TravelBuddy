@@ -222,6 +222,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
                   ? GlobalStyles.colors.error200
                   : undefined
               }
+              countryId={defaultValues!.countryId}
             />
           </View>
           <View style={styles.formRow}>

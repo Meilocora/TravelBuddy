@@ -52,9 +52,7 @@ import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 
-// TODO: Date is being transformed wrong (+1 month) at Transportationelement
 // TODO: Check forms, that work for major and minor stages (=> reset values!)
-// TODO: No data when editing place from inside minorstage
 
 // TODO: Find a way to handle time based on the user's timezone
 // TODO: Implement frontend validation to Forms for max and min length of an entry

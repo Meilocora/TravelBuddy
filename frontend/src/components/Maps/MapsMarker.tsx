@@ -58,8 +58,6 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
 
-  console.log(iconKey);
-
   return (
     <Marker
       ref={markerRef}

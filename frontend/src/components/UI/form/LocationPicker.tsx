@@ -21,6 +21,7 @@ interface LocationPickerProps {
   onPickLocation: (location: MapLocation) => void;
   iconColor?: string;
   colorScheme?: ColorScheme;
+  countryId?: number;
 }
 
 const LocationPicker: React.FC<LocationPickerProps> = ({
@@ -28,6 +29,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   onPickLocation,
   iconColor,
   colorScheme = ColorScheme.primary,
+  countryId,
 }): ReactElement => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
@@ -78,6 +80,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
       onResetLocation: handleResetLocation,
       hasLocation: hasInitialLocation,
       colorScheme: colorScheme,
+      customCountryId: countryId,
     });
     setIsLoading(false);
   }

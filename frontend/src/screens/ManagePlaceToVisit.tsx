@@ -31,14 +31,14 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const customCountryCtx = useContext(CustomCountryContext);
-  const placeCtx = useContext(PlaceContext);
+  const placesCtx = useContext(PlaceContext);
   const stagesCtx = useContext(StagesContext);
 
   const majorStageId = route.params?.majorStageId;
   const placeId = route.params?.placeId;
   let isEditing = !!placeId;
 
-  const selectedPlace = placeCtx.placesToVisit.find(
+  const selectedPlace = placesCtx.placesToVisit.find(
     (place) => place.id === placeId
   );
 
@@ -67,7 +67,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         setError(error);
         return;
       } else if (place && status === 200) {
-        placeCtx.updatePlace(place);
+        placesCtx.updatePlace(place);
         customCountryCtx.fetchUsersCustomCountries();
         if (majorStageId) {
           stagesCtx.fetchUserData();
@@ -79,7 +79,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         setError(error);
         return;
       } else if (place && status === 201) {
-        placeCtx.addPlace(place);
+        placesCtx.addPlace(place);
         customCountryCtx.fetchUsersCustomCountries();
         navigation.goBack();
       }
@@ -91,7 +91,7 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
       setError(response.error);
       return;
     } else if (response.status === 200) {
-      placeCtx.deletePlace(placeId);
+      placesCtx.deletePlace(placeId);
       customCountryCtx.fetchUsersCustomCountries();
       navigation.goBack();
     }

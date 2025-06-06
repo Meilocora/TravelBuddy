@@ -64,6 +64,7 @@ export type StackParamList = {
     onResetLocation: () => void;
     hasLocation: boolean;
     colorScheme?: ColorScheme;
+    customCountryId?: number;
   };
   ShowMap: {
     location: Location;

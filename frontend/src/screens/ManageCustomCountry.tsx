@@ -1,7 +1,6 @@
 import React, {
   ReactElement,
   useContext,
-  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
@@ -25,8 +24,6 @@ import {
 } from '../utils/http/custom_country';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PlacesList from '../components/Locations/Places/PlacesList';
-import { PlaceContext } from '../store/place-context';
-import { fetchPlaces } from '../utils/http/place_to_visit';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
 
 interface ManageCustomCountryProps {
@@ -43,7 +40,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
   const [isShowingPlaces, setIsShowingPlaces] = useState(false);
 
   const customCountryCtx = useContext(CustomCountryContext);
-  const placesCtx = useContext(PlaceContext);
   const countryId = route.params.countryId;
 
   const country = customCountryCtx.customCountries.find(
@@ -66,21 +62,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
       ),
     });
   }, [navigation, isEditing]);
-
-  // Fetch all places to visit for user
-  useEffect(() => {
-    async function getPlaces() {
-      const response = await fetchPlaces();
-
-      if (!response.error) {
-        placesCtx.setPlacesToVisit(response.places || []);
-      } else {
-        setError(response.error);
-      }
-    }
-
-    getPlaces();
-  }, []);
 
   function handleChangeEdit() {
     // TODO: Improve Animation...

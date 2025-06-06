@@ -1,6 +1,11 @@
 import 'react-native-get-random-values';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { ReactElement, useLayoutEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  useContext,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import MapView, {
@@ -11,30 +16,37 @@ import MapView, {
 } from 'react-native-maps';
 import GooglePlacesTextInput from 'react-native-google-places-textinput';
 
-import { ColorScheme, StackParamList } from '../models';
+import { ColorScheme, PlaceToVisit, StackParamList } from '../models';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
 import { GlobalStyles } from '../constants/styles';
 import Button from '../components/UI/Button';
-import { getPlaceDetails } from '../utils/location';
+import { formatPlaceToLocation, getPlaceDetails } from '../utils/location';
+import { CustomCountryContext } from '../store/custom-country-context';
+import MapsMarker from '../components/Maps/MapsMarker';
+import { generateRandomString } from '../utils';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
   route: RouteProp<StackParamList, 'LocationPickMap'>;
 }
 
-// TODO: Add PlacesToVisit that already exist for the country, when adding one to a country
-// TODO: Same for Activities
-
 const LocationPickMap: React.FC<LocationPickMapProps> = ({
   navigation,
   route,
 }): ReactElement => {
+  const customCountryCtx = useContext(CustomCountryContext);
   const initialLocation = route.params && {
     lat: route.params.initialLat,
     lng: route.params.initialLng,
   };
   const initialColorScheme = route.params.colorScheme || ColorScheme.primary;
+
+  const customCountryId = route.params.customCountryId || undefined;
+  let placesToVisit: undefined | PlaceToVisit[];
+  if (customCountryId) {
+    placesToVisit = customCountryCtx.findCountriesPlaces(customCountryId);
+  }
 
   const [hasLocation, setHasLocation] = useState(route.params.hasLocation);
   const [region, setRegion] = useState<Region>({
@@ -143,6 +155,13 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
             }}
           />
         )}
+        {placesToVisit &&
+          placesToVisit.map((place) => (
+            <MapsMarker
+              location={formatPlaceToLocation(place)}
+              key={generateRandomString()}
+            />
+          ))}
       </MapView>
       <View style={styles.buttonContainer}>
         <Button colorScheme={initialColorScheme} onPress={handleResetPlace}>
