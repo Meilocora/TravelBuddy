@@ -28,6 +28,7 @@ import { GlobalStyles } from '../../../constants/styles';
 import ComplementaryGradient from '../../../components/UI/LinearGradients/ComplementaryGradient';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -89,8 +90,11 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
         majorStageId !== undefined
           ? { backgroundColor: GlobalStyles.colors.accent700 }
           : { backgroundColor: GlobalStyles.colors.complementary700 },
-      headerTitleAlign: 'center',
-      title: isEditing ? `Manage Transportation` : 'Add Transportation',
+      headerTitle: () => (
+        <HeaderTitle
+          title={isEditing ? `Manage Transportation` : 'Add Transportation'}
+        />
+      ),
       headerLeft: ({ tintColor }) => (
         <IconButton
           color={tintColor}
@@ -108,7 +112,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, selectedTransportation]);
 
   async function deleteHandler() {
     try {

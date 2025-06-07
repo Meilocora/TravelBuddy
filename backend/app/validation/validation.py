@@ -88,8 +88,6 @@ class Validation:
   def check_for_overlap(self, new_date: str, existing_start_date: date, existing_end_date: date, overlap_journey_name: str, mode: str) -> bool:
     try:
       new_date = datetime.strptime(new_date, '%d.%m.%Y')
-      print(type(new_date))
-      print(type(existing_start_date))
     except (TypeError , ValueError):
       self.error_list.append('Error with overlap check occured')
     else:
@@ -159,4 +157,15 @@ class Validation:
     if type not in ['Bus', 'Car', 'Boat', 'Plane', 'Train', 'Other']:
       self.error_list.append('Invalid transportation type')      
     
+    return self.__return_feedback()
+  
+  
+  def validate_coordinates(self, latitude:str, longitude:str):
+    try:
+        lat = float(latitude['value'])
+        lng = float(longitude['value'])
+    except (TypeError, ValueError, KeyError):
+        self.error_list.append('No location picked')
+        
+        return self.__return_feedback()
     return self.__return_feedback()

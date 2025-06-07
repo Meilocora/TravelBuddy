@@ -25,6 +25,7 @@ import { formatPlaceToLocation, getPlaceDetails } from '../utils/location';
 import { CustomCountryContext } from '../store/custom-country-context';
 import MapsMarker from '../components/Maps/MapsMarker';
 import { generateRandomString } from '../utils';
+import HeaderTitle from '../components/UI/HeaderTitle';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
@@ -112,7 +113,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Pick a Location',
+      headerTitle: () => <HeaderTitle title={'Pick a Location'} />,
       headerStyle: { backgroundColor: mainColor },
     });
   }, []);

@@ -136,7 +136,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
                   {chosenCountries.map((item) => (
                     <ListItem
                       key={generateRandomString()}
-                      onPress={handlePressListElement.bind(item)}
+                      onPress={() => {}}
                       containerStyles={styles.chosenListElement}
                       textStyles={styles.chosenText}
                     >

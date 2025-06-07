@@ -52,9 +52,10 @@ import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 
-// TODO: Check forms, that work for major and minor stages (=> reset values!)
-
 // TODO: Find a way to handle time based on the user's timezone
+// Save datetime only in Z-Time on backend
+
+// TODO: Prevent Forms from crashing, when errors are displayed
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Overview => Diagramms and Statistics

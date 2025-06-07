@@ -25,6 +25,7 @@ import {
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PlacesList from '../components/Locations/Places/PlacesList';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
+import HeaderTitle from '../components/UI/HeaderTitle';
 
 interface ManageCustomCountryProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManageCustomCountry'>;
@@ -51,8 +52,7 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: 'center',
-      title: 'Country Details',
+      headerTitle: () => <HeaderTitle title={'Country Details'} />,
       headerRight: () => (
         <IconButton
           icon={Icons.edit}

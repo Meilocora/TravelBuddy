@@ -12,12 +12,14 @@ class TransportationValidation(Validation):
   def validate_transportation(transportation):
         errors = False
       
+        print(transportation['departure_latitude'])
+      
         for key, value in transportation.items():
             if key != 'transportation_costs' and key != 'link' and key != 'departure_latitude' and key != 'departure_longitude' and key != 'arrival_latitude' and key != 'arrival_longitude':
+            # if key != 'transportation_costs' and key != 'link':
                 if value['value'] == "" or value['value'] == None:
                     transportation[key]['errors'].append(f'Input is required')
                     transportation[key]['isValid'] = False
-            
                  
         type_val = TransportationValidation().validate_transportation_type(transportation['type']['value'])
         if type_val:
@@ -28,11 +30,24 @@ class TransportationValidation(Validation):
         if place_departurte_val:
             transportation['place_of_departure']['errors'].append(f", {place_departurte_val}")
             transportation['place_of_departure']['isValid'] = False
-        
+            
+        coordinated_departure_val = TransportationValidation().validate_coordinates(transportation['departure_latitude'], transportation['departure_longitude'])
+
+        if coordinated_departure_val:
+            transportation['place_of_departure']['errors'].append(f", {coordinated_departure_val}")
+            transportation['place_of_departure']['isValid'] = False
+            transportation['departure_latitude']['isValid'] = False
+            
         place_arrival_val = TransportationValidation().validate_string(transportation['place_of_arrival']['value'], min_length=0, max_length=50)
         if place_arrival_val:
             transportation['place_of_arrival']['errors'].append(f", {place_arrival_val}")
             transportation['place_of_arrival']['isValid'] = False
+          
+        coordinated_arrival_val = TransportationValidation().validate_coordinates(transportation['arrival_latitude'], transportation['arrival_longitude'])
+        if coordinated_arrival_val:
+            transportation['place_of_arrival']['errors'].append(f", {coordinated_arrival_val}")
+            transportation['place_of_arrival']['isValid'] = False
+            transportation['arrival_latitude']['isValid'] = False
           
         start_val = TransportationValidation().validate_date_time(transportation['start_time']['value'])
         if start_val:

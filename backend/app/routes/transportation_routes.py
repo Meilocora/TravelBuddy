@@ -26,6 +26,9 @@ def create_major_stage_transportation(current_user, majorStageId):
         return jsonify({'transportationFormValues': response, 'status': 400})
     
     try:
+        # TODO: Calculate start and arrival time in dependence of timezone (coordinates)
+        
+         
         # Create a new transportation
         new_transportation = Transportation(
             type=transportation['type']['value'],

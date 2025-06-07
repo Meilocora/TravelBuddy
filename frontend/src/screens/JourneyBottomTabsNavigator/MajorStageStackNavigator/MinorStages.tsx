@@ -21,10 +21,11 @@ import ComplementaryGradient from '../../../components/UI/LinearGradients/Comple
 import { GlobalStyles } from '../../../constants/styles';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import MinorStageList from '../../../components/MinorStage/MinorStageList';
-import { parseDate, validateIsOver } from '../../../utils';
+import { validateIsOver } from '../../../utils';
 import InfoText from '../../../components/UI/InfoText';
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface MinorStagesProps {
   navigation: NativeStackNavigationProp<
@@ -93,7 +94,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
   useLayoutEffect(() => {
     if (!isOver) {
       navigation.setOptions({
-        title: majorStage?.title,
+        headerTitle: () => <HeaderTitle title={majorStage!.title} />,
         headerRight: () => (
           <IconButton
             icon={Icons.add}
@@ -108,6 +109,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
             size={24}
             icon={Icons.arrowBack}
             onPress={() => {
+              console.log('Back');
               planningNavigation.navigate('Planning', {
                 journeyId: journeyId!,
               });
@@ -118,7 +120,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
       });
     } else {
       navigation.setOptions({
-        title: majorStage?.title,
+        headerTitle: () => <HeaderTitle title={majorStage!.title} />,
         headerLeft: ({ tintColor }) => (
           <IconButton
             color={tintColor}

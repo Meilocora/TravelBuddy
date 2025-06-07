@@ -49,10 +49,10 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     name: selectedJourney?.name || '',
     description: selectedJourney?.description || '',
     scheduled_start_time: selectedJourney?.scheduled_start_time
-      ? formatDateString(selectedJourney.scheduled_start_time)
+      ? formatDateString(selectedJourney.scheduled_start_time)!
       : null,
     scheduled_end_time: selectedJourney?.scheduled_end_time
-      ? formatDateString(selectedJourney.scheduled_end_time)
+      ? formatDateString(selectedJourney.scheduled_end_time)!
       : null,
     budget: selectedJourney?.costs.budget || 0,
     spent_money: selectedJourney?.costs.spent_money || 0,
@@ -68,10 +68,10 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         name: selectedJourney?.name || '',
         description: selectedJourney?.description || '',
         scheduled_start_time: selectedJourney?.scheduled_start_time
-          ? formatDateString(selectedJourney.scheduled_start_time)
+          ? formatDateString(selectedJourney.scheduled_start_time)!
           : null,
         scheduled_end_time: selectedJourney?.scheduled_end_time
-          ? formatDateString(selectedJourney.scheduled_end_time)
+          ? formatDateString(selectedJourney.scheduled_end_time)!
           : null,
         budget: selectedJourney?.costs.budget || 0,
         spent_money: selectedJourney?.costs.spent_money || 0,

@@ -17,6 +17,7 @@ import IconButton from '../../../components/UI/IconButton';
 import { deleteSpending } from '../../../utils/http/spending';
 import SpendingForm from '../../../components/MinorStage/ManageSpending/SpendingForm';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface ManageSpendingProps {
   navigation: NativeStackNavigationProp<
@@ -55,8 +56,9 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: 'center',
-      headerTitle: isEditing ? 'Edit Spending' : 'Add Spending',
+      headerTitle: () => (
+        <HeaderTitle title={isEditing ? 'Edit Spending' : 'Add Spending'} />
+      ),
       headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
     });
   }, [navigation]);

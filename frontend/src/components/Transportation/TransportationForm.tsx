@@ -391,6 +391,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
             colorScheme={
               majorStageId ? ColorScheme.accent : ColorScheme.complementary
             }
+            iconColor={!inputs.departure_latitude.isValid ? 'red' : undefined}
           />
         </View>
         <View style={styles.formRow}>
@@ -418,6 +419,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
             colorScheme={
               majorStageId ? ColorScheme.accent : ColorScheme.complementary
             }
+            iconColor={!inputs.arrival_latitude.isValid ? 'red' : undefined}
           />
         </View>
         <View style={styles.formRow}>

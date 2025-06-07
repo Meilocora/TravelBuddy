@@ -8,6 +8,7 @@ import MapView, { Region } from 'react-native-maps';
 import { StackParamList } from '../models';
 import { GlobalStyles } from '../constants/styles';
 import MapsMarker from '../components/Maps/MapsMarker';
+import HeaderTitle from '../components/UI/HeaderTitle';
 
 interface ShowMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ShowMap'>;
@@ -36,7 +37,7 @@ const ShowMap: React.FC<ShowMapProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Map',
+      headerTitle: () => <HeaderTitle title={'Map'} />,
       headerStyle: headerstyle,
     });
   }, []);

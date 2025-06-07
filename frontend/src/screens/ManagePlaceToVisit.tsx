@@ -13,6 +13,7 @@ import PlaceForm from '../components/Locations/Places/PlaceForm';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
 import { CustomCountryContext } from '../store/custom-country-context';
 import { StagesContext } from '../store/stages-context';
+import HeaderTitle from '../components/UI/HeaderTitle';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -99,8 +100,11 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: 'center',
-      title: isEditing ? `Manage ${selectedPlace?.name}` : 'Add Place',
+      headerTitle: () => (
+        <HeaderTitle
+          title={isEditing ? `Manage ${selectedPlace?.name}` : 'Add Place'}
+        />
+      ),
     });
   }, [navigation]);
 

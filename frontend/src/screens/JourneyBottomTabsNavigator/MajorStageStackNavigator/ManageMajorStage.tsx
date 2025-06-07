@@ -30,6 +30,7 @@ import IconButton from '../../../components/UI/IconButton';
 import MajorStageForm from '../../../components/MajorStage/ManageMajorStage/MajorStageForm';
 import { deleteMajorStage } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<
@@ -67,10 +68,10 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     title: selectedMajorStage?.title || '',
     done: selectedMajorStage?.done || false,
     scheduled_start_time: selectedMajorStage?.scheduled_start_time
-      ? formatDateString(selectedMajorStage.scheduled_start_time)
+      ? formatDateString(selectedMajorStage.scheduled_start_time)!
       : null,
     scheduled_end_time: selectedMajorStage?.scheduled_end_time
-      ? formatDateString(selectedMajorStage.scheduled_end_time)
+      ? formatDateString(selectedMajorStage.scheduled_end_time)!
       : null,
     additional_info: selectedMajorStage?.additional_info || '',
     budget: selectedMajorStage?.costs.budget || 0,
@@ -85,10 +86,10 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         title: selectedMajorStage?.title || '',
         done: selectedMajorStage?.done || false,
         scheduled_start_time: selectedMajorStage?.scheduled_start_time
-          ? formatDateString(selectedMajorStage.scheduled_start_time)
+          ? formatDateString(selectedMajorStage.scheduled_start_time)!
           : null,
         scheduled_end_time: selectedMajorStage?.scheduled_end_time
-          ? formatDateString(selectedMajorStage.scheduled_end_time)
+          ? formatDateString(selectedMajorStage.scheduled_end_time)!
           : null,
         additional_info: selectedMajorStage?.additional_info || '',
         budget: selectedMajorStage?.costs.budget || 0,
@@ -107,10 +108,15 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: 'center',
-      title: isEditing
-        ? `Manage "${selectedMajorStage?.title}"`
-        : 'Add Major Stage',
+      headerTitle: () => (
+        <HeaderTitle
+          title={
+            isEditing
+              ? `Manage "${selectedMajorStage?.title}"`
+              : 'Add Major Stage'
+          }
+        />
+      ),
       headerLeft: ({ tintColor }) => (
         <IconButton
           color={tintColor}

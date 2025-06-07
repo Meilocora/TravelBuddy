@@ -24,6 +24,7 @@ import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import IconButton from '../../../components/UI/IconButton';
 import MinorStageForm from '../../../components/MinorStage/ManageMinorStage/MinorStageForm';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface ManageMinorStageProps {
   navigation: NativeStackNavigationProp<
@@ -62,10 +63,10 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     title: selectedMinorStage?.title || '',
     done: selectedMinorStage?.done || false,
     scheduled_start_time: selectedMinorStage?.scheduled_start_time
-      ? formatDateString(selectedMinorStage.scheduled_start_time)
+      ? formatDateString(selectedMinorStage.scheduled_start_time)!
       : null,
     scheduled_end_time: selectedMinorStage?.scheduled_end_time
-      ? formatDateString(selectedMinorStage.scheduled_end_time)
+      ? formatDateString(selectedMinorStage.scheduled_end_time)!
       : null,
     budget: selectedMinorStage?.costs.budget || 0,
     spent_money: selectedMinorStage?.costs.spent_money || 0,
@@ -82,10 +83,15 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
   useLayoutEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
-      headerTitleAlign: 'center',
-      title: isEditing
-        ? `Manage "${selectedMinorStage?.title}"`
-        : 'Add Minor Stage',
+      headerTitle: () => (
+        <HeaderTitle
+          title={
+            isEditing
+              ? `Manage "${selectedMinorStage?.title}"`
+              : 'Add Minor Stage'
+          }
+        />
+      ),
     });
   }, [navigation, isEditing]);
 
@@ -95,10 +101,10 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
       title: selectedMinorStage?.title || '',
       done: selectedMinorStage?.done || false,
       scheduled_start_time: selectedMinorStage?.scheduled_start_time
-        ? formatDateString(selectedMinorStage.scheduled_start_time)
+        ? formatDateString(selectedMinorStage.scheduled_start_time)!
         : null,
       scheduled_end_time: selectedMinorStage?.scheduled_end_time
-        ? formatDateString(selectedMinorStage.scheduled_end_time)
+        ? formatDateString(selectedMinorStage.scheduled_end_time)!
         : null,
       budget: selectedMinorStage?.costs.budget || 0,
       spent_money: selectedMinorStage?.costs.spent_money || 0,

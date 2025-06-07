@@ -17,6 +17,7 @@ import IconButton from '../../../components/UI/IconButton';
 import ActivityForm from '../../../components/MinorStage/ManageActivity/ActivityForm';
 import { deleteActivity } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
+import HeaderTitle from '../../../components/UI/HeaderTitle';
 
 interface ManageActivityProps {
   navigation: NativeStackNavigationProp<
@@ -55,8 +56,9 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: 'center',
-      headerTitle: isEditing ? 'Edit Activity' : 'Add Activity',
+      headerTitle: () => (
+        <HeaderTitle title={isEditing ? 'Edit Activity' : 'Add Activity'} />
+      ),
       headerStyle: { backgroundColor: GlobalStyles.colors.complementary700 },
     });
   }, [navigation]);
