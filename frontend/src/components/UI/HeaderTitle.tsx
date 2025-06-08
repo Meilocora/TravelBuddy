@@ -13,7 +13,7 @@ const HeaderTitle: React.FC<InfoTextProps> = ({ title }): ReactElement => {
       style={[
         styles.title,
         {
-          maxWidth: Dimensions.get('window').width * 0.75,
+          width: Dimensions.get('window').width * 0.7,
         },
       ]}
     >

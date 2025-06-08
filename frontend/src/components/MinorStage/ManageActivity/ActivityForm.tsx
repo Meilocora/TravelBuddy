@@ -161,21 +161,16 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
   }
 
   function handlePickLocation(location: MapLocation) {
-    if (location.title) {
-      setInputs((currInputs) => {
-        return {
-          ...currInputs,
-          place: {
-            value: location.title!,
-            isValid: true,
-            errors: [],
-          },
-        };
-      });
-    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
+        ...(location.title && {
+          place: {
+            value: location.title,
+            isValid: true,
+            errors: [],
+          },
+        }),
         latitude: {
           value: location.lat,
           isValid: true,

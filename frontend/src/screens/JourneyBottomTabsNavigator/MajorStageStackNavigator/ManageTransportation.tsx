@@ -3,7 +3,9 @@ import {
   ReactElement,
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
+  useMemo,
   useState,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -64,25 +66,22 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     route.params;
   let isEditing = !!transportationId;
 
-  useFocusEffect(
-    useCallback(() => {
-      // selectedTransportation set, when screen is focused
-      if (minorStageId) {
-        setSelectedTransportation(
-          stagesCtx.findMinorStage(minorStageId)?.transportation
-        );
-      } else if (majorStageId) {
-        setSelectedTransportation(
-          stagesCtx.findMajorStage(majorStageId)?.transportation
-        );
-      }
+  useEffect(() => {
+    if (minorStageId) {
+      setSelectedTransportation(
+        stagesCtx.findMinorStage(minorStageId)?.transportation
+      );
+    } else if (majorStageId) {
+      setSelectedTransportation(
+        stagesCtx.findMajorStage(majorStageId)?.transportation
+      );
+    }
 
-      return () => {
-        // Clean up function, when screen is unfocused
-        setSelectedTransportation(undefined);
-      };
-    }, [selectedTransportation])
-  );
+    return () => {
+      // Clean up function, when screen is unfocused
+      setSelectedTransportation(undefined);
+    };
+  }, [minorStageId, majorStageId, stagesCtx]);
 
   useLayoutEffect(() => {
     planningNavigation.setOptions({
@@ -95,24 +94,8 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
           title={isEditing ? `Manage Transportation` : 'Add Transportation'}
         />
       ),
-      headerLeft: ({ tintColor }) => (
-        <IconButton
-          color={tintColor}
-          size={24}
-          icon={Icons.arrowBack}
-          onPress={() => {
-            if (majorStageId !== undefined) {
-              planningNavigation.navigate('Planning', {
-                journeyId: journeyId!,
-              });
-            } else {
-              navigation.goBack();
-            }
-          }}
-        />
-      ),
     });
-  }, [navigation, selectedTransportation]);
+  }, [navigation, majorStageId, minorStageId]);
 
   async function deleteHandler() {
     try {
@@ -148,7 +131,13 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   }
 
   function cancelHandler() {
-    planningNavigation.navigate('Planning', { journeyId: journeyId! });
+    if (majorStageId !== undefined) {
+      planningNavigation.navigate('Planning', {
+        journeyId: journeyId!,
+      });
+    } else {
+      navigation.goBack();
+    }
   }
 
   async function confirmHandler({
@@ -186,6 +175,11 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
     }
   }
 
+  // Memoize default values, so the TransportationForm does not rerender, when the user is directed to LocationPickMap
+  const memoizedDefaultValues = useMemo(() => {
+    return isEditing ? selectedTransportation : undefined;
+  }, [isEditing, selectedTransportation]);
+
   return (
     <>
       {error && <ErrorOverlay message={error} onPress={() => setError(null)} />}
@@ -196,7 +190,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
             onCancel={cancelHandler}
             onSubmit={confirmHandler}
             submitButtonLabel={isEditing ? 'Update' : 'Add'}
-            defaultValues={isEditing ? selectedTransportation : undefined}
+            defaultValues={memoizedDefaultValues}
             isEditing={isEditing}
             majorStageId={majorStageId!}
             minorStageId={minorStageId!}

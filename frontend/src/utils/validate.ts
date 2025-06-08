@@ -1,4 +1,4 @@
-import { parseDate } from '.';
+import { parseDate } from './formatting';
 
 export function validateIsOver(date: string): boolean {
   const now = new Date();

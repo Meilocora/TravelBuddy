@@ -12,3 +12,4 @@ pyjwt~=2.4.0
 python-dotenv~=1.0.1
 countryinfo~=0.1.2
 pycountry~=24.6.1
+timezonefinder~=6.5.9

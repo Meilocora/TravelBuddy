@@ -117,16 +117,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
           }
         />
       ),
-      headerLeft: ({ tintColor }) => (
-        <IconButton
-          color={tintColor}
-          size={24}
-          icon={Icons.arrowBack}
-          onPress={() => {
-            planningNavigation.navigate('Planning', { journeyId: journeyId });
-          }}
-        />
-      ),
     });
   }, [navigation, isEditing]);
 

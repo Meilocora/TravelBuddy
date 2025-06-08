@@ -133,11 +133,15 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
 
   const duration = formatDuration(
     transportation.start_time,
-    transportation.arrival_time
+    transportation.start_time_offset,
+    transportation.arrival_time,
+    transportation.arrival_time_offset
   );
   const doneStart = parseDateAndTime(transportation.start_time) < new Date();
+  // TODO: Calculate arrival_time in dependance of current timezone and timezone from place of departure
   const doneArrival =
     parseDateAndTime(transportation.arrival_time) < new Date();
+  // TODO: Calculate arrival_time in dependance of current timezone and timezone from place of arrival
 
   const infoPointsData = [
     {

@@ -204,21 +204,16 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   }
 
   function handleDeparturePickLocation(location: MapLocation) {
-    if (location.title) {
-      setInputs((currInputs) => {
-        return {
-          ...currInputs,
-          place_of_departure: {
-            value: location.title!,
-            isValid: true,
-            errors: [],
-          },
-        };
-      });
-    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
+        ...(location.title && {
+          place_of_departure: {
+            value: location.title,
+            isValid: true,
+            errors: [],
+          },
+        }),
         departure_latitude: {
           value: location.lat,
           isValid: true,
@@ -234,21 +229,16 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   }
 
   function handleArrivalPickLocation(location: MapLocation) {
-    if (location.title) {
-      setInputs((currInputs) => {
-        return {
-          ...currInputs,
-          place_of_arrival: {
-            value: location.title!,
-            isValid: true,
-            errors: [],
-          },
-        };
-      });
-    }
     setInputs((currInputs) => {
       return {
         ...currInputs,
+        ...(location.title && {
+          place_of_arrival: {
+            value: location.title,
+            isValid: true,
+            errors: [],
+          },
+        }),
         arrival_latitude: {
           value: location.lat,
           isValid: true,

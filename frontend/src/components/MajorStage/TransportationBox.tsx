@@ -46,9 +46,13 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
     setOpenInfoBox((prevState) => !prevState);
   };
 
+  console.log(transportation);
+
   const duration = formatDuration(
     transportation.start_time,
-    transportation.arrival_time
+    transportation.start_time_offset,
+    transportation.arrival_time,
+    transportation.arrival_time_offset
   );
 
   const infoPointsData = [

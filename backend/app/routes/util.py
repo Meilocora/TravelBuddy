@@ -1,4 +1,6 @@
 from datetime import datetime
+from timezonefinder import TimezoneFinder
+import pytz
 from db import db
 from app.models import Costs, Spendings, Transportation, MajorStage, MinorStage, Accommodation, Activity
 
@@ -76,3 +78,21 @@ def calculate_journey_costs(journey_costs):
     journey_costs.spent_money = spent_money
     journey_costs.money_exceeded = journey_costs.spent_money > journey_costs.budget
     return db.session.commit()
+
+
+def calculate_time_zone_offset(lat, lng):
+    tf = TimezoneFinder()
+    target_timezone_str = tf.timezone_at(lng=lng, lat=lat)
+    
+    if not target_timezone_str:
+        raise ValueError("Could not determine timezone for coordinates.")
+    
+    target_tz = pytz.timezone(target_timezone_str)
+    now_utc = datetime.utcnow()
+    # Get the offset of the target timezone from UTC at the current time
+    target_offset = target_tz.utcoffset(now_utc)
+    diff_hours = target_offset.total_seconds() / 3600
+    
+    return diff_hours
+    
+   

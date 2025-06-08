@@ -109,7 +109,6 @@ const MinorStages: React.FC<MinorStagesProps> = ({
             size={24}
             icon={Icons.arrowBack}
             onPress={() => {
-              console.log('Back');
               planningNavigation.navigate('Planning', {
                 journeyId: journeyId!,
               });

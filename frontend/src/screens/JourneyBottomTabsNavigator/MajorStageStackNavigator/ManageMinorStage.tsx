@@ -92,6 +92,16 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
           }
         />
       ),
+      headerLeft: ({ tintColor }) => (
+        <IconButton
+          color={tintColor}
+          size={24}
+          icon={Icons.arrowBack}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+      ),
     });
   }, [navigation, isEditing]);
 

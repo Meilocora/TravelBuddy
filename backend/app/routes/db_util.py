@@ -1,6 +1,7 @@
 from db import db
 from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
-from app.routes.util import parseDate, formatDateToString, parseDateTime, formatDateTimeToString
+from app.routes.util import formatDateToString, formatDateTimeToString
+from app.routes.util import calculate_time_zone_offset
 
 
 def fetch_journeys(current_user):
@@ -137,20 +138,28 @@ def fetch_major_stages(current_user, journeyId):
                 return custom_country
             
             if transportation is not None:
+                start_time_offset = calculate_time_zone_offset(transportation.departure_latitude, transportation.departure_longitude)
+                arrival_time_offset = calculate_time_zone_offset(transportation.arrival_latitude, transportation.arrival_longitude)
+                print(start_time_offset)
+                print(arrival_time_offset)
+                
                 major_stage_data['transportation'] = {
                     'id': transportation.id,
                     'type': transportation.type,
                     'start_time': formatDateTimeToString(transportation.start_time),
+                    'start_time_offset': start_time_offset,
                     'arrival_time': formatDateTimeToString(transportation.arrival_time),
+                    'arrival_time_offset': arrival_time_offset,
                     'place_of_departure': transportation.place_of_departure,
-                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
-                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
+                    'departure_latitude': transportation.departure_latitude,
+                    'departure_longitude': transportation.departure_longitude,
                     'place_of_arrival': transportation.place_of_arrival,
-                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
-                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
+                    'arrival_latitude': transportation.arrival_latitude,
+                    'arrival_longitude': transportation.arrival_longitude,
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }
+                
             
             if minorStages is not None:
                 minor_stages_list = fetch_minor_stages(majorStage.id)
@@ -239,17 +248,22 @@ def fetch_minor_stages(majorStageId):
             }
             
             if transportation is not None:
+                start_time_offset = calculate_time_zone_offset(transportation.departure_latitude, transportation.departure_longitude)
+                arrival_time_offset = calculate_time_zone_offset(transportation.arrival_latitude, transportation.arrival_longitude)
+                
                 minor_stage_data['transportation'] = {
                     'id': transportation.id,
                     'type': transportation.type,
                     'start_time': formatDateTimeToString(transportation.start_time),
+                    'start_time_offset': start_time_offset,
                     'arrival_time': formatDateTimeToString(transportation.arrival_time),
+                    'arrival_time_offset': arrival_time_offset,
                     'place_of_departure': transportation.place_of_departure,
-                    'departure_latitude': transportation.departure_latitude if transportation.departure_latitude else None,
-                    'departure_longitude': transportation.departure_longitude if transportation.departure_longitude else None,
+                    'departure_latitude': transportation.departure_latitude,
+                    'departure_longitude': transportation.departure_longitude,
                     'place_of_arrival': transportation.place_of_arrival,
-                    'arrival_latitude': transportation.arrival_latitude if transportation.arrival_latitude else None,
-                    'arrival_longitude': transportation.arrival_longitude if transportation.arrival_longitude else None,
+                    'arrival_latitude': transportation.arrival_latitude,
+                    'arrival_longitude': transportation.arrival_longitude,
                     'transportation_costs': transportation.transportation_costs,
                     'link': transportation.link,
                 }

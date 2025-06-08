@@ -36,7 +36,9 @@ export interface Transportation {
   id: number;
   type: string;
   start_time: string;
+  start_time_offset: string;
   arrival_time: string;
+  arrival_time_offset: string;
   place_of_departure: string;
   departure_latitude: number | undefined;
   departure_longitude: number | undefined;

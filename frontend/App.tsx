@@ -51,9 +51,7 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
-
-// TODO: Find a way to handle time based on the user's timezone
-// Save datetime only in Z-Time on backend
+import { FlatListComponent } from 'react-native';
 
 // TODO: Prevent Forms from crashing, when errors are displayed
 // TODO: Implement frontend validation to Forms for max and min length of an entry
@@ -265,6 +263,7 @@ const MajorStageStackNavigator = () => {
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         animationEnabled: false,
+        headerBackVisible: false,
       })}
     >
       <MajorStageStack.Screen
