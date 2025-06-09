@@ -1,7 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ReactElement,
-  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -9,11 +8,7 @@ import {
   useState,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
-import {
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -155,17 +150,23 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       (transportation && status === 201)
     ) {
       if (mode === 'major') {
-        stagesCtx.fetchUserData();
+        await stagesCtx.fetchUserData();
         const majorStageTitle = stagesCtx.findMajorStage(majorStageId!)?.title;
-        const popupText = `"${majorStageTitle}" successfully updated!`;
+        const popupText =
+          status === 200
+            ? `"${majorStageTitle}" successfully updated!`
+            : `"${majorStageTitle}" successfully created!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId!,
           popupText: popupText,
         });
       } else if (mode === 'minor') {
-        stagesCtx.fetchUserData();
+        await stagesCtx.fetchUserData();
         const minorStage = stagesCtx.findMinorStage(minorStageId!);
-        const popupText = `"${minorStage!.title}" successfully updated!`;
+        const popupText =
+          status === 200
+            ? `"${minorStage!.title}" successfully updated!`
+            : `"${minorStage!.title}" successfully created!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId!,
           majorStageId: backendMajorStageId!,

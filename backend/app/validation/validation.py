@@ -85,21 +85,28 @@ class Validation:
       return self.__return_feedback()
     
     
-  def check_for_overlap(self, new_date: str, existing_start_date: date, existing_end_date: date, overlap_journey_name: str, mode: str) -> bool:
+  def check_for_overlap(self, new_date: str, existing_start_date: date, existing_end_date: date, overlap_superior_name: str) -> bool:
     try:
       new_date = datetime.strptime(new_date, '%d.%m.%Y')
     except (TypeError , ValueError):
       self.error_list.append('Error with overlap check occured')
     else:
       if new_date >= existing_start_date and new_date <= existing_end_date:
-        if mode == 'start':
-          self.error_list.append(f'Overlaps with "{overlap_journey_name}"')
-        elif mode == 'end':
-          self.error_list.append(f'Overlaps with "{overlap_journey_name}"')
-        
+        self.error_list.append(f'Overlaps with "{overlap_superior_name}"')
     return self.__return_feedback()
-    
-    
+
+
+  def check_for_inferior_collision(self, new_date: str, inferior_start_date: date, inferior_end_date: date, inferior_name: str) -> bool:
+    try:
+      new_date = datetime.strptime(new_date, '%d.%m.%Y')
+    except (TypeError , ValueError):
+      self.error_list.append('Error with inferior collision check occured')
+    else:
+      if new_date > inferior_start_date and new_date < inferior_end_date:
+        self.error_list.append(f'Collides with "{inferior_name}"')
+    return self.__return_feedback()
+
+
   def validate_amount(self, amount: int):
     amount = int(amount)
     if amount < 0:

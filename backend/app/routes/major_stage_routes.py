@@ -79,6 +79,7 @@ def create_major_stage(current_user, journeyId):
 def update_major_stage(current_user, journeyId, majorStageId):
     try:
         major_stage = request.get_json()
+        minor_stages = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId)).scalars().all()
         result = db.session.execute(db.select(MajorStage).filter(MajorStage.id != majorStageId, MajorStage.journey_id==journeyId))
         existing_major_stages = result.scalars().all()
         old_major_stage = db.get_or_404(MajorStage, majorStageId)
@@ -93,7 +94,7 @@ def update_major_stage(current_user, journeyId, majorStageId):
         return jsonify({'error': 'Unknown error'}, 400)
     
     
-    response, isValid = MajorStageValidation.validate_major_stage_update(major_stage, old_major_stage, existing_major_stages, existing_major_stages_costs, journey_costs)
+    response, isValid = MajorStageValidation.validate_major_stage_update(major_stage, existing_major_stages, existing_major_stages_costs, journey_costs, minor_stages)
     
     if not isValid:
         return jsonify({'majorStageFormValues': response, 'status': 400})

@@ -47,6 +47,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   const stagesCtx = useContext(StagesContext);
   const majorStage = stagesCtx.findMajorStage(majorStageId);
+
   const isOver = validateIsOver(majorStage!.scheduled_end_time);
 
   const planningNavigation =

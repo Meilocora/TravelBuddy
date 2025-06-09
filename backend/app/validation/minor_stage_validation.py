@@ -26,12 +26,12 @@ class MinorStageValidation(Validation):
             minorStage['title']['isValid'] = False
         
         for existing_minor_stage in existing_minor_stages:
-            start_val = MinorStageValidation().check_for_overlap(minorStage['scheduled_start_time']['value'], existing_minor_stage.scheduled_start_time, existing_minor_stage.scheduled_end_time, existing_minor_stage.title, mode='start')
+            start_val = MinorStageValidation().check_for_overlap(minorStage['scheduled_start_time']['value'], existing_minor_stage.scheduled_start_time, existing_minor_stage.scheduled_end_time, existing_minor_stage.title)
             if start_val:   
                 minorStage['scheduled_start_time']['errors'].append(f", {start_val}")             
                 minorStage['scheduled_start_time']['isValid'] = False
                 
-            end_val = MinorStageValidation().check_for_overlap(minorStage['scheduled_end_time']['value'], existing_minor_stage.scheduled_start_time, existing_minor_stage.scheduled_end_time, existing_minor_stage.title, mode='end')
+            end_val = MinorStageValidation().check_for_overlap(minorStage['scheduled_end_time']['value'], existing_minor_stage.scheduled_start_time, existing_minor_stage.scheduled_end_time, existing_minor_stage.title)
             if end_val:
                 minorStage['scheduled_end_time']['errors'].append(f", {end_val}")
                 minorStage['scheduled_end_time']['isValid'] = False

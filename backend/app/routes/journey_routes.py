@@ -100,21 +100,21 @@ def create_journey(current_user):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
+    
 @journey_bp.route('/update-journey/<int:journeyId>', methods=['POST'])
 @token_required
 def update_journey(current_user, journeyId):
     try:
         journey = request.get_json()
         result = db.session.execute(db.select(Journey).filter(Journey.id != journeyId, Journey.user_id==current_user))
+        major_stages = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId)).scalars().all()
         existing_journeys = result.scalars().all()
     except:
         return jsonify({'error': 'Unknown error'}, 400)
     
     
-    response, isValid = JourneyValidation.validate_journey(journey, existing_journeys)
-    
-    # TODO: Check if affects major stages (then don't allow)
-    
+    response, isValid = JourneyValidation.validate_journey_update(journey, existing_journeys, major_stages)
+        
     if not isValid:
         return jsonify({'journeyFormValues': response, 'status': 400})
     
@@ -204,10 +204,7 @@ def update_journey(current_user, journeyId):
 @journey_bp.route('/delete-journey/<int:journeyId>', methods=['DELETE'])
 @token_required
 def delete_journey(current_user, journeyId):
-    try:
-        
-        # TODO: Check if its the current journey in user, then delete there aswell
-        
+    try:        
         # Delete connected entries in the link table
         journey = db.get_or_404(Journey, journeyId)
         countries = journey.countries.split(', ')

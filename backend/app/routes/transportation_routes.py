@@ -70,7 +70,7 @@ def create_minor_stage_transportation(current_user, minorStageId):
     try:
         transportation = request.get_json()
         minor_stage = db.get_or_404(MinorStage, minorStageId)
-        major_stage = db.get_or_404(MajorStage, minor_stage.id)
+        major_stage = db.get_or_404(MajorStage, minor_stage.major_stage_id)        
         journey = db.get_or_404(Journey, major_stage.journey_id)
         journey_costs = db.session.execute(db.select(Costs).filter_by(journey_id=journey.id)).scalars().first()
          
