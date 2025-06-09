@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -19,6 +19,7 @@ import {
   formatDuration,
 } from '../../utils';
 import Link from '../UI/Link';
+import { StagesContext } from '../../store/stages-context';
 
 interface TransportationBoxProps {
   transportation: Transportation;
@@ -31,11 +32,16 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
   majorStageIsOver,
   onPressEdit,
 }): ReactElement => {
+  const stagesCtx = useContext(StagesContext);
   const [openInfoBox, setOpenInfoBox] = useState(false);
 
   let countdown: string | undefined = undefined;
   if (transportation) {
-    countdown = formatCountdown(transportation.start_time);
+    countdown = formatCountdown(
+      transportation.start_time,
+      transportation.start_time_offset,
+      stagesCtx.userTimeZoneOffset
+    );
   }
 
   const handleOpenInfoBox = () => {
@@ -45,8 +51,6 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
     });
     setOpenInfoBox((prevState) => !prevState);
   };
-
-  console.log(transportation);
 
   const duration = formatDuration(
     transportation.start_time,

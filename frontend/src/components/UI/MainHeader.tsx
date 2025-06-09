@@ -20,8 +20,6 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   );
 };
 
-// TODO: Improve Logo
-
 const styles = StyleSheet.create({
   container: {
     marginVertical: 24,

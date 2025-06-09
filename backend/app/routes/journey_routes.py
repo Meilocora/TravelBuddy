@@ -6,16 +6,20 @@ from app.routes.util import parseDate, formatDateToString
 from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
 from app.validation.journey_validation import JourneyValidation
 from app.routes.db_util import fetch_journeys
+from app.routes.util import calculate_time_zone_offset
 
 journey_bp = Blueprint('journey', __name__)
 
 @journey_bp.route('/get-stages-data', methods=['GET'])
 @token_required
-def get_stages_data(current_user): 
+def get_stages_data(current_user):
+    latitude = request.args.get('latitude', type=float)
+    longitude = request.args.get('longitude', type=float) 
     journeys_list = fetch_journeys(current_user=current_user)
         
-    if not isinstance(journeys_list, Exception):    
-        return jsonify({'journeys': journeys_list, 'status': 200})
+    if not isinstance(journeys_list, Exception):   
+        user_time_zone_offset =  calculate_time_zone_offset(latitude, longitude)
+        return jsonify({'journeys': journeys_list, 'offset': user_time_zone_offset, 'status': 200})
     else:
         return jsonify({'error': str(journeys_list)}, 500)
         

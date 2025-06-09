@@ -3,9 +3,11 @@ import { AxiosResponse } from 'axios';
 import { BACKEND_URL } from '@env';
 import { Journey, JourneyFormValues, TransportationType } from '../../models';
 import api from './api';
+import { getCurrentLocation } from '../location';
 
 interface FetchJourneysProps {
   journeys?: Journey[];
+  offset?: number;
   status: number;
   error?: string;
 }
@@ -13,9 +15,12 @@ interface FetchJourneysProps {
 const prefix = `${BACKEND_URL}/journey`;
 
 export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
+  const currentLocation = await getCurrentLocation();
+
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(
-      `${prefix}/get-stages-data`
+      `${prefix}/get-stages-data`,
+      { params: currentLocation }
     );
 
     // Error from backend
@@ -23,13 +28,13 @@ export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
       return { status: response.data.status, error: response.data.error };
     }
 
-    const { journeys, status } = response.data;
+    const { journeys, offset, status } = response.data;
 
     if (!journeys) {
       return { status };
     }
 
-    return { journeys, status };
+    return { journeys, offset, status };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch data!' };

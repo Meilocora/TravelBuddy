@@ -32,6 +32,7 @@ export enum Indicators {
 
 interface StagesContextType {
   journeys: Journey[];
+  userTimeZoneOffset: number;
   fetchUserData: () => Promise<void | string>;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
@@ -75,6 +76,7 @@ interface StagesContextType {
 
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
+  userTimeZoneOffset: 0,
   fetchUserData: async () => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
@@ -107,6 +109,7 @@ export default function StagesContextProvider({
   children: React.ReactNode;
 }) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [userTimeZoneOffset, setUserTimeZoneOffset] = useState<number>(0);
   const [selectedJourneyId, setSelectedJourneyId] = useState<
     number | undefined
   >(undefined);
@@ -168,6 +171,7 @@ export default function StagesContextProvider({
     if (response.journeys) {
       setJourneys(response.journeys);
       setShouldSetStages(true); // trigger effect
+      setUserTimeZoneOffset(response.offset!);
     } else {
       return response.error;
     }
@@ -504,6 +508,7 @@ export default function StagesContextProvider({
 
   const value = {
     journeys,
+    userTimeZoneOffset,
     fetchUserData,
     findJourney,
     findMajorStage,

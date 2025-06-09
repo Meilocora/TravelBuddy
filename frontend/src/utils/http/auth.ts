@@ -47,9 +47,6 @@ export const createUser = async (
 export const loginUser = async (
   authFormValues: AuthFormValues
 ): Promise<UserCreationProps> => {
-  // TODO: also retrieve users timeZoneOffset
-  // TODO: Maybe get local currency, by locating user in a country by coordinates, the use the installed package to get the currency of the country and then use the "currencyconverter" for Conversion rates
-  // TODO: Same, when user uses refreshToken?
   try {
     const response: AxiosResponse<UserCreationProps> = await axios.post(
       `${prefix}/login-user`,

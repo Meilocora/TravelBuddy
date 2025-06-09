@@ -76,14 +76,23 @@ export function formatDurationToDays(
 }
 
 export function formatCountdown(
-  startDate: string | undefined
+  startDate: string | undefined,
+  startDateOffset: string,
+  userOffset: number
 ): string | undefined {
   if (!startDate) {
     return undefined;
   }
-  const today = new Date();
+  const currentDateObject = new Date();
+  currentDateObject.setHours(currentDateObject.getHours() + userOffset);
+
   const startDateObject = parseDateAndTime(startDate);
-  const timeDifference = startDateObject.getTime() - today.getTime();
+  startDateObject.setHours(
+    startDateObject.getHours() + Number(startDateOffset)
+  );
+
+  const timeDifference =
+    startDateObject.getTime() - currentDateObject.getTime();
 
   if (timeDifference < 0) {
     return 'already departed';

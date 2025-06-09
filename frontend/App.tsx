@@ -51,12 +51,15 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
-import { FlatListComponent } from 'react-native';
 
 // TODO: Prevent Forms from crashing, when errors are displayed
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Overview => Diagramms and Statistics
+// TODO: Solve problem with navigationbuttons on mobile
+// TODO: Maybe also retrieve current local currency?
+// Maybe get local currency, by locating user in a country by coordinates, the use the installed package to get the currency of the country and then use the "currencyconverter" for Conversion rates
+
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: Fix custom progress bar
 

@@ -79,11 +79,10 @@ def calculate_journey_costs(journey_costs):
     journey_costs.money_exceeded = journey_costs.spent_money > journey_costs.budget
     return db.session.commit()
 
+tf = TimezoneFinder()
 
 def calculate_time_zone_offset(lat, lng):
-    tf = TimezoneFinder()
     target_timezone_str = tf.timezone_at(lng=lng, lat=lat)
-    
     if not target_timezone_str:
         raise ValueError("Could not determine timezone for coordinates.")
     

@@ -140,8 +140,6 @@ def fetch_major_stages(current_user, journeyId):
             if transportation is not None:
                 start_time_offset = calculate_time_zone_offset(transportation.departure_latitude, transportation.departure_longitude)
                 arrival_time_offset = calculate_time_zone_offset(transportation.arrival_latitude, transportation.arrival_longitude)
-                print(start_time_offset)
-                print(arrival_time_offset)
                 
                 major_stage_data['transportation'] = {
                     'id': transportation.id,

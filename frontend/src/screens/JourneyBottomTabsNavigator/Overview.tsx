@@ -5,6 +5,7 @@ interface OverviewProps {}
 
 const Overview: React.FC<OverviewProps> = (): ReactElement => {
   // TODO: Add Description of Journey + Journey stats
+  // Show gaps in between stages and missing transportations
 
   return (
     <View style={styles.root}>

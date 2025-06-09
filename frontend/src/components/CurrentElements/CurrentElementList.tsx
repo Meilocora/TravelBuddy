@@ -123,9 +123,10 @@ const CurrentElementList: React.FC<
     }
   } else {
     const duration = formatCountdownDays(currentMinorStage?.scheduled_end_time);
-    // TODO: Take timezones into account
     const countDownTransportation = formatCountdown(
-      nextTransportation?.start_time
+      nextTransportation?.start_time,
+      nextTransportation?.start_time_offset!,
+      stagesCtx.userTimeZoneOffset
     );
     const durationTransportation = formatDuration(
       nextTransportation?.start_time,

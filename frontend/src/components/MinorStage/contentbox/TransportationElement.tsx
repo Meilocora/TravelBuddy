@@ -15,11 +15,13 @@ import {
   formatAmount,
   formatDateTimeString,
   formatDuration,
-  parseDateAndTime,
+  validateIsOverDateTime,
 } from '../../../utils';
 import Link from '../../UI/Link';
 import TextLink from '../../UI/TextLink';
 import { Location, LocationType } from '../../../utils/http';
+import { useContext } from 'react';
+import { StagesContext } from '../../../store/stages-context';
 
 interface TransportElementInfopointProps {
   subtitle: string;
@@ -114,6 +116,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
   handleEdit,
   minorStageIsOver,
 }) => {
+  const stagesCtx = useContext(StagesContext);
   if (transportation === undefined) {
     return (
       <View style={styles.infoContainer}>
@@ -137,11 +140,16 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
     transportation.arrival_time,
     transportation.arrival_time_offset
   );
-  const doneStart = parseDateAndTime(transportation.start_time) < new Date();
-  // TODO: Calculate arrival_time in dependance of current timezone and timezone from place of departure
-  const doneArrival =
-    parseDateAndTime(transportation.arrival_time) < new Date();
-  // TODO: Calculate arrival_time in dependance of current timezone and timezone from place of arrival
+  const doneStart = validateIsOverDateTime(
+    transportation.start_time,
+    transportation.start_time_offset,
+    stagesCtx.userTimeZoneOffset
+  );
+  const doneArrival = validateIsOverDateTime(
+    transportation.arrival_time,
+    transportation.arrival_time_offset,
+    stagesCtx.userTimeZoneOffset
+  );
 
   const infoPointsData = [
     {
