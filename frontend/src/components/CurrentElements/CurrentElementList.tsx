@@ -42,7 +42,7 @@ const CurrentElementList: React.FC<
   const transportationStageType =
     connectedStage && 'country' in connectedStage ? 'accent' : 'complementary';
 
-  let content: ReactElement = <Text>No Information</Text>;
+  let content: ReactElement = <></>;
 
   function handleGoToNextJourney() {
     stagesCtx.setSelectedJourneyId(nextJourney!.id);

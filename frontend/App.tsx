@@ -61,6 +61,7 @@ import StagesContextProvider from './src/store/stages-context';
 // Maybe get local currency, by locating user in a country by coordinates, the use the installed package to get the currency of the country and then use the "currencyconverter" for Conversion rates
 
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
+// TODO: Change all LayoutAnimations into something that actually works
 // TODO: Fix custom progress bar
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -206,7 +207,6 @@ const JourneyBottomTabsNavigator = () => {
           tabBarIconStyle: { color: 'white' },
           tabBarLabelStyle: {
             fontSize: 14,
-            // marginBottom: 5,
           },
         })}
       >

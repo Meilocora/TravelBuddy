@@ -15,7 +15,6 @@ const InfoCurtain: React.FC<InfoCurtainProps> = ({
 }): ReactElement => {
   const [showInfo, setShowInfo] = useState(true);
 
-  // TODO: Maybe use LayoutAnimation instead?
   let schemeStyles = primaryStyles;
 
   if (colorScheme === ColorScheme.accent) {
@@ -49,14 +48,12 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingVertical: 20,
     marginHorizontal: 20,
-    // backgroundColor: GlobalStyles.colors.accent100,
     borderRadius: 10,
     borderBottomRightRadius: 100,
     borderBottomLeftRadius: 100,
     margin: 10,
   },
   text: {
-    // color: GlobalStyles.colors.accent800,
     fontSize: 16,
     textAlign: 'center',
   },

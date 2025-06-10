@@ -43,8 +43,6 @@ interface TransportationFormProps {
   minorStageId?: number;
 }
 
-// TODO: No minorStages visible after adding one?
-
 const TransportationForm: React.FC<TransportationFormProps> = ({
   onCancel,
   onSubmit,

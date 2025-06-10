@@ -64,7 +64,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
   }, [navigation, isEditing]);
 
   function handleChangeEdit() {
-    // TODO: Improve Animation...
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsEditing((prevValue) => !prevValue);
   }

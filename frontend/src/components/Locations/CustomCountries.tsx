@@ -17,7 +17,7 @@ interface CustomCountriesProps {}
 
 const CustomCountries: React.FC<CustomCountriesProps> = (): ReactElement => {
   const [isAddCountry, setIsAddCountry] = useState(false);
-  const [isSetFilter, setIsSetFilter] = useState(false);
+  const [isSort, setSort] = useState(false);
   // TODO: Implement Filter functionality
   const [isSearch, setIsSearch] = useState(false);
   // TODO: Implement Search functionality
@@ -31,7 +31,7 @@ const CustomCountries: React.FC<CustomCountriesProps> = (): ReactElement => {
 
   function handleTapOutside(): void {
     setIsAddCountry(false);
-    setIsSetFilter(false);
+    setSort(false);
     setIsSearch(false);
     Keyboard.dismiss();
   }
@@ -58,7 +58,7 @@ const CustomCountries: React.FC<CustomCountriesProps> = (): ReactElement => {
           />
           <IconButton
             icon={Icons.filter}
-            onPress={() => setIsSetFilter((prevState) => !prevState)}
+            onPress={() => setSort((prevState) => !prevState)}
           />
         </View>
         <CountriesList />
