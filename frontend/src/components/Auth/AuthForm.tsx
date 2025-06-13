@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   formRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     width: '85%',
     marginVertical: 4,
     marginHorizontal: 'auto',

@@ -16,8 +16,8 @@ class Validation:
   
   
   def validate_string(self, value: str, min_length: int = 1, max_length: int = 250) -> bool | None:    
-    if not value and min_length == 0:
-      pass    
+    if not value:
+      return self.__return_feedback()
     elif len(value.strip()) < min_length:
       self.error_list.append(f'Min length is {min_length}')
     
@@ -49,7 +49,8 @@ class Validation:
     try:
       datetime.strptime(value, '%d.%m.%Y')
     except (TypeError , ValueError):
-      self.error_list.append('Wrong format')
+      # self.error_list.append('Wrong format')
+      return self.__return_feedback()
     else:
       if not min_date:
         min_date = self.current_date_string
@@ -89,7 +90,8 @@ class Validation:
     try:
       new_date = datetime.strptime(new_date, '%d.%m.%Y')
     except (TypeError , ValueError):
-      self.error_list.append('Error with overlap check occured')
+      # self.error_list.append('Error with overlap check occured')
+      return self.__return_feedback()
     else:
       if new_date >= existing_start_date and new_date <= existing_end_date:
         self.error_list.append(f'Overlaps with "{overlap_superior_name}"')

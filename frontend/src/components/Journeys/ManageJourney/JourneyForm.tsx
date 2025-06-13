@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   formRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'stretch',
     marginVertical: 8,
   },
   buttonsContainer: {

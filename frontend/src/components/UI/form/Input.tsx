@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   invalidLabel: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: GlobalStyles.colors.error200,
   },

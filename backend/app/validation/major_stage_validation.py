@@ -32,12 +32,12 @@ class MajorStageValidation(Validation):
             majorStage['additional_info']['isValid'] = False
         
         for existing_major_stage in existing_major_stages:
-            start_val = MajorStageValidation().check_for_overlap(majorStage['scheduled_start_time']['value'], existing_major_stage.scheduled_start_time, existing_major_stage.scheduled_end_time, existing_major_stage.title, mode='start')
+            start_val = MajorStageValidation().check_for_overlap(majorStage['scheduled_start_time']['value'], existing_major_stage.scheduled_start_time, existing_major_stage.scheduled_end_time, existing_major_stage.title)
             if start_val:   
                 majorStage['scheduled_start_time']['errors'].append(f", {start_val}")             
                 majorStage['scheduled_start_time']['isValid'] = False
                 
-            end_val = MajorStageValidation().check_for_overlap(majorStage['scheduled_end_time']['value'], existing_major_stage.scheduled_start_time, existing_major_stage.scheduled_end_time, existing_major_stage.title, mode='end')
+            end_val = MajorStageValidation().check_for_overlap(majorStage['scheduled_end_time']['value'], existing_major_stage.scheduled_start_time, existing_major_stage.scheduled_end_time, existing_major_stage.title)
             if end_val:
                 majorStage['scheduled_end_time']['errors'].append(f", {end_val}")
                 majorStage['scheduled_end_time']['isValid'] = False
