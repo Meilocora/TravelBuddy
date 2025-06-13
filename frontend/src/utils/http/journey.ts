@@ -14,9 +14,15 @@ interface FetchJourneysProps {
 
 const prefix = `${BACKEND_URL}/journey`;
 
-export const fetchStagesData = async (): Promise<FetchJourneysProps> => {
-  const currentLocation = await getCurrentLocation();
-
+export const fetchStagesData = async (
+  hasPermission: boolean
+): Promise<FetchJourneysProps> => {
+  let currentLocation: { latitude: number; longitude: number } | undefined;
+  if (hasPermission) {
+    const currentLocation = await getCurrentLocation();
+  } else {
+    const currentLocation = undefined;
+  }
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(
       `${prefix}/get-stages-data`,
@@ -183,3 +189,6 @@ export const fetchJourneysLocations = async (
     return { status: 500, error: 'Could not fetch locations!' };
   }
 };
+function verifyPermissions() {
+  throw new Error('Function not implemented.');
+}

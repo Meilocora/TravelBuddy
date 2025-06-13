@@ -25,6 +25,7 @@ import IconButton from '../../../components/UI/IconButton';
 import MinorStageForm from '../../../components/MinorStage/ManageMinorStage/MinorStageForm';
 import { StagesContext } from '../../../store/stages-context';
 import HeaderTitle from '../../../components/UI/HeaderTitle';
+import { useLocationPermissions } from '../../../utils/location';
 
 interface ManageMinorStageProps {
   navigation: NativeStackNavigationProp<
@@ -46,6 +47,8 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
 
@@ -133,7 +136,8 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
     try {
       const { error, status } = await deleteMinorStage(editedMinorStageId!);
       if (!error && status === 200) {
-        stagesCtx.fetchUserData();
+        const hasPermission = await verifyPermissions();
+        stagesCtx.fetchUserData(hasPermission);
         const popupText = `Minor Stage successfully deleted!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
@@ -190,7 +194,8 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 200) {
-        stagesCtx.fetchUserData();
+        const hasPermission = await verifyPermissions();
+        stagesCtx.fetchUserData(hasPermission);
         const popupText = `"${minorStage.title}" successfully updated!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,
@@ -204,7 +209,8 @@ const ManageMinorStage: React.FC<ManageMinorStageProps> = ({
         setError(error);
         return;
       } else if (minorStage && status === 201) {
-        stagesCtx.fetchUserData();
+        const hasPermission = await verifyPermissions();
+        stagesCtx.fetchUserData(hasPermission);
         const popupText = `"${minorStage.title}" successfully created!`;
         navigation.navigate('MinorStages', {
           journeyId: journeyId,

@@ -21,6 +21,7 @@ interface InputProps {
   errors?: string[];
   isEditing?: boolean;
   mandatory?: boolean;
+  customInputStyles?: ViewStyle;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -31,6 +32,7 @@ const Input: React.FC<InputProps> = ({
   errors,
   isEditing = true,
   mandatory = false,
+  customInputStyles,
 }): ReactElement => {
   const inputStyles: StyleProp<TextStyle>[] = [styles.input];
 
@@ -60,17 +62,18 @@ const Input: React.FC<InputProps> = ({
       </Text>
       {isMultiline ? (
         <TextInput
-          style={inputStyles}
+          style={[inputStyles, customInputStyles]}
           readOnly={!isEditing}
           autoCorrect={false}
           autoCapitalize='none'
           autoComplete='off'
           {...textInputConfig}
           selectionColor='white'
+          underlineColorAndroid='transparent'
         />
       ) : (
         <TextInput
-          style={inputStyles}
+          style={[inputStyles, customInputStyles]}
           readOnly={!isEditing}
           autoCorrect={false}
           autoCapitalize='none'
@@ -78,6 +81,7 @@ const Input: React.FC<InputProps> = ({
           numberOfLines={1}
           {...textInputConfig}
           selectionColor='white'
+          underlineColorAndroid='transparent'
         />
       )}
       {errors &&

@@ -14,6 +14,7 @@ import { StagesContext } from '../../store/stages-context';
 import { CustomCountryContext } from '../../store/custom-country-context';
 import CurrentElementList from '../../components/CurrentElements/CurrentElementList';
 import { PlaceContext } from '../../store/place-context';
+import { useLocationPermissions } from '../../utils/location';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -28,6 +29,8 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
+
+  const { verifyPermissions } = useLocationPermissions();
 
   const authCtx = useContext(AuthContext);
   const stagesCtx = useContext(StagesContext);
@@ -58,7 +61,8 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   useEffect(() => {
     async function getData() {
       setIsFetching(true);
-      const stagesBackendError = await stagesCtx.fetchUserData();
+      const hasPermission = await verifyPermissions();
+      const stagesBackendError = await stagesCtx.fetchUserData(hasPermission);
       const countriesBackendError =
         await countryCtx.fetchUsersCustomCountries();
       const placesBackendError = await placesCtx.fetchPlacesToVisit();

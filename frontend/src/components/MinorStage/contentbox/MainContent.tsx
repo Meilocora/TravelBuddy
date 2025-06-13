@@ -15,6 +15,7 @@ import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
 import { validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
+import { useLocationPermissions } from '../../../utils/location';
 
 interface MainContentProps {
   journeyId: number;
@@ -38,6 +39,8 @@ const MainContent: React.FC<MainContentProps> = ({
   majorStageId,
   minorStage,
 }): ReactElement => {
+  const { verifyPermissions } = useLocationPermissions();
+
   const stagesCtx = useContext(StagesContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
@@ -61,12 +64,14 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleAddPlace(name: string) {
     await addMinorStageToFavoritePlace(name, minorStage.id);
-    stagesCtx.fetchUserData();
+    const hasPermission = await verifyPermissions();
+    stagesCtx.fetchUserData(hasPermission);
   }
 
   async function handleRemovePlace(name: string) {
     await removeMinorStageFromFavoritePlace(name);
-    stagesCtx.fetchUserData();
+    const hasPermission = await verifyPermissions();
+    stagesCtx.fetchUserData(hasPermission);
   }
 
   function handleAddActivity() {
@@ -84,7 +89,8 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleDeleteActivity(id: number) {
     await deleteActivity(id);
-    stagesCtx.fetchUserData();
+    const hasPermission = await verifyPermissions();
+    stagesCtx.fetchUserData(hasPermission);
   }
 
   function handleAddSpending() {

@@ -1,16 +1,17 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement } from 'react';
 import { StyleSheet, FlatList, View } from 'react-native';
 
-import { CustomCountryContext } from '../../store/custom-country-context';
 import CountryGridTile from './CountryGridTile';
 import InfoText from '../UI/InfoText';
+import { CustomCountry } from '../../models';
 
-interface CountriesListProps {}
+interface CountriesListProps {
+  countries: CustomCountry[];
+}
 
-const CountriesList: React.FC<CountriesListProps> = (): ReactElement => {
-  const customCountryCtx = useContext(CustomCountryContext);
-  const countries = customCountryCtx.customCountries;
-
+const CountriesList: React.FC<CountriesListProps> = ({
+  countries,
+}): ReactElement => {
   return (
     <View style={styles.container}>
       {countries.length > 0 && (
@@ -21,7 +22,7 @@ const CountriesList: React.FC<CountriesListProps> = (): ReactElement => {
           numColumns={2}
         />
       )}
-      {countries.length === 0 && <InfoText content='No countries added yet!' />}
+      {countries.length === 0 && <InfoText content='No countries found.' />}
     </View>
   );
 };

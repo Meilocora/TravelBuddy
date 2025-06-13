@@ -18,7 +18,10 @@ def get_stages_data(current_user):
     journeys_list = fetch_journeys(current_user=current_user)
         
     if not isinstance(journeys_list, Exception):   
-        user_time_zone_offset =  calculate_time_zone_offset(latitude, longitude)
+        if latitude is None or longitude is None:
+            user_time_zone_offset = 0
+        else:
+            user_time_zone_offset =  calculate_time_zone_offset(latitude, longitude)
         return jsonify({'journeys': journeys_list, 'offset': user_time_zone_offset, 'status': 200})
     else:
         return jsonify({'error': str(journeys_list)}, 500)

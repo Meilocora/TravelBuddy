@@ -33,7 +33,7 @@ export enum Indicators {
 interface StagesContextType {
   journeys: Journey[];
   userTimeZoneOffset: number;
-  fetchUserData: () => Promise<void | string>;
+  fetchUserData: (hasPermission: boolean) => Promise<void | string>;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
   findMinorStage: (minorStageId: number) => MinorStage | undefined;
@@ -77,7 +77,7 @@ interface StagesContextType {
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
   userTimeZoneOffset: 0,
-  fetchUserData: async () => {},
+  fetchUserData: async (hasPermission) => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
   findMinorStage: () => undefined,
@@ -165,8 +165,8 @@ export default function StagesContextProvider({
 
   const [shouldSetStages, setShouldSetStages] = useState(false);
 
-  async function fetchUserData(): Promise<void | string> {
-    const response = await fetchStagesData();
+  async function fetchUserData(hasPermission: boolean): Promise<void | string> {
+    const response = await fetchStagesData(hasPermission);
 
     if (response.journeys) {
       setJourneys(response.journeys);

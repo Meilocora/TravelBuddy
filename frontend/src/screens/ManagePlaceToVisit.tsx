@@ -14,6 +14,7 @@ import MainGradient from '../components/UI/LinearGradients/MainGradient';
 import { CustomCountryContext } from '../store/custom-country-context';
 import { StagesContext } from '../store/stages-context';
 import HeaderTitle from '../components/UI/HeaderTitle';
+import { useLocationPermissions } from '../utils/location';
 
 interface ManagePlaceToVisitProps {
   navigation: NativeStackNavigationProp<StackParamList, 'ManagePlaceToVisit'>;
@@ -31,6 +32,9 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
   route,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
+
+  const { verifyPermissions } = useLocationPermissions();
+
   const customCountryCtx = useContext(CustomCountryContext);
   const placesCtx = useContext(PlaceContext);
   const stagesCtx = useContext(StagesContext);
@@ -71,7 +75,8 @@ const ManagePlaceToVisit: React.FC<ManagePlaceToVisitProps> = ({
         placesCtx.updatePlace(place);
         customCountryCtx.fetchUsersCustomCountries();
         if (majorStageId) {
-          stagesCtx.fetchUserData();
+          const hasPermission = await verifyPermissions();
+          stagesCtx.fetchUserData(hasPermission);
         }
         navigation.goBack();
       }

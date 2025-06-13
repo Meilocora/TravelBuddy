@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
+import OutsidePressHandler from 'react-native-outside-press';
 
 import Input from '../form/Input';
 import Button from '../Button';
@@ -17,7 +19,6 @@ import InfoText from '../InfoText';
 import { GlobalStyles } from '../../../constants/styles';
 import ListItem from './ListItem';
 import ErrorOverlay from '../ErrorOverlay';
-import { BlurView } from 'expo-blur';
 
 interface SearchElementProps<T, U> {
   onFetchRequest: (
@@ -28,6 +29,7 @@ interface SearchElementProps<T, U> {
   ) => Promise<{ addedItem?: U; status: number; error?: string }>;
   onAddHandler: (addedItem: U) => void;
   searchTermLabel: string;
+  onOutsidePress: () => void;
 }
 
 const SearchElement = <T, U>({
@@ -35,6 +37,7 @@ const SearchElement = <T, U>({
   onAddRequest,
   onAddHandler,
   searchTermLabel,
+  onOutsidePress,
 }: SearchElementProps<T, U>): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -141,29 +144,31 @@ const SearchElement = <T, U>({
         exiting={FadeOutUp}
         style={styles.outerContainer}
       >
-        <View style={styles.innerContainer}>
-          <Input
-            errors={[]}
-            invalid={false}
-            label={searchTermLabel}
-            textInputConfig={{
-              value: searchTerm,
-              onChangeText: inputChangedHandler,
-            }}
-          />
-          <Button
-            onPress={handleAddItem}
-            colorScheme={ColorScheme.accent}
-            style={{
-              marginHorizontal: 10,
-              alignSelf: 'flex-end',
-              marginBottom: 12,
-            }}
-          >
-            Add
-          </Button>
-        </View>
-        {content}
+        <OutsidePressHandler onOutsidePress={onOutsidePress}>
+          <View style={styles.innerContainer}>
+            <Input
+              errors={[]}
+              invalid={false}
+              label={searchTermLabel}
+              textInputConfig={{
+                value: searchTerm,
+                onChangeText: inputChangedHandler,
+              }}
+            />
+            <Button
+              onPress={handleAddItem}
+              colorScheme={ColorScheme.accent}
+              style={{
+                marginHorizontal: 10,
+                alignSelf: 'flex-end',
+                marginBottom: 12,
+              }}
+            >
+              Add
+            </Button>
+          </View>
+          {content}
+        </OutsidePressHandler>
       </Animated.View>
     </BlurView>
   );
