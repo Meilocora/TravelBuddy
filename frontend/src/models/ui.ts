@@ -45,6 +45,7 @@ export enum Icons {
   settings = 'settings-outline',
   goTo = 'arrow-forward-circle',
   arrowLeft = 'chevron-back',
+  activity = 'flash',
 }
 
 export enum ButtonMode {

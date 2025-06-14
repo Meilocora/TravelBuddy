@@ -52,17 +52,17 @@ import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 
-// TODO: Prevent Forms from crashing, when errors are displayed
-// TODO: Implement frontend validation to Forms for max and min length of an entry
-// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Overview => Diagramms and Statistics
+// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
 // TODO: Solve problem with navigationbuttons on mobile
 // TODO: Maybe also retrieve current local currency?
 // Maybe get local currency, by locating user in a country by coordinates, the use the installed package to get the currency of the country and then use the "currencyconverter" for Conversion rates
 
+// TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: Change all LayoutAnimations into something that actually works
 // TODO: Fix custom progress bar
+// TODO: Maybe make it possible to have several accommodations for one minorStage?
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

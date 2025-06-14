@@ -1,15 +1,25 @@
-import { ReactElement } from 'react';
+import { ReactElement, useContext } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+
+import { StagesContext } from '../../store/stages-context';
+import DesctipionElement from '../../components/Overview/DescriptionElement';
+import OverviewDetails from '../../components/Overview/OverviewDetails';
 
 interface OverviewProps {}
 
 const Overview: React.FC<OverviewProps> = (): ReactElement => {
-  // TODO: Add Description of Journey + Journey stats
-  // Show gaps in between stages and missing transportations
+  const stagesCtx = useContext(StagesContext);
+  const journey = stagesCtx.findJourney(stagesCtx.selectedJourneyId!);
+
+  // AREA Money Spent cake diagramm
+  // Functionality => Check for gaps, missing transportation, missing accommodation
 
   return (
     <View style={styles.root}>
-      <Text>Overview</Text>
+      {journey?.description && (
+        <DesctipionElement description={journey.description} />
+      )}
+      <OverviewDetails journey={journey!} />
     </View>
   );
 };

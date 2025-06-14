@@ -72,7 +72,6 @@ def create_place(current_user):
         return jsonify({'error': 'Unknown error'}, 400) 
         
     response, isValid = PlaceValidation.validate_place(place=place)
-    print(response)
     if not isValid:
         return jsonify({'placeFormValues': response, 'status': 400})
     

@@ -2,12 +2,13 @@ import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { CustomCountry } from '../models';
 
 export function formatAmount(amount: number): string {
-  return new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  if (amount < 1000) {
+    return `${amount} €`;
+  } else if (amount < 1000000) {
+    return `${(amount / 1000).toFixed(1)}k €`;
+  } else {
+    return `${(amount / 1000000).toFixed(1)}mio €`;
+  }
 }
 
 export function formatQuantity(qty: number): string | null {

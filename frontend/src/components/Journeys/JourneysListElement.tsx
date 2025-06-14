@@ -1,5 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { ReactElement, useContext, useEffect, useState } from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { ReactElement, useContext } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
