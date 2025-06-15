@@ -109,8 +109,13 @@ class Validation:
     return self.__return_feedback()
 
 
-  def validate_amount(self, amount: int):
-    amount = int(amount)
+  def validate_amount(self, amount: float):
+    try:
+      amount = float(amount)
+    except ValueError:
+      self.error_list.append('Invalid amount')
+      return self.__return_feedback()
+      
     if amount < 0:
       self.error_list.append('Amount cannot be negative')
     

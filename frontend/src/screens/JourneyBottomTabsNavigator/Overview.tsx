@@ -4,6 +4,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import { StagesContext } from '../../store/stages-context';
 import DesctipionElement from '../../components/Overview/DescriptionElement';
 import OverviewDetails from '../../components/Overview/OverviewDetails';
+import OverviewChart from '../../components/Overview/OverviewChart';
 
 interface OverviewProps {}
 
@@ -20,6 +21,7 @@ const Overview: React.FC<OverviewProps> = (): ReactElement => {
         <DesctipionElement description={journey.description} />
       )}
       <OverviewDetails journey={journey!} />
+      <OverviewChart journey={journey!} />
     </View>
   );
 };
