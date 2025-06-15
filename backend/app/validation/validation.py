@@ -113,9 +113,9 @@ class Validation:
     try:
       amount = float(amount)
     except ValueError:
-      self.error_list.append('Invalid amount')
+      self.error_list.append('Invalid amount format')
       return self.__return_feedback()
-      
+     
     if amount < 0:
       self.error_list.append('Amount cannot be negative')
     

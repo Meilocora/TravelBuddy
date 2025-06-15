@@ -123,9 +123,9 @@ def update_journey(current_user, journeyId):
     
     
     old_journey = db.get_or_404(Journey, journeyId)
-    
-    money_exceeded = int(response['budget']['value']) < int(response['spent_money']['value'])
-    
+
+    money_exceeded = float(response['budget']['value']) < float(response['spent_money']['value'])
+
     majorStages_result = db.session.execute(db.select(MajorStage).filter_by(journey_id=journeyId))
     majorStages = majorStages_result.scalars().all()
     majorStagesIds = [majorStage.id for majorStage in majorStages]

@@ -142,8 +142,8 @@ class Costs(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    budget: Mapped[int] = mapped_column(Integer, nullable=False)
-    spent_money: Mapped[int] = mapped_column(Integer, nullable=False)
+    budget: Mapped[float] = mapped_column(Float, nullable=False)
+    spent_money: Mapped[float] = mapped_column(Float, nullable=False)
     money_exceeded: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Foreign keys to the parents
@@ -166,7 +166,7 @@ class Spendings(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
     date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     category: Mapped[str] = mapped_column(String, nullable=False)
 
@@ -191,7 +191,7 @@ class Transportation(db.Model):
     place_of_arrival: Mapped[str] = mapped_column(String, nullable=False)
     arrival_latitude: Mapped[float] = mapped_column(Float, nullable=True)
     arrival_longitude: Mapped[float] = mapped_column(Float, nullable=True)
-    transportation_costs: Mapped[int] = mapped_column(Integer, nullable=False)
+    transportation_costs: Mapped[float] = mapped_column(Float, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
 
     # Foreign keys to the parents
@@ -210,7 +210,7 @@ class Accommodation(db.Model):
     latitude: Mapped[float] = mapped_column(Float, nullable=True)
     longitude: Mapped[float] = mapped_column(Float, nullable=True)
     place: Mapped[str] = mapped_column(String, nullable=False)
-    costs: Mapped[int] = mapped_column(Integer, nullable=False)
+    costs: Mapped[float] = mapped_column(Float, nullable=False)
     booked: Mapped[bool] = mapped_column(Boolean, nullable=False)
     link: Mapped[str] = mapped_column(String, nullable=True)
 
@@ -227,7 +227,7 @@ class Activity(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    costs: Mapped[int] = mapped_column(Integer, nullable=False)
+    costs: Mapped[float] = mapped_column(Float, nullable=False)
     booked: Mapped[bool] = mapped_column(Boolean, nullable=False)
     place: Mapped[str] = mapped_column(String, nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=True)

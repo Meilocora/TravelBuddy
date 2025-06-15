@@ -105,9 +105,9 @@ def update_major_stage(current_user, journeyId, majorStageId):
             for minor_stage in old_major_stage.minor_stages:
                 db.session.delete(minor_stage)
             db.session.commit()
-    
-    money_exceeded = int(response['budget']['value']) < int(response['spent_money']['value'])
-    
+
+    money_exceeded = float(response['budget']['value']) < float(response['spent_money']['value'])
+
     minorStages_result = db.session.execute(db.select(MinorStage).filter_by(major_stage_id=majorStageId))
     minorStages = minorStages_result.scalars().all()
     minorStagesIds = [minorStage.id for minorStage in minorStages]

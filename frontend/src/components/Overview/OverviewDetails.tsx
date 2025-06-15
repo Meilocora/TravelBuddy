@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: 'row',
     alignItems: 'stretch',
+    justifyContent: 'space-evenly',
     flexWrap: 'wrap',
     marginHorizontal: 'auto',
   },

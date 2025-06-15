@@ -73,18 +73,18 @@ class MinorStageValidation(Validation):
         if money_val:
             minorStage['budget']['errors'].append(f", {money_val}")
             minorStage['budget']['isValid'] = False
+        else:
+            minor_stages_budget = float(minorStage['budget']['value'])
+            major_stage_budget = major_stage_costs.budget
             
-        minor_stages_budget = int(minorStage['budget']['value'])
-        major_stage_budget = major_stage_costs.budget
-        
-        if existing_minor_stages_costs and existing_minor_stages_costs[0] != None:
-            for existing_minor_stage_costs in existing_minor_stages_costs:
-                minor_stages_budget += existing_minor_stage_costs.budget
-        if minor_stages_budget > major_stage_budget:
-            max_available_money = major_stage_budget - minor_stages_budget + int(minorStage['budget']['value'])
-            max_available_money_str = locale.currency(max_available_money, grouping=True)
-            minorStage['budget']['errors'].append(f", Max available amount for major stage: {max_available_money_str}")
-            minorStage['budget']['isValid'] = False
+            if existing_minor_stages_costs and existing_minor_stages_costs[0] != None:
+                for existing_minor_stage_costs in existing_minor_stages_costs:
+                    minor_stages_budget += existing_minor_stage_costs.budget
+            if minor_stages_budget > major_stage_budget:
+                max_available_money = major_stage_budget - minor_stages_budget + float(minorStage['budget']['value'])
+                max_available_money_str = locale.currency(max_available_money, grouping=True)
+                minorStage['budget']['errors'].append(f", Max available amount for major stage: {max_available_money_str}")
+                minorStage['budget']['isValid'] = False
             
         for key, value in minorStage.items():
             if 'errors' in value and value['errors']:

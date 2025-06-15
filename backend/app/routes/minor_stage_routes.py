@@ -121,9 +121,9 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
 
     if not isValid:
         return jsonify({'minorStageFormValues': response, 'status': 400})
-    
-    money_exceeded = int(response['budget']['value']) < int(response['spent_money']['value'])
-    
+
+    money_exceeded = float(response['budget']['value']) < float(response['spent_money']['value'])
+
     spendings = db.session.execute(db.select(Spendings).join(Costs).filter(Costs.minor_stage_id == minorStageId)).scalars().all()
     transportation = db.session.execute(db.select(Transportation).filter_by(minor_stage_id=minorStageId)).scalars().first()
     places_to_visit = db.session.execute(db.select(PlaceToVisit).filter_by(minor_stage_id=minorStageId)).scalars().all()

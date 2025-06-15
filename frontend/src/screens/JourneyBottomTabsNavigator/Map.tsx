@@ -57,6 +57,9 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const stagesCtx = useContext(StagesContext);
   const journeyId = stagesCtx.selectedJourneyId!;
 
+  // TODO: Symbole werden nicht komplett dargestellt
+  // TODO: aktivierte Orte anders färben
+
   useEffect(() => {
     async function fetchUserLocation() {
       const currentLocation = await getCurrentLocation();
