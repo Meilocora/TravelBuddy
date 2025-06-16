@@ -157,6 +157,8 @@ const OverviewDetails: React.FC<OverviewDetailsProps> = ({
   );
 };
 
+// TODO: Adjust styling
+
 const styles = StyleSheet.create({
   container: {
     width: '90%',

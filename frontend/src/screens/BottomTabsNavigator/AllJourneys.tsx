@@ -62,6 +62,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     async function getData() {
       setIsFetching(true);
       const hasPermission = await verifyPermissions();
+      //
       const stagesBackendError = await stagesCtx.fetchUserData(hasPermission);
       const countriesBackendError =
         await countryCtx.fetchUsersCustomCountries();

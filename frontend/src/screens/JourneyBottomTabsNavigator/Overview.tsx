@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 
 import { StagesContext } from '../../store/stages-context';
 import DesctipionElement from '../../components/Overview/DescriptionElement';
@@ -12,17 +12,16 @@ const Overview: React.FC<OverviewProps> = (): ReactElement => {
   const stagesCtx = useContext(StagesContext);
   const journey = stagesCtx.findJourney(stagesCtx.selectedJourneyId!);
 
-  // AREA Money Spent cake diagramm
   // Functionality => Check for gaps, missing transportation, missing accommodation
 
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       {journey?.description && (
         <DesctipionElement description={journey.description} />
       )}
       <OverviewDetails journey={journey!} />
       <OverviewChart journey={journey!} />
-    </View>
+    </ScrollView>
   );
 };
 

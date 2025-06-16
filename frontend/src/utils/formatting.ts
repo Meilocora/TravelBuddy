@@ -11,6 +11,13 @@ export function formatAmount(amount: number): string {
   }
 }
 
+export function formatPercentage(percentage: number): string {
+  if (percentage < 0.01) {
+    return '<0.01%';
+  }
+  return percentage.toFixed(2) + '%';
+}
+
 export function formatQuantity(qty: number): string | null {
   if (!qty) {
     return null;

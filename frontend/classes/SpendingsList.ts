@@ -1,13 +1,17 @@
-import { SpendingCategory } from '../src/models';
+import { Journey, SpendingCategory } from '../src/models';
+import { formatAmount, formatPercentage } from '../src/utils';
 
 interface SpendingsObject {
+  category: string;
   amount: number;
   percentage: number;
   color: string;
 }
 
-interface ChartData {
+export interface ChartData {
+  category: string;
   value: number;
+  text: string;
   color: string;
   focused?: boolean;
 }
@@ -19,6 +23,7 @@ export class SpendingsList {
     this.spendings = {} as Record<SpendingCategory, SpendingsObject>;
     Object.values(SpendingCategory).forEach((category, idx) => {
       this.spendings[category] = {
+        category: category,
         amount: 0,
         percentage: 0,
         color: colors[idx % colors.length],
@@ -35,12 +40,66 @@ export class SpendingsList {
     return Object.values(this.spendings);
   }
 
-  getChartData(): ChartData[] {
-    return Object.values(this.spendings).map((spending) => ({
-      value: spending.amount,
-      color: spending.color,
-      focused: spending.amount > 0, // Focus on categories with non-zero amounts
-    }));
+  // TODO: This must also work for List of Journeys
+  fillSpendingsList(journey: Journey) {
+    if (journey.majorStages) {
+      for (const majorStage of journey.majorStages) {
+        majorStage.transportation &&
+          this.addAmount(
+            SpendingCategory.transportation,
+            majorStage.transportation.transportation_costs
+          );
+        if (majorStage.minorStages) {
+          for (const minorStage of majorStage.minorStages) {
+            minorStage.transportation &&
+              this.addAmount(
+                SpendingCategory.transportation,
+                minorStage.transportation.transportation_costs
+              );
+            this.addAmount(
+              SpendingCategory.acommodation,
+              minorStage.accommodation.costs
+            );
+            if (minorStage.costs.spendings) {
+              for (const spending of minorStage.costs.spendings) {
+                this.addAmount(
+                  spending.category as SpendingCategory,
+                  spending.amount
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  getChartData(mode: 'amount' | 'percentage'): ChartData[] {
+    let chartData: ChartData[] = [];
+    if (mode === 'percentage') {
+      chartData = Object.values(this.spendings).map((spending) => ({
+        value: spending.percentage,
+        text: formatPercentage(spending.percentage),
+        color: spending.color,
+        category: spending.category,
+      }));
+    } else {
+      chartData = Object.values(this.spendings).map((spending) => ({
+        value: spending.amount,
+        text: formatAmount(spending.amount),
+        color: spending.color,
+        category: spending.category,
+      }));
+    }
+    const maxAmount = Math.max(...chartData.map((obj) => obj.value));
+
+    const filteredChartData = chartData.filter((item) => item.value !== 0);
+
+    const sortedChartData = filteredChartData
+      .slice()
+      .sort((b, a) => a.value - b.value);
+
+    return sortedChartData;
   }
 
   getTotalAmount(): number {
