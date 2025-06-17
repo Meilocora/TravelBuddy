@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 import { Icons, Journey } from '../../models';
@@ -157,11 +157,9 @@ const OverviewDetails: React.FC<OverviewDetailsProps> = ({
   );
 };
 
-// TODO: Adjust styling
-
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: '100%',
     marginHorizontal: 'auto',
   },
   innerContainer: {
@@ -174,10 +172,10 @@ const styles = StyleSheet.create({
   element: {
     alignItems: 'center',
     marginTop: 10,
-    marginHorizontal: 8,
+    marginHorizontal: 4,
     paddingVertical: 4,
     paddingHorizontal: 6,
-    minWidth: 100,
+    width: '40%',
     borderColor: GlobalStyles.colors.gray100,
     borderWidth: 0.75,
     borderRadius: 10,

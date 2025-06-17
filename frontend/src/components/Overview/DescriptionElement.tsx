@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   container: {
     width: '80%',
     marginHorizontal: 'auto',
+    marginBottom: 5,
   },
   text: {
     color: GlobalStyles.colors.gray100,

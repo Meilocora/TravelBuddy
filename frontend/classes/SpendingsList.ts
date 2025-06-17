@@ -1,7 +1,7 @@
 import { Journey, SpendingCategory } from '../src/models';
 import { formatAmount, formatPercentage } from '../src/utils';
 
-interface SpendingsObject {
+export interface SpendingsObject {
   category: string;
   amount: number;
   percentage: number;
@@ -19,7 +19,7 @@ export interface ChartData {
 export class SpendingsList {
   private spendings: Record<SpendingCategory, SpendingsObject>;
 
-  constructor(colors: string[]) {
+  constructor(colors: string[], journeys?: Journey[]) {
     this.spendings = {} as Record<SpendingCategory, SpendingsObject>;
     Object.values(SpendingCategory).forEach((category, idx) => {
       this.spendings[category] = {
@@ -29,6 +29,9 @@ export class SpendingsList {
         color: colors[idx % colors.length],
       };
     });
+    if (journeys) {
+      this.fillSpendingsList(journeys);
+    }
   }
 
   addAmount(category: SpendingCategory, amount: number) {
@@ -40,32 +43,33 @@ export class SpendingsList {
     return Object.values(this.spendings);
   }
 
-  // TODO: This must also work for List of Journeys
-  fillSpendingsList(journey: Journey) {
-    if (journey.majorStages) {
-      for (const majorStage of journey.majorStages) {
-        majorStage.transportation &&
-          this.addAmount(
-            SpendingCategory.transportation,
-            majorStage.transportation.transportation_costs
-          );
-        if (majorStage.minorStages) {
-          for (const minorStage of majorStage.minorStages) {
-            minorStage.transportation &&
-              this.addAmount(
-                SpendingCategory.transportation,
-                minorStage.transportation.transportation_costs
-              );
+  fillSpendingsList(journeys: Journey[]) {
+    for (const journey of journeys) {
+      if (journey.majorStages) {
+        for (const majorStage of journey.majorStages) {
+          majorStage.transportation &&
             this.addAmount(
-              SpendingCategory.acommodation,
-              minorStage.accommodation.costs
+              SpendingCategory.transportation,
+              majorStage.transportation.transportation_costs
             );
-            if (minorStage.costs.spendings) {
-              for (const spending of minorStage.costs.spendings) {
+          if (majorStage.minorStages) {
+            for (const minorStage of majorStage.minorStages) {
+              minorStage.transportation &&
                 this.addAmount(
-                  spending.category as SpendingCategory,
-                  spending.amount
+                  SpendingCategory.transportation,
+                  minorStage.transportation.transportation_costs
                 );
+              this.addAmount(
+                SpendingCategory.acommodation,
+                minorStage.accommodation.costs
+              );
+              if (minorStage.costs.spendings) {
+                for (const spending of minorStage.costs.spendings) {
+                  this.addAmount(
+                    spending.category as SpendingCategory,
+                    spending.amount
+                  );
+                }
               }
             }
           }
@@ -91,7 +95,6 @@ export class SpendingsList {
         category: spending.category,
       }));
     }
-    const maxAmount = Math.max(...chartData.map((obj) => obj.value));
 
     const filteredChartData = chartData.filter((item) => item.value !== 0);
 
