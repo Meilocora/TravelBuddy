@@ -1,4 +1,4 @@
-import { Journey } from '../models';
+import { Journey, MajorStage, MinorStage } from '../models';
 import { parseDate, parseDateAndTime } from './formatting';
 
 export function validateIsOver(date: string): boolean {
@@ -39,10 +39,8 @@ export interface CheckLog {
   description: string;
 }
 
-export function validateJourney(journey: Journey) {
-  let checks: CheckLog[] = [];
-
-  // TODO: Check if there are any gaps in the Planning
+export function validateJourney(journey: Journey): CheckLog[] {
+  const checks: CheckLog[] = [];
 
   // Check if all countries in the journey are represented in major stages
   const journeyCountries = journey.countries.map((country) => country.name);
@@ -81,6 +79,21 @@ export function validateJourney(journey: Journey) {
       description: 'You have not added any major stages to your journey.',
     });
   } else {
+    // Check if the journey is covered by major stages
+    const coverageChecks = validateCoversSuperiorStage(
+      journey,
+      journey.majorStages
+    );
+    if (coverageChecks.length > 0) {
+      checks.push(...coverageChecks);
+    }
+
+    // Check if majorStages are planned correctly without gaps
+    const planningGaps = validateStagesDates(journey.majorStages);
+    if (planningGaps.length > 0) {
+      checks.push(...planningGaps);
+    }
+
     for (const majorStage of journey.majorStages) {
       // Check if the budget of the majorStage is exceeded
       if (majorStage.costs.budget <= majorStage.costs.spent_money) {
@@ -107,6 +120,21 @@ export function validateJourney(journey: Journey) {
           description: `Major stage "${majorStage.title}" has no minor stages.`,
         });
       } else {
+        // Check if the major stage is covered by minor stages
+        const coverageChecks = validateCoversSuperiorStage(
+          majorStage,
+          majorStage.minorStages
+        );
+        if (coverageChecks.length > 0) {
+          checks.push(...coverageChecks);
+        }
+
+        // Check if minorStages are planned correctly without gaps
+        const planningGaps = validateStagesDates(majorStage.minorStages);
+        if (planningGaps.length > 0) {
+          checks.push(...planningGaps);
+        }
+
         for (const minorStage of majorStage.minorStages) {
           // Check if the budget of the minorStage is exceeded
           if (minorStage.costs.budget <= minorStage.costs.spent_money) {
@@ -141,4 +169,75 @@ export function validateJourney(journey: Journey) {
       }
     }
   }
+  return checks;
+}
+
+function validateCoversSuperiorStage(
+  superiorStage: Journey | MajorStage,
+  inferiorStages: MajorStage[] | MinorStage[]
+): CheckLog[] {
+  let checks: CheckLog[] = [];
+
+  const superiorStageType =
+    'country' in superiorStage ? 'Major Stage' : 'Journey';
+  const inferiorStageType =
+    superiorStageType === 'Major Stage' ? 'Minor Stage' : 'Major Stage';
+
+  let superiorTitle: string;
+  if (superiorStageType === 'Major Stage') {
+    superiorTitle = (superiorStage as MajorStage).title;
+  } else {
+    superiorTitle = (superiorStage as Journey).name!;
+  }
+
+  const superiorStart = parseDate(superiorStage.scheduled_start_time).getDate();
+  const superiorEnd = parseDate(superiorStage.scheduled_end_time).getDate();
+
+  const coversStart =
+    parseDate(inferiorStages[0].scheduled_start_time).getDate() ===
+    superiorStart;
+  if (!coversStart) {
+    checks.push({
+      subtitle: `${superiorStageType}'s start date not covered`,
+      description: `${superiorStageType} "${superiorTitle}" starts on ${superiorStage.scheduled_start_time} but ${inferiorStageType} "${inferiorStages[0].title}" starts on ${inferiorStages[0].scheduled_start_time}.`,
+    });
+  }
+  const coversEnd =
+    parseDate(
+      inferiorStages[inferiorStages.length - 1].scheduled_end_time
+    ).getDate() === superiorEnd;
+  if (!coversEnd) {
+    checks.push({
+      subtitle: `${superiorStageType}'s end date not covered`,
+      description: `${superiorStageType} "${superiorTitle}" ends on ${
+        superiorStage.scheduled_end_time
+      } but ${inferiorStageType} "${
+        inferiorStages[inferiorStages.length - 1].title
+      }" ends on ${
+        inferiorStages[inferiorStages.length - 1].scheduled_end_time
+      }.`,
+    });
+  }
+  return checks;
+}
+
+function validateStagesDates(stages: MajorStage[] | MinorStage[]) {
+  const checks: CheckLog[] = [];
+
+  const stageType = 'country' in stages[0] ? 'Major Stage' : 'Minor Stage';
+
+  for (let i = 0; i < stages.length - 1; i++) {
+    const currentEnd = parseDate(stages[i].scheduled_end_time).getDate();
+    const nextStart = parseDate(stages[i + 1].scheduled_start_time).getDate();
+    if (currentEnd !== nextStart - 1) {
+      checks.push({
+        subtitle: `Gap between ${stageType}s`,
+        description: `There is a gap between "${
+          stages[i].title
+        }" (${currentEnd}) and "${stages[i + 1].title}" (${nextStart}).`,
+      });
+    }
+  }
+
+  return checks;
 }
