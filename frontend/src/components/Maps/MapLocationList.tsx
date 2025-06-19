@@ -11,10 +11,9 @@ import OutsidePressHandler from 'react-native-outside-press';
 import { MapViewDirectionsMode } from 'react-native-maps-directions';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
-import { Location } from '../../utils/http';
 import { generateRandomString } from '../../utils';
 import IconButton from '../UI/IconButton';
-import { ButtonMode, ColorScheme, Icons } from '../../models';
+import { ButtonMode, ColorScheme, Icons, Location } from '../../models';
 import Button from '../UI/Button';
 
 import { GlobalStyles } from '../../constants/styles';

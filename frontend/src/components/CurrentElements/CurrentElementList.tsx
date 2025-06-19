@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -12,8 +12,13 @@ import {
   parseDate,
 } from '../../utils';
 import CurrentElement from './CurrentElement';
-import { ColorScheme, StackParamList, TransportationType } from '../../models';
-import { LocationType, Location } from '../../utils/http';
+import {
+  ColorScheme,
+  Location,
+  LocationType,
+  StackParamList,
+  TransportationType,
+} from '../../models';
 
 interface CurrentElementListProps {}
 

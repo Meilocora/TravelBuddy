@@ -1,5 +1,11 @@
 import { ReactElement } from 'react';
-import { Icons, MinorStage, StackParamList } from '../../models';
+import {
+  Icons,
+  Location,
+  LocationType,
+  MinorStage,
+  StackParamList,
+} from '../../models';
 import { StyleSheet, Text, View } from 'react-native';
 import { GlobalStyles } from '../../constants/styles';
 import { formatAmount, parseDate, validateIsOver } from '../../utils';
@@ -7,7 +13,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
 import TextLink from '../UI/TextLink';
-import { Location, LocationType } from '../../utils/http';
 
 interface AccommodationBoxProps {
   minorStage: MinorStage;

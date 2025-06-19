@@ -1,8 +1,7 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { MapMarker, Marker } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 
-import { Location } from '../../utils/http';
 import ActivityIcon from '../../../assets/activity.svg';
 import AccommodationIcon from '../../../assets/accommodation.svg';
 import PlaceToVisitIcon from '../../../assets/placeToVisit.svg';
@@ -18,6 +17,7 @@ import TrainArrivalIcon from '../../../assets/train_arrival.svg';
 import TrainDepartureIcon from '../../../assets/train_departure.svg';
 import OtherArrivalIcon from '../../../assets/other_arrival.svg';
 import OtherDepartureIcon from '../../../assets/other_departure.svg';
+import { Location } from '../../models';
 
 const iconMap: { [key: string]: React.FC<any> } = {
   accommodation: AccommodationIcon,
@@ -37,18 +37,27 @@ const iconMap: { [key: string]: React.FC<any> } = {
   transportation_arrival_other: OtherArrivalIcon,
 };
 
-const heigth = 40;
-const width = 40;
+const heigth = 32;
+const width = 32;
 
 interface MapsMarkerProps {
   location: Location;
+  active?: boolean;
 }
 
-const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
+const MapsMarker: React.FC<MapsMarkerProps> = ({
+  location,
+  active,
+}): ReactElement => {
   const { description, locationType, transportationType, data, color, done } =
     location;
 
+  const markerColor = active ? 'blue' : color;
+
   const markerRef = useRef<MapMarker>(null);
+  useEffect(() => {
+    markerRef.current!.redraw();
+  }, []);
 
   // Construct the icon key
   let iconKey: string = locationType;
@@ -62,6 +71,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
     <Marker
       ref={markerRef}
       title={data.name}
+      tracksViewChanges={false}
       coordinate={{
         latitude: data.latitude,
         longitude: data.longitude,
@@ -73,7 +83,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({ location }): ReactElement => {
           <IconComponent
             width={width}
             height={heigth}
-            fill={color || 'black'}
+            fill={markerColor || 'black'}
             style={done && styles.iconDone}
           />
         )}

@@ -10,13 +10,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-import { Location, LocationType } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
 import ActivityContent from './ActivityContent';
 import TransportationContent from './TransportationContent';
 import AccommodationContent from './AccommodationContent';
 import { GlobalStyles } from '../../../constants/styles';
 import PlaceContent from './PlaceContent';
+import { Location, LocationType } from '../../../models';
 
 interface MapLocationElementProps {
   location: Location;

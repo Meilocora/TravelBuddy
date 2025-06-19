@@ -13,14 +13,17 @@ import MapViewDirections, {
   MapViewDirectionsMode,
 } from 'react-native-maps-directions';
 
-import { ColorScheme, JourneyBottomTabsParamsList } from '../../models';
+import {
+  ColorScheme,
+  JourneyBottomTabsParamsList,
+  Location,
+} from '../../models';
 import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
-import { fetchJourneysLocations, Location } from '../../utils/http';
-import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import {
   addColor,
   getCurrentLocation,
+  getMapLocationsFromJourney,
   getRegionForLocations,
 } from '../../utils/location';
 import { generateRandomString } from '../../utils';
@@ -36,9 +39,6 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
-  const [isFetching, setIsFetching] = useState(false);
-  const [refresh, setRefresh] = useState(0);
-  const [error, setError] = useState<string | null>(null);
   const [mapScope, setMapScope] = useState<string>('Journey');
   const [mapScopeList, setMapScopeList] = useState<string[]>(['Journey']);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -56,9 +56,11 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
 
   const stagesCtx = useContext(StagesContext);
   const journeyId = stagesCtx.selectedJourneyId!;
+  const journey = stagesCtx.findJourney(journeyId);
 
-  // TODO: Symbole werden nicht komplett dargestellt
-  // TODO: aktivierte Orte anders färben
+  const majorStageTitles: string[] = journey?.majorStages
+    ? journey.majorStages.map((stage) => stage.title)
+    : [];
 
   useEffect(() => {
     async function fetchUserLocation() {
@@ -71,35 +73,27 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
 
   useFocusEffect(
     useCallback(() => {
-      // Fetch data when the screen comes into focus
+      // get data when the screen comes into focus
       async function getLocations() {
-        const response = await fetchJourneysLocations(journeyId);
-        if (!response.error && response.locations) {
-          setLocations(response.locations!);
-          const coloredLocations = addColor(response.locations!, mapScope);
+        const locations = getMapLocationsFromJourney(journey!);
+        if (locations) {
+          setLocations(locations);
+          const coloredLocations = addColor(locations, mapScope);
           setShownLocations(coloredLocations);
-          setMapScopeList((prevValues) => [
-            ...prevValues,
-            ...response.majorStageNames!,
-          ]);
-          const relevantLocations = response.locations.filter(
+          setMapScopeList((prevValues) => [...prevValues, ...majorStageTitles]);
+          const relevantLocations = locations.filter(
             (location) =>
               location.locationType !== 'transportation_departure' &&
               location.locationType !== 'transportation_arrival'
           );
           setRegion(await getRegionForLocations(relevantLocations));
-        } else if (response.error) {
-          setError(response.error);
         }
-        setIsFetching(false);
       }
 
       getLocations();
 
       return () => {
         // Cleanup function to reset all states when the screen goes out of focus
-        setIsFetching(false);
-        setError(null);
         setLocations([]);
         setMapScopeList(['Journey']); // Reset the list on cleanup
         setMapScope('Journey'); // Reset the map scope to default
@@ -107,11 +101,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       };
     }, [journeyId])
   );
-
-  function handlePressReload() {
-    setError(null);
-    setRefresh((prev) => prev + 1);
-  }
 
   function handlePressListElement(location: Location) {
     setRegion({
@@ -179,13 +168,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           colorScheme={ColorScheme.accent}
         />
       )}
-      {error && (
-        <ErrorOverlay
-          message={error}
-          onPress={handlePressReload}
-          buttonText='Reload'
-        />
-      )}
       <MapTypeSelector
         onChangeMapType={handleChangeMapType}
         value={mapScope}
@@ -219,8 +201,13 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           />
         )}
         {shownLocations.map((location) => {
+          const isActive = pressedLocation && location === pressedLocation;
           return (
-            <MapsMarker key={generateRandomString()} location={location} />
+            <MapsMarker
+              key={generateRandomString()}
+              location={location}
+              active={isActive}
+            />
           );
         })}
       </MapView>

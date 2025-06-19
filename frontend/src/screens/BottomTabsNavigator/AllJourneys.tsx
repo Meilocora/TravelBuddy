@@ -25,7 +25,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   navigation,
   route,
 }): ReactElement => {
-  const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
@@ -60,7 +59,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   // Fetch all data here, because the users always starts on this screen
   useEffect(() => {
     async function getData() {
-      setIsFetching(true);
       const hasPermission = await verifyPermissions();
       //
       const stagesBackendError = await stagesCtx.fetchUserData(hasPermission);
@@ -75,7 +73,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
       } else if (placesBackendError) {
         setError(placesBackendError);
       }
-      setIsFetching(false);
     }
 
     getData();
@@ -91,10 +88,7 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }
 
   let content;
-
-  if (isFetching) {
-    content = <InfoText content='Loading Journeys...' />;
-  } else if (stagesCtx.journeys.length === 0 && !error) {
+  if (stagesCtx.journeys.length === 0 && !error) {
     content = <InfoText content='No Journeys found!' />;
   } else {
     content = <JourneysList />;

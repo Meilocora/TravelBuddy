@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
 
-import { Location } from '../../utils/http';
 import ActivityIcon from '../../../assets/activity.svg';
 import AccommodationIcon from '../../../assets/accommodation.svg';
 import PlaceToVisitIcon from '../../../assets/placeToVisit.svg';
@@ -12,6 +11,7 @@ import PlaneIcon from '../../../assets/plane_clean.svg';
 import TrainIcon from '../../../assets/train_clean.svg';
 import OtherIcon from '../../../assets/other_clean.svg';
 import { GlobalStyles } from '../../constants/styles';
+import { Location } from '../../models';
 
 const iconMap: { [key: string]: React.FC<any> } = {
   accommodation: AccommodationIcon,

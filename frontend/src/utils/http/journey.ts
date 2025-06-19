@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { Journey, JourneyFormValues, TransportationType } from '../../models';
+import { Journey, JourneyFormValues } from '../../models';
 import api from './api';
 import { getCurrentLocation } from '../location';
 
@@ -130,65 +130,3 @@ export const deleteJourney = async (
     return { status: 500, error: 'Could not delete journey!' };
   }
 };
-
-interface LocationData {
-  name: string;
-  latitude: number;
-  longitude: number;
-}
-
-export enum LocationType {
-  transportation_departure = 'transportation_departure',
-  transportation_arrival = 'transportation_arrival',
-  accommodation = 'accommodation',
-  activity = 'activity',
-  placeToVisit = 'placeToVisit',
-}
-
-export interface Location {
-  id?: number;
-  belonging: string;
-  locationType: LocationType;
-  data: LocationData;
-  done: boolean;
-  minorStageName?: string;
-  description?: string;
-  transportationType?: TransportationType;
-  color?: string;
-}
-
-interface FetchJourneysLocationsProps {
-  locations?: Location[];
-  majorStageNames?: string[];
-  status: number;
-  error?: string;
-}
-
-export const fetchJourneysLocations = async (
-  journeyId: number
-): Promise<FetchJourneysLocationsProps> => {
-  try {
-    const response: AxiosResponse<FetchJourneysLocationsProps> = await api.get(
-      `${prefix}/get-journeys-locations/${journeyId}`
-    );
-
-    // Error from backend
-    if (response.data.error) {
-      return { status: response.data.status, error: response.data.error };
-    }
-
-    const { locations, majorStageNames, status } = response.data;
-
-    if (!locations) {
-      return { status };
-    }
-
-    return { locations, majorStageNames, status };
-  } catch (error) {
-    // Error from frontend
-    return { status: 500, error: 'Could not fetch locations!' };
-  }
-};
-function verifyPermissions() {
-  throw new Error('Function not implemented.');
-}

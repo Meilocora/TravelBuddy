@@ -14,6 +14,8 @@ import {
   ButtonMode,
   ColorScheme,
   Icons,
+  Location,
+  LocationType,
   MinorStage,
   StackParamList,
 } from '../../../models';
@@ -28,7 +30,6 @@ import {
   parseDate,
   validateIsOver,
 } from '../../../utils';
-import { Location, LocationType } from '../../../utils/http';
 
 interface ActivityListElementProps {
   activity: Activity;

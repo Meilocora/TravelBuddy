@@ -5,6 +5,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ButtonMode,
   ColorScheme,
+  Location,
+  LocationType,
   MapLocation,
   StackParamList,
   Transportation,
@@ -19,7 +21,6 @@ import {
 } from '../../../utils';
 import Link from '../../UI/Link';
 import TextLink from '../../UI/TextLink';
-import { Location, LocationType } from '../../../utils/http';
 import { useContext } from 'react';
 import { StagesContext } from '../../../store/stages-context';
 

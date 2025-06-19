@@ -2,7 +2,13 @@ import { ReactElement, useContext, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-import { Icons, PlaceToVisit, StackParamList } from '../../../models';
+import {
+  Icons,
+  Location,
+  LocationType,
+  PlaceToVisit,
+  StackParamList,
+} from '../../../models';
 import IconButton from '../../UI/IconButton';
 import { GlobalStyles } from '../../../constants/styles';
 import Link from '../../UI/Link';
@@ -11,7 +17,6 @@ import {
   toggleFavoritePlace,
   toggleVisitedPlace,
 } from '../../../utils/http/place_to_visit';
-import { Location, LocationType } from '../../../utils/http';
 
 interface PlacesListItemProps {
   place: PlaceToVisit;

@@ -10,6 +10,7 @@ import {
 } from '../models';
 import { fetchStagesData } from '../utils/http';
 import { parseDate, parseDateAndTime } from '../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface ActiveHeader {
   minorStageId?: number;
@@ -165,12 +166,25 @@ export default function StagesContextProvider({
 
   const [shouldSetStages, setShouldSetStages] = useState(false);
 
+  // If user is offline, the local stored data is used
+  useEffect(() => {
+    (async () => {
+      const storedJourneys = await AsyncStorage.getItem('journeys');
+      if (storedJourneys) {
+        setJourneys(JSON.parse(storedJourneys));
+        setShouldSetStages(true);
+      }
+    })();
+  }, []);
+
   async function fetchUserData(hasPermission: boolean): Promise<void | string> {
     const response = await fetchStagesData(hasPermission);
 
     if (response.journeys) {
       setJourneys(response.journeys);
+      AsyncStorage.setItem('journeys', JSON.stringify(journeys));
       setShouldSetStages(true); // trigger effect
+      // TODO: Save offset in extra user store
       setUserTimeZoneOffset(response.offset!);
     } else {
       return response.error;
