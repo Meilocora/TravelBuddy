@@ -52,12 +52,10 @@ import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 
-// TODO: Maybe also retrieve current local currency?
-// Maybe get local currency, by locating user in a country by coordinates, the use the installed package to get the currency of the country and then use the "currencyconverter" for Conversion rates
-// Also safe usersPosition in new user store together with currency and current UTC Offset and mabye more data in the future
+// TODO: Implement local currency and conversionRate into SpendingsForm?
 
 // TODO: Fix ErrorOverley
-// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme
+// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme, currentLocation, UTC Timezoneoffset, localCurrency, conversionRate
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: Change all LayoutAnimations into something that actually works

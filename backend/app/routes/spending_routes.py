@@ -112,3 +112,7 @@ def delete_spending(current_user, spendingId):
         return jsonify({'status': 200, 'backendJourneyId': journey.id})
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
+    
+    
+# TODO: Route for getting all currencies to choose one for conversion => c.currencies
+# TODO: Route for getting a specific conversionRate

@@ -1,12 +1,11 @@
 from flask import Blueprint, request, jsonify
-from datetime import datetime
 from db import db
 from app.routes.route_protection import token_required
 from app.routes.util import parseDate, formatDateToString
-from app.models import Journey, Costs, Spendings, MajorStage, MinorStage, CustomCountry, JourneysCustomCountriesLink, Transportation, Accommodation, Activity, PlaceToVisit
+from app.models import Journey, Costs, Spendings, MajorStage,  CustomCountry, JourneysCustomCountriesLink
 from app.validation.journey_validation import JourneyValidation
 from app.routes.db_util import fetch_journeys
-from app.routes.util import calculate_time_zone_offset
+from app.routes.util import calculate_time_zone_offset, get_local_currency
 
 journey_bp = Blueprint('journey', __name__)
 
@@ -22,7 +21,8 @@ def get_stages_data(current_user):
             user_time_zone_offset = 0
         else:
             user_time_zone_offset =  calculate_time_zone_offset(latitude, longitude)
-        return jsonify({'journeys': journeys_list, 'offset': user_time_zone_offset, 'status': 200})
+            currencyInfo = get_local_currency(latitude, longitude)
+        return jsonify({'journeys': journeys_list, 'offset': user_time_zone_offset, 'status': 200, 'localCurrency': currencyInfo['currency'], 'conversionRate': currencyInfo['conversion_rate']})
     else:
         return jsonify({'error': str(journeys_list)}, 500)
         

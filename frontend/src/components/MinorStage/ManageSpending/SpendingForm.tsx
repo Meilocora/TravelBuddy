@@ -55,6 +55,9 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     0
   );
 
+  // TODO: Implement component to get a specific currency and conversionRate
+  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [inputs, setInputs] = useState<SpendingFormValues>({

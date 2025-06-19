@@ -34,6 +34,8 @@ export enum Indicators {
 interface StagesContextType {
   journeys: Journey[];
   userTimeZoneOffset: number;
+  localCurrency: string | undefined;
+  conversionRate: number | undefined;
   fetchUserData: (hasPermission: boolean) => Promise<void | string>;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
@@ -78,6 +80,8 @@ interface StagesContextType {
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
   userTimeZoneOffset: 0,
+  localCurrency: 'EUR',
+  conversionRate: 1,
   fetchUserData: async (hasPermission) => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
@@ -111,6 +115,9 @@ export default function StagesContextProvider({
 }) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [userTimeZoneOffset, setUserTimeZoneOffset] = useState<number>(0);
+  const [localCurrency, setLocalCurrency] = useState<string | undefined>('EUR');
+  const [conversionRate, setConversionRate] = useState<number | undefined>(1);
+
   const [selectedJourneyId, setSelectedJourneyId] = useState<
     number | undefined
   >(undefined);
@@ -184,8 +191,9 @@ export default function StagesContextProvider({
       setJourneys(response.journeys);
       AsyncStorage.setItem('journeys', JSON.stringify(journeys));
       setShouldSetStages(true); // trigger effect
-      // TODO: Save offset in extra user store
       setUserTimeZoneOffset(response.offset!);
+      setLocalCurrency(response.localCurrency || undefined);
+      setConversionRate(response.conversionRate || undefined);
     } else {
       return response.error;
     }
@@ -523,6 +531,8 @@ export default function StagesContextProvider({
   const value = {
     journeys,
     userTimeZoneOffset,
+    localCurrency,
+    conversionRate,
     fetchUserData,
     findJourney,
     findMajorStage,

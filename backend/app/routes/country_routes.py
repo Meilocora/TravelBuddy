@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import db
 from countryinfo import CountryInfo
-from app.models import CustomCountry, Journey, PlaceToVisit, JourneysCustomCountriesLink
+from app.models import CustomCountry, Journey, PlaceToVisit
 from app.validation.country_validation import CountryValidation
 from app.routes.route_protection import token_required
 import re

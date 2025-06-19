@@ -1,4 +1,7 @@
 from datetime import datetime
+from geopy.geocoders import Nominatim
+from countryinfo import CountryInfo
+from currency_converter import CurrencyConverter
 from timezonefinder import TimezoneFinder
 import pytz
 from db import db
@@ -94,4 +97,33 @@ def calculate_time_zone_offset(lat, lng):
     
     return diff_hours
     
-   
+def get_local_currency(lat, lng):
+    # Get country name by reverse geocoding
+    geolocator = Nominatim(user_agent="travelbuddy")
+    location = geolocator.reverse((lat, lng), language='en')
+    if not location or 'country' not in location.raw['address']:
+        return None
+
+    country_name = location.raw['address']['country']
+
+    # Get currency using CountryInfo
+    try:
+        country_info = CountryInfo(country_name)
+        currency = country_info.currencies()[0]  # returns a list, take the first
+    except Exception:
+        currency = None
+
+    conversion_rate = get_conversion_rate(currency)
+    if not isinstance(conversion_rate, Exception):  
+        return {'currency': currency, 'conversion_rate': conversion_rate}
+    else:
+        return {'currency': None, 'conversion_rate': None}
+
+def get_conversion_rate(currency_code, base_currency='EUR'):
+    c = CurrencyConverter()
+    try:
+        rate = c.convert(1, base_currency, currency_code)
+        return rate
+    except Exception as e:
+        print(f"Conversion error: {e}")
+        return None

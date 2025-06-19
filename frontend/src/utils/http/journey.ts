@@ -8,6 +8,8 @@ import { getCurrentLocation } from '../location';
 interface FetchJourneysProps {
   journeys?: Journey[];
   offset?: number;
+  localCurrency?: string;
+  conversionRate?: number;
   status: number;
   error?: string;
 }
@@ -19,14 +21,16 @@ export const fetchStagesData = async (
 ): Promise<FetchJourneysProps> => {
   let currentLocation: { latitude: number; longitude: number } | undefined;
   if (hasPermission) {
-    const currentLocation = await getCurrentLocation();
+    currentLocation = await getCurrentLocation();
   } else {
-    const currentLocation = undefined;
+    currentLocation = undefined;
   }
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(
       `${prefix}/get-stages-data`,
-      { params: currentLocation }
+      {
+        params: currentLocation,
+      }
     );
 
     // Error from backend
@@ -34,13 +38,14 @@ export const fetchStagesData = async (
       return { status: response.data.status, error: response.data.error };
     }
 
-    const { journeys, offset, status } = response.data;
+    const { journeys, offset, localCurrency, conversionRate, status } =
+      response.data;
 
     if (!journeys) {
       return { status };
     }
 
-    return { journeys, offset, status };
+    return { journeys, offset, localCurrency, conversionRate, status };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch data!' };
