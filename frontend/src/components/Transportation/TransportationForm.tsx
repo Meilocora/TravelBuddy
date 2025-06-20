@@ -63,6 +63,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     stage = stagesCtx.findMinorStage(minorStageId!)!;
   }
 
+  // TODO: Implement component to get a specific currency and conversionRate
+  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
+
   minStartDate = parseDate(stage!.scheduled_start_time);
   minStartDate.setDate(minStartDate.getDate() - 1);
   maxStartDate = parseDate(stage!.scheduled_start_time);

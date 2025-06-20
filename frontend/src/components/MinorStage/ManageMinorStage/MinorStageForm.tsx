@@ -57,6 +57,9 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   const maxEndDate = majorStage!.scheduled_end_time;
   let maxAvailableMoney = majorStage!.costs.budget;
 
+  // TODO: Implement component to get a specific currency and conversionRate
+  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
+
   const minorStages = majorStage!.minorStages;
   minorStages?.forEach((ms) => {
     maxAvailableMoney -= ms.costs.budget;

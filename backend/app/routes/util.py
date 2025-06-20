@@ -97,6 +97,7 @@ def calculate_time_zone_offset(lat, lng):
     
     return diff_hours
     
+    
 def get_local_currency(lat, lng):
     # Get country name by reverse geocoding
     geolocator = Nominatim(user_agent="travelbuddy")
@@ -119,11 +120,22 @@ def get_local_currency(lat, lng):
     else:
         return {'currency': None, 'conversion_rate': None}
 
+
+c = CurrencyConverter()
+
+
+def get_all_currencies():
+    try:
+        currencies = c.currencies
+        return currencies
+    except Exception as e:
+        print(f"Error fetching currencies: {e}")
+        return None
+
+
 def get_conversion_rate(currency_code, base_currency='EUR'):
-    c = CurrencyConverter()
     try:
         rate = c.convert(1, base_currency, currency_code)
         return rate
     except Exception as e:
-        print(f"Conversion error: {e}")
         return None

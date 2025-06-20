@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { Spending, SpendingFormValues } from '../../models';
+import { CurrencyInfo, Spending, SpendingFormValues } from '../../models';
 import api from './api';
 
 const prefix = `${BACKEND_URL}/spending`;
@@ -105,5 +105,32 @@ export const deleteSpending = async (
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not delete spending!' };
+  }
+};
+
+interface FetchCurrenciesProps {
+  currencies?: CurrencyInfo[];
+  status: number;
+  error?: string;
+}
+
+export const fetchCurrencies = async (): Promise<FetchCurrenciesProps> => {
+  try {
+    const response: AxiosResponse<FetchCurrenciesProps> = await api.get(
+      `${prefix}/get-currencies`
+    );
+
+    // Error from backend
+    if (response!.data.error) {
+      return { status: response!.data.status, error: response!.data.error };
+    }
+
+    return {
+      status: response!.data.status,
+      currencies: response!.data.currencies,
+    };
+  } catch (error) {
+    // Error from frontend
+    return { status: 500, error: 'Could not fetch currencies!' };
   }
 };

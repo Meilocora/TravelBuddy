@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from db import db
 from app.routes.route_protection import token_required
-from app.routes.util import parseDate, formatDateToString
+from app.routes.util import parseDate, formatDateToString, get_all_currencies, get_conversion_rate
 from app.models import Costs, Journey,  MinorStage, MajorStage, Spendings
 from app.validation.spending_validation import SpendingValidation
 from app.routes.util import calculate_journey_costs
@@ -93,7 +93,6 @@ def update_spending(current_user, minorStageId, spendingId):
         return jsonify({'error': str(e)}, 500)
 
     
-
 @spending_bp.route('/delete-spending/<int:spendingId>', methods=['DELETE'])
 @token_required
 def delete_spending(current_user, spendingId):
@@ -113,6 +112,12 @@ def delete_spending(current_user, spendingId):
     except Exception as e:
         return jsonify({'error': str(e)}, 500)
     
-    
-# TODO: Route for getting all currencies to choose one for conversion => c.currencies
-# TODO: Route for getting a specific conversionRate
+
+@spending_bp.route('/get-currencies', methods=['GET'])
+@token_required
+def get_currencies(current_user):
+    currencies = get_all_currencies()
+    currencyInfo = [{'currency': currency, 'conversionRate': get_conversion_rate(currency)} for currency in currencies]
+
+    currencyInfo = [info for info in currencyInfo if info['conversionRate'] is not None]
+    return jsonify({'currencies': currencyInfo, 'status': 200})

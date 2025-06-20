@@ -6,6 +6,11 @@ export interface Costs {
   spendings: Spending[] | null;
 }
 
+export interface CurrencyInfo {
+  currency: string;
+  conversionRate: number;
+}
+
 export interface Spending {
   id?: number;
   name: string;
