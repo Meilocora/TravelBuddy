@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 8,
     marginHorizontal: 'auto',
-    maxWidth: '40%',
+    alignSelf: 'flex-start',
   },
 });
 

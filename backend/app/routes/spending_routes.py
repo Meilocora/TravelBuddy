@@ -120,4 +120,5 @@ def get_currencies(current_user):
     currencyInfo = [{'currency': currency, 'conversionRate': get_conversion_rate(currency)} for currency in currencies]
 
     currencyInfo = [info for info in currencyInfo if info['conversionRate'] is not None]
+        
     return jsonify({'currencies': currencyInfo, 'status': 200})

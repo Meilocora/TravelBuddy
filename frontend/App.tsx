@@ -51,6 +51,7 @@ import ManageSpending from './src/screens/JourneyBottomTabsNavigator/MajorStageS
 import LocationPickMap from './src/screens/LocationPickMap';
 import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
+import UserContextProvider from './src/store/user-context';
 
 // TODO: Implement local currency and conversionRate into SpendingsForm?
 
@@ -298,64 +299,66 @@ const AuthenticatedStack = () => {
 
   return (
     <GestureHandlerRootView>
-      <StagesContextProvider>
-        <CustomCountryContextProvider>
-          <PlaceContextProvider>
-            <Stack.Navigator
-              screenOptions={() => ({
-                headerTintColor: 'white',
-                headerStyle: {
-                  backgroundColor: GlobalStyles.colors.primary500,
-                },
-                headerTitleAlign: 'center',
-                headerShadowVisible: false,
-                animationEnabled: false,
-              })}
-            >
-              <Stack.Screen
-                name='BottomTabsNavigator'
-                component={BottomTabsNavigator}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name='UserProfile'
-                component={UserProfile}
-                options={{
-                  title: `${authCtx.username}'s Profile`,
-                  headerRight: ({ tintColor }) => (
-                    <IconButton
-                      color={tintColor}
-                      size={24}
-                      icon={Icons.logout}
-                      onPress={() => {
-                        authCtx.logout();
-                      }}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='JourneyBottomTabsNavigator'
-                component={JourneyBottomTabsNavigator}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name='ManageCustomCountry'
-                component={ManageCustomCountry}
-              />
-              <Stack.Screen
-                name='ManagePlaceToVisit'
-                component={ManagePlaceToVisit}
-              />
-              <Stack.Screen
-                name='LocationPickMap'
-                component={LocationPickMap}
-              />
-              <Stack.Screen name='ShowMap' component={ShowMap} />
-            </Stack.Navigator>
-          </PlaceContextProvider>
-        </CustomCountryContextProvider>
-      </StagesContextProvider>
+      <UserContextProvider>
+        <StagesContextProvider>
+          <CustomCountryContextProvider>
+            <PlaceContextProvider>
+              <Stack.Navigator
+                screenOptions={() => ({
+                  headerTintColor: 'white',
+                  headerStyle: {
+                    backgroundColor: GlobalStyles.colors.primary500,
+                  },
+                  headerTitleAlign: 'center',
+                  headerShadowVisible: false,
+                  animationEnabled: false,
+                })}
+              >
+                <Stack.Screen
+                  name='BottomTabsNavigator'
+                  component={BottomTabsNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='UserProfile'
+                  component={UserProfile}
+                  options={{
+                    title: `${authCtx.username}'s Profile`,
+                    headerRight: ({ tintColor }) => (
+                      <IconButton
+                        color={tintColor}
+                        size={24}
+                        icon={Icons.logout}
+                        onPress={() => {
+                          authCtx.logout();
+                        }}
+                      />
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name='JourneyBottomTabsNavigator'
+                  component={JourneyBottomTabsNavigator}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='ManageCustomCountry'
+                  component={ManageCustomCountry}
+                />
+                <Stack.Screen
+                  name='ManagePlaceToVisit'
+                  component={ManagePlaceToVisit}
+                />
+                <Stack.Screen
+                  name='LocationPickMap'
+                  component={LocationPickMap}
+                />
+                <Stack.Screen name='ShowMap' component={ShowMap} />
+              </Stack.Navigator>
+            </PlaceContextProvider>
+          </CustomCountryContextProvider>
+        </StagesContextProvider>
+      </UserContextProvider>
     </GestureHandlerRootView>
   );
 };

@@ -16,6 +16,7 @@ def get_stages_data(current_user):
     longitude = request.args.get('longitude', type=float) 
     journeys_list = fetch_journeys(current_user=current_user)
         
+    # TODO: Get user_time_zone_offset and localCurrency + conversionRate in another route, initiated via user-context
     if not isinstance(journeys_list, Exception):   
         if latitude is None or longitude is None:
             user_time_zone_offset = 0

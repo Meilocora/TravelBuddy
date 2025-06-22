@@ -15,6 +15,7 @@ export interface Spending {
   id?: number;
   name: string;
   amount: number;
+  unconvertedAmount?: string;
   date: string;
   category: string;
 }
@@ -22,6 +23,7 @@ export interface Spending {
 export interface SpendingFormValues {
   name: Validable<string>;
   amount: Validable<number>;
+  unconvertedAmount: Validable<string>;
   date: Validable<string | null>;
   category: Validable<string>;
 }

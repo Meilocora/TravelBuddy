@@ -15,6 +15,7 @@ import { createSpending, updateSpending } from '../../../utils/http/spending';
 import DatePicker from '../../UI/form/DatePicker';
 import SpendingCategorySelector from './SpendingCategorySelector';
 import { StagesContext } from '../../../store/stages-context';
+import AmountElement from '../../UI/form/Money/AmountElement';
 
 type InputValidationResponse = {
   spending?: Spending;
@@ -50,20 +51,26 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   const minStartDate = minorStage!.scheduled_start_time;
   const maxEndDate = minorStage!.scheduled_end_time;
 
+  // TODO: Implement this in every file, where this is calculated
   const maxAvailableMoney = Math.max(
-    minorStage!.costs.budget - minorStage!.costs.spent_money,
+    Math.round(
+      (minorStage!.costs.budget - minorStage!.costs.spent_money) * 100
+    ) / 100,
     0
   );
-
-  // TODO: Implement component to get a specific currency and conversionRate
-  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [inputs, setInputs] = useState<SpendingFormValues>({
     name: { value: defaultValues?.name || '', isValid: true, errors: [] },
     amount: {
-      value: defaultValues?.amount || 0,
+      value: 0,
+      isValid: true,
+      errors: [],
+    },
+    // TODO: Implement this for every other form, that handles amounts (MinorStageForm, ActivityForm, TransportationForm)
+    unconvertedAmount: {
+      value: defaultValues?.amount.toString() || '',
       isValid: true,
       errors: [],
     },
@@ -84,7 +91,12 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     setInputs({
       name: { value: defaultValues?.name || '', isValid: true, errors: [] },
       amount: {
-        value: defaultValues?.amount || 0,
+        value: 0,
+        isValid: true,
+        errors: [],
+      },
+      unconvertedAmount: {
+        value: defaultValues?.amount.toString() || '',
         isValid: true,
         errors: [],
       },
@@ -105,6 +117,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     setInputs({
       name: { value: '', isValid: true, errors: [] },
       amount: { value: 0, isValid: true, errors: [] },
+      unconvertedAmount: { value: '', isValid: true, errors: [] },
       date: { value: '', isValid: true, errors: [] },
       category: { value: 'Other', isValid: true, errors: [] },
     });
@@ -112,7 +125,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
 
   function inputChangedHandler(
     inputIdentifier: string,
-    enteredValue: string | boolean
+    enteredValue: string | boolean | number
   ) {
     setInputs((currInputs) => {
       return {
@@ -146,7 +159,15 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (spendingFormValues) {
-      setInputs((prevValues) => spendingFormValues);
+      // setInputs((prevValues) => spendingFormValues);
+      setInputs((prevValues) => ({
+        ...spendingFormValues,
+        unconvertedAmount: {
+          ...spendingFormValues.unconvertedAmount,
+          errors: spendingFormValues.amount.errors,
+          isValid: spendingFormValues.amount.isValid,
+        },
+      }));
     }
     setIsSubmitting(false);
     return;
@@ -203,26 +224,13 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
             />
           </View>
           <View style={styles.formRow}>
-            <View style={styles.rowElement}>
-              <Input
-                label='Amount'
-                invalid={!inputs.amount.isValid}
-                errors={inputs.amount.errors}
-                mandatory
-                textInputConfig={{
-                  keyboardType: 'decimal-pad',
-                  value:
-                    inputs.amount.value !== 0
-                      ? inputs.amount.value.toString()
-                      : '',
-                  onChangeText: inputChangedHandler.bind(this, 'amount'),
-                  placeholder:
-                    maxAvailableMoney > 0
-                      ? `Max: ${formatAmount(maxAvailableMoney)}`
-                      : '',
-                }}
-              />
-            </View>
+            <AmountElement
+              unconvertedInput={inputs.unconvertedAmount}
+              inputChangedHandler={inputChangedHandler}
+              maxAmount={maxAvailableMoney}
+            />
+          </View>
+          <View style={styles.formRow}>
             <View style={styles.rowElement}>
               <DatePicker
                 openDatePicker={openDatePicker}

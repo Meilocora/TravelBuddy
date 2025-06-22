@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Make sure the compoennt is only reexecuted by the Form, when the errors of editing state change
+// Make sure the compoennt is only reexecuted by the Form, when the errors or editing state change
 function areEqual(prevProps: InputProps, nextProps: InputProps): boolean {
   return (
     prevProps.errors === nextProps.errors &&

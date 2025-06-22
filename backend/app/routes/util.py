@@ -115,7 +115,7 @@ def get_local_currency(lat, lng):
         currency = None
 
     conversion_rate = get_conversion_rate(currency)
-    if not isinstance(conversion_rate, Exception):  
+    if conversion_rate is not None:  
         return {'currency': currency, 'conversion_rate': conversion_rate}
     else:
         return {'currency': None, 'conversion_rate': None}

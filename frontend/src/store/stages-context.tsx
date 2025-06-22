@@ -79,9 +79,12 @@ interface StagesContextType {
 
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
+
+  // TODO: Delete
   userTimeZoneOffset: 0,
   localCurrency: 'EUR',
   conversionRate: 1,
+
   fetchUserData: async (hasPermission) => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
@@ -114,6 +117,8 @@ export default function StagesContextProvider({
   children: React.ReactNode;
 }) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
+
+  // TODO: Delete
   const [userTimeZoneOffset, setUserTimeZoneOffset] = useState<number>(0);
   const [localCurrency, setLocalCurrency] = useState<string | undefined>('EUR');
   const [conversionRate, setConversionRate] = useState<number | undefined>(1);
@@ -191,9 +196,11 @@ export default function StagesContextProvider({
       setJourneys(response.journeys);
       AsyncStorage.setItem('journeys', JSON.stringify(journeys));
       setShouldSetStages(true); // trigger effect
+
+      // TODO: Delete
       setUserTimeZoneOffset(response.offset!);
-      setLocalCurrency(response.localCurrency || undefined);
-      setConversionRate(response.conversionRate || undefined);
+      setLocalCurrency(response.localCurrency || 'EUR');
+      setConversionRate(response.conversionRate || 1);
     } else {
       return response.error;
     }
@@ -530,10 +537,15 @@ export default function StagesContextProvider({
 
   const value = {
     journeys,
+
+    // TODO: Delete
     userTimeZoneOffset,
     localCurrency,
     conversionRate,
+
+    // TODO: Rename to "fetchStagesData"
     fetchUserData,
+
     findJourney,
     findMajorStage,
     findMinorStage,

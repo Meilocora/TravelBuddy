@@ -16,6 +16,7 @@ interface FetchJourneysProps {
 
 const prefix = `${BACKEND_URL}/journey`;
 
+// TODO: Get currentLocation as input from userContext
 export const fetchStagesData = async (
   hasPermission: boolean
 ): Promise<FetchJourneysProps> => {
@@ -25,6 +26,9 @@ export const fetchStagesData = async (
   } else {
     currentLocation = undefined;
   }
+
+  // TODO: Delete after successfull testing
+  currentLocation = { latitude: 33.261, longitude: -86.67 };
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(
       `${prefix}/get-stages-data`,
@@ -45,6 +49,7 @@ export const fetchStagesData = async (
       return { status };
     }
 
+    // TODO: make another http request fot getting offset, localCurrency and conversionRate
     return { journeys, offset, localCurrency, conversionRate, status };
   } catch (error) {
     // Error from frontend
