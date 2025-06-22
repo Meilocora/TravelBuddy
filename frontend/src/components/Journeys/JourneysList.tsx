@@ -10,15 +10,12 @@ import FilterSettings from '../UI/FilterSettings';
 import { deleteJourney } from '../../utils/http';
 import Modal from '../UI/Modal';
 import { StagesContext } from '../../store/stages-context';
-import { useLocationPermissions } from '../../utils/location';
 
 const JourneysList: React.FC = ({}): ReactElement => {
   const [filter, setFilter] = useState<StageFilter>(StageFilter.current);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [deleteJourneyId, setDeleteJourneyId] = useState<number | null>(null);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
 
@@ -48,8 +45,7 @@ const JourneysList: React.FC = ({}): ReactElement => {
   async function handleDelete() {
     const { error, status } = await deleteJourney(deleteJourneyId!);
     if (!error && status === 200) {
-      const hasPermission = await verifyPermissions();
-      stagesCtx.fetchUserData(hasPermission);
+      stagesCtx.fetchStagesData();
     }
     setOpenDeleteModal(false);
   }

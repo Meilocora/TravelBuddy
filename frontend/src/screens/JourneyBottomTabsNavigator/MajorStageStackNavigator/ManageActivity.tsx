@@ -18,7 +18,6 @@ import ActivityForm from '../../../components/MinorStage/ManageActivity/Activity
 import { deleteActivity } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
 import HeaderTitle from '../../../components/UI/HeaderTitle';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface ManageActivityProps {
   navigation: NativeStackNavigationProp<
@@ -40,8 +39,6 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
   navigation,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
 
@@ -98,8 +95,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
         activityId!
       );
       if (!error && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
       } else {
         setError(error!);
@@ -134,8 +130,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
         setError(error);
         return;
       } else if (activity && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
         resetValues();
       }
@@ -144,8 +139,7 @@ const ManageActivity: React.FC<ManageActivityProps> = ({
         setError(error);
         return;
       } else if (activity && status === 201) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
         resetValues();
       }

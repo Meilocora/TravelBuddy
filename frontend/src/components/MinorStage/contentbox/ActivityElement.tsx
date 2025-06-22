@@ -109,8 +109,8 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
             <Text style={listElementStyles.description}>
               {activity.description}
             </Text>
-            {activity.place && (
-              <View style={listElementStyles.row}>
+            <View style={listElementStyles.row}>
+              {activity.place && (
                 <View style={listElementStyles.rowElement}>
                   <Text style={listElementStyles.subtitle}>Place: </Text>
                   <Text
@@ -121,6 +121,8 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
                     {activity.place}
                   </Text>
                 </View>
+              )}
+              {activity.costs && (
                 <View style={listElementStyles.rowElement}>
                   <Text style={listElementStyles.subtitle}>Costs: </Text>
                   <Text
@@ -131,8 +133,8 @@ const ActivityListElement: React.FC<ActivityListElementProps> = ({
                     {formatAmount(activity.costs)}
                   </Text>
                 </View>
-              </View>
-            )}
+              )}
+            </View>
             <View style={listElementStyles.row}>
               <View style={listElementStyles.rowElement}>
                 <Text style={listElementStyles.subtitle}>Booked: </Text>

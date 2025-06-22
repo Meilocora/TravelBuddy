@@ -19,6 +19,7 @@ import {
   StackParamList,
   TransportationType,
 } from '../../models';
+import { UserContext } from '../../store/user-context';
 
 interface CurrentElementListProps {}
 
@@ -29,6 +30,7 @@ const CurrentElementList: React.FC<
   const mapNavigation =
     useNavigation<NativeStackNavigationProp<StackParamList>>();
 
+  const userCtx = useContext(UserContext);
   const stagesCtx = useContext(StagesContext);
 
   const currentJourney = stagesCtx.journeys.find(
@@ -131,7 +133,7 @@ const CurrentElementList: React.FC<
     const countDownTransportation = formatCountdown(
       nextTransportation?.start_time,
       nextTransportation?.start_time_offset!,
-      stagesCtx.userTimeZoneOffset
+      userCtx.timezoneoffset
     );
     const durationTransportation = formatDuration(
       nextTransportation?.start_time,

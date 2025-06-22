@@ -31,7 +31,6 @@ import MajorStageForm from '../../../components/MajorStage/ManageMajorStage/Majo
 import { deleteMajorStage } from '../../../utils/http';
 import { StagesContext } from '../../../store/stages-context';
 import HeaderTitle from '../../../components/UI/HeaderTitle';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface ManageMajorStageProps {
   navigation: NativeStackNavigationProp<
@@ -53,8 +52,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
@@ -127,8 +124,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
     try {
       const { error, status } = await deleteMajorStage(editedMajorStageId!);
       if (!error && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const popupText = `Major Stage successfully deleted!`;
         planningNavigation.navigate('Planning', {
           journeyId: journeyId,
@@ -180,8 +176,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         resetValues();
         const popupText = `"${majorStage.title}" successfully updated!`;
         planningNavigation.navigate('Planning', {
@@ -194,8 +189,7 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
         setError(error);
         return;
       } else if (majorStage && status === 201) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         resetValues();
         const popupText = `"${majorStage.title}" successfully created!`;
         planningNavigation.navigate('Planning', {

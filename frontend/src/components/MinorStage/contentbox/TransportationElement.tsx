@@ -22,7 +22,7 @@ import {
 import Link from '../../UI/Link';
 import TextLink from '../../UI/TextLink';
 import { useContext } from 'react';
-import { StagesContext } from '../../../store/stages-context';
+import { UserContext } from '../../../store/user-context';
 
 interface TransportElementInfopointProps {
   subtitle: string;
@@ -117,7 +117,7 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
   handleEdit,
   minorStageIsOver,
 }) => {
-  const stagesCtx = useContext(StagesContext);
+  const userCtx = useContext(UserContext);
   if (transportation === undefined) {
     return (
       <View style={styles.infoContainer}>
@@ -144,12 +144,12 @@ const TransportationElement: React.FC<TransportationElementProps> = ({
   const doneStart = validateIsOverDateTime(
     transportation.start_time,
     transportation.start_time_offset,
-    stagesCtx.userTimeZoneOffset
+    userCtx.timezoneoffset
   );
   const doneArrival = validateIsOverDateTime(
     transportation.arrival_time,
     transportation.arrival_time_offset,
-    stagesCtx.userTimeZoneOffset
+    userCtx.timezoneoffset
   );
 
   const infoPointsData = [

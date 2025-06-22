@@ -14,7 +14,13 @@ import { StagesContext } from '../../store/stages-context';
 import { CustomCountryContext } from '../../store/custom-country-context';
 import CurrentElementList from '../../components/CurrentElements/CurrentElementList';
 import { PlaceContext } from '../../store/place-context';
-import { useLocationPermissions } from '../../utils/location';
+import {
+  getCurrentLocation,
+  useLocationPermissions,
+} from '../../utils/location';
+import { UserContext } from '../../store/user-context';
+import { ActivityIndicator } from 'react-native-paper';
+import { GlobalStyles } from '../../constants/styles';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -25,12 +31,14 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   navigation,
   route,
 }): ReactElement => {
+  const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [popupText, setPopupText] = useState<string | null>();
 
   const { verifyPermissions } = useLocationPermissions();
 
+  const userCtx = useContext(UserContext);
   const authCtx = useContext(AuthContext);
   const stagesCtx = useContext(StagesContext);
   const countryCtx = useContext(CustomCountryContext);
@@ -59,19 +67,32 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   // Fetch all data here, because the users always starts on this screen
   useEffect(() => {
     async function getData() {
+      setIsFetching(true);
       const hasPermission = await verifyPermissions();
-      const stagesBackendError = await stagesCtx.fetchUserData(hasPermission);
+      if (hasPermission) {
+        const currentLocation = await getCurrentLocation();
+        userCtx.setCurrentLocation(currentLocation);
+      }
+
+      // TODO: First fetch doesnt work probably because currentLocation is not passed to backend
+
+      const userBackendError = await userCtx.fetchUserData();
+
+      const stagesBackendError = await stagesCtx.fetchStagesData();
       const countriesBackendError =
         await countryCtx.fetchUsersCustomCountries();
       const placesBackendError = await placesCtx.fetchPlacesToVisit();
 
-      if (stagesBackendError) {
+      if (userBackendError) {
+        setError(userBackendError);
+      } else if (stagesBackendError) {
         setError(stagesBackendError);
       } else if (countriesBackendError) {
         setError(countriesBackendError);
       } else if (placesBackendError) {
         setError(placesBackendError);
       }
+      setIsFetching(false);
     }
 
     getData();
@@ -87,7 +108,11 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
   }
 
   let content;
-  if (stagesCtx.journeys.length === 0 && !error) {
+  if (isFetching) {
+    content = (
+      <ActivityIndicator size='large' color={GlobalStyles.colors.primary100} />
+    );
+  } else if (stagesCtx.journeys.length === 0 && !error) {
     content = <InfoText content='No Journeys found!' />;
   } else {
     content = <JourneysList />;

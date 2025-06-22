@@ -26,7 +26,6 @@ import ComplementaryGradient from '../../../components/UI/LinearGradients/Comple
 import ErrorOverlay from '../../../components/UI/ErrorOverlay';
 import { StagesContext } from '../../../store/stages-context';
 import HeaderTitle from '../../../components/UI/HeaderTitle';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface ManageTransportationProps {
   navigation: NativeStackNavigationProp<
@@ -52,8 +51,6 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   const [selectedTransportation, setSelectedTransportation] = useState<
     Transportation | undefined
   >(undefined);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const planningNavigation =
     useNavigation<BottomTabNavigationProp<JourneyBottomTabsParamsList>>();
@@ -103,16 +100,14 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       );
       if (!error && status === 200) {
         if (majorStageId) {
-          const hasPermission = await verifyPermissions();
-          stagesCtx.fetchUserData(hasPermission);
+          stagesCtx.fetchStagesData();
           const popupText = `Transportation successfully deleted!`;
           planningNavigation.navigate('Planning', {
             journeyId: journeyId!,
             popupText: popupText,
           });
         } else if (minorStageId) {
-          const hasPermission = await verifyPermissions();
-          stagesCtx.fetchUserData(hasPermission);
+          stagesCtx.fetchStagesData();
           const popupText = `Transportation successfully deleted!`;
           navigation.navigate('MinorStages', {
             journeyId: journeyId!,
@@ -155,8 +150,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
       (transportation && status === 201)
     ) {
       if (mode === 'major') {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const majorStageTitle = stagesCtx.findMajorStage(majorStageId!)?.title;
         const popupText =
           status === 200
@@ -167,8 +161,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
           popupText: popupText,
         });
       } else if (mode === 'minor') {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const minorStage = stagesCtx.findMinorStage(minorStageId!);
         const popupText =
           status === 200

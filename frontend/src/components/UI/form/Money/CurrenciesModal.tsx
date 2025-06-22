@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import OutsidePressHandler from 'react-native-outside-press';
 
@@ -7,25 +7,25 @@ import Button from '../../Button';
 import ListItem from '../../search/ListItem';
 import { generateRandomString } from '../../../../utils';
 import { GlobalStyles } from '../../../../constants/styles';
+import { UserContext } from '../../../../store/user-context';
 
 interface CurrenciesModalProps {
-  currencies: CurrencyInfo[];
   onCloseModal: () => void;
   onSelectCurrency: (currency: CurrencyInfo) => void;
 }
 
 const CurrenciesModal: React.FC<CurrenciesModalProps> = ({
-  currencies,
   onCloseModal,
   onSelectCurrency,
 }): ReactElement => {
+  const userCtx = useContext(UserContext);
   return (
     <View style={styles.outerContainer}>
       <OutsidePressHandler onOutsidePress={onCloseModal}>
         <View style={styles.innerContainer}>
           <ScrollView style={styles.list}>
-            {currencies &&
-              currencies.map((item) => (
+            {userCtx.currencies &&
+              userCtx.currencies.map((item) => (
                 <ListItem
                   key={generateRandomString()}
                   onPress={() => onSelectCurrency(item)}

@@ -3,38 +3,19 @@ import { AxiosResponse } from 'axios';
 import { BACKEND_URL } from '@env';
 import { Journey, JourneyFormValues } from '../../models';
 import api from './api';
-import { getCurrentLocation } from '../location';
 
 interface FetchJourneysProps {
   journeys?: Journey[];
-  offset?: number;
-  localCurrency?: string;
-  conversionRate?: number;
   status: number;
   error?: string;
 }
 
 const prefix = `${BACKEND_URL}/journey`;
 
-// TODO: Get currentLocation as input from userContext
-export const fetchStagesData = async (
-  hasPermission: boolean
-): Promise<FetchJourneysProps> => {
-  let currentLocation: { latitude: number; longitude: number } | undefined;
-  if (hasPermission) {
-    currentLocation = await getCurrentLocation();
-  } else {
-    currentLocation = undefined;
-  }
-
-  // TODO: Delete after successfull testing
-  currentLocation = { latitude: 33.261, longitude: -86.67 };
+export const fetchStagesDatas = async (): Promise<FetchJourneysProps> => {
   try {
     const response: AxiosResponse<FetchJourneysProps> = await api.get(
-      `${prefix}/get-stages-data`,
-      {
-        params: currentLocation,
-      }
+      `${prefix}/get-stages-data`
     );
 
     // Error from backend
@@ -42,15 +23,13 @@ export const fetchStagesData = async (
       return { status: response.data.status, error: response.data.error };
     }
 
-    const { journeys, offset, localCurrency, conversionRate, status } =
-      response.data;
+    const { journeys, status } = response.data;
 
     if (!journeys) {
       return { status };
     }
 
-    // TODO: make another http request fot getting offset, localCurrency and conversionRate
-    return { journeys, offset, localCurrency, conversionRate, status };
+    return { journeys, status };
   } catch (error) {
     // Error from frontend
     return { status: 500, error: 'Could not fetch data!' };

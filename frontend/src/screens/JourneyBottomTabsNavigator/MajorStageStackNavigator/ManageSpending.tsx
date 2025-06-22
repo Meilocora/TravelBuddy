@@ -18,7 +18,6 @@ import { deleteSpending } from '../../../utils/http/spending';
 import SpendingForm from '../../../components/MinorStage/ManageSpending/SpendingForm';
 import { StagesContext } from '../../../store/stages-context';
 import HeaderTitle from '../../../components/UI/HeaderTitle';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface ManageSpendingProps {
   navigation: NativeStackNavigationProp<
@@ -40,9 +39,6 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
   navigation,
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
-
-  const { verifyPermissions } = useLocationPermissions();
-
   const stagesCtx = useContext(StagesContext);
 
   const { minorStageId, spendingId } = route.params;
@@ -90,8 +86,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         spendingId!
       );
       if (!error && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
       } else {
         setError(error!);
@@ -122,8 +117,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         setError(error);
         return;
       } else if (spending && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
         resetValues();
       }
@@ -132,8 +126,7 @@ const ManageSpending: React.FC<ManageSpendingProps> = ({
         setError(error);
         return;
       } else if (spending && status === 201) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         navigation.goBack();
         resetValues();
       }

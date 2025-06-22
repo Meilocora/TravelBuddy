@@ -19,7 +19,7 @@ import {
   formatDuration,
 } from '../../utils';
 import Link from '../UI/Link';
-import { StagesContext } from '../../store/stages-context';
+import { UserContext } from '../../store/user-context';
 
 interface TransportationBoxProps {
   transportation: Transportation;
@@ -32,7 +32,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
   majorStageIsOver,
   onPressEdit,
 }): ReactElement => {
-  const stagesCtx = useContext(StagesContext);
+  const userCtx = useContext(UserContext);
   const [openInfoBox, setOpenInfoBox] = useState(false);
 
   let countdown: string | undefined = undefined;
@@ -40,7 +40,7 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
     countdown = formatCountdown(
       transportation.start_time,
       transportation.start_time_offset,
-      stagesCtx.userTimeZoneOffset
+      userCtx.timezoneoffset
     );
   }
 

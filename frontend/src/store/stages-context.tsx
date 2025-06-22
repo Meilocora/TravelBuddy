@@ -8,7 +8,7 @@ import {
   PlaceToVisit,
   Transportation,
 } from '../models';
-import { fetchStagesData } from '../utils/http';
+import { fetchStagesDatas } from '../utils/http';
 import { parseDate, parseDateAndTime } from '../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -33,10 +33,7 @@ export enum Indicators {
 
 interface StagesContextType {
   journeys: Journey[];
-  userTimeZoneOffset: number;
-  localCurrency: string | undefined;
-  conversionRate: number | undefined;
-  fetchUserData: (hasPermission: boolean) => Promise<void | string>;
+  fetchStagesData: () => Promise<void | string>;
   findJourney: (journeyId: number) => Journey | undefined;
   findMajorStage: (majorStageId: number) => MajorStage | undefined;
   findMinorStage: (minorStageId: number) => MinorStage | undefined;
@@ -79,13 +76,7 @@ interface StagesContextType {
 
 export const StagesContext = createContext<StagesContextType>({
   journeys: [],
-
-  // TODO: Delete
-  userTimeZoneOffset: 0,
-  localCurrency: 'EUR',
-  conversionRate: 1,
-
-  fetchUserData: async (hasPermission) => {},
+  fetchStagesData: async () => {},
   findJourney: () => undefined,
   findMajorStage: () => undefined,
   findMinorStage: () => undefined,
@@ -117,12 +108,6 @@ export default function StagesContextProvider({
   children: React.ReactNode;
 }) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
-
-  // TODO: Delete
-  const [userTimeZoneOffset, setUserTimeZoneOffset] = useState<number>(0);
-  const [localCurrency, setLocalCurrency] = useState<string | undefined>('EUR');
-  const [conversionRate, setConversionRate] = useState<number | undefined>(1);
-
   const [selectedJourneyId, setSelectedJourneyId] = useState<
     number | undefined
   >(undefined);
@@ -189,18 +174,13 @@ export default function StagesContextProvider({
     })();
   }, []);
 
-  async function fetchUserData(hasPermission: boolean): Promise<void | string> {
-    const response = await fetchStagesData(hasPermission);
+  async function fetchStagesData(): Promise<void | string> {
+    const response = await fetchStagesDatas();
 
     if (response.journeys) {
       setJourneys(response.journeys);
       AsyncStorage.setItem('journeys', JSON.stringify(journeys));
       setShouldSetStages(true); // trigger effect
-
-      // TODO: Delete
-      setUserTimeZoneOffset(response.offset!);
-      setLocalCurrency(response.localCurrency || 'EUR');
-      setConversionRate(response.conversionRate || 1);
     } else {
       return response.error;
     }
@@ -537,15 +517,7 @@ export default function StagesContextProvider({
 
   const value = {
     journeys,
-
-    // TODO: Delete
-    userTimeZoneOffset,
-    localCurrency,
-    conversionRate,
-
-    // TODO: Rename to "fetchStagesData"
-    fetchUserData,
-
+    fetchStagesData,
     findJourney,
     findMajorStage,
     findMinorStage,

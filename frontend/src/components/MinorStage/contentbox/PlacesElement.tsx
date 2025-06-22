@@ -8,7 +8,6 @@ import { fetchavailablePlacesByCountry } from '../../../utils/http';
 import PlacesListItem from '../../Locations/Places/PlacesListItem';
 import { generateRandomString, validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface PlacesElementProps {
   majorStageId: number;
@@ -24,8 +23,6 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   handleDelete,
 }) => {
   const [openSelection, setOpenSelection] = useState(false);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
   const majorStage = stagesCtx.findMinorStagesMajorStage(minorStage.id);
@@ -43,13 +40,11 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   }
 
   async function handleToggleFavourite(placeId: number) {
-    const hasPermission = await verifyPermissions();
-    stagesCtx.fetchUserData(hasPermission);
+    stagesCtx.fetchStagesData();
   }
 
   async function handleToggleVisited(placeId: number) {
-    const hasPermission = await verifyPermissions();
-    stagesCtx.fetchUserData(hasPermission);
+    stagesCtx.fetchStagesData();
   }
 
   const screenHeight = Dimensions.get('window').height;

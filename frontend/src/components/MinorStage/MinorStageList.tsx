@@ -16,7 +16,6 @@ import Modal from '../UI/Modal';
 import IconButton from '../UI/IconButton';
 import FilterSettings from '../UI/FilterSettings';
 import { StagesContext } from '../../store/stages-context';
-import { useLocationPermissions } from '../../utils/location';
 
 interface MinorStageListProps {
   majorStage: MajorStage;
@@ -33,8 +32,6 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   const [deleteMinorStageId, setDeleteMinorStageId] = useState<number | null>(
     null
   );
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
   const now = new Date();
@@ -63,8 +60,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
   async function handleDelete() {
     const { error, status } = await deleteMinorStage(deleteMinorStageId!);
     if (!error && status === 200) {
-      const hasPermission = await verifyPermissions();
-      stagesCtx.fetchUserData(hasPermission);
+      stagesCtx.fetchStagesData();
     }
     setOpenDeleteModal(false);
   }

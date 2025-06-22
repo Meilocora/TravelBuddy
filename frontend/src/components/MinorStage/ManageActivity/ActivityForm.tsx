@@ -12,10 +12,10 @@ import {
 import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
-import { formatAmount } from '../../../utils';
 import { createActivity, updateActivity } from '../../../utils/http';
 import LocationPicker from '../../UI/form/LocationPicker';
 import { StagesContext } from '../../../store/stages-context';
+import AmountElement from '../../UI/form/Money/AmountElement';
 
 type InputValidationResponse = {
   activity?: Activity;
@@ -48,12 +48,11 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
   const minorStage = stagesCtx.findMinorStage(minorStageId);
 
   const maxAvailableMoney = Math.max(
-    minorStage!.costs.budget - minorStage!.costs.spent_money,
+    Math.round(
+      (minorStage!.costs.budget - minorStage!.costs.spent_money) * 100
+    ) / 100,
     0
   );
-
-  // TODO: Implement component to get a specific currency and conversionRate
-  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,7 +64,12 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       errors: [],
     },
     costs: {
-      value: defaultValues?.costs || 0,
+      value: 0,
+      isValid: true,
+      errors: [],
+    },
+    unconvertedAmount: {
+      value: defaultValues?.costs.toString() || '',
       isValid: true,
       errors: [],
     },
@@ -106,7 +110,12 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
         errors: [],
       },
       costs: {
-        value: defaultValues?.costs || 0,
+        value: 0,
+        isValid: true,
+        errors: [],
+      },
+      unconvertedAmount: {
+        value: defaultValues?.costs.toString() || '',
         isValid: true,
         errors: [],
       },
@@ -143,6 +152,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
       name: { value: '', isValid: true, errors: [] },
       description: { value: '', isValid: true, errors: [] },
       costs: { value: 0, isValid: true, errors: [] },
+      unconvertedAmount: { value: '', isValid: true, errors: [] },
       booked: { value: false, isValid: true, errors: [] },
       place: { value: '', isValid: true, errors: [] },
       latitude: { value: undefined, isValid: true, errors: [] },
@@ -153,7 +163,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
 
   function inputChangedHandler(
     inputIdentifier: string,
-    enteredValue: string | boolean
+    enteredValue: string | boolean | number
   ) {
     setInputs((currInputs) => {
       return {
@@ -212,7 +222,14 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (activityFormValues) {
-      setInputs((prevValues) => activityFormValues);
+      setInputs((prevValues) => ({
+        ...activityFormValues,
+        unconvertedAmount: {
+          ...activityFormValues.unconvertedAmount,
+          errors: activityFormValues.costs.errors,
+          isValid: activityFormValues.costs.isValid,
+        },
+      }));
     }
     setIsSubmitting(false);
     return;
@@ -275,7 +292,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
             />
           </View>
           <View style={styles.formRow}>
-            <Input
+            {/* <Input
               label='Costs'
               invalid={!inputs.costs.isValid}
               errors={inputs.costs.errors}
@@ -292,6 +309,23 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
               style={{
                 maxWidth: '50%',
               }}
+            /> */}
+            <AmountElement
+              unconvertedInput={inputs.unconvertedAmount}
+              inputChangedHandler={inputChangedHandler}
+              maxAmount={maxAvailableMoney}
+              field='costs'
+            />
+          </View>
+          <View style={styles.formRow}>
+            <Input
+              label='Link'
+              invalid={!inputs.link.isValid}
+              errors={inputs.link.errors}
+              textInputConfig={{
+                value: inputs.link.value,
+                onChangeText: inputChangedHandler.bind(this, 'link'),
+              }}
             />
             <View style={styles.checkBoxContainer}>
               <Text style={styles.checkBoxLabel}>Booked?</Text>
@@ -304,17 +338,6 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
                 color={GlobalStyles.colors.complementary100}
               />
             </View>
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.link.isValid}
-              errors={inputs.link.errors}
-              textInputConfig={{
-                value: inputs.link.value,
-                onChangeText: inputChangedHandler.bind(this, 'link'),
-              }}
-            />
           </View>
         </View>
         <View style={styles.buttonsContainer}>

@@ -19,7 +19,6 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import Modal from '../../components/UI/Modal';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { StagesContext } from '../../store/stages-context';
-import { useLocationPermissions } from '../../utils/location';
 
 interface ManageJourneyProps {
   route: ManageJourneyRouteProp;
@@ -38,8 +37,6 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
 }): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const { verifyPermissions } = useLocationPermissions();
 
   const stagesCtx = useContext(StagesContext);
   const editedJourneyId = route.params?.journeyId;
@@ -105,8 +102,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
     try {
       const { error, status } = await deleteJourney(editedJourneyId!);
       if (!error && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const popupText = 'Journey successfully deleted!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       } else {
@@ -142,8 +138,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 200) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const popupText = 'Journey successfully updated!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }
@@ -152,8 +147,7 @@ const ManageJourney: React.FC<ManageJourneyProps> = ({
         setError(error);
         return;
       } else if (journey && status === 201) {
-        const hasPermission = await verifyPermissions();
-        stagesCtx.fetchUserData(hasPermission);
+        stagesCtx.fetchStagesData();
         const popupText = 'Journey successfully created!';
         navigation.navigate('AllJourneys', { popupText: popupText });
       }

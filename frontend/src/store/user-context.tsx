@@ -3,17 +3,20 @@ import { LatLng } from 'react-native-maps';
 
 import { CurrencyInfo } from '../models';
 import { fetchCurrencies } from '../utils/http/spending';
+import { FetchUserDataProps, fetchUsersData } from '../utils/http/user';
 
 interface UserContextType {
-  currentPosition: LatLng;
+  currentLocation: LatLng | undefined;
+  setCurrentLocation: (loc: LatLng | undefined) => void;
   timezoneoffset: number;
   localCurrency: CurrencyInfo;
   currencies: CurrencyInfo[];
-  fetchUserData: () => Promise<void | string>;
+  fetchUserData: (loc?: LatLng | undefined) => Promise<void | string>;
 }
 
 export const UserContext = createContext<UserContextType>({
-  currentPosition: { latitude: 0, longitude: 0 },
+  currentLocation: undefined,
+  setCurrentLocation: () => {},
   timezoneoffset: 0,
   localCurrency: { currency: 'EUR', conversionRate: 1 },
   currencies: [],
@@ -25,10 +28,9 @@ export default function UserContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currentPosition, setCurrentPosition] = useState<LatLng>({
-    latitude: 0,
-    longitude: 0,
-  });
+  const [currentLocation, setCurrentLocation] = useState<LatLng | undefined>(
+    undefined
+  );
   const [timezoneoffset, setTimezoneOffset] = useState<number>(0);
   const [localCurrency, setLocalCurrency] = useState<CurrencyInfo>({
     currency: 'EUR',
@@ -36,14 +38,30 @@ export default function UserContextProvider({
   });
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>([]);
 
-  async function fetchUserData(): Promise<void | string> {
-    // FetchCurrentPosition first
+  async function fetchUserData(
+    loc?: LatLng | undefined
+  ): Promise<void | string> {
+    let userDataResponse: FetchUserDataProps;
+    if (loc) {
+      userDataResponse = await fetchUsersData(loc);
+    } else {
+      userDataResponse = await fetchUsersData(currentLocation);
+    }
+    if (userDataResponse.error) {
+      return userDataResponse.error;
+    } else {
+      setTimezoneOffset(userDataResponse.offset || 0);
+      setLocalCurrency({
+        currency: userDataResponse.localCurrency || 'EUR',
+        conversionRate: userDataResponse.conversionRate || 1,
+      });
+    }
 
-    const response = await fetchCurrencies();
-    if (response.error) {
-      return response.error;
-    } else if (response.currencies) {
-      sortCurrencies(response.currencies);
+    const currencyResponse = await fetchCurrencies();
+    if (currencyResponse.error) {
+      return currencyResponse.error;
+    } else if (currencyResponse.currencies) {
+      sortCurrencies(currencyResponse.currencies);
     }
   }
 
@@ -74,7 +92,8 @@ export default function UserContextProvider({
   }
 
   const value = {
-    currentPosition,
+    currentLocation,
+    setCurrentLocation,
     timezoneoffset,
     localCurrency,
     currencies,

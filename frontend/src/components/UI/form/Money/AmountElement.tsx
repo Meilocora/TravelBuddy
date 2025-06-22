@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import Input from '../Input';
 import { formatAmount } from '../../../../utils';
 import CurrencyPicker from './CurrencyPicker';
@@ -11,6 +12,7 @@ interface AmountElementProps {
     value: string;
   };
   maxAmount: number;
+  field: string;
   inputChangedHandler: (
     inputIdentifier: string,
     enteredValue: string | number
@@ -20,6 +22,7 @@ interface AmountElementProps {
 const AmountElement: React.FC<AmountElementProps> = ({
   unconvertedInput,
   maxAmount,
+  field,
   inputChangedHandler,
 }): ReactElement => {
   return (
@@ -40,6 +43,7 @@ const AmountElement: React.FC<AmountElementProps> = ({
         unconvertedValue={unconvertedInput.value}
         style={{ flexGrow: 1.5 }}
         inputChangedHandler={inputChangedHandler}
+        field={field}
       />
     </View>
   );

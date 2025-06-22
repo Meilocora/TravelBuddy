@@ -159,7 +159,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (spendingFormValues) {
-      // setInputs((prevValues) => spendingFormValues);
+      // TODO: Adjust this also
       setInputs((prevValues) => ({
         ...spendingFormValues,
         unconvertedAmount: {
@@ -228,6 +228,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
               unconvertedInput={inputs.unconvertedAmount}
               inputChangedHandler={inputChangedHandler}
               maxAmount={maxAvailableMoney}
+              field='amount'
             />
           </View>
           <View style={styles.formRow}>

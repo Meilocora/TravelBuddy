@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
 import { MajorStageStackParamList, MinorStage } from '../../../models';
 import { useNavigation } from '@react-navigation/native';
@@ -15,7 +15,6 @@ import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
 import { validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
-import { useLocationPermissions } from '../../../utils/location';
 
 interface MainContentProps {
   journeyId: number;
@@ -39,8 +38,6 @@ const MainContent: React.FC<MainContentProps> = ({
   majorStageId,
   minorStage,
 }): ReactElement => {
-  const { verifyPermissions } = useLocationPermissions();
-
   const stagesCtx = useContext(StagesContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<MajorStageStackParamList>>();
@@ -64,14 +61,12 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleAddPlace(name: string) {
     await addMinorStageToFavoritePlace(name, minorStage.id);
-    const hasPermission = await verifyPermissions();
-    stagesCtx.fetchUserData(hasPermission);
+    stagesCtx.fetchStagesData();
   }
 
   async function handleRemovePlace(name: string) {
     await removeMinorStageFromFavoritePlace(name);
-    const hasPermission = await verifyPermissions();
-    stagesCtx.fetchUserData(hasPermission);
+    stagesCtx.fetchStagesData();
   }
 
   function handleAddActivity() {
@@ -89,8 +84,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
   async function handleDeleteActivity(id: number) {
     await deleteActivity(id);
-    const hasPermission = await verifyPermissions();
-    stagesCtx.fetchUserData(hasPermission);
+    stagesCtx.fetchStagesData();
   }
 
   function handleAddSpending() {
@@ -159,7 +153,12 @@ const MainContent: React.FC<MainContentProps> = ({
     );
   }
 
-  return <View style={styles.container}>{displayedContent?.element}</View>;
+  // TODO: Scrollview doesnt really work
+  return (
+    <ScrollView>
+      <View style={styles.container}>{displayedContent?.element}</View>
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -59,6 +59,7 @@ export interface Activity {
   name: string;
   description: string;
   costs: number;
+  unconvertedAmount?: string;
   booked: boolean;
   place: string;
   latitude: number | undefined;
@@ -70,6 +71,7 @@ export interface ActivityFormValues {
   name: Validable<string>;
   description: Validable<string>;
   costs: Validable<number>;
+  unconvertedAmount: Validable<string>;
   booked: Validable<boolean>;
   place: Validable<string>;
   latitude: Validable<number | undefined>;

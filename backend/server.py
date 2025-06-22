@@ -17,6 +17,7 @@ from app.routes.place_routes import place_bp
 from app.routes.transportation_routes import transportation_bp
 from app.routes.activity_routes import activity_bp
 from app.routes.spending_routes import spending_bp
+from app.routes.user_routes import user_bp
 
 # Load environment variables from .env file
 load_dotenv()
@@ -38,6 +39,7 @@ app.register_blueprint(place_bp, url_prefix='/place-to-visit')
 app.register_blueprint(transportation_bp, url_prefix='/transportation')
 app.register_blueprint(activity_bp, url_prefix='/activity')
 app.register_blueprint(spending_bp, url_prefix='/spending')
+app.register_blueprint(user_bp, url_prefix='/user')
 
 
 with app.app_context():
