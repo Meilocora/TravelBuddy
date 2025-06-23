@@ -81,6 +81,7 @@ export interface TransportationFormValues {
   arrival_latitude: Validable<number | undefined>;
   arrival_longitude: Validable<number | undefined>;
   transportation_costs: Validable<number>;
+  unconvertedAmount: Validable<string>;
   link: Validable<string | undefined>;
 }
 

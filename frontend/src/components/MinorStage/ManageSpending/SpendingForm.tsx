@@ -51,7 +51,6 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
   const minStartDate = minorStage!.scheduled_start_time;
   const maxEndDate = minorStage!.scheduled_end_time;
 
-  // TODO: Implement this in every file, where this is calculated
   const maxAvailableMoney = Math.max(
     Math.round(
       (minorStage!.costs.budget - minorStage!.costs.spent_money) * 100
@@ -68,7 +67,6 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
       isValid: true,
       errors: [],
     },
-    // TODO: Implement this for every other form, that handles amounts (MinorStageForm, ActivityForm, TransportationForm)
     unconvertedAmount: {
       value: defaultValues?.amount.toString() || '',
       isValid: true,
@@ -159,7 +157,6 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (spendingFormValues) {
-      // TODO: Adjust this also
       setInputs((prevValues) => ({
         ...spendingFormValues,
         unconvertedAmount: {

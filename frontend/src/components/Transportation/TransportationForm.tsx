@@ -23,6 +23,7 @@ import {
 } from '../../utils/http/transportation';
 import LocationPicker from '../UI/form/LocationPicker';
 import { StagesContext } from '../../store/stages-context';
+import AmountElement from '../UI/form/Money/AmountElement';
 
 type InputValidationResponse = {
   transportation?: Transportation;
@@ -62,9 +63,6 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
   } else {
     stage = stagesCtx.findMinorStage(minorStageId!)!;
   }
-
-  // TODO: Implement component to get a specific currency and conversionRate
-  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
 
   minStartDate = parseDate(stage!.scheduled_start_time);
   minStartDate.setDate(minStartDate.getDate() - 1);
@@ -122,7 +120,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
       errors: [],
     },
     transportation_costs: {
-      value: defaultValues?.transportation_costs || 0,
+      value: 0,
+      isValid: true,
+      errors: [],
+    },
+    unconvertedAmount: {
+      value: defaultValues?.transportation_costs.toString() || '',
       isValid: true,
       errors: [],
     },
@@ -182,7 +185,12 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         errors: [],
       },
       transportation_costs: {
-        value: defaultValues?.transportation_costs || 0,
+        value: 0,
+        isValid: true,
+        errors: [],
+      },
+      unconvertedAmount: {
+        value: defaultValues?.transportation_costs.toString() || '',
         isValid: true,
         errors: [],
       },
@@ -196,7 +204,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 
   function inputChangedHandler(
     inputIdentifier: string,
-    enteredValue: string | boolean
+    enteredValue: string | boolean | number
   ) {
     setInputs((currInputs) => {
       return {
@@ -298,7 +306,14 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         mode: minorStageId ? 'minor' : 'major',
       });
     } else if (transportationFormValues) {
-      setInputs((prevValues) => transportationFormValues);
+      setInputs((prevValues) => ({
+        ...transportationFormValues,
+        unconvertedAmount: {
+          ...transportationFormValues.unconvertedAmount,
+          errors: transportationFormValues.transportation_costs.errors,
+          isValid: transportationFormValues.transportation_costs.isValid,
+        },
+      }));
     }
     setIsSubmitting(false);
     return;
@@ -338,7 +353,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
             invalid={!inputs.type.isValid}
             errors={inputs.type.errors}
           />
-          <Input
+        </View>
+        <View style={styles.formRow}>
+          {/* <Input
             label='Costs'
             invalid={!inputs.transportation_costs.isValid}
             errors={inputs.transportation_costs.errors}
@@ -353,6 +370,11 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
                 'transportation_costs'
               ),
             }}
+          /> */}
+          <AmountElement
+            unconvertedInput={inputs.unconvertedAmount}
+            inputChangedHandler={inputChangedHandler}
+            field='transportation_costs'
           />
         </View>
         <View style={styles.formRow}>

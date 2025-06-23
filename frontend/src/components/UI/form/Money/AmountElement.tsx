@@ -11,7 +11,7 @@ interface AmountElementProps {
     errors: string[];
     value: string;
   };
-  maxAmount: number;
+  maxAmount?: number;
   field: string;
   inputChangedHandler: (
     inputIdentifier: string,
@@ -21,7 +21,7 @@ interface AmountElementProps {
 
 const AmountElement: React.FC<AmountElementProps> = ({
   unconvertedInput,
-  maxAmount,
+  maxAmount = 0,
   field,
   inputChangedHandler,
 }): ReactElement => {

@@ -23,6 +23,7 @@ import {
 import DatePicker from '../../UI/form/DatePicker';
 import LocationPicker from '../../UI/form/LocationPicker';
 import { StagesContext } from '../../../store/stages-context';
+import AmountElement from '../../UI/form/Money/AmountElement';
 
 type InputValidationResponse = {
   minorStage?: MinorStage;
@@ -56,9 +57,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   const minStartDate = majorStage!.scheduled_start_time;
   const maxEndDate = majorStage!.scheduled_end_time;
   let maxAvailableMoney = majorStage!.costs.budget;
-
-  // TODO: Implement component to get a specific currency and conversionRate
-  // Suggest the found local currency OR 'EUR' with 1.0 conversionRate
 
   const minorStages = majorStage!.minorStages;
   minorStages?.forEach((ms) => {
@@ -102,7 +100,12 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       errors: [],
     },
     accommodation_costs: {
-      value: defaultValues?.accommodation_costs || 0,
+      value: 0,
+      isValid: true,
+      errors: [],
+    },
+    unconvertedAmount: {
+      value: defaultValues?.accommodation_costs.toString() || '',
       isValid: true,
       errors: [],
     },
@@ -132,6 +135,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     useState(Math.max(0, inputs.budget.value));
   useEffect(() => {
     setMaxAvailableMoneyAccommodation(Math.max(0, inputs.budget.value));
+
     setInputs((prevValues) => {
       return {
         ...prevValues,
@@ -179,7 +183,12 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
         errors: [],
       },
       accommodation_costs: {
-        value: defaultValues?.accommodation_costs || 0,
+        value: 0,
+        isValid: true,
+        errors: [],
+      },
+      unconvertedAmount: {
+        value: defaultValues?.accommodation_costs.toString() || '',
         isValid: true,
         errors: [],
       },
@@ -216,6 +225,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
       spent_money: { value: 0, isValid: true, errors: [] },
       accommodation_place: { value: '', isValid: true, errors: [] },
       accommodation_costs: { value: 0, isValid: true, errors: [] },
+      unconvertedAmount: { value: '', isValid: true, errors: [] },
       accommodation_booked: { value: false, isValid: true, errors: [] },
       accommodation_latitude: { value: undefined, isValid: true, errors: [] },
       accommodation_longitude: { value: undefined, isValid: true, errors: [] },
@@ -225,7 +235,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
 
   function inputChangedHandler(
     inputIdentifier: string,
-    enteredValue: string | boolean
+    enteredValue: string | boolean | number
   ) {
     setInputs((currInputs) => {
       return {
@@ -292,7 +302,14 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
     } else if (error) {
       onSubmit({ error, status });
     } else if (minorStageFormValues) {
-      setInputs((prevValues) => minorStageFormValues);
+      setInputs((prevValues) => ({
+        ...minorStageFormValues,
+        unconvertedAmount: {
+          ...minorStageFormValues.unconvertedAmount,
+          errors: minorStageFormValues.accommodation_costs.errors,
+          isValid: minorStageFormValues.accommodation_costs.isValid,
+        },
+      }));
     }
     setIsSubmitting(false);
     return;
@@ -432,26 +449,27 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
             />
           </View>
           <View style={styles.formRow}>
+            <AmountElement
+              unconvertedInput={inputs.unconvertedAmount}
+              inputChangedHandler={inputChangedHandler}
+              maxAmount={maxAvailableMoney}
+              field='accommodation_costs'
+            />
+          </View>
+          <View style={styles.formRow}>
             <Input
-              label='Costs'
-              invalid={!inputs.accommodation_costs.isValid}
-              errors={inputs.accommodation_costs.errors}
+              label='Link'
+              invalid={!inputs.accommodation_link.isValid}
+              errors={inputs.accommodation_link.errors}
               textInputConfig={{
-                keyboardType: 'decimal-pad',
-                value:
-                  inputs.accommodation_costs.value !== 0
-                    ? inputs.accommodation_costs.value!.toString()
-                    : '',
+                value: inputs.accommodation_link.value,
                 onChangeText: inputChangedHandler.bind(
                   this,
-                  'accommodation_costs'
+                  'accommodation_link'
                 ),
-                placeholder: maxAvailableMoneyAccommodation
-                  ? `Max: ${formatAmount(maxAvailableMoneyAccommodation)}`
-                  : '',
               }}
-              style={{ maxWidth: '50%' }}
             />
+
             <View style={styles.checkBoxContainer}>
               <Text style={styles.checkBoxLabel}>Booked?</Text>
               <Checkbox
@@ -468,20 +486,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
                 color={GlobalStyles.colors.complementary100}
               />
             </View>
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Link'
-              invalid={!inputs.accommodation_link.isValid}
-              errors={inputs.accommodation_link.errors}
-              textInputConfig={{
-                value: inputs.accommodation_link.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'accommodation_link'
-                ),
-              }}
-            />
           </View>
         </View>
         <View style={styles.buttonsContainer}>

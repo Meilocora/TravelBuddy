@@ -53,7 +53,7 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Implement local currency and conversionRate into SpendingsForm?
+// TODO: Add currencyConversion to the countries in Locations Screen
 
 // TODO: Fix ErrorOverley
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme, currentLocation, UTC Timezoneoffset, localCurrency, conversionRate

@@ -23,7 +23,7 @@ export interface MinorStageValues {
   budget: number;
   spent_money: number;
   accommodation_place: string;
-  accommodation_costs: number | null;
+  accommodation_costs: number;
   accommodation_booked: boolean;
   accommodation_latitude: number | undefined;
   accommodation_longitude: number | undefined;
@@ -39,6 +39,7 @@ export interface MinorStageFormValues {
   spent_money: Validable<number>;
   accommodation_place: Validable<string>;
   accommodation_costs: Validable<number>;
+  unconvertedAmount: Validable<string>;
   accommodation_booked: Validable<boolean>;
   accommodation_latitude: Validable<number | undefined>;
   accommodation_longitude: Validable<number | undefined>;

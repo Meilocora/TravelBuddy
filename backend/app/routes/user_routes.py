@@ -10,6 +10,7 @@ def get_user_data(current_user):
     latitude = request.args.get('latitude', type=float)
     longitude = request.args.get('longitude', type=float)
 
+    currencyInfo = {'currency': 'EUR', 'conversion_rate': 1.0}
     if latitude is None or longitude is None:
         user_time_zone_offset = 0
     else:
