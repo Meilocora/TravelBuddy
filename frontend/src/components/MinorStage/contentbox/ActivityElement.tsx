@@ -163,7 +163,7 @@ const listElementStyles = StyleSheet.create({
   container: {
     paddingVertical: 2,
     paddingHorizontal: 4,
-    marginVertical: 5,
+    marginVertical: 4,
     backgroundColor: GlobalStyles.colors.gray500,
     borderRadius: 16,
   },

@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { MajorStageStackParamList, MinorStage } from '../../../models';
 import { useNavigation } from '@react-navigation/native';
@@ -153,11 +153,10 @@ const MainContent: React.FC<MainContentProps> = ({
     );
   }
 
-  // TODO: Scrollview doesnt really work
   return (
-    <ScrollView>
+    <View>
       <View style={styles.container}>{displayedContent?.element}</View>
-    </ScrollView>
+    </View>
   );
 };
 

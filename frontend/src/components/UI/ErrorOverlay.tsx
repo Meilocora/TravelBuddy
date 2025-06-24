@@ -13,7 +13,7 @@ interface ErrorOverlayProps {
   buttonText?: string;
 }
 
-// TODO: Improve, so it slides in from bottom
+// TODO: Improve, so it slides in from bottom like MapLocationElement
 export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
   title = 'An Error occurred!',
   message,

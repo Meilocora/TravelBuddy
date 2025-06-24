@@ -53,11 +53,10 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Add currencyConversion to the countries in Locations Screen
-
 // TODO: Fix ErrorOverley
 // TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme, currentLocation, UTC Timezoneoffset, localCurrency, conversionRate
 // TODO: Implement frontend validation to Forms for max and min length of an entry
+// TODO: Check whole frontend
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile
 // TODO: Change all LayoutAnimations into something that actually works
 // TODO: Fix custom progress bar

@@ -7,7 +7,6 @@ export interface CustomCountry {
   code: string;
   timezones: string;
   currencies: string;
-  // TODO: conversionRate: number | undefined
   languages: string[];
   capital: string;
   population: number;

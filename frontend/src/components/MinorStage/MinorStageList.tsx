@@ -91,6 +91,7 @@ const MinorStageList: React.FC<MinorStageListProps> = ({
         />
       )}
       <FlatList
+        scrollEnabled
         style={styles.listContainer}
         data={shownMinorStages}
         renderItem={({ item }) => (

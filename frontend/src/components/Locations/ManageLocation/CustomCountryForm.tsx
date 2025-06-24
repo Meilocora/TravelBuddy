@@ -1,5 +1,5 @@
-import React, { ReactElement, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { ReactElement, useContext, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 
 import {
   ColorScheme,
@@ -23,6 +23,7 @@ import {
 } from '../../../utils/http/custom_country';
 import Modal from '../../UI/Modal';
 import PlacesToggle from '../Places/PlacesToggle';
+import { UserContext } from '../../../store/user-context';
 
 interface CustomCountryFormProps {
   country: CustomCountry;
@@ -43,9 +44,31 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
 }): ReactElement => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [switchConversion, setSwitchConversion] = useState(false);
+
+  const userCtx = useContext(UserContext);
 
   const languages = getLanguageNames(country.languages);
   const population = formatQuantity(country.population);
+  let currency = country.currencies;
+
+  const currencyObj = userCtx.currencies?.find((c) =>
+    Array.isArray(country.currencies)
+      ? country.currencies.includes(c.currency)
+      : c.currency === country.currencies
+  );
+
+  if (currencyObj && currencyObj.currency !== 'EUR') {
+    currency = `${currencyObj.currency} ~ ${(
+      1 / currencyObj.conversionRate
+    ).toFixed(2)}€`;
+
+    if (switchConversion) {
+      currency = `1€ ~ ${currencyObj.conversionRate.toFixed(2)} ${
+        currencyObj.currency
+      }`;
+    }
+  }
 
   const [inputs, setInputs] = useState<CustomCountryFormValues>({
     visum_regulations: {
@@ -143,10 +166,12 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           <InfoPoint title='Code' value={country.code || 'No data...'} />
         </View>
         <View style={styles.formRow}>
-          <InfoPoint
-            title='Currencies'
-            value={country.currencies || 'No data...'}
-          />
+          <Pressable
+            style={{ width: '50%' }}
+            onPress={() => setSwitchConversion((prevValue) => !prevValue)}
+          >
+            <InfoPoint title='Currencies' value={currency || 'No data...'} />
+          </Pressable>
           <InfoPoint
             title='Population'
             value={population?.toString() || 'No data...'}

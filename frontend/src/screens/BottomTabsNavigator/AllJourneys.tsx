@@ -73,9 +73,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
         const currentLocation = await getCurrentLocation();
         userCtx.setCurrentLocation(currentLocation);
       }
-
-      // TODO: First fetch doesnt work probably because currentLocation is not passed to backend
-
       const userBackendError = await userCtx.fetchUserData();
 
       const stagesBackendError = await stagesCtx.fetchStagesData();
