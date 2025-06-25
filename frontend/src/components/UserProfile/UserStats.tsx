@@ -233,7 +233,7 @@ const UserStats: React.FC<UserStatsProps> = ({
             onPress={toggleVisivility}
             style={styles.button}
           >
-            Hide Details
+            Hide Stats
           </Button>
         </Animated.View>
       ) : (
@@ -243,7 +243,7 @@ const UserStats: React.FC<UserStatsProps> = ({
           onPress={toggleVisivility}
           style={styles.button}
         >
-          Show Details
+          Show Stats
         </Button>
       )}
     </View>
@@ -254,9 +254,11 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     marginHorizontal: 'auto',
+    marginTop: 5,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
+    textDecorationLine: 'underline',
     color: GlobalStyles.colors.gray50,
     textAlign: 'center',
   },

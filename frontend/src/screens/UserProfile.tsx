@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { UserProfileRouteProp } from '../models';
 import MainGradient from '../components/UI/LinearGradients/MainGradient';
@@ -8,14 +8,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { StagesContext } from '../store/stages-context';
 import UserSettings from '../components/UserProfile/UserSettings';
 import UserStats from '../components/UserProfile/UserStats';
+import UserProfileChart from '../components/UserProfile/UserProfileChart';
+import UserDataForm from '../components/UserProfile/UserDataForm';
 
 interface UserProfileProps {
   route: UserProfileRouteProp;
 }
 
 // TODO:
-// Money Chart
-
 // change username and password
 // change ColorScheme,
 
@@ -33,12 +33,14 @@ const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
     >
       <MainGradient />
       <CurrentElementList />
+      <UserSettings />
+      <UserDataForm />
       <UserStats
         journeys={journeys}
         toggleVisivility={() => setShowDetails((prevValue) => !prevValue)}
         isVisible={showDetails}
       />
-      <UserSettings />
+      <UserProfileChart journeys={journeys} />
     </ScrollView>
   );
 };
