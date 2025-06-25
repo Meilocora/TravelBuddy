@@ -15,6 +15,7 @@ import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
 import { validateIsOver } from '../../../utils';
 import { StagesContext } from '../../../store/stages-context';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface MainContentProps {
   journeyId: number;
@@ -155,7 +156,15 @@ const MainContent: React.FC<MainContentProps> = ({
 
   return (
     <View>
-      <View style={styles.container}>{displayedContent?.element}</View>
+      <ScrollView
+        contentContainerStyle={{
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        }}
+        style={styles.container}
+      >
+        {displayedContent?.element}
+      </ScrollView>
     </View>
   );
 };
@@ -163,8 +172,6 @@ const MainContent: React.FC<MainContentProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
     marginHorizontal: 10,
   },
 });

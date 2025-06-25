@@ -32,9 +32,6 @@ const OverviewDetails: React.FC<OverviewDetailsProps> = ({
   }).format(journey.costs.spent_money);
   const budgetExceeded = journey.costs.spent_money > journey.costs.budget;
 
-  const startDate = formatDateString(journey.scheduled_start_time);
-  const endDate = formatDateString(journey.scheduled_end_time);
-
   const durationInDays = formatDurationToDays(
     journey.scheduled_start_time,
     journey.scheduled_end_time

@@ -170,7 +170,11 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
             style={{ width: '50%' }}
             onPress={() => setSwitchConversion((prevValue) => !prevValue)}
           >
-            <InfoPoint title='Currencies' value={currency || 'No data...'} />
+            <InfoPoint
+              title='Currencies'
+              value={currency || 'No data...'}
+              touchable={currencyObj && currencyObj.currency !== 'EUR'}
+            />
           </Pressable>
           <InfoPoint
             title='Population'

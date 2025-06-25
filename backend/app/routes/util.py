@@ -91,10 +91,12 @@ def calculate_time_zone_offset(lat, lng):
     
     target_tz = pytz.timezone(target_timezone_str)
     now_utc = datetime.utcnow()
+    
     # Get the offset of the target timezone from UTC at the current time
     target_offset = target_tz.utcoffset(now_utc)
-    diff_hours = target_offset.total_seconds() / 3600
     
+    diff_hours = target_offset.total_seconds() / 3600
+
     return diff_hours
     
     

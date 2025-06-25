@@ -5,14 +5,16 @@ import { GlobalStyles } from '../../../constants/styles';
 interface InfoPointProps {
   title: string;
   value: string;
+  touchable?: boolean;
 }
 
 const InfoPoint: React.FC<InfoPointProps> = ({
   title,
   value,
+  touchable = false,
 }): ReactElement => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, touchable ? styles.touchable : undefined]}>
       <Text style={styles.value}>{value}</Text>
       <Text style={styles.title}>{title}</Text>
     </View>
@@ -30,6 +32,10 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalStyles.colors.gray700,
     marginVertical: 4,
     marginHorizontal: 4,
+  },
+  touchable: {
+    borderColor: GlobalStyles.colors.accent100,
+    borderWidth: 1,
   },
   value: {
     fontSize: 16,
