@@ -53,11 +53,9 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Fix ErrorOverley
-// TODO: UserProfile => track data... Nr. of journeys etc., change ColorScheme, currentLocation, UTC Timezoneoffset, localCurrency, conversionRate
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: Check whole frontend
-// TODO: ColorSchemes => colorful, dark, light inside UserProfile
+// TODO: ColorSchemes => colorful, dark, light inside UserProfile as part of userContext
 // TODO: Change all LayoutAnimations into something that actually works
 // TODO: Fix custom progress bar
 // TODO: Maybe make it possible to have several accommodations for one minorStage?

@@ -1,8 +1,17 @@
 import { useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  runOnJS,
+  SlideInDown,
+  SlideOutDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { ReactElement } from 'react';
 
 import { GlobalStyles } from '../../constants/styles';
-import { ReactElement } from 'react';
 import { ButtonMode, ColorScheme } from '../../models';
 import Button from './Button';
 
@@ -13,7 +22,8 @@ interface ErrorOverlayProps {
   buttonText?: string;
 }
 
-// TODO: Improve, so it slides in from bottom like MapLocationElement
+const DISMISS_THRESHOLD = 100;
+
 export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
   title = 'An Error occurred!',
   message,
@@ -27,43 +37,84 @@ export const ErrorOverlay: React.FC<ErrorOverlayProps> = ({
     setModalVisible(false);
   }
 
+  // Drag-to-dismiss logic
+  const translateY = useSharedValue(0);
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      if (event.translationY > 0) {
+        translateY.value = event.translationY;
+      }
+    })
+    .onEnd((event) => {
+      if (event.translationY > DISMISS_THRESHOLD) {
+        runOnJS(onClose)();
+      } else {
+        translateY.value = withSpring(0, {
+          mass: 2,
+          damping: 25,
+          stiffness: 100,
+        });
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <Modal visible={true} animationType='fade' transparent={true}>
-      <View style={styles.container}>
-        <Text style={[styles.text, styles.title]}>{title}</Text>
-        <Text style={styles.text}>{message}</Text>
-        <Button
-          mode={ButtonMode.default}
-          onPress={onClose}
-          colorScheme={ColorScheme.error}
+    <View style={styles.container}>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View
+          style={[styles.innerContainer, animatedStyle]}
+          entering={SlideInDown}
+          exiting={SlideOutDown}
         >
-          {buttonText}
-        </Button>
-      </View>
-    </Modal>
+          <Text style={[styles.text, styles.title]}>{title}</Text>
+          <Text style={styles.text}>{message}</Text>
+          <Button
+            mode={ButtonMode.default}
+            onPress={onClose}
+            colorScheme={ColorScheme.error}
+            style={styles.button}
+          >
+            {buttonText}
+          </Button>
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 'auto',
-    marginHorizontal: 'auto',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    backgroundColor: GlobalStyles.colors.error50,
-    borderWidth: 2,
-    borderRadius: 20,
-    borderColor: GlobalStyles.colors.error500,
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'flex-end',
   },
-  text: {
-    textAlign: 'center',
-    marginBottom: 8,
-    color: GlobalStyles.colors.error500,
+  innerContainer: {
+    zIndex: 1,
+    marginHorizontal: 'auto',
+    width: '100%',
+    backgroundColor: 'rgba(252, 196, 228, 0.75)',
+    borderColor: GlobalStyles.colors.error200,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
   },
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: 'bold',
+  },
+  text: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginVertical: 12,
+    color: GlobalStyles.colors.error500,
+  },
+  button: {
+    marginVertical: 20,
+    alignSelf: 'center',
   },
 });
 

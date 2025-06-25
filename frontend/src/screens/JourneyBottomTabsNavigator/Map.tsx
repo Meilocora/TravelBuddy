@@ -26,7 +26,6 @@ import {
   getMapLocationsFromJourney,
   getRegionForLocations,
 } from '../../utils/location';
-import { generateRandomString } from '../../utils';
 import MapLocationList from '../../components/Maps/MapLocationList';
 import { GOOGLE_API_KEY } from '@env';
 import Popup from '../../components/UI/Popup';
@@ -204,7 +203,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           const isActive = pressedLocation && location === pressedLocation;
           return (
             <MapsMarker
-              key={generateRandomString()}
+              key={location.data.latitude + ',' + location.data.longitude}
               location={location}
               active={isActive}
             />

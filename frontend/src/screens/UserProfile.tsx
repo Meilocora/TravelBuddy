@@ -16,7 +16,12 @@ interface UserProfileProps {
 // MajorStages completed / planned
 // MinorStages completed / planned
 // Total costs / budget => money spent by category
-// Total time spent travelling
+// Total days spent travelling
+
+// change ColorScheme,
+// currentLocation,
+// UTC Timezoneoffset,
+// localCurrency + conversionRate
 
 const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   return (

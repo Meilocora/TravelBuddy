@@ -13,7 +13,6 @@ export const GlobalStyles = {
     complementary400: '#B266FF',
     complementary500: '#A54DFF',
     complementary600: '#9933FF',
-    // complementary700: '#8C1AFF',
     complementary700: '#71098e',
     complementary800: '#7F00FF',
     accent50: '#f1dfcf',

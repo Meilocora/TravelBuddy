@@ -1,12 +1,13 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { RouteProp } from '@react-navigation/native';
+import { StyleSheet } from 'react-native';
 
 import JourneysList from '../../components/Journeys/JourneysList';
-import { StyleSheet } from 'react-native';
 import ErrorOverlay from '../../components/UI/ErrorOverlay';
 import { BottomTabsParamList } from '../../models';
-import { RouteProp } from '@react-navigation/native';
 import Popup from '../../components/UI/Popup';
 import InfoText from '../../components/UI/InfoText';
 import { AuthContext } from '../../store/auth-context';
@@ -19,7 +20,6 @@ import {
   useLocationPermissions,
 } from '../../utils/location';
 import { UserContext } from '../../store/user-context';
-import { ActivityIndicator } from 'react-native-paper';
 import { GlobalStyles } from '../../constants/styles';
 
 interface AllJourneysProps {

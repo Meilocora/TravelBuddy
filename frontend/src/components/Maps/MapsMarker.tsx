@@ -57,7 +57,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({
   const markerRef = useRef<MapMarker>(null);
   useEffect(() => {
     markerRef.current!.redraw();
-  }, []);
+  }, [location]);
 
   // Construct the icon key
   let iconKey: string = locationType;
@@ -94,7 +94,7 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({
 
 const styles = StyleSheet.create({
   iconDone: {
-    opacity: 0.5,
+    opacity: 0.75,
   },
 });
 

@@ -93,7 +93,11 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
       if (event.translationY > DISMISS_THRESHOLD) {
         runOnJS(onClose)();
       } else {
-        translateY.value = withSpring(0);
+        translateY.value = withSpring(0, {
+          mass: 2,
+          damping: 25,
+          stiffness: 100,
+        });
       }
     });
 
@@ -119,7 +123,8 @@ const MapLocationElement: React.FC<MapLocationElementProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    maxHeight: '30%',
+    minHeight: '20%',
+    maxHeight: '40%',
     width: '100%',
     bottom: 0,
     marginHorizontal: 'auto',
@@ -127,9 +132,11 @@ const styles = StyleSheet.create({
   innerContainer: {
     zIndex: 1,
     marginHorizontal: 'auto',
-    width: '80%',
+    paddingTop: 10,
+    width: '90%',
+    height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     borderWidth: 2,
     borderColor: GlobalStyles.colors.gray500,
     borderTopLeftRadius: 30,
