@@ -19,6 +19,8 @@ interface UserProfileProps {
 // change username and password
 // change ColorScheme,
 
+// TODO: UTC offset not directly calculated?!
+
 const UserProfile: React.FC<UserProfileProps> = (): ReactElement => {
   const [showDetails, setShowDetails] = useState(true);
 

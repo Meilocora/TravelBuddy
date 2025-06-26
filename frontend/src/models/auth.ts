@@ -5,3 +5,14 @@ export interface AuthFormValues {
   username: Validable<string>;
   password: Validable<string>;
 }
+
+export interface NameChangeFormValues {
+  newUsername: Validable<string>;
+  password: Validable<string>;
+}
+
+export interface PasswordChangeFormValues {
+  newPassword: Validable<string>;
+  confirmPassword: Validable<string>;
+  oldPassword: Validable<string>;
+}
