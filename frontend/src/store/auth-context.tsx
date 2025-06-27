@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useEffect, useState } from 'react';
 import { Buffer } from 'buffer';
-import { refreshAuthToken } from '../utils/http';
+import { fetchUserInfos, refreshAuthToken } from '../utils/http';
 
 interface AuthContextType {
+  fetchUserInfo: () => Promise<void | string>;
   username: string | null;
+  setUsername: (name: string) => void;
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
@@ -14,7 +16,9 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType>({
+  fetchUserInfo: async () => {},
   username: null,
+  setUsername: (name) => {},
   token: null,
   refreshToken: null,
   isAuthenticated: false,
@@ -31,6 +35,7 @@ export default function AuthContextProvider({
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const loadToken = async () => {
@@ -43,18 +48,12 @@ export default function AuthContextProvider({
         if (decodedToken.exp * 1000 > Date.now()) {
           setAuthToken(storedToken);
           setRefreshToken(storedRefreshToken);
-          setUsername(decodedToken.username);
         } else {
           const { error, status, newToken, newRefreshToken } =
             await refreshAuthToken(storedRefreshToken!);
           if (!error && newToken && newRefreshToken) {
             setAuthToken(newToken);
             setRefreshToken(newRefreshToken);
-            setUsername(
-              JSON.parse(
-                Buffer.from(newToken.split('.')[1], 'base64').toString()
-              ).username
-            );
             AsyncStorage.setItem('token', newToken);
             AsyncStorage.setItem('refreshToken', newRefreshToken);
           } else {
@@ -74,7 +73,6 @@ export default function AuthContextProvider({
     if (decodedToken.exp * 1000 > Date.now()) {
       setAuthToken(token);
       setRefreshToken(refreshToken);
-      setUsername(decodedToken.username);
       AsyncStorage.setItem('token', token);
       AsyncStorage.setItem('refreshToken', refreshToken!);
     } else {
@@ -97,10 +95,6 @@ export default function AuthContextProvider({
     if (!error && newToken && newRefreshToken) {
       setAuthToken(newToken);
       setRefreshToken(newRefreshToken);
-      setUsername(
-        JSON.parse(Buffer.from(newToken.split('.')[1], 'base64').toString())
-          .username
-      );
       AsyncStorage.setItem('token', newToken);
       AsyncStorage.setItem('refreshToken', newRefreshToken);
     } else {
@@ -108,14 +102,26 @@ export default function AuthContextProvider({
     }
   }
 
+  async function fetchUserInfo() {
+    const response = await fetchUserInfos();
+    if (!response.error) {
+      setUsername(response.username!);
+      setEmail(response.email!);
+    } else {
+      return response.error;
+    }
+  }
+
   const value = {
-    username: username,
+    fetchUserInfo,
+    username,
+    setUsername,
     token: authToken,
     refreshToken: refreshToken,
     isAuthenticated: !!authToken,
-    authenticate: authenticate,
-    logout: logout,
-    useRefreshToken: useRefreshToken,
+    authenticate,
+    logout,
+    useRefreshToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

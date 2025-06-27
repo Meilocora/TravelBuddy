@@ -21,6 +21,7 @@ import {
 } from '../../utils/location';
 import { UserContext } from '../../store/user-context';
 import { GlobalStyles } from '../../constants/styles';
+import { LatLng } from 'react-native-maps';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -50,7 +51,6 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
         setPopupText(route.params?.popupText);
       }
     }
-
     activatePopup();
   }, [route.params]);
 
@@ -69,18 +69,23 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     async function getData() {
       setIsFetching(true);
       const hasPermission = await verifyPermissions();
+      let currentLocation: LatLng | undefined;
       if (hasPermission) {
-        const currentLocation = await getCurrentLocation();
+        currentLocation = await getCurrentLocation();
         userCtx.setCurrentLocation(currentLocation);
       }
-      const userBackendError = await userCtx.fetchUserData();
-
+      const userInfoBackendError = await authCtx.fetchUserInfo();
+      const userBackendError = await userCtx.fetchUserData(
+        currentLocation || undefined
+      );
       const stagesBackendError = await stagesCtx.fetchStagesData();
       const countriesBackendError =
         await countryCtx.fetchUsersCustomCountries();
       const placesBackendError = await placesCtx.fetchPlacesToVisit();
 
-      if (userBackendError) {
+      if (userInfoBackendError) {
+        setError(userInfoBackendError);
+      } else if (userBackendError) {
         setError(userBackendError);
       } else if (stagesBackendError) {
         setError(stagesBackendError);

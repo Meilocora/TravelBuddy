@@ -38,8 +38,13 @@ export default function UserContextProvider({
   });
   const [currencies, setCurrencies] = useState<CurrencyInfo[]>([]);
 
-  async function fetchUserData(): Promise<void | string> {
-    const userDataResponse = await fetchUsersData(currentLocation);
+  async function fetchUserData(location?: LatLng): Promise<void | string> {
+    let userDataResponse: FetchUserDataProps;
+    if (location) {
+      userDataResponse = await fetchUsersData(location);
+    } else {
+      userDataResponse = await fetchUsersData(currentLocation);
+    }
 
     if (userDataResponse.error) {
       return userDataResponse.error;

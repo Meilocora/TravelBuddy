@@ -1,31 +1,33 @@
 import { ReactElement, ReactNode, useContext, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-  FadeInDown,
-  FadeOutUp,
-  SlideInUp,
-  SlideOutUp,
-} from 'react-native-reanimated';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
+import OutsidePressHandler from 'react-native-outside-press';
 
 import { GlobalStyles } from '../../constants/styles';
 import {
   ButtonMode,
   ColorScheme,
   Icons,
-  Journey,
   NameChangeFormValues,
   PasswordChangeFormValues,
 } from '../../models';
-import { CustomCountryContext } from '../../store/custom-country-context';
 import Button from '../UI/Button';
-import { UserContext } from '../../store/user-context';
 import { AuthContext } from '../../store/auth-context';
 import Input from '../UI/form/Input';
 import IconButton from '../UI/IconButton';
+import ErrorOverlay from '../UI/ErrorOverlay';
+import { changePassword, changeUsername } from '../../utils/http';
 
-interface UserDataFormProps {}
+interface UserDataFormProps {
+  setPopupText: (message: string) => void;
+  scrollToTop: () => void;
+}
 
-const UserDataForm: React.FC<UserDataFormProps> = ({}): ReactElement => {
+const UserDataForm: React.FC<UserDataFormProps> = ({
+  setPopupText,
+  scrollToTop,
+}): ReactElement => {
+  const [error, setError] = useState<string | null>();
   const [showNameForm, setShowNameForm] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -41,7 +43,6 @@ const UserDataForm: React.FC<UserDataFormProps> = ({}): ReactElement => {
     });
 
   const authCtx = useContext(AuthContext);
-  const userCtx = useContext(UserContext);
 
   function handlePressEditName() {
     setShowNameForm(true);
@@ -51,6 +52,13 @@ const UserDataForm: React.FC<UserDataFormProps> = ({}): ReactElement => {
   function handlePressEditPassword() {
     setShowNameForm(false);
     setShowPasswordForm(true);
+  }
+
+  function handlePressClose() {
+    resetInputs();
+    setShowNameForm(false);
+    setShowPasswordForm(false);
+    setHidePassword(true);
   }
 
   function inputChangedHandler(
@@ -84,74 +92,226 @@ const UserDataForm: React.FC<UserDataFormProps> = ({}): ReactElement => {
           { width: screenWidth, height: screenHeight * 1.25 },
         ]}
       >
-        <Animated.View
-          style={styles.formContainer}
-          entering={FadeInDown}
-          exiting={FadeOutUp}
+        <OutsidePressHandler
+          onOutsidePress={handlePressClose}
+          style={styles.outsidePressStyle}
         >
-          <View style={styles.formRow}>
-            <Input
-              label='New Username'
-              invalid={!nameInputs.newUsername.isValid}
-              errors={nameInputs.newUsername.errors}
-              textInputConfig={{
-                value: nameInputs.newUsername.value,
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'name',
-                  'newUsername'
-                ),
-                placeholder: authCtx.username!,
-              }}
-            />
-          </View>
-          <View style={styles.formRow}>
-            <Input
-              label='Password'
-              invalid={!nameInputs.password.isValid}
-              errors={nameInputs.password.errors}
-              textInputConfig={{
-                value: nameInputs.password.value,
-                onChangeText: inputChangedHandler.bind(
-                  null,
-                  'name',
-                  'password'
-                ),
-                secureTextEntry: hidePassword,
-              }}
-            />
-            <IconButton
-              icon={hidePassword ? Icons.eyeOff : Icons.eyeOn}
-              onPress={() => setHidePassword((prevValue) => !prevValue)}
-              style={{ marginTop: 22 }}
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={() => setShowNameForm(false)}
-              colorScheme={ColorScheme.neutral}
-              mode={ButtonMode.flat}
-              style={styles.formButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={() => {}}
-              colorScheme={ColorScheme.neutral}
-              style={styles.formButton}
-            >
-              Submit
-            </Button>
-          </View>
-        </Animated.View>
+          <Animated.View
+            style={styles.formContainer}
+            entering={FadeInUp}
+            exiting={FadeOutUp}
+          >
+            <View style={styles.formRow}>
+              <Input
+                label='New Username'
+                invalid={!nameInputs.newUsername.isValid}
+                errors={nameInputs.newUsername.errors}
+                textInputConfig={{
+                  value:
+                    nameInputs.newUsername.value === ''
+                      ? authCtx.username!
+                      : nameInputs.newUsername.value,
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'name',
+                    'newUsername'
+                  ),
+                }}
+              />
+            </View>
+            <View style={styles.formRow}>
+              <Input
+                label='Password'
+                invalid={!nameInputs.password.isValid}
+                errors={nameInputs.password.errors}
+                textInputConfig={{
+                  value: nameInputs.password.value,
+                  onChangeText: inputChangedHandler.bind(
+                    null,
+                    'name',
+                    'password'
+                  ),
+                  secureTextEntry: hidePassword,
+                }}
+              />
+              <IconButton
+                icon={hidePassword ? Icons.eyeOff : Icons.eyeOn}
+                onPress={() => setHidePassword((prevValue) => !prevValue)}
+                style={{ marginTop: 22 }}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={handlePressClose}
+                colorScheme={ColorScheme.neutral}
+                mode={ButtonMode.flat}
+                style={styles.formButton}
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => validateInputs('name')}
+                colorScheme={ColorScheme.neutral}
+                style={styles.formButton}
+              >
+                Submit
+              </Button>
+            </View>
+          </Animated.View>
+        </OutsidePressHandler>
       </View>
     );
   }
 
-  // TODO: Make form for password change
-  // Validation function
-  // http request
-  // backend
+  if (showPasswordForm) {
+    content = (
+      <View
+        style={[
+          styles.blurContainer,
+          { width: screenWidth, height: screenHeight * 1.25 },
+        ]}
+      >
+        <OutsidePressHandler
+          onOutsidePress={handlePressClose}
+          style={styles.outsidePressStyle}
+        >
+          <Animated.View
+            style={styles.formContainer}
+            entering={FadeInUp}
+            exiting={FadeOutUp}
+          >
+            <View style={styles.formRow}>
+              <Input
+                label='New Password'
+                invalid={!passwordInputs.newPassword.isValid}
+                errors={passwordInputs.newPassword.errors}
+                textInputConfig={{
+                  value: passwordInputs.newPassword.value,
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'password',
+                    'newPassword'
+                  ),
+                }}
+              />
+            </View>
+            <View style={styles.formRow}>
+              <Input
+                label='Confirm New Password'
+                invalid={!passwordInputs.confirmPassword.isValid}
+                errors={passwordInputs.confirmPassword.errors}
+                textInputConfig={{
+                  value: passwordInputs.confirmPassword.value,
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'password',
+                    'confirmPassword'
+                  ),
+                }}
+              />
+            </View>
+            <View style={styles.formRow}>
+              <Input
+                label='Current Password'
+                invalid={!passwordInputs.oldPassword.isValid}
+                errors={passwordInputs.oldPassword.errors}
+                textInputConfig={{
+                  value: passwordInputs.oldPassword.value,
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'password',
+                    'oldPassword'
+                  ),
+                  secureTextEntry: hidePassword,
+                }}
+              />
+              <IconButton
+                icon={hidePassword ? Icons.eyeOff : Icons.eyeOn}
+                onPress={() => setHidePassword((prevValue) => !prevValue)}
+                style={{ marginTop: 22 }}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={handlePressClose}
+                colorScheme={ColorScheme.neutral}
+                mode={ButtonMode.flat}
+                style={styles.formButton}
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => validateInputs('password')}
+                colorScheme={ColorScheme.neutral}
+                style={styles.formButton}
+              >
+                Submit
+              </Button>
+            </View>
+          </Animated.View>
+        </OutsidePressHandler>
+      </View>
+    );
+  }
+
+  function resetInputs() {
+    setNameInputs({
+      newUsername: { value: '', isValid: true, errors: [] },
+      password: { value: '', isValid: true, errors: [] },
+    });
+    setPasswordInputs({
+      newPassword: { value: '', isValid: true, errors: [] },
+      confirmPassword: { value: '', isValid: true, errors: [] },
+      oldPassword: { value: '', isValid: true, errors: [] },
+    });
+  }
+
+  async function validateInputs(formType: 'name' | 'password'): Promise<void> {
+    // Set all errors to empty array to prevent stacking of errors
+
+    if (formType === 'name') {
+      for (const key in nameInputs) {
+        nameInputs[key as keyof NameChangeFormValues].errors = [];
+      }
+
+      const response = await changeUsername(nameInputs);
+      const { error, nameFormValues, newUsername } = response!;
+
+      if (!error && newUsername) {
+        resetInputs();
+        setShowNameForm(false);
+        authCtx.setUsername(newUsername);
+        setPopupText('Name changed successfully!');
+        scrollToTop();
+      } else if (error) {
+        setError(error);
+      } else if (nameFormValues) {
+        setNameInputs((prevValues) => nameFormValues);
+      }
+    } else {
+      for (const key in passwordInputs) {
+        passwordInputs[key as keyof PasswordChangeFormValues].errors = [];
+      }
+
+      const response = await changePassword(passwordInputs);
+      const { error, status, passwordFormValues } = response!;
+
+      if (!error && status === 200) {
+        resetInputs();
+        setShowPasswordForm(false);
+        setPopupText('Password changed successfully!');
+        scrollToTop();
+      } else if (error) {
+        setError(error);
+      } else if (passwordFormValues) {
+        setPasswordInputs((prevValues) => passwordFormValues);
+      }
+    }
+  }
+
+  if (error) {
+    return <ErrorOverlay message={error} onPress={() => setError(null)} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -190,6 +350,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(34, 28, 48, 0.7)',
     alignSelf: 'stretch',
     zIndex: 1,
+  },
+  outsidePressStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   formContainer: {
     width: '80%',

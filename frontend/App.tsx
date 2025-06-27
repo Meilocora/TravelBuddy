@@ -295,78 +295,77 @@ const AuthenticatedStack = () => {
   const authCtx = useContext(AuthContext);
 
   return (
-    <GestureHandlerRootView>
-      <UserContextProvider>
-        <StagesContextProvider>
-          <CustomCountryContextProvider>
-            <PlaceContextProvider>
-              <Stack.Navigator
-                screenOptions={() => ({
-                  headerTintColor: 'white',
-                  headerStyle: {
-                    backgroundColor: GlobalStyles.colors.primary500,
-                  },
-                  headerTitleAlign: 'center',
-                  headerShadowVisible: false,
-                  animationEnabled: false,
-                })}
-              >
-                <Stack.Screen
-                  name='BottomTabsNavigator'
-                  component={BottomTabsNavigator}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='UserProfile'
-                  component={UserProfile}
-                  options={{
-                    title: `${authCtx.username}'s Profile`,
-                    headerRight: ({ tintColor }) => (
-                      <IconButton
-                        color={tintColor}
-                        size={24}
-                        icon={Icons.logout}
-                        onPress={() => {
-                          authCtx.logout();
-                        }}
-                      />
-                    ),
-                  }}
-                />
-                <Stack.Screen
-                  name='JourneyBottomTabsNavigator'
-                  component={JourneyBottomTabsNavigator}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='ManageCustomCountry'
-                  component={ManageCustomCountry}
-                />
-                <Stack.Screen
-                  name='ManagePlaceToVisit'
-                  component={ManagePlaceToVisit}
-                />
-                <Stack.Screen
-                  name='LocationPickMap'
-                  component={LocationPickMap}
-                />
-                <Stack.Screen name='ShowMap' component={ShowMap} />
-              </Stack.Navigator>
-            </PlaceContextProvider>
-          </CustomCountryContextProvider>
-        </StagesContextProvider>
-      </UserContextProvider>
-    </GestureHandlerRootView>
+    <UserContextProvider>
+      <StagesContextProvider>
+        <CustomCountryContextProvider>
+          <PlaceContextProvider>
+            <Stack.Navigator
+              screenOptions={() => ({
+                headerTintColor: 'white',
+                headerStyle: {
+                  backgroundColor: GlobalStyles.colors.primary500,
+                },
+                headerTitleAlign: 'center',
+                headerShadowVisible: false,
+                animationEnabled: false,
+              })}
+            >
+              <Stack.Screen
+                name='BottomTabsNavigator'
+                component={BottomTabsNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='UserProfile'
+                component={UserProfile}
+                options={{
+                  headerRight: ({ tintColor }) => (
+                    <IconButton
+                      color={tintColor}
+                      size={24}
+                      icon={Icons.logout}
+                      onPress={() => {
+                        authCtx.logout();
+                      }}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='JourneyBottomTabsNavigator'
+                component={JourneyBottomTabsNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name='ManageCustomCountry'
+                component={ManageCustomCountry}
+              />
+              <Stack.Screen
+                name='ManagePlaceToVisit'
+                component={ManagePlaceToVisit}
+              />
+              <Stack.Screen
+                name='LocationPickMap'
+                component={LocationPickMap}
+              />
+              <Stack.Screen name='ShowMap' component={ShowMap} />
+            </Stack.Navigator>
+          </PlaceContextProvider>
+        </CustomCountryContextProvider>
+      </StagesContextProvider>
+    </UserContextProvider>
   );
 };
 
 const Navigation = () => {
   const authCtx = useContext(AuthContext);
   return (
-    <NavigationContainer theme={navTheme}>
-      {!authCtx.isAuthenticated && <AuthStack />}
-      {authCtx.isAuthenticated && <AuthenticatedStack />}
-    </NavigationContainer>
+    <GestureHandlerRootView>
+      <NavigationContainer theme={navTheme}>
+        {!authCtx.isAuthenticated && <AuthStack />}
+        {authCtx.isAuthenticated && <AuthenticatedStack />}
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
