@@ -20,7 +20,7 @@ def create_minor_stage(current_user, majorStageId):
         existing_minor_stages_costs = []
         for stage in existing_minor_stages:
             existing_minor_stages_costs.append(db.session.execute(db.select(Costs).filter_by(minor_stage_id=stage.id)).scalars().first())
-        
+                
         major_stage_costs = db.session.execute(db.select(Costs).filter_by(major_stage_id=majorStageId)).scalars().first()
 
         journey_id = db.session.execute(db.select(MajorStage).filter_by(id=majorStageId)).scalars().first().journey_id
@@ -29,8 +29,8 @@ def create_minor_stage(current_user, majorStageId):
     except:
         return jsonify({'error': 'Unknown error'}, 400) 
     
-    response, isValid = MinorStageValidation.validate_minor_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)
-
+    response, isValid = MinorStageValidation.validate_minor_stage(minor_stage, existing_minor_stages, existing_minor_stages_costs, major_stage_costs)  
+    
     if not isValid:
         return jsonify({'minorStageFormValues': response, 'status': 400})
     

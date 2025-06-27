@@ -12,7 +12,7 @@ import Input from '../../UI/form/Input';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../UI/Button';
 import { createJourney, updateJourney } from '../../../utils/http';
-import { formatDate, parseDate } from '../../../utils';
+import { formatAmount, formatDate, parseDate } from '../../../utils';
 import DatePicker from '../../UI/form/DatePicker';
 import Modal from '../../UI/Modal';
 import CountriesSelectionForm from './CountriesSelectionForm';
@@ -243,7 +243,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
               invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
-                placeholder: inputs.spent_money.value.toString(),
+                placeholder: formatAmount(inputs.spent_money.value),
               }}
             />
             <Input

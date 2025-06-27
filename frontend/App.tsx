@@ -56,6 +56,7 @@ import UserContextProvider from './src/store/user-context';
 // TODO: Implement frontend validation to Forms for max and min length of an entry
 // TODO: Check whole frontend
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile as part of userContext
+
 // TODO: Change all LayoutAnimations into something that actually works
 // TODO: Fix custom progress bar
 // TODO: Maybe make it possible to have several accommodations for one minorStage?

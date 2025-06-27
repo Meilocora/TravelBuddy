@@ -15,7 +15,7 @@ class MinorStageValidation(Validation):
         errors = False
       
         for key, value in minorStage.items():
-            if key != 'accommodation_name' and key != 'accommodation_place' and key != 'accommodation_costs' and key != 'accommodation_link' and key != 'accommodation_latitude' and key != 'accommodation_longitude':
+            if key != 'accommodation_name' and key != 'accommodation_place' and key != 'accommodation_costs' and key != 'accommodation_link' and key != 'accommodation_latitude' and key != 'accommodation_longitude' and key != 'unconvertedAmount':
                 if value['value'] == "" or value['value'] == None:
                     minorStage[key]['errors'].append(f'Input is required')
                     minorStage[key]['isValid'] = False

@@ -15,6 +15,7 @@ import { generateRandomString } from '../../../utils';
 
 interface InputProps {
   label: string;
+  maxLength: number;
   style?: ViewStyle;
   textInputConfig?: TextInputProps;
   invalid?: boolean;
@@ -26,6 +27,7 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
   label,
+  maxLength,
   style,
   textInputConfig,
   invalid = false,
@@ -70,6 +72,7 @@ const Input: React.FC<InputProps> = ({
           {...textInputConfig}
           selectionColor='white'
           underlineColorAndroid='transparent'
+          maxLength={maxLength}
         />
       ) : (
         <TextInput
@@ -82,6 +85,7 @@ const Input: React.FC<InputProps> = ({
           {...textInputConfig}
           selectionColor='white'
           underlineColorAndroid='transparent'
+          maxLength={maxLength}
         />
       )}
       {errors &&

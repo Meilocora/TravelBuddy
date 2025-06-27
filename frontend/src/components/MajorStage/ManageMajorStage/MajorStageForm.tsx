@@ -294,7 +294,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
               invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
-                placeholder: inputs.spent_money.value.toString(),
+                placeholder: formatAmount(inputs.spent_money.value),
               }}
             />
             <Input
