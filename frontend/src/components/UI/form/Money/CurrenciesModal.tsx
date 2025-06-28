@@ -23,7 +23,7 @@ const CurrenciesModal: React.FC<CurrenciesModalProps> = ({
     <View style={styles.outerContainer}>
       <OutsidePressHandler onOutsidePress={onCloseModal}>
         <View style={styles.innerContainer}>
-          <ScrollView style={styles.list}>
+          <ScrollView style={styles.list} nestedScrollEnabled>
             {userCtx.currencies &&
               userCtx.currencies.map((item) => (
                 <ListItem
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   outerContainer: {
     zIndex: 1,
     position: 'absolute',
-    top: '-100%',
     width: '100%',
   },
   innerContainer: {

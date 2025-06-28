@@ -383,7 +383,9 @@ const styles = StyleSheet.create({
   },
   checkBoxContainer: {
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginHorizontal: 'auto',
+    marginBottom: '5%',
   },
   checkBoxLabel: {
     color: GlobalStyles.colors.gray50,

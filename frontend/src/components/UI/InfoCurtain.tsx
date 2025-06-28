@@ -1,7 +1,8 @@
 import { ReactElement, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
+import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
+
 import { GlobalStyles } from '../../constants/styles';
-import Animated, { FadeOutUp } from 'react-native-reanimated';
 import { ColorScheme } from '../../models';
 
 interface InfoCurtainProps {
@@ -30,7 +31,7 @@ const InfoCurtain: React.FC<InfoCurtainProps> = ({
   return (
     <>
       {showInfo && (
-        <Animated.View exiting={FadeOutUp}>
+        <Animated.View entering={SlideInUp} exiting={SlideOutUp.duration(200)}>
           <Pressable
             style={[styles.container, schemeStyles.container]}
             onPress={() => setShowInfo(!showInfo)}

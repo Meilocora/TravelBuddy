@@ -38,7 +38,6 @@ def create_minor_stage(current_user, majorStageId):
         # Create a new minor stage
         new_minor_stage = MinorStage(
             title=minor_stage['title']['value'],
-            done=False,
             scheduled_start_time=parseDate(minor_stage['scheduled_start_time']['value']),
             scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
             major_stage_id=majorStageId
@@ -74,7 +73,6 @@ def create_minor_stage(current_user, majorStageId):
         # build response major stage object for the frontend
         response_minor_stage = {'id': new_minor_stage.id,
                                 'title': new_minor_stage.title,
-                                'done': new_minor_stage.done,
                                 'scheduled_start_time': formatDateToString(new_minor_stage.scheduled_start_time),
                                 'scheduled_end_time': formatDateToString(new_minor_stage.scheduled_end_time),
                                 'costs': {
@@ -134,7 +132,6 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         # Update the minor stage
         db.session.execute(db.update(MinorStage).where(MinorStage.id == minorStageId).values(
             title=minor_stage['title']['value'],
-            done=minor_stage['done']['value'],
             scheduled_start_time=parseDate(minor_stage['scheduled_start_time']['value']),
             scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
         ))
@@ -165,7 +162,6 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         # build response minor stage object for the frontend
         response_minor_stage = {'id': minorStageId,
                                 'title': minor_stage['title']['value'],
-                                'done': minor_stage['done']['value'],
                                 'scheduled_start_time': minor_stage['scheduled_start_time']['value'],
                                 'scheduled_end_time': minor_stage['scheduled_end_time']['value'],
                                 'costs': {

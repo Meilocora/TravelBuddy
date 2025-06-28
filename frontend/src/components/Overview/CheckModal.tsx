@@ -7,6 +7,7 @@ import { GlobalStyles } from '../../constants/styles';
 import Button from '../UI/Button';
 import { ColorScheme } from '../../models';
 import OutsidePressHandler from 'react-native-outside-press';
+import { Screen } from 'react-native-screens';
 
 interface ValidationModalProps {
   checkLogs: CheckLog[];
@@ -20,13 +21,13 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
   onTapItem,
 }): ReactElement => {
   return (
-    <View style={styles.outerContainer}>
+    <Animated.View
+      style={styles.outerContainer}
+      entering={FadeInDown}
+      exiting={FadeOutUp}
+    >
       <OutsidePressHandler onOutsidePress={onClose} style={{ zIndex: 2 }}>
-        <Animated.View
-          style={styles.innerContainer}
-          entering={FadeInDown}
-          exiting={FadeOutUp}
-        >
+        <Animated.View style={styles.innerContainer}>
           <Text style={styles.title}>Validation Log</Text>
           <Text style={styles.titleDescription}>
             - {checkLogs.length} problems found -
@@ -57,7 +58,7 @@ const ValidationModal: React.FC<ValidationModalProps> = ({
           </Button>
         </Animated.View>
       </OutsidePressHandler>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -65,10 +66,11 @@ const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
     zIndex: 1,
-    height: '110%',
+    top: 0,
+    height: 1500,
     width: '100%',
     position: 'absolute',
-    backgroundColor: 'rgba(30, 30, 30, 0.8)',
+    backgroundColor: 'rgba(30, 30, 30, 0.5)',
   },
   innerContainer: {
     alignContent: 'stretch',

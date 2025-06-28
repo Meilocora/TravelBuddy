@@ -162,6 +162,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({
           <Pressable onPress={handleOpenModal}>
             <Input
               label='Country'
+              maxLength={100}
               errors={errors}
               mandatory
               textInputConfig={{
@@ -191,7 +192,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: '50%',
   },
   headerContainer: {
     width: '100%',
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     marginVertical: 'auto',
     marginHorizontal: 'auto',
     paddingTop: 20,
-    paddingBottom: 10,
     paddingHorizontal: 15,
     width: 200,
     maxHeight: 300,
@@ -226,7 +225,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
     borderColor: GlobalStyles.colors.gray200,
     borderWidth: 0.5,
     borderTopRightRadius: 10,

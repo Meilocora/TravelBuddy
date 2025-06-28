@@ -69,11 +69,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
 
   const [inputs, setInputs] = useState<MinorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-    done: {
-      value: defaultValues?.done || false,
-      isValid: true,
-      errors: [],
-    },
     scheduled_start_time: {
       value: defaultValues?.scheduled_start_time || null,
       isValid: true,
@@ -152,11 +147,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   useEffect(() => {
     setInputs({
       title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-      done: {
-        value: defaultValues?.done || false,
-        isValid: true,
-        errors: [],
-      },
       scheduled_start_time: {
         value: defaultValues?.scheduled_start_time || null,
         isValid: true,
@@ -218,7 +208,6 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
   function resetValues() {
     setInputs({
       title: { value: '', isValid: true, errors: [] },
-      done: { value: false, isValid: true, errors: [] },
       scheduled_start_time: { value: null, isValid: true, errors: [] },
       scheduled_end_time: { value: null, isValid: true, errors: [] },
       budget: { value: 0, isValid: true, errors: [] },
@@ -346,6 +335,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Title'
+              maxLength={15}
               invalid={!inputs.title.isValid}
               errors={inputs.title.errors}
               mandatory
@@ -358,6 +348,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Spent Money'
+              maxLength={100}
               invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
@@ -366,6 +357,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
             />
             <Input
               label='Budget'
+              maxLength={6}
               invalid={!inputs.budget.isValid}
               errors={inputs.budget.errors}
               textInputConfig={{
@@ -423,6 +415,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Place'
+              maxLength={20}
               invalid={!inputs.accommodation_place.isValid}
               errors={inputs.accommodation_place.errors}
               textInputConfig={{
@@ -459,6 +452,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Link'
+              maxLength={100}
               invalid={!inputs.accommodation_link.isValid}
               errors={inputs.accommodation_link.errors}
               textInputConfig={{
@@ -549,7 +543,9 @@ const styles = StyleSheet.create({
   },
   checkBoxContainer: {
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginHorizontal: 'auto',
+    marginBottom: '5%',
   },
   checkBoxLabel: {
     color: GlobalStyles.colors.gray50,

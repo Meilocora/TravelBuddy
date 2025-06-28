@@ -1,6 +1,5 @@
 import { ReactElement, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Checkbox } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
 
 import {
   ButtonMode,
@@ -64,11 +63,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
 
   const [inputs, setInputs] = useState<MajorStageFormValues>({
     title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-    done: {
-      value: defaultValues?.done || false,
-      isValid: true,
-      errors: [],
-    },
     scheduled_start_time: {
       value: defaultValues?.scheduled_start_time || null,
       isValid: true,
@@ -105,11 +99,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   useEffect(() => {
     setInputs({
       title: { value: defaultValues?.title || '', isValid: true, errors: [] },
-      done: {
-        value: defaultValues?.done || false,
-        isValid: true,
-        errors: [],
-      },
       scheduled_start_time: {
         value: defaultValues?.scheduled_start_time || null,
         isValid: true,
@@ -146,7 +135,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
   function resetValues() {
     setInputs({
       title: { value: '', isValid: true, errors: [] },
-      done: { value: false, isValid: true, errors: [] },
       scheduled_start_time: { value: null, isValid: true, errors: [] },
       scheduled_end_time: { value: null, isValid: true, errors: [] },
       additional_info: { value: '', isValid: true, errors: [] },
@@ -267,6 +255,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Title'
+              maxLength={15}
               invalid={!inputs.title.isValid}
               errors={inputs.title.errors}
               mandatory
@@ -279,6 +268,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Additional Information'
+              maxLength={150}
               invalid={!inputs.additional_info.isValid}
               errors={inputs.additional_info.errors}
               textInputConfig={{
@@ -291,6 +281,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Spent Money'
+              maxLength={100}
               invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
@@ -299,6 +290,7 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
             />
             <Input
               label='Budget'
+              maxLength={6}
               invalid={!inputs.budget.isValid}
               errors={inputs.budget.errors}
               textInputConfig={{
@@ -358,19 +350,6 @@ const MajorStageForm: React.FC<MajorStageFormProps> = ({
               journeyId={journeyId}
               defaultCountryName={inputs.country.value}
             />
-            {isEditing && (
-              <View style={styles.checkBoxContainer}>
-                <Text style={styles.checkBoxLabel}>Stage done?</Text>
-                <Checkbox
-                  status={inputs.done.value ? 'checked' : 'unchecked'}
-                  onPress={() =>
-                    inputChangedHandler('done', !inputs.done.value)
-                  }
-                  uncheckedColor={GlobalStyles.colors.gray200}
-                  color={GlobalStyles.colors.accent100}
-                />
-              </View>
-            )}
           </View>
         </View>
         <View style={styles.buttonsContainer}>
@@ -419,13 +398,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     marginVertical: 8,
     marginHorizontal: 12,
-  },
-  checkBoxContainer: {
-    alignItems: 'center',
-    marginHorizontal: 'auto',
-  },
-  checkBoxLabel: {
-    color: GlobalStyles.colors.gray50,
   },
   buttonsContainer: {
     flexDirection: 'row',

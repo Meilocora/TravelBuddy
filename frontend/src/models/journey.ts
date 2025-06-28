@@ -8,7 +8,6 @@ export interface Journey {
   description: string;
   scheduled_start_time: string;
   scheduled_end_time: string;
-  done: boolean;
   majorStages?: MajorStage[];
   costs: Costs;
   countries: CustomCountry[];

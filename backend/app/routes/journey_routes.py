@@ -45,7 +45,6 @@ def create_journey(current_user):
             scheduled_start_time=parseDate(journey['scheduled_start_time']['value']),
             scheduled_end_time=parseDate(journey['scheduled_end_time']['value']),
             countries=journey['countries']['value'],
-            done=False,
             user_id=current_user
         )
          
@@ -89,7 +88,6 @@ def create_journey(current_user):
                 'scheduled_start_time': formatDateToString(new_journey.scheduled_start_time),
                 'scheduled_end_time': formatDateToString(new_journey.scheduled_end_time),
                 'countries': new_journey.countries,
-                'done': new_journey.done,
                 'majorStagesIds': []}
         
         return jsonify({'journey': response_journey,'status': 201})
@@ -185,7 +183,6 @@ def update_journey(current_user, journeyId):
                 'scheduled_start_time': journey['scheduled_start_time']['value'],
                 'scheduled_end_time': journey['scheduled_end_time']['value'],
                 'countries': journey['countries']['value'],
-                'done': old_journey.done,
                 'majorStagesIds': majorStagesIds}
         
         if journey_spendings:

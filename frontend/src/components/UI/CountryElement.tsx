@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    marginVertical: 8,
     fontStyle: 'italic',
   },
   currentText: {

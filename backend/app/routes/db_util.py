@@ -32,7 +32,6 @@ def fetch_journeys(current_user):
                 },
                 'scheduled_start_time': formatDateToString(journey.scheduled_start_time),
                 'scheduled_end_time': formatDateToString(journey.scheduled_end_time),
-                'done': journey.done,
             }
             
             custom_countries = fetch_custom_countries(current_user=current_user, journeyId=journey.id)
@@ -120,7 +119,6 @@ def fetch_major_stages(current_user, journeyId):
                 'id': majorStage.id,
                 'title': majorStage.title,
                 'country': majorStage.country,
-                'done': majorStage.done,
                 'scheduled_start_time': formatDateToString(majorStage.scheduled_start_time),
                 'scheduled_end_time': formatDateToString(majorStage.scheduled_end_time),
                 'additional_info': majorStage.additional_info,
@@ -229,7 +227,6 @@ def fetch_minor_stages(majorStageId):
                 'title': minorStage.title,
                 'scheduled_start_time': formatDateToString(minorStage.scheduled_start_time),
                 'scheduled_end_time': formatDateToString(minorStage.scheduled_end_time),
-                'done': minorStage.done,
                 'costs': {
                     'budget': costs.budget,
                     'spent_money': costs.spent_money,

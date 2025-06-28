@@ -7,6 +7,7 @@ import {
   TextStyle,
   Pressable,
 } from 'react-native';
+
 import TextLink from '../TextLink';
 import { Icons } from '../../../models';
 import IconButton from '../IconButton';
@@ -64,10 +65,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 10,
-    marginHorizontal: 12,
+    marginTop: 8,
+    marginHorizontal: 4,
     paddingVertical: 4,
-    flexBasis: '40%',
+    minWidth: 100,
     borderWidth: 0.75,
     borderRadius: 10,
   },

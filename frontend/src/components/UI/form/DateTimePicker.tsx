@@ -74,6 +74,7 @@ const DateTimePicker: React.FC<DatePickerProps> = ({
       <Pressable onPress={setOpenDatePicker}>
         <Input
           label={label}
+          maxLength={100}
           invalid={invalid}
           errors={errors}
           mandatory

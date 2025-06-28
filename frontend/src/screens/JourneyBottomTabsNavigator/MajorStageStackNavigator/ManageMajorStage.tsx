@@ -66,7 +66,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   // Empty, when no default values provided
   const [majorStageValues, setMajorStageValues] = useState<MajorStageValues>({
     title: selectedMajorStage?.title || '',
-    done: selectedMajorStage?.done || false,
     scheduled_start_time: selectedMajorStage?.scheduled_start_time
       ? formatDateString(selectedMajorStage.scheduled_start_time)!
       : null,
@@ -84,7 +83,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
       // JourneyValues set, when screen is focused
       setMajorStageValues({
         title: selectedMajorStage?.title || '',
-        done: selectedMajorStage?.done || false,
         scheduled_start_time: selectedMajorStage?.scheduled_start_time
           ? formatDateString(selectedMajorStage.scheduled_start_time)!
           : null,
@@ -144,7 +142,6 @@ const ManageMajorStage: React.FC<ManageMajorStageProps> = ({
   function resetValues() {
     setMajorStageValues({
       title: '',
-      done: false,
       scheduled_start_time: null,
       scheduled_end_time: null,
       additional_info: '',

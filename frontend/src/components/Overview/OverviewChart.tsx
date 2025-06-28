@@ -103,41 +103,46 @@ const OverviewChart: React.FC<OverviewChartProps> = ({
   }
 
   return (
-    <View style={styles.container}>
-      {mode === 'amount' ? (
-        <Button
-          colorScheme={ColorScheme.accent}
-          onPress={() => setMode('percentage')}
-          mode={ButtonMode.flat}
-          style={styles.button}
-        >
-          Show Percentages
-        </Button>
+    <>
+      {totalAmount ? (
+        <View style={styles.container}>
+          {mode === 'amount' ? (
+            <Button
+              colorScheme={ColorScheme.accent}
+              onPress={() => setMode('percentage')}
+              mode={ButtonMode.flat}
+              style={styles.button}
+            >
+              Show Percentages
+            </Button>
+          ) : (
+            <Button
+              colorScheme={ColorScheme.accent}
+              onPress={() => setMode('amount')}
+              mode={ButtonMode.flat}
+              style={styles.button}
+            >
+              Show Amounts
+            </Button>
+          )}
+          <View style={styles.chart}>
+            <OutsidePressHandler onOutsidePress={handleOutsideTap}>
+              <PieChart
+                data={chartData}
+                sectionAutoFocus
+                onPress={handleTapSection}
+                centerLabelComponent={() => {
+                  return centerLabelComponent;
+                }}
+              />
+            </OutsidePressHandler>
+          </View>
+          <Legend data={chartData} />
+        </View>
       ) : (
-        <Button
-          colorScheme={ColorScheme.accent}
-          onPress={() => setMode('amount')}
-          mode={ButtonMode.flat}
-          style={styles.button}
-        >
-          Show Amounts
-        </Button>
+        <View></View>
       )}
-      <View style={styles.chart}>
-        <OutsidePressHandler onOutsidePress={handleOutsideTap}>
-          <PieChart
-            data={chartData}
-            sectionAutoFocus
-            onPress={handleTapSection}
-            centerLabelComponent={() => {
-              return centerLabelComponent;
-            }}
-          />
-        </OutsidePressHandler>
-      </View>
-
-      <Legend data={chartData} />
-    </View>
+    </>
   );
 };
 

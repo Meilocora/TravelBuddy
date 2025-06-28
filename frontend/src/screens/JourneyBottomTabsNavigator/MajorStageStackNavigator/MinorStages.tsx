@@ -62,7 +62,7 @@ const MinorStages: React.FC<MinorStagesProps> = ({
     });
     return () =>
       navigation.getParent()?.setOptions({
-        tabBarStyle: undefined,
+        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary700 },
       });
   }, [navigation]);
 
@@ -155,11 +155,14 @@ const MinorStages: React.FC<MinorStagesProps> = ({
 
   if (error) {
     return (
-      <ErrorOverlay
-        message={error}
-        onPress={handlePressReload}
-        buttonText='Reload'
-      />
+      <>
+        <ComplementaryGradient />
+        <ErrorOverlay
+          message={error}
+          onPress={handlePressReload}
+          buttonText='Reload'
+        />
+      </>
     );
   }
 

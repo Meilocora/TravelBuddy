@@ -93,17 +93,13 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
   return (
     <View style={styles.container}>
       {isLoading ? (
-        <ActivityIndicator
-          size='large'
-          color={iconStandardColor}
-          style={styles.button}
-        />
+        <ActivityIndicator size='large' color={iconStandardColor} />
       ) : (
         <IconButton
           icon={hasInitialLocation ? Icons.map : Icons.mapFilled}
           onPress={pickOnMapHandler}
           size={32}
-          containerStyle={styles.button}
+          containerStyle={styles.mapButton}
           color={
             iconColor
               ? iconColor
@@ -119,10 +115,10 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'flex-end',
+    marginTop: 26,
   },
-  button: {
-    paddingBottom: 10,
+  mapButton: {
+    backgroundColor: GlobalStyles.colors.gray300,
   },
 });
 

@@ -11,12 +11,9 @@ class TransportationValidation(Validation):
   @staticmethod
   def validate_transportation(transportation):
         errors = False
-      
-        print(transportation['departure_latitude'])
-      
+            
         for key, value in transportation.items():
-            if key != 'transportation_costs' and key != 'link' and key != 'departure_latitude' and key != 'departure_longitude' and key != 'arrival_latitude' and key != 'arrival_longitude':
-            # if key != 'transportation_costs' and key != 'link':
+            if key != 'transportation_costs' and key != 'link' and key != 'departure_latitude' and key != 'departure_longitude' and key != 'arrival_latitude' and key != 'arrival_longitude' and key != 'unconvertedAmount':
                 if value['value'] == "" or value['value'] == None:
                     transportation[key]['errors'].append(f'Input is required')
                     transportation[key]['isValid'] = False

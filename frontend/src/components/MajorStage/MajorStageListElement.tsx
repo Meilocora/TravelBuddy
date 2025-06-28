@@ -1,6 +1,8 @@
 import { ReactElement } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import {
   ButtonMode,
@@ -17,13 +19,11 @@ import {
   validateIsOver,
 } from '../../utils';
 import { GlobalStyles } from '../../constants/styles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import IconButton from '../UI/IconButton';
 import DetailArea, { ElementDetailInfo } from '../UI/list/DetailArea';
 import ElementTitle from '../UI/list/ElementTitle';
 import ElementComment from '../UI/list/ElementComment';
 import Button from '../UI/Button';
-import { LinearGradient } from 'expo-linear-gradient';
 import TransportationBox from './TransportationBox';
 import CustomProgressBar from '../UI/CustomProgressBar';
 

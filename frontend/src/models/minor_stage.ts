@@ -4,7 +4,6 @@ import { PlaceToVisit } from './place';
 export interface MinorStage {
   id: number;
   title: string;
-  done: boolean;
   scheduled_start_time: string;
   scheduled_end_time: string;
   costs: Costs;
@@ -17,7 +16,6 @@ export interface MinorStage {
 
 export interface MinorStageValues {
   title: string;
-  done: boolean;
   scheduled_start_time: string | null;
   scheduled_end_time: string | null;
   budget: number;
@@ -32,7 +30,6 @@ export interface MinorStageValues {
 
 export interface MinorStageFormValues {
   title: Validable<string>;
-  done: Validable<boolean>;
   scheduled_start_time: Validable<string | null>;
   scheduled_end_time: Validable<string | null>;
   budget: Validable<number>;

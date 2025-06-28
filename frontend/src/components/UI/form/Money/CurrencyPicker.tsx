@@ -37,16 +37,7 @@ const CurrencyPicker: React.FC<CurrencyPickerProps> = ({
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    async function getCurrencies() {
-      const response = await fetchCurrencies();
-      if (response.error) {
-        setError(response.error);
-      } else if (response.currencies) {
-        calculateConvertedAmount();
-      }
-    }
-
-    getCurrencies();
+    calculateConvertedAmount();
   }, [unconvertedValue]);
 
   function selectCurrency(currency: CurrencyInfo) {
@@ -109,6 +100,7 @@ const CurrencyPicker: React.FC<CurrencyPickerProps> = ({
         {chosenCurrency.currency !== 'EUR' && placeHolder !== '' && (
           <Input
             label=''
+            maxLength={100}
             invalid={false}
             errors={[]}
             textInputConfig={{

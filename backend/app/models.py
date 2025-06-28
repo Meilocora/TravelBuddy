@@ -7,8 +7,8 @@ class User(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
 
     # Define relationships to children
@@ -21,12 +21,11 @@ class Journey(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     countries: Mapped[str] = mapped_column(String, nullable=False)
-    done: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Define relationships to children
     major_stages: Mapped[list['MajorStage']] = relationship('MajorStage', back_populates='journey', cascade='all, delete-orphan')
@@ -50,15 +49,15 @@ class CustomCountry(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(40), nullable=False)
-    code: Mapped[str] = mapped_column(String(2), nullable=True)
-    timezones: Mapped[str] = mapped_column(String(40), nullable=True)
-    currencies: Mapped[str] = mapped_column(String(3), nullable=True)
-    languages: Mapped[str] = mapped_column(String(40), nullable=True)
-    capital: Mapped[str] = mapped_column(String(40), nullable=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    code: Mapped[str] = mapped_column(String, nullable=True)
+    timezones: Mapped[str] = mapped_column(String, nullable=True)
+    currencies: Mapped[str] = mapped_column(String, nullable=True)
+    languages: Mapped[str] = mapped_column(String, nullable=True)
+    capital: Mapped[str] = mapped_column(String, nullable=True)
     population: Mapped[int] = mapped_column(Integer, nullable=True)
-    region: Mapped[str] = mapped_column(String(40), nullable=True)
-    subregion: Mapped[str] = mapped_column(String(40), nullable=True)
+    region: Mapped[str] = mapped_column(String, nullable=True)
+    subregion: Mapped[str] = mapped_column(String, nullable=True)
     wiki_link: Mapped[str] = mapped_column(String, nullable=True)
     visited: Mapped[bool] = mapped_column(Boolean, nullable=True)
     visum_regulations: Mapped[str] = mapped_column(String, nullable=True)
@@ -95,8 +94,7 @@ class MajorStage(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    title: Mapped[str] = mapped_column(String(40), nullable=False)
-    done: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
     scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     additional_info: Mapped[str] = mapped_column(String, nullable=True)
@@ -121,7 +119,6 @@ class MinorStage(db.Model):
     title: Mapped[str] = mapped_column(String(40), nullable=False)
     scheduled_start_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     scheduled_end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    done: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     # Define relationships to children
     costs: Mapped['Costs'] = relationship('Costs', back_populates='minor_stage', cascade='all, delete-orphan')

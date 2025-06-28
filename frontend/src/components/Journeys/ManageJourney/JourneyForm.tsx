@@ -219,6 +219,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
         <View>
           <Input
             label='Name'
+            maxLength={15}
             invalid={!inputs.name.isValid}
             errors={inputs.name.errors}
             mandatory
@@ -229,6 +230,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           />
           <Input
             label='Description'
+            maxLength={300}
             invalid={!inputs.description.isValid}
             errors={inputs.description.errors}
             textInputConfig={{
@@ -240,6 +242,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Spent Money'
+              maxLength={100}
               invalid={!inputs.spent_money.isValid}
               textInputConfig={{
                 readOnly: true,
@@ -248,6 +251,7 @@ const JourneyForm: React.FC<JourneyFormProps> = ({
             />
             <Input
               label='Budget'
+              maxLength={6}
               invalid={!inputs.budget.isValid}
               errors={inputs.budget.errors}
               textInputConfig={{

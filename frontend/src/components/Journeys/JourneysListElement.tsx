@@ -184,7 +184,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   countryRow: {
+    maxHeight: 60,
+    marginVertical: 4,
+    justifyContent: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   detailArea: {
     borderTopWidth: 2,

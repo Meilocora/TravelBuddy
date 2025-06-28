@@ -34,7 +34,6 @@ def create_major_stage(current_user, journeyId):
         # Create a new major stage
         new_major_stage = MajorStage(
             title=major_stage['title']['value'],
-            done=False,
             scheduled_start_time=parseDate(major_stage['scheduled_start_time']['value']),
             scheduled_end_time=parseDate(major_stage['scheduled_end_time']['value']),
             additional_info=major_stage['additional_info']['value'],
@@ -57,7 +56,6 @@ def create_major_stage(current_user, journeyId):
         # build response major stage object for the frontend
         response_major_stage = {'id': new_major_stage.id,
                                 'title': new_major_stage.title,
-                                'done': new_major_stage.done,
                                 'scheduled_start_time': formatDateToString(new_major_stage.scheduled_start_time),
                                 'scheduled_end_time': formatDateToString(new_major_stage.scheduled_end_time),
                                 'additional_info': new_major_stage.additional_info,
@@ -119,7 +117,6 @@ def update_major_stage(current_user, journeyId, majorStageId):
         # Update the major_stage
         db.session.execute(db.update(MajorStage).where(MajorStage.id == majorStageId).values(
             title=major_stage['title']['value'],
-            done=major_stage['done']['value'],
             scheduled_start_time=parseDate(major_stage['scheduled_start_time']['value']),
             scheduled_end_time=parseDate(major_stage['scheduled_end_time']['value']),
             additional_info=major_stage['additional_info']['value'],
@@ -137,7 +134,6 @@ def update_major_stage(current_user, journeyId, majorStageId):
         
         response_major_stage = {'id': majorStageId,
                                 'title': major_stage['title']['value'],
-                                'done': major_stage['done']['value'],
                                 'scheduled_start_time': major_stage['scheduled_start_time']['value'],
                                 'scheduled_end_time': major_stage['scheduled_end_time']['value'],
                                 'additional_info': major_stage['additional_info']['value'],

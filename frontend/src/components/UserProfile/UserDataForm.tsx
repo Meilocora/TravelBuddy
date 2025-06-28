@@ -104,6 +104,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({
             <View style={styles.formRow}>
               <Input
                 label='New Username'
+                maxLength={15}
                 invalid={!nameInputs.newUsername.isValid}
                 errors={nameInputs.newUsername.errors}
                 textInputConfig={{
@@ -122,6 +123,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({
             <View style={styles.formRow}>
               <Input
                 label='Password'
+                maxLength={40}
                 invalid={!nameInputs.password.isValid}
                 errors={nameInputs.password.errors}
                 textInputConfig={{
@@ -183,6 +185,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({
             <View style={styles.formRow}>
               <Input
                 label='New Password'
+                maxLength={40}
                 invalid={!passwordInputs.newPassword.isValid}
                 errors={passwordInputs.newPassword.errors}
                 textInputConfig={{
@@ -198,6 +201,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({
             <View style={styles.formRow}>
               <Input
                 label='Confirm New Password'
+                maxLength={40}
                 invalid={!passwordInputs.confirmPassword.isValid}
                 errors={passwordInputs.confirmPassword.errors}
                 textInputConfig={{
@@ -213,6 +217,7 @@ const UserDataForm: React.FC<UserDataFormProps> = ({
             <View style={styles.formRow}>
               <Input
                 label='Current Password'
+                maxLength={40}
                 invalid={!passwordInputs.oldPassword.isValid}
                 errors={passwordInputs.oldPassword.errors}
                 textInputConfig={{

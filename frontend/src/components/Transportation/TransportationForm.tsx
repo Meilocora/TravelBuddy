@@ -355,22 +355,6 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
           />
         </View>
         <View style={styles.formRow}>
-          {/* <Input
-            label='Costs'
-            invalid={!inputs.transportation_costs.isValid}
-            errors={inputs.transportation_costs.errors}
-            textInputConfig={{
-              keyboardType: 'decimal-pad',
-              value:
-                inputs.transportation_costs.value !== 0
-                  ? inputs.transportation_costs.value.toString()
-                  : '',
-              onChangeText: inputChangedHandler.bind(
-                this,
-                'transportation_costs'
-              ),
-            }}
-          /> */}
           <AmountElement
             unconvertedInput={inputs.unconvertedAmount}
             inputChangedHandler={inputChangedHandler}
@@ -380,6 +364,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         <View style={styles.formRow}>
           <Input
             label='Place of departure'
+            maxLength={20}
             invalid={!inputs.place_of_departure.isValid}
             errors={inputs.place_of_departure.errors}
             mandatory
@@ -412,6 +397,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         <View style={styles.formRow}>
           <Input
             label='Place of arrival'
+            maxLength={20}
             invalid={!inputs.place_of_arrival.isValid}
             errors={inputs.place_of_arrival.errors}
             mandatory
@@ -469,6 +455,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
         <View style={styles.formRow}>
           <Input
             label='Link'
+            maxLength={100}
             invalid={!inputs.link.isValid}
             errors={inputs.link.errors}
             textInputConfig={{
@@ -497,9 +484,9 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
 const styles = StyleSheet.create({
   formContainer: {
     opacity: 0.75,
-    marginHorizontal: 16,
+    marginHorizontal: 14,
     marginVertical: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
     paddingVertical: 16,
     borderWidth: 2,
     borderRadius: 8,

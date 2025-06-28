@@ -29,6 +29,7 @@ const AmountElement: React.FC<AmountElementProps> = ({
     <View style={styles.container}>
       <Input
         label='Amount'
+        maxLength={12}
         invalid={!unconvertedInput.isValid}
         errors={unconvertedInput.errors}
         textInputConfig={{

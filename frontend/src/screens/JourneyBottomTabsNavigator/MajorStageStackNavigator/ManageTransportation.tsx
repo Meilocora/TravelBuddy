@@ -47,6 +47,9 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
   route,
   navigation,
 }): ReactElement => {
+  // JourneyBottomTabs.Navigator
+  // const journeyBottomTabsNav = useNavigation<BottomTabNavigationProp
+
   const [error, setError] = useState<string | null>(null);
   const [selectedTransportation, setSelectedTransportation] = useState<
     Transportation | undefined
@@ -90,7 +93,7 @@ const ManageTransportation: React.FC<ManageTransportationProps> = ({
         />
       ),
     });
-  }, [navigation, majorStageId, minorStageId]);
+  }, [planningNavigation, majorStageId, minorStageId]);
 
   async function deleteHandler() {
     try {
