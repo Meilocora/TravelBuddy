@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { BACKEND_URL } from '@env';
-import { refreshAuthToken } from './auth';
+import { refreshAuthToken } from './common';
 
 const api = axios.create({
   baseURL: BACKEND_URL,

@@ -34,6 +34,8 @@ interface MajorStageListElementProps {
   onDelete: (majorStageId: number) => void;
 }
 
+// TODO: Add Screen to view MajorStage on Map and make route planning between places
+
 const MajorStageListElement: React.FC<MajorStageListElementProps> = ({
   journeyId,
   majorStage,

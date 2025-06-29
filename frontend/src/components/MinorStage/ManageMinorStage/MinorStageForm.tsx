@@ -335,7 +335,7 @@ const MinorStageForm: React.FC<MinorStageFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Title'
-              maxLength={15}
+              maxLength={20}
               invalid={!inputs.title.isValid}
               errors={inputs.title.errors}
               mandatory
@@ -526,7 +526,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    marginVertical: 4,
     marginHorizontal: 12,
   },
   separator: {

@@ -141,3 +141,18 @@ def get_conversion_rate(currency_code, base_currency='EUR'):
         return rate
     except Exception as e:
         return None
+
+
+def safe_countryinfo_attr(obj, attr, join=False):
+    try:
+        value = getattr(obj, attr)
+        if callable(value):
+            value = value()
+        # Only use if not a dictionary
+        if value and not isinstance(value, dict):
+            if join and isinstance(value, (list, tuple)):
+                return ', '.join(str(v) for v in value)
+            return value
+    except Exception:
+        return None
+    return None

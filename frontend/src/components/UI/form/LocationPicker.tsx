@@ -116,6 +116,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginTop: 26,
+    width: 60,
   },
   mapButton: {
     backgroundColor: GlobalStyles.colors.gray300,

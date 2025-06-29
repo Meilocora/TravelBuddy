@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginHorizontal: 20,
     borderRadius: 10,
-    borderBottomRightRadius: 100,
-    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 70,
+    borderBottomLeftRadius: 70,
     margin: 10,
   },
   text: {

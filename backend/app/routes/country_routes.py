@@ -4,6 +4,7 @@ from countryinfo import CountryInfo
 from app.models import CustomCountry, Journey, PlaceToVisit
 from app.validation.country_validation import CountryValidation
 from app.routes.route_protection import token_required
+from app.routes.util import safe_countryinfo_attr
 import re
 
 country_bp = Blueprint('country', __name__)
@@ -78,19 +79,18 @@ def create_custom_country(current_user):
         if country_name.lower() not in CountryInfo().all().keys():
             return jsonify({'error': 'Country does not exist', 'status': 400})
         else:
-            countryInfo = CountryInfo(country_name)
-            
+            countryInfo = CountryInfo(country_name)           
+
             new_country = CustomCountry(
                 name=country_name,
-                code = countryInfo.iso(3) if countryInfo.iso(3) else None,
-                timezones = ', '.join(countryInfo.timezones()) if countryInfo.timezones() else None, 
-                currencies = ', '.join(countryInfo.currencies()) if countryInfo.currencies() else None,
-                languages = ', '.join(countryInfo.languages()) if countryInfo.languages() else None,
-                capital = countryInfo.capital() if countryInfo.capital() else None,
-                population = countryInfo.population() if countryInfo.population() else None,
-                region = countryInfo.region() if countryInfo.region() else None,
-                subregion = countryInfo.subregion() if countryInfo.subregion() else None,
-                wiki_link = countryInfo.wiki() if countryInfo.wiki() else None,
+                currencies = safe_countryinfo_attr(countryInfo, 'currencies', join=True),
+                languages = safe_countryinfo_attr(countryInfo, 'languages', join=True),
+                capital = safe_countryinfo_attr(countryInfo, 'capital'),
+                population = safe_countryinfo_attr(countryInfo, 'population'),
+                region = safe_countryinfo_attr(countryInfo, 'region'),
+                subregion = safe_countryinfo_attr(countryInfo, 'subregion'),
+                wiki_link = safe_countryinfo_attr(countryInfo, 'wiki'),
+                code = safe_countryinfo_attr(countryInfo, 'iso') ,
                 visited = False,
                 visum_regulations = None,
                 best_time_to_visit = None,
@@ -100,6 +100,9 @@ def create_custom_country(current_user):
             
             db.session.add(new_country)
             db.session.commit()
+            
+            print('Here')
+            
             
             response_country = {'id': new_country.id,
                                 'name': new_country.name,
@@ -116,6 +119,7 @@ def create_custom_country(current_user):
         
         return jsonify({'customCountry': response_country,'status': 201})
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e), 'status': 500})
     
 

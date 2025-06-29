@@ -21,19 +21,27 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
   spendings,
   handleEdit,
 }) => {
-  const tableHeaders = ['Name', 'Category', 'Amount', 'Date'];
-
   return (
     <View style={listElementStyles.container}>
       <View style={[listElementStyles.row, listElementStyles.headRow]}>
-        {tableHeaders.map((header) => (
-          <View
-            style={listElementStyles.rowElement}
-            key={generateRandomString()}
-          >
-            <Text style={listElementStyles.headerText}>{header}</Text>
-          </View>
-        ))}
+        <View
+          style={[listElementStyles.rowElement, { width: '40%' }]}
+          key={generateRandomString()}
+        >
+          <Text style={listElementStyles.headerText}>Name</Text>
+        </View>
+        <View
+          style={[listElementStyles.rowElement, { width: '35%' }]}
+          key={generateRandomString()}
+        >
+          <Text style={listElementStyles.headerText}>Category</Text>
+        </View>
+        <View
+          style={[listElementStyles.rowElement, { width: '25%' }]}
+          key={generateRandomString()}
+        >
+          <Text style={listElementStyles.headerText}>Amount</Text>
+        </View>
       </View>
       <ScrollView>
         {spendings.map((spending, index) => (
@@ -48,20 +56,21 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
               index + 1 === spendings.length ? listElementStyles.lastRow : {},
             ]}
           >
-            <View style={listElementStyles.rowElement}>
+            <View style={[listElementStyles.rowElement, { width: '40%' }]}>
               <Text
                 ellipsizeMode='tail'
                 numberOfLines={1}
-                style={
+                style={[
                   index % 2 === 0
                     ? listElementStyles.evenText
-                    : listElementStyles.oddText
-                }
+                    : listElementStyles.oddText,
+                  { fontWeight: 'bold' },
+                ]}
               >
                 {spending.name}
               </Text>
             </View>
-            <View style={listElementStyles.rowElement}>
+            <View style={[listElementStyles.rowElement, { width: '35%' }]}>
               <Text
                 ellipsizeMode='tail'
                 numberOfLines={1}
@@ -74,7 +83,7 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 {spending.category}
               </Text>
             </View>
-            <View style={listElementStyles.rowElement}>
+            <View style={[listElementStyles.rowElement, { width: '25%' }]}>
               <Text
                 ellipsizeMode='tail'
                 numberOfLines={1}
@@ -85,19 +94,6 @@ const SpendingListElement: React.FC<SpendingListElementProps> = ({
                 }
               >
                 {formatAmount(spending.amount)}
-              </Text>
-            </View>
-            <View style={listElementStyles.rowElement}>
-              <Text
-                ellipsizeMode='tail'
-                numberOfLines={1}
-                style={
-                  index % 2 === 0
-                    ? listElementStyles.evenText
-                    : listElementStyles.oddText
-                }
-              >
-                {spending.date}
               </Text>
             </View>
           </Pressable>
@@ -142,7 +138,7 @@ const listElementStyles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   rowElement: {
-    flexBasis: '25%',
+    // flexBasis: '33%',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -209,6 +209,7 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           ) : (
             <Input
               label='Best Time to Visit'
+              maxLength={50}
               invalid={!inputs.best_time_to_visit.isValid}
               errors={inputs.best_time_to_visit.errors}
               isEditing={isEditing}
@@ -233,6 +234,7 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           ) : (
             <Input
               label='General Information'
+              maxLength={300}
               invalid={!inputs.general_information.isValid}
               errors={inputs.general_information.errors}
               isEditing={isEditing}
@@ -258,6 +260,7 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           ) : (
             <Input
               label='Visum Regulations'
+              maxLength={100}
               invalid={!inputs.visum_regulations.isValid}
               errors={inputs.visum_regulations.errors}
               isEditing={isEditing}

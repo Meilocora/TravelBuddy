@@ -90,6 +90,5 @@ class MinorStageValidation(Validation):
             if 'errors' in value and value['errors']:
                 errors = True
                 break
-        
-     
+                
         return minorStage, not errors

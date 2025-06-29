@@ -192,6 +192,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
             apikey={GOOGLE_API_KEY}
             origin={userLocation}
             destination={directionDestination}
+            // TODO: User should be able to enter multiple waypoints and change the origin to another place
+            // waypoints={}
             strokeWidth={4}
             strokeColor='blue'
             precision='high'

@@ -96,6 +96,7 @@ const SpendingCategorySelector: React.FC<SpendingCategorySelectorProps> = ({
           <Pressable onPress={handleOpenModal}>
             <Input
               label='Category'
+              maxLength={100}
               errors={errors}
               mandatory
               textInputConfig={{

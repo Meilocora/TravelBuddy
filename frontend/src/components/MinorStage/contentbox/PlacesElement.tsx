@@ -1,6 +1,13 @@
-import { StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
-
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Modal,
+} from 'react-native';
 import { useContext, useState } from 'react';
+
 import { ButtonMode, ColorScheme, MinorStage } from '../../../models';
 import Button from '../../UI/Button';
 import PlacesSelection from '../ManageMinorStage/PlacesSelection';
@@ -36,6 +43,7 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   }
 
   function handleToggleSelection() {
+    console.log('Toggle Selection');
     setOpenSelection((prev) => !prev);
   }
 
@@ -82,15 +90,17 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
         )}
       </View>
       {openSelection && (
-        <PlacesSelection
-          chosenPlaces={defaultPlacesNames}
-          countryName={countryName}
-          onAddHandler={handleAdd}
-          onCloseModal={handleToggleSelection}
-          onFetchRequest={() =>
-            fetchavailablePlacesByCountry(minorStage.id, countryName)
-          }
-        />
+        <Modal visible={openSelection} transparent>
+          <PlacesSelection
+            chosenPlaces={defaultPlacesNames}
+            countryName={countryName}
+            onAddHandler={handleAdd}
+            onCloseModal={handleToggleSelection}
+            onFetchRequest={() =>
+              fetchavailablePlacesByCountry(minorStage.id, countryName)
+            }
+          />
+        </Modal>
       )}
     </View>
   );

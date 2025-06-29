@@ -200,6 +200,7 @@ const SpendingForm: React.FC<SpendingFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Name'
+              maxLength={15}
               invalid={!inputs.name.isValid}
               errors={inputs.name.errors}
               mandatory
@@ -285,7 +286,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    marginVertical: 4,
     marginHorizontal: 12,
   },
   rowElement: {

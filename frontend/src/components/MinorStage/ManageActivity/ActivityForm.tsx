@@ -246,6 +246,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Name'
+              maxLength={15}
               invalid={!inputs.name.isValid}
               errors={inputs.name.errors}
               mandatory
@@ -258,6 +259,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Description'
+              maxLength={150}
               invalid={!inputs.description.isValid}
               errors={inputs.description.errors}
               textInputConfig={{
@@ -270,6 +272,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Place'
+              maxLength={15}
               invalid={!inputs.place.isValid}
               errors={inputs.place.errors}
               textInputConfig={{
@@ -292,24 +295,6 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
             />
           </View>
           <View style={styles.formRow}>
-            {/* <Input
-              label='Costs'
-              invalid={!inputs.costs.isValid}
-              errors={inputs.costs.errors}
-              textInputConfig={{
-                keyboardType: 'decimal-pad',
-                value:
-                  inputs.costs.value !== 0 ? inputs.costs.value.toString() : '',
-                onChangeText: inputChangedHandler.bind(this, 'costs'),
-                placeholder:
-                  maxAvailableMoney > 0
-                    ? `Max: ${formatAmount(maxAvailableMoney)}`
-                    : '',
-              }}
-              style={{
-                maxWidth: '50%',
-              }}
-            /> */}
             <AmountElement
               unconvertedInput={inputs.unconvertedAmount}
               inputChangedHandler={inputChangedHandler}
@@ -320,6 +305,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Link'
+              maxLength={100}
               invalid={!inputs.link.isValid}
               errors={inputs.link.errors}
               textInputConfig={{
@@ -378,7 +364,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    marginVertical: 4,
     marginHorizontal: 12,
   },
   checkBoxContainer: {

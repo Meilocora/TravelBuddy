@@ -50,7 +50,6 @@ const AccommodationBox: React.FC<AccommodationBoxProps> = ({
   }
 
   const isOver = validateIsOver(minorStage.scheduled_end_time);
-  const elementWith = `${100 / elementCounter}%`;
 
   return (
     <View style={styles.container}>

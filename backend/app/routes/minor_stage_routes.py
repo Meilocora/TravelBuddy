@@ -35,6 +35,7 @@ def create_minor_stage(current_user, majorStageId):
         return jsonify({'minorStageFormValues': response, 'status': 400})
     
     try:
+        print(minor_stage)
         # Create a new minor stage
         new_minor_stage = MinorStage(
             title=minor_stage['title']['value'],
@@ -42,8 +43,11 @@ def create_minor_stage(current_user, majorStageId):
             scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
             major_stage_id=majorStageId
         )
+        print(new_minor_stage.title,new_minor_stage.scheduled_start_time, new_minor_stage.scheduled_end_time, new_minor_stage.major_stage_id)
         db.session.add(new_minor_stage)
         db.session.commit()
+        
+        print('There')
         
          # Create a new accommodation for the minor stage
         new_accommodation = Accommodation(

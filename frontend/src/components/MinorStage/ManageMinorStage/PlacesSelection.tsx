@@ -16,6 +16,7 @@ import ListItem from '../../UI/search/ListItem';
 import Button from '../../UI/Button';
 import { ButtonMode, ColorScheme, StackParamList } from '../../../models';
 import { FetchPlacesProps } from '../../../utils/http';
+import OutsidePressHandler from 'react-native-outside-press';
 
 interface PlacesSelectionProps {
   onFetchRequest: (countryName: string) => Promise<FetchPlacesProps>;
@@ -24,6 +25,8 @@ interface PlacesSelectionProps {
   chosenPlaces: string[];
   countryName: string;
 }
+
+// TODO: Add Functionality to choose places from country by Map
 
 const PlacesSelection = ({
   onFetchRequest,
@@ -103,42 +106,69 @@ const PlacesSelection = ({
   } else {
     content = (
       <>
-        <InfoText content='No items found' style={styles.info} />
-        <Button
-          colorScheme={ColorScheme.accent}
-          onPress={handlePressAdd}
-          style={styles.button}
-        >
-          Add Place!
-        </Button>
+        <InfoText content='No items found...' style={styles.info} />
+        <View style={{ flexDirection: 'row' }}>
+          <Button
+            colorScheme={ColorScheme.neutral}
+            mode={ButtonMode.flat}
+            onPress={onCloseModal}
+            style={styles.button}
+          >
+            Dismiss
+          </Button>
+          <Button
+            colorScheme={ColorScheme.accent}
+            onPress={handlePressAdd}
+            style={styles.button}
+          >
+            Add Place!
+          </Button>
+        </View>
       </>
     );
   }
 
   return (
-    <Animated.View entering={FadeInUp} exiting={FadeOutUp}>
-      <View style={styles.outerContainer}>
-        <Pressable onPress={onCloseModal}>{content}</Pressable>
-      </View>
-    </Animated.View>
+    <View style={styles.outerContainer}>
+      <OutsidePressHandler
+        onOutsidePress={onCloseModal}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <Animated.View
+          entering={FadeInUp}
+          exiting={FadeOutUp}
+          style={styles.outerContainer}
+        >
+          <Pressable onPress={onCloseModal} style={styles.pressable}>
+            {content}
+          </Pressable>
+        </Animated.View>
+      </OutsidePressHandler>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   outerContainer: {
+    flex: 1,
+    width: '80%',
+    height: '100%',
+    top: '30%',
+    left: '10%',
     position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -150 }, { translateY: -200 }],
+  },
+  innerContainer: {
+    marginVertical: 'auto',
+    marginHorizontal: 'auto',
+  },
+  pressable: {
     paddingVertical: 5,
     paddingHorizontal: 10,
-    width: '90%',
-    marginHorizontal: 'auto',
     backgroundColor: GlobalStyles.colors.gray700,
     borderWidth: 2,
     borderColor: GlobalStyles.colors.gray300,
     borderRadius: 10,
-    zIndex: 1,
+    zIndex: 2,
   },
   list: {
     marginHorizontal: 15,
@@ -154,7 +184,8 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 8,
     marginHorizontal: 'auto',
-    maxWidth: '40%',
+    // maxWidth: '40%',
+    alignSelf: 'center',
   },
 });
 

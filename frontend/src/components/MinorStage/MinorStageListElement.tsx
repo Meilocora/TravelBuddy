@@ -25,6 +25,8 @@ interface MinorStageListElementProps {
   onDelete: (minorStageId: number) => void;
 }
 
+// TODO: Add Screen to view MinorStage on Map and make route planning between places
+
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   minorStage,
   onDelete,
@@ -83,21 +85,19 @@ const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
         <View style={styles.titleContainer}>
           <ElementTitle>{minorStage.title}</ElementTitle>
         </View>
-        <View style={styles.iconContainer}>
-          {!isOver ? (
-            <IconButton
-              icon={Icons.edit}
-              color={GlobalStyles.colors.accent800}
-              onPress={handleEdit}
-            />
-          ) : (
-            <IconButton
-              icon={Icons.delete}
-              color={GlobalStyles.colors.gray500}
-              onPress={() => onDelete(minorStage.id)}
-            />
-          )}
-        </View>
+        {!isOver ? (
+          <IconButton
+            icon={Icons.edit}
+            color={GlobalStyles.colors.accent800}
+            onPress={handleEdit}
+          />
+        ) : (
+          <IconButton
+            icon={Icons.delete}
+            color={GlobalStyles.colors.gray500}
+            onPress={() => onDelete(minorStage.id)}
+          />
+        )}
       </View>
       <ElementComment content={`${startDate} - ${endDate}`} />
       <DetailArea elementDetailInfo={elementDetailInfo} />
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   titleContainer: {
