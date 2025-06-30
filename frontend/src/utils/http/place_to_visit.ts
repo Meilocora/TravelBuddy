@@ -185,7 +185,7 @@ export const toggleVisitedPlace = async (
   }
 };
 
-export const addMinorStageToFavoritePlace = async (
+export const addMinorStageToPlace = async (
   name: string,
   minorStageId: number
 ): Promise<ManagePlaceProps> => {
@@ -206,7 +206,7 @@ export const addMinorStageToFavoritePlace = async (
   }
 };
 
-export const removeMinorStageFromFavoritePlace = async (
+export const removeMinorStageFromPlace = async (
   name: string
 ): Promise<ManagePlaceProps> => {
   try {

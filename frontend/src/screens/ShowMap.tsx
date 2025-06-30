@@ -52,7 +52,7 @@ const ShowMap: React.FC<ShowMapProps> = ({
         showsUserLocation
         showsMyLocationButton
       >
-        <MapsMarker location={location} />
+        <MapsMarker location={location} key={location.data.latitude} />
       </MapView>
     </View>
   );

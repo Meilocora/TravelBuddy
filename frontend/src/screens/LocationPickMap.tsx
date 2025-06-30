@@ -26,6 +26,7 @@ import { CustomCountryContext } from '../store/custom-country-context';
 import MapsMarker from '../components/Maps/MapsMarker';
 import { generateRandomString } from '../utils';
 import HeaderTitle from '../components/UI/HeaderTitle';
+import { StagesContext } from '../store/stages-context';
 
 interface LocationPickMapProps {
   navigation: NativeStackNavigationProp<StackParamList, 'LocationPickMap'>;
@@ -37,12 +38,14 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
   route,
 }): ReactElement => {
   const customCountryCtx = useContext(CustomCountryContext);
+  const stagesCtx = useContext(StagesContext);
   const initialLocation = route.params && {
     lat: route.params.initialLat,
     lng: route.params.initialLng,
   };
   const initialColorScheme = route.params.colorScheme || ColorScheme.primary;
 
+  const minorStageId = route.params.minorStageId;
   const customCountryId = route.params.customCountryId || undefined;
   let placesToVisit: undefined | PlaceToVisit[];
   if (customCountryId) {
@@ -100,8 +103,16 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
   }
 
   function handleResetPlace() {
-    route.params.onResetLocation();
-    navigation.goBack();
+    if (route.params.onResetLocation) {
+      route.params.onResetLocation();
+      navigation.goBack();
+    }
+  }
+
+  function handlePressMarker(name: string) {
+    if (route.params.onPressMarker) {
+      route.params.onPressMarker(name);
+    }
   }
 
   let mainColor = GlobalStyles.colors.primary700;
@@ -131,20 +142,22 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           containerStyle={styles.modal}
         />
       )}
-      <GooglePlacesTextInput
-        apiKey={GOOGLE_API_KEY}
-        onPlaceSelect={handleSearchResult}
-        placeHolderText='Search for a location'
-        minCharsToFetch={3}
-        style={{
-          container: styles.searchContainer,
-          textInput: styles.searchInput,
-        }}
-      />
+      {route.params.onResetLocation && (
+        <GooglePlacesTextInput
+          apiKey={GOOGLE_API_KEY}
+          onPlaceSelect={handleSearchResult}
+          placeHolderText='Search for a location'
+          minCharsToFetch={3}
+          style={{
+            container: styles.searchContainer,
+            textInput: styles.searchInput,
+          }}
+        />
+      )}
       <MapView
         initialRegion={region!}
         region={region}
-        onPress={selectLocationHandler}
+        onPress={route.params.onPressMarker ? undefined : selectLocationHandler}
         style={styles.map}
       >
         {initialLocation && hasLocation && (
@@ -157,18 +170,35 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           />
         )}
         {placesToVisit &&
-          placesToVisit.map((place) => (
-            <MapsMarker
-              location={formatPlaceToLocation(place)}
-              key={generateRandomString()}
-            />
-          ))}
+          placesToVisit.map((place) => {
+            // Check if this place is part of the minorStage
+            let isActive = false;
+            if (minorStageId) {
+              const minorStage = stagesCtx.findMinorStage(minorStageId);
+              if (minorStage && minorStage.placesToVisit) {
+                isActive = minorStage.placesToVisit.some(
+                  (p) => p.name === place.name
+                );
+              }
+            }
+
+            return (
+              <MapsMarker
+                location={formatPlaceToLocation(place)}
+                key={generateRandomString()}
+                onPressMarker={handlePressMarker}
+                active={isActive}
+              />
+            );
+          })}
       </MapView>
-      <View style={styles.buttonContainer}>
-        <Button colorScheme={initialColorScheme} onPress={handleResetPlace}>
-          Reset Location
-        </Button>
-      </View>
+      {route.params.onResetLocation && (
+        <View style={styles.buttonContainer}>
+          <Button colorScheme={initialColorScheme} onPress={handleResetPlace}>
+            Reset Location
+          </Button>
+        </View>
+      )}
     </View>
   );
 };

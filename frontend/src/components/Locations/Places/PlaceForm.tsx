@@ -198,6 +198,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Name'
+              maxLength={15}
               invalid={!inputs.name.isValid}
               errors={inputs.name.errors}
               mandatory
@@ -228,6 +229,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Description'
+              maxLength={100}
               invalid={!inputs.description.isValid}
               errors={inputs.description.errors}
               textInputConfig={{
@@ -240,6 +242,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Link'
+              maxLength={100}
               invalid={!inputs.link.isValid}
               errors={inputs.link.errors}
               textInputConfig={{

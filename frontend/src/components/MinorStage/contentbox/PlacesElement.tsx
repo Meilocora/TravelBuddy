@@ -43,7 +43,6 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
   }
 
   function handleToggleSelection() {
-    console.log('Toggle Selection');
     setOpenSelection((prev) => !prev);
   }
 
@@ -95,10 +94,12 @@ const PlacesElement: React.FC<PlacesElementProps> = ({
             chosenPlaces={defaultPlacesNames}
             countryName={countryName}
             onAddHandler={handleAdd}
+            onRemoveHandler={handleDelete}
             onCloseModal={handleToggleSelection}
             onFetchRequest={() =>
               fetchavailablePlacesByCountry(minorStage.id, countryName)
             }
+            minorStageId={minorStage.id}
           />
         </Modal>
       )}

@@ -7,9 +7,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TransportationElement from './TransportationElement';
 import PlacesElement from './PlacesElement';
 import {
-  addMinorStageToFavoritePlace,
+  addMinorStageToPlace,
   deleteActivity,
-  removeMinorStageFromFavoritePlace,
+  removeMinorStageFromPlace,
 } from '../../../utils/http';
 import ActivityElement from './ActivityElement';
 import SpendingElement from './SpendingElement';
@@ -61,12 +61,12 @@ const MainContent: React.FC<MainContentProps> = ({
   }
 
   async function handleAddPlace(name: string) {
-    await addMinorStageToFavoritePlace(name, minorStage.id);
+    await addMinorStageToPlace(name, minorStage.id);
     stagesCtx.fetchStagesData();
   }
 
   async function handleRemovePlace(name: string) {
-    await removeMinorStageFromFavoritePlace(name);
+    await removeMinorStageFromPlace(name);
     stagesCtx.fetchStagesData();
   }
 

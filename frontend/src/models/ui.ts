@@ -46,6 +46,7 @@ export enum Icons {
   goTo = 'arrow-forward-circle',
   arrowLeft = 'chevron-back',
   activity = 'flash',
+  routePlanner = 'git-merge-outline',
 }
 
 export enum ButtonMode {

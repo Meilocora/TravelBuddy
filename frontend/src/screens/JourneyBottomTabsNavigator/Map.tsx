@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import MapView, { LatLng, Region } from 'react-native-maps';
 import MapViewDirections, {
@@ -31,6 +31,7 @@ import { GOOGLE_API_KEY } from '@env';
 import Popup from '../../components/UI/Popup';
 import { StagesContext } from '../../store/stages-context';
 import MapLocationElement from '../../components/Maps/MapLocationElement/MapLocationElement';
+import RoutePlanner from '../../components/Maps/RoutePlanner';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -45,6 +46,10 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const [region, setRegion] = useState<Region | null>(null);
   const [directionDestination, setDirectionDestination] =
     useState<LatLng | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{
+    distance: number;
+    duration: number;
+  } | null>(null);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [directionsMode, setDirectionsMode] =
     useState<MapViewDirectionsMode>('WALKING');
@@ -52,6 +57,11 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const [pressedLocation, setPressedLocation] = useState<
     Location | undefined
   >();
+
+  const [showContent, setShowContent] = useState([
+    { button: true, list: false },
+    { button: true, list: false },
+  ]);
 
   const stagesCtx = useContext(StagesContext);
   const journeyId = stagesCtx.selectedJourneyId!;
@@ -158,6 +168,39 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     }
   }
 
+  // TODO: Let user also choose a single MinorStage, if he wants (additional selection further right)
+  // Selection also need fine tuning
+
+  function handleHideButtons(identifier: 'locationList' | 'routePlanner') {
+    if (identifier === 'locationList') {
+      if (showContent[0].button === false) {
+        setShowContent([
+          { button: true, list: false },
+          { button: true, list: false },
+        ]);
+      } else {
+        setShowContent([
+          { button: false, list: true },
+          { button: false, list: false },
+        ]);
+      }
+    } else if (identifier === 'routePlanner') {
+      if (showContent[1].button === false) {
+        setShowContent([
+          { button: true, list: false },
+          { button: true, list: false },
+        ]);
+      } else {
+        setShowContent([
+          { button: false, list: false },
+          { button: false, list: true },
+        ]);
+      }
+    }
+  }
+
+  // TODO: Enable routeplanning between all the location
+
   return (
     <View style={styles.root}>
       {popupText && (
@@ -178,6 +221,17 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         mode={directionsMode}
         setMode={handleChangeDirectionsMode}
         onPress={handlePressListElement}
+        toggleButtonVisibility={() => handleHideButtons('locationList')}
+        showContent={showContent[0]}
+      />
+      <RoutePlanner
+        locations={shownLocations}
+        mapScope={mapScope}
+        mode={directionsMode}
+        setMode={handleChangeDirectionsMode}
+        onPress={() => {}}
+        toggleButtonVisibility={() => handleHideButtons('routePlanner')}
+        showContent={showContent[1]}
       />
       <MapView
         style={styles.map}
@@ -199,6 +253,12 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
             precision='high'
             mode={directionsMode}
             onError={() => setPopupText('No route found...')}
+            onReady={(result) => {
+              setRouteInfo({
+                distance: result.distance, // in kilometers
+                duration: result.duration, // in minutes
+              });
+            }}
           />
         )}
         {shownLocations.map((location) => {
@@ -218,6 +278,17 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           onClose={handleCloseMapLocationElement}
         />
       )}
+      {routeInfo && (
+        <Pressable
+          onPress={() => setRouteInfo(null)}
+          style={styles.routeInfoContainer}
+        >
+          <Text style={styles.routeInfoText}>
+            Distance: {routeInfo.distance.toFixed(1)} km | Time:{' '}
+            {Math.round(routeInfo.duration)} min
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -233,6 +304,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '90%',
     left: '80%',
+  },
+  routeInfoContainer: {
+    position: 'absolute',
+    top: 55,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 8,
+    borderRadius: 8,
+    zIndex: 10,
+  },
+  routeInfoText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

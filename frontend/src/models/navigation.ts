@@ -60,10 +60,12 @@ export type StackParamList = {
     initialLat: number;
     initialLng: number;
     onPickLocation: (location: MapLocation) => void;
-    onResetLocation: () => void;
+    onResetLocation?: () => void;
     hasLocation: boolean;
     colorScheme?: ColorScheme;
     customCountryId?: number;
+    onPressMarker?: (name: string) => void;
+    minorStageId?: number;
   };
   ShowMap: {
     location: Location;

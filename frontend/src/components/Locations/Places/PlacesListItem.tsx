@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   name: {
     color: GlobalStyles.colors.gray50,
     fontSize: 16,
-    maxWidth: '65%',
+    maxWidth: '50%',
     marginLeft: 10,
   },
   description: {

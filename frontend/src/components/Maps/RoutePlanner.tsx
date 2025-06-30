@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
-import MapLocationListElement from './MapLocationListElement';
+import { Dimensions, ScrollView, StyleSheet, View, Text } from 'react-native';
 import Animated, { SlideInLeft, SlideOutLeft } from 'react-native-reanimated';
 import OutsidePressHandler from 'react-native-outside-press';
 import { MapViewDirectionsMode } from 'react-native-maps-directions';
@@ -12,8 +11,9 @@ import { ButtonMode, ColorScheme, Icons, Location } from '../../models';
 import Button from '../UI/Button';
 
 import { GlobalStyles } from '../../constants/styles';
+import RoutePlannerList from './RoutePlannerList';
 
-interface MapLocationListProps {
+interface RoutePlannerProps {
   locations: Location[];
   mapScope: string;
   mode: MapViewDirectionsMode;
@@ -23,7 +23,7 @@ interface MapLocationListProps {
   onPress: (location: Location) => void;
 }
 
-const MapLocationList: React.FC<MapLocationListProps> = ({
+const RoutePlanner: React.FC<RoutePlannerProps> = ({
   locations,
   mapScope,
   mode,
@@ -32,32 +32,34 @@ const MapLocationList: React.FC<MapLocationListProps> = ({
   setMode,
   onPress,
 }): ReactElement => {
-  const [selectedLocation, setSelectedLocation] = useState<
-    string | undefined
-  >();
+  const [routeLocations, setRouteLocations] = useState<string[]>([]);
 
   const isFocused = useIsFocused();
 
-  useFocusEffect(() => {
-    if (!isFocused) {
-      setSelectedLocation(undefined); // Reset only when the screen loses focus
-    }
-  });
+  // useFocusEffect(() => {
+  //   if (!isFocused) {
+  //     setRouteLocations(undefined); // Reset only when the screen loses focus
+  //   }
+  // });
 
-  useEffect(() => {
-    setSelectedLocation(undefined);
-  }, [mapScope]);
-
-  const uniqueLocations = locations.filter((location, index, self) => {
-    return (
-      self.findIndex((loc) => loc.data.name === location.data.name) === index
-    );
-  });
+  // useEffect(() => {
+  //   setRouteLocations(undefined);
+  // }, [mapScope]);
 
   function handlePressListElement(location: Location) {
-    setSelectedLocation(location.data.name);
+    // setRouteLocations(location.data.name);
     onPress(location);
     toggleButtonVisibility();
+  }
+
+  function handleAddElement(loc: string) {
+    setRouteLocations((prevValues) => [...prevValues, loc]);
+  }
+
+  function handleRemoveElement(loc: string) {
+    setRouteLocations((prevValues) =>
+      prevValues.filter((item) => item !== loc)
+    );
   }
 
   return (
@@ -69,10 +71,11 @@ const MapLocationList: React.FC<MapLocationListProps> = ({
           exiting={SlideOutLeft}
         >
           <IconButton
-            icon={Icons.listCircleOutline}
+            icon={Icons.routePlanner}
             onPress={toggleButtonVisibility}
             color='black'
-            size={40}
+            size={36}
+            style={{ marginLeft: 6 }}
           />
         </Animated.View>
       )}
@@ -113,14 +116,20 @@ const MapLocationList: React.FC<MapLocationListProps> = ({
               />
             </View>
             <ScrollView>
-              {uniqueLocations.map((location) => (
-                <MapLocationListElement
-                  key={generateRandomString()}
-                  location={location}
-                  onPress={handlePressListElement}
-                  selected={selectedLocation === location.data.name}
-                />
-              ))}
+              {/* {routeLocations &&
+                routeLocations.map((location) => (
+                  <View
+                    key={`${location.data.latitude}-${location.data.longitude}`}
+                  >
+                    <Text>{location.data.name}</Text>
+                  </View>
+                ))} */}
+              <RoutePlannerList
+                locations={locations}
+                routeElements={routeLocations}
+                onAddElement={handleAddElement}
+                onRemoveElement={handleRemoveElement}
+              />
             </ScrollView>
             <View>
               <Button
@@ -160,7 +169,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     position: 'absolute',
-    top: '40%',
+    top: '50%',
     zIndex: 1,
   },
   buttonRow: {
@@ -186,4 +195,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapLocationList;
+export default RoutePlanner;

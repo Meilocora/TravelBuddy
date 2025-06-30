@@ -25,8 +25,6 @@ interface MinorStageListElementProps {
   onDelete: (minorStageId: number) => void;
 }
 
-// TODO: Add Screen to view MinorStage on Map and make route planning between places
-
 const MinorStageListElement: React.FC<MinorStageListElementProps> = ({
   minorStage,
   onDelete,

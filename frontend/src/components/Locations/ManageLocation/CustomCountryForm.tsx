@@ -152,166 +152,173 @@ const CustomCountryForm: React.FC<CustomCountryFormProps> = ({
           onCancel={closeModalHandler}
         />
       )}
-      <ScrollView style={styles.container}>
-        {!country.wiki_link && (
+      <View style={styles.container}>
+        {!country.wiki_link ? (
           <Text style={styles.header}>{country.name}</Text>
+        ) : (
+          country.wiki_link && (
+            <TextLink link={country.wiki_link} textStyle={headerStyle}>
+              {country.name}
+            </TextLink>
+          )
         )}
-        {country.wiki_link && (
-          <TextLink link={country.wiki_link} textStyle={headerStyle}>
-            {country.name}
-          </TextLink>
-        )}
-        <View style={styles.formRow}>
-          <InfoPoint title='Capital' value={country.capital || 'No data...'} />
-          <InfoPoint title='Code' value={country.code || 'No data...'} />
-        </View>
-        <View style={styles.formRow}>
-          <Pressable
-            style={{ width: '50%' }}
-            onPress={() => setSwitchConversion((prevValue) => !prevValue)}
-          >
+        <ScrollView>
+          <View style={styles.formRow}>
             <InfoPoint
-              title='Currencies'
-              value={currency || 'No data...'}
-              touchable={currencyObj && currencyObj.currency !== 'EUR'}
+              title='Capital'
+              value={country.capital || 'No data...'}
             />
-          </Pressable>
-          <InfoPoint
-            title='Population'
-            value={population?.toString() || 'No data...'}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <InfoPoint title='Region' value={country.region || 'No data...'} />
-          <InfoPoint
-            title='Subregion'
-            value={country.subregion || 'No data...'}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <InfoPoint
-            title='Languages'
-            value={languages?.toString() || 'No data...'}
-          />
-        </View>
-        <View style={styles.formRow}>
-          <InfoPoint
-            title='Timezones'
-            value={country.timezones?.toString() || 'No data...'}
-          />
-        </View>
-        <View style={styles.formRow}>
-          {!isEditing ? (
+            <InfoPoint title='Code' value={country.code || 'No data...'} />
+          </View>
+          <View style={styles.formRow}>
+            <Pressable
+              style={{ width: '50%' }}
+              onPress={() => setSwitchConversion((prevValue) => !prevValue)}
+            >
+              <InfoPoint
+                title='Currencies'
+                value={currency || 'No data...'}
+                touchable={currencyObj && currencyObj.currency !== 'EUR'}
+              />
+            </Pressable>
             <InfoPoint
-              title='Best Time to Visit'
-              value={country.best_time_to_visit || 'No data...'}
+              title='Population'
+              value={population?.toString() || 'No data...'}
             />
-          ) : (
-            <Input
-              label='Best Time to Visit'
-              maxLength={50}
-              invalid={!inputs.best_time_to_visit.isValid}
-              errors={inputs.best_time_to_visit.errors}
-              isEditing={isEditing}
-              style={styles.input}
-              textInputConfig={{
-                value: inputs.best_time_to_visit.value?.toString(),
-                placeholder: 'Enter best time to visit here',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'best_time_to_visit'
-                ),
-              }}
-            />
-          )}
-        </View>
-        <View style={styles.formRow}>
-          {!isEditing ? (
+          </View>
+          <View style={styles.formRow}>
+            <InfoPoint title='Region' value={country.region || 'No data...'} />
             <InfoPoint
-              title='General Information'
-              value={country.general_information || 'No data...'}
+              title='Subregion'
+              value={country.subregion || 'No data...'}
             />
-          ) : (
-            <Input
-              label='General Information'
-              maxLength={300}
-              invalid={!inputs.general_information.isValid}
-              errors={inputs.general_information.errors}
-              isEditing={isEditing}
-              style={styles.input}
-              textInputConfig={{
-                multiline: true,
-                value: inputs.general_information.value?.toString(),
-                placeholder: 'Enter general information here',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'general_information'
-                ),
-              }}
-            />
-          )}
-        </View>
-        <View style={styles.formRow}>
-          {!isEditing ? (
+          </View>
+          <View style={styles.formRow}>
             <InfoPoint
-              title='Visum Regulations'
-              value={country.visum_regulations || 'No data...'}
+              title='Languages'
+              value={languages?.toString() || 'No data...'}
             />
-          ) : (
-            <Input
-              label='Visum Regulations'
-              maxLength={100}
-              invalid={!inputs.visum_regulations.isValid}
-              errors={inputs.visum_regulations.errors}
-              isEditing={isEditing}
-              style={styles.input}
-              textInputConfig={{
-                multiline: true,
-                value: inputs.visum_regulations.value?.toString(),
-                placeholder: 'Enter visum regulations here',
-                onChangeText: inputChangedHandler.bind(
-                  this,
-                  'visum_regulations'
-                ),
-              }}
+          </View>
+          <View style={styles.formRow}>
+            <InfoPoint
+              title='Timezones'
+              value={country.timezones?.toString() || 'No data...'}
             />
-          )}
-        </View>
-        <PlacesToggle
-          isShowingPlaces={isShowingPlaces}
-          handleTogglePlaces={handleTogglePlaces}
-        />
-        <View style={styles.buttonsContainer}>
-          {!isEditing && (
-            <IconButton
-              icon={Icons.delete}
-              onPress={deleteHandler}
-              size={36}
-              color={GlobalStyles.colors.error500}
-            />
-          )}
-          {isEditing && (
-            <>
-              <Button
-                colorScheme={ColorScheme.primary}
-                onPress={validateInputs}
-              >
-                {buttonLabel}
-              </Button>
-            </>
-          )}
-        </View>
-      </ScrollView>
+          </View>
+          <View style={styles.formRow}>
+            {!isEditing ? (
+              <InfoPoint
+                title='Best Time to Visit'
+                value={country.best_time_to_visit || 'No data...'}
+              />
+            ) : (
+              <Input
+                label='Best Time to Visit'
+                maxLength={50}
+                invalid={!inputs.best_time_to_visit.isValid}
+                errors={inputs.best_time_to_visit.errors}
+                isEditing={isEditing}
+                style={styles.input}
+                textInputConfig={{
+                  value: inputs.best_time_to_visit.value?.toString(),
+                  placeholder: 'Enter best time to visit here',
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'best_time_to_visit'
+                  ),
+                }}
+              />
+            )}
+          </View>
+          <View style={styles.formRow}>
+            {!isEditing ? (
+              <InfoPoint
+                title='General Information'
+                value={country.general_information || 'No data...'}
+              />
+            ) : (
+              <Input
+                label='General Information'
+                maxLength={300}
+                invalid={!inputs.general_information.isValid}
+                errors={inputs.general_information.errors}
+                isEditing={isEditing}
+                style={styles.input}
+                textInputConfig={{
+                  multiline: true,
+                  value: inputs.general_information.value?.toString(),
+                  placeholder: 'Enter general information here',
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'general_information'
+                  ),
+                }}
+              />
+            )}
+          </View>
+          <View style={styles.formRow}>
+            {!isEditing ? (
+              <InfoPoint
+                title='Visum Regulations'
+                value={country.visum_regulations || 'No data...'}
+              />
+            ) : (
+              <Input
+                label='Visum Regulations'
+                maxLength={100}
+                invalid={!inputs.visum_regulations.isValid}
+                errors={inputs.visum_regulations.errors}
+                isEditing={isEditing}
+                style={styles.input}
+                textInputConfig={{
+                  multiline: true,
+                  value: inputs.visum_regulations.value?.toString(),
+                  placeholder: 'Enter visum regulations here',
+                  onChangeText: inputChangedHandler.bind(
+                    this,
+                    'visum_regulations'
+                  ),
+                }}
+              />
+            )}
+          </View>
+          <PlacesToggle
+            isShowingPlaces={isShowingPlaces}
+            handleTogglePlaces={handleTogglePlaces}
+          />
+          <View style={styles.buttonsContainer}>
+            {!isEditing && (
+              <IconButton
+                icon={Icons.delete}
+                onPress={deleteHandler}
+                size={36}
+                color={GlobalStyles.colors.error500}
+              />
+            )}
+            {isEditing && (
+              <>
+                <Button
+                  colorScheme={ColorScheme.primary}
+                  onPress={validateInputs}
+                >
+                  {buttonLabel}
+                </Button>
+              </>
+            )}
+          </View>
+        </ScrollView>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {},
   container: {
     flex: 1,
     padding: 12,
     marginVertical: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     backgroundColor: 'rgba(169, 169, 169, 0.3)',
     borderRadius: 10,
   },

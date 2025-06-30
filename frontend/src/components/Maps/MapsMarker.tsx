@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { MapMarker, Marker } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 
@@ -43,21 +43,27 @@ const width = 32;
 interface MapsMarkerProps {
   location: Location;
   active?: boolean;
+  onPressMarker?: (name: string) => void;
 }
 
 const MapsMarker: React.FC<MapsMarkerProps> = ({
   location,
   active,
+  onPressMarker,
 }): ReactElement => {
+  const [tracksViewChanges, setTracksViewChanges] = useState(true);
   const { description, locationType, transportationType, data, color, done } =
     location;
 
   const markerColor = active ? 'blue' : color;
 
   const markerRef = useRef<MapMarker>(null);
-  useEffect(() => {
-    markerRef.current!.redraw();
-  }, [location]);
+
+  function handlePressMarker() {
+    if (onPressMarker) {
+      onPressMarker(location.data.name);
+    }
+  }
 
   // Construct the icon key
   let iconKey: string = locationType;
@@ -67,16 +73,23 @@ const MapsMarker: React.FC<MapsMarkerProps> = ({
   // Get the corresponding icon component
   const IconComponent = iconMap[iconKey] || null; // Fallback to null if no icon is found
 
+  useEffect(() => {
+    // After a short delay, stop tracking view changes to prevent flicker
+    const timeout = setTimeout(() => setTracksViewChanges(false), 500);
+    return () => clearTimeout(timeout);
+  }, [iconKey, markerColor, done]); // rerun if icon or color changes
+
   return (
     <Marker
       ref={markerRef}
       title={data.name}
-      tracksViewChanges={false}
+      tracksViewChanges={tracksViewChanges}
       coordinate={{
         latitude: data.latitude,
         longitude: data.longitude,
       }}
       description={description}
+      onPress={handlePressMarker}
     >
       <View style={{ zIndex: 10 }}>
         {IconComponent && (

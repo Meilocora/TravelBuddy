@@ -53,8 +53,7 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Implement frontend validation to Forms for max and min length of an entry
-// TODO: Check whole frontend
+// TODO: Extra Functionality for Map
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile as part of userContext
 
 // TODO: Change all LayoutAnimations into something that actually works
