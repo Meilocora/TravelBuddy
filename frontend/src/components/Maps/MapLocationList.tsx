@@ -122,7 +122,7 @@ const MapLocationList: React.FC<MapLocationListProps> = ({
                 />
               ))}
             </ScrollView>
-            <View>
+            {/* <View>
               <Button
                 colorScheme={ColorScheme.neutral}
                 onPress={toggleButtonVisibility}
@@ -131,7 +131,7 @@ const MapLocationList: React.FC<MapLocationListProps> = ({
               >
                 Dismiss
               </Button>
-            </View>
+            </View> */}
           </OutsidePressHandler>
         </Animated.View>
       )}

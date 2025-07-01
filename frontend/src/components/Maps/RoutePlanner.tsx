@@ -116,14 +116,6 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
               />
             </View>
             <ScrollView>
-              {/* {routeLocations &&
-                routeLocations.map((location) => (
-                  <View
-                    key={`${location.data.latitude}-${location.data.longitude}`}
-                  >
-                    <Text>{location.data.name}</Text>
-                  </View>
-                ))} */}
               <RoutePlannerList
                 locations={locations}
                 routeElements={routeLocations}
@@ -131,7 +123,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
                 onRemoveElement={handleRemoveElement}
               />
             </ScrollView>
-            <View>
+            {/* <View>
               <Button
                 colorScheme={ColorScheme.neutral}
                 onPress={toggleButtonVisibility}
@@ -140,7 +132,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
               >
                 Dismiss
               </Button>
-            </View>
+            </View> */}
           </OutsidePressHandler>
         </Animated.View>
       )}

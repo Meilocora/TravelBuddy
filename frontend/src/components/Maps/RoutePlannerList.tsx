@@ -14,6 +14,7 @@ import OutsidePressHandler from 'react-native-outside-press';
 import Button from '../UI/Button';
 import { generateRandomString } from '../../utils';
 import ListItem from '../UI/search/ListItem';
+import RoutePlannerListElement from './RoutePlannerListElement';
 
 interface RoutePlannerListProps {
   locations: Location[];
@@ -32,7 +33,10 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
 }): ReactElement => {
   const [showModal, setShowModal] = useState(false);
   const origin = routeElements[0];
-  const destination = routeElements[routeElements.length - 1];
+  let destination = '';
+  if (routeElements.length > 1) {
+    destination = routeElements[routeElements.length - 1];
+  }
   const choosableLocations = locations
     .map((loc) => loc.data.name)
     .filter((name) => !routeElements.includes(name));
@@ -42,77 +46,90 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
     // TODO: Open Selection, that lets the user choose a location, that has not been added yet
   }
 
+  function handleAddElement(name: string) {
+    onAddElement(name);
+    setShowModal(false);
+  }
+
   return (
     <>
       {showModal && (
-        // <OutsidePressHandler
-        //   onOutsidePress={() => console.log('Pressed Outside')}
-        //   style={styles.selectionContainer}
-        // >
-        // <Modal visible={showModal}>
-        <View style={styles.selectionContainer}>
-          <View style={styles.listContainer}>
-            <ScrollView style={styles.list}>
-              {choosableLocations.map((name: string) => (
-                <ListItem
-                  key={generateRandomString()}
-                  onPress={() => onAddElement(name)}
-                >
-                  {name}
-                </ListItem>
-              ))}
-            </ScrollView>
-            <Button
-              colorScheme={ColorScheme.neutral}
-              mode={ButtonMode.flat}
-              onPress={() => setShowModal(false)}
-              style={styles.button}
-            >
-              Dismiss
-            </Button>
+        <Modal
+          visible={showModal}
+          transparent
+          animationType='fade'
+          onRequestClose={() => setShowModal(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.listContainer}>
+              <ScrollView style={styles.list}>
+                {choosableLocations.map((name: string) => (
+                  <ListItem
+                    key={generateRandomString()}
+                    onPress={() => handleAddElement(name)}
+                  >
+                    {name}
+                  </ListItem>
+                ))}
+              </ScrollView>
+              <Button
+                colorScheme={ColorScheme.neutral}
+                mode={ButtonMode.flat}
+                onPress={() => setShowModal(false)}
+                style={styles.button}
+              >
+                Dismiss
+              </Button>
+            </View>
           </View>
-        </View>
-        // </Modal>
-        // </OutsidePressHandler>
+        </Modal>
       )}
       <View>
-        <Pressable style={styles.container} onPress={handlePressElement}>
-          <Text style={styles.subtitle}>Origin</Text>
-          <Text style={styles.name}>{origin}</Text>
-        </Pressable>
-        <View style={styles.seperator}></View>
-        <IconButton
-          icon={Icons.add}
-          onPress={() => {}}
-          color={GlobalStyles.colors.gray500}
-          style={styles.icon}
-          size={30}
+        <RoutePlannerListElement
+          name={origin}
+          subtitle={'Origin'}
+          onPress={handlePressElement}
         />
         <View style={styles.seperator}></View>
-        <Pressable style={styles.container} onPress={handlePressElement}>
-          <Text style={styles.subtitle}>Destination</Text>
-          <Text style={styles.name}>{destination}</Text>
-        </Pressable>
+        {routeElements.length > 2 &&
+          routeElements.slice(1, -1).map((name) => (
+            <>
+              <RoutePlannerListElement
+                key={generateRandomString()}
+                name={name}
+                onPress={handlePressElement}
+              />
+              <View style={styles.seperator}></View>
+            </>
+          ))}
+        <RoutePlannerListElement
+          name={destination}
+          subtitle={'Destination'}
+          onPress={handlePressElement}
+        />
+        <Button
+          onPress={() => setShowModal(true)}
+          colorScheme={ColorScheme.neutral}
+          style={styles.icon}
+        >
+          Add Stopover
+        </Button>
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
-    alignContent: 'center',
-    marginVertical: 10,
-  },
-  selectionContainer: {
-    position: 'absolute',
-    height: 500,
-    maxHeight: 200,
-    zIndex: 1,
-    backgroundColor: 'red',
+    alignItems: 'center',
   },
   listContainer: {
-    marginHorizontal: 10,
+    maxHeight: '70%',
+    width: '80%',
+    alignItems: 'center',
     paddingTop: 10,
     backgroundColor: GlobalStyles.colors.gray700,
     borderColor: GlobalStyles.colors.gray100,
@@ -130,25 +147,16 @@ const styles = StyleSheet.create({
   button: {
     marginHorizontal: 'auto',
   },
-  subtitle: {
-    marginLeft: 10,
-  },
-  name: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginVertical: 2,
-    paddingVertical: 2,
-    paddingHorizontal: 4,
-    borderRadius: 20,
-    borderWidth: 1,
-    minWidth: 200,
-  },
   seperator: {
     width: '50%',
-    height: 25,
+    height: 12,
     alignSelf: 'flex-start',
     borderRightWidth: 2,
     borderColor: GlobalStyles.colors.gray500,
+  },
+  iconContainer: {
+    marginVertical: 4,
+    paddingVertical: 0,
   },
   icon: {
     justifyContent: 'center',
