@@ -19,7 +19,7 @@ import RoutePlannerListElement from './RoutePlannerListElement';
 interface RoutePlannerListProps {
   locations: Location[];
   routeElements: string[];
-  onAddElement: (loc: string) => void;
+  onAddElement: (loc: string, index: number) => void;
   onRemoveElement: (loc: string) => void;
   onSwitchElements?: (loc1: string, loc2: string) => void;
 }
@@ -32,24 +32,29 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
   onSwitchElements,
 }): ReactElement => {
   const [showModal, setShowModal] = useState(false);
-  const origin = routeElements[0];
-  let destination = '';
-  if (routeElements.length > 1) {
-    destination = routeElements[routeElements.length - 1];
-  }
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const choosableLocations = locations
     .map((loc) => loc.data.name)
     .filter((name) => !routeElements.includes(name));
 
-  function handlePressElement() {
+  function handlePressButton() {
+    setCurrentIndex(99);
     setShowModal(true);
-    // TODO: Open Selection, that lets the user choose a location, that has not been added yet
+  }
+
+  function handlePressElement(index: number) {
+    setCurrentIndex(index);
+    setShowModal(true);
   }
 
   function handleAddElement(name: string) {
-    onAddElement(name);
+    onAddElement(name, currentIndex);
     setShowModal(false);
   }
+
+  // TODO: Allow removing places
+  // TODO: Allow switching places by gesture
 
   return (
     <>
@@ -67,6 +72,8 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
                   <ListItem
                     key={generateRandomString()}
                     onPress={() => handleAddElement(name)}
+                    containerStyles={styles.listElementContainer}
+                    textStyles={styles.listElementText}
                   >
                     {name}
                   </ListItem>
@@ -77,6 +84,7 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
                 mode={ButtonMode.flat}
                 onPress={() => setShowModal(false)}
                 style={styles.button}
+                textStyle={styles.buttonText}
               >
                 Dismiss
               </Button>
@@ -86,34 +94,43 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
       )}
       <View>
         <RoutePlannerListElement
-          name={origin}
+          name={routeElements[0] || ''}
           subtitle={'Origin'}
-          onPress={handlePressElement}
+          onPress={() => handlePressElement(0)}
         />
         <View style={styles.seperator}></View>
         {routeElements.length > 2 &&
-          routeElements.slice(1, -1).map((name) => (
-            <>
+          routeElements.slice(1, -1).map((name, index) => (
+            <View key={generateRandomString()}>
               <RoutePlannerListElement
-                key={generateRandomString()}
                 name={name}
-                onPress={handlePressElement}
+                onPress={() => handlePressElement(index + 1)}
               />
               <View style={styles.seperator}></View>
-            </>
+            </View>
           ))}
         <RoutePlannerListElement
-          name={destination}
+          name={
+            routeElements.length > 1
+              ? routeElements[routeElements.length - 1]
+              : ''
+          }
           subtitle={'Destination'}
-          onPress={handlePressElement}
+          onPress={() =>
+            handlePressElement(
+              routeElements.length > 1 ? routeElements.length - 1 : 1
+            )
+          }
         />
-        <Button
-          onPress={() => setShowModal(true)}
-          colorScheme={ColorScheme.neutral}
-          style={styles.icon}
-        >
-          Add Stopover
-        </Button>
+        {routeElements.length > 1 && (
+          <Button
+            onPress={handlePressButton}
+            colorScheme={ColorScheme.neutral}
+            style={styles.icon}
+          >
+            Add Stopover
+          </Button>
+        )}
       </View>
     </>
   );
@@ -122,7 +139,7 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -131,8 +148,8 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
     paddingTop: 10,
-    backgroundColor: GlobalStyles.colors.gray700,
-    borderColor: GlobalStyles.colors.gray100,
+    backgroundColor: GlobalStyles.colors.gray50,
+    borderColor: GlobalStyles.colors.gray500,
     borderWidth: 1,
     borderRadius: 20,
     zIndex: 1,
@@ -140,12 +157,21 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: 5,
     borderBottomWidth: 1,
-    borderBottomColor: GlobalStyles.colors.gray100,
+    borderBottomColor: GlobalStyles.colors.gray500,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
+  listElementContainer: {
+    borderColor: GlobalStyles.colors.gray500,
+  },
+  listElementText: {
+    color: GlobalStyles.colors.gray500,
+  },
   button: {
     marginHorizontal: 'auto',
+  },
+  buttonText: {
+    color: GlobalStyles.colors.gray500,
   },
   seperator: {
     width: '50%',

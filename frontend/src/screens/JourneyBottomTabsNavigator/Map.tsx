@@ -52,7 +52,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   } | null>(null);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [directionsMode, setDirectionsMode] =
-    useState<MapViewDirectionsMode>('WALKING');
+    useState<MapViewDirectionsMode>('DRIVING');
   const [popupText, setPopupText] = useState<string | undefined>();
   const [pressedLocation, setPressedLocation] = useState<
     Location | undefined

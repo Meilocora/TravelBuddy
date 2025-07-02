@@ -52,8 +52,25 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
     toggleButtonVisibility();
   }
 
-  function handleAddElement(loc: string) {
-    setRouteLocations((prevValues) => [...prevValues, loc]);
+  function handleAddElement(loc: string, index: number) {
+    if (routeLocations.length === 1 && index === 1) {
+      return setRouteLocations((prevValues) => [...prevValues, loc]);
+    } else if (index === 99) {
+      return setRouteLocations((prevValues) => [
+        ...prevValues.slice(0, -1),
+        loc,
+        prevValues[prevValues.length - 1],
+      ]);
+    }
+
+    console.log(index);
+
+    setRouteLocations((prevValues) => [
+      ...prevValues.slice(0, index!),
+      loc,
+      ...prevValues.slice(index! + 1),
+    ]);
+    // }
   }
 
   function handleRemoveElement(loc: string) {
