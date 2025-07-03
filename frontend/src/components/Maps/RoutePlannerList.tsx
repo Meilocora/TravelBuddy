@@ -1,16 +1,9 @@
 import { ReactElement, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  Modal,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Modal } from 'react-native';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+
 import { GlobalStyles } from '../../constants/styles';
-import IconButton from '../UI/IconButton';
-import { ButtonMode, ColorScheme, Icons, Location } from '../../models';
-import OutsidePressHandler from 'react-native-outside-press';
+import { ButtonMode, ColorScheme, Location } from '../../models';
 import Button from '../UI/Button';
 import { generateRandomString } from '../../utils';
 import ListItem from '../UI/search/ListItem';
@@ -21,7 +14,7 @@ interface RoutePlannerListProps {
   routeElements: string[];
   onAddElement: (loc: string, index: number) => void;
   onRemoveElement: (loc: string) => void;
-  onSwitchElements?: (loc1: string, loc2: string) => void;
+  onSwitchElements: (locs: string[]) => void;
 }
 
 const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
@@ -53,8 +46,13 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
     setShowModal(false);
   }
 
-  // TODO: Allow removing places
-  // TODO: Allow switching places by gesture
+  function handleRemoveElement(name: string) {
+    onRemoveElement(name);
+  }
+
+  function handleSwitchElements(locs: string[]) {
+    onSwitchElements(locs);
+  }
 
   return (
     <>
@@ -92,46 +90,66 @@ const RoutePlannerList: React.FC<RoutePlannerListProps> = ({
           </View>
         </Modal>
       )}
-      <View>
-        <RoutePlannerListElement
-          name={routeElements[0] || ''}
-          subtitle={'Origin'}
-          onPress={() => handlePressElement(0)}
+      {routeElements.length < 2 && (
+        <>
+          <RoutePlannerListElement
+            name={routeElements[0] || ''}
+            subtitle={'Origin'}
+            onPress={() => handlePressElement(0)}
+            onRemove={handleRemoveElement}
+            onLongPress={() => {}}
+          />
+          <RoutePlannerListElement
+            name={routeElements[1] || ''}
+            subtitle={'Destination'}
+            onPress={() => handlePressElement(1)}
+            onRemove={handleRemoveElement}
+            onLongPress={() => {}}
+          />
+        </>
+      )}
+      {!showModal && routeElements.length > 1 && (
+        <DraggableFlatList
+          data={routeElements}
+          keyExtractor={(item) => item}
+          renderItem={({ item, getIndex, drag, isActive }) => {
+            const index = getIndex?.() ?? 0;
+            return (
+              <>
+                <RoutePlannerListElement
+                  name={item}
+                  onPress={() => handlePressElement(index + 1)}
+                  onRemove={handleRemoveElement}
+                  onLongPress={drag}
+                  subtitle={
+                    index === 0
+                      ? 'Origin'
+                      : index === routeElements.length - 1
+                      ? 'Destination'
+                      : ''
+                  }
+                  isActive={isActive}
+                />
+                {index !== routeElements.length - 1 && (
+                  <View style={styles.seperator}></View>
+                )}
+              </>
+            );
+          }}
+          onDragEnd={({ data }) => {
+            onSwitchElements(data);
+          }}
         />
-        <View style={styles.seperator}></View>
-        {routeElements.length > 2 &&
-          routeElements.slice(1, -1).map((name, index) => (
-            <View key={generateRandomString()}>
-              <RoutePlannerListElement
-                name={name}
-                onPress={() => handlePressElement(index + 1)}
-              />
-              <View style={styles.seperator}></View>
-            </View>
-          ))}
-        <RoutePlannerListElement
-          name={
-            routeElements.length > 1
-              ? routeElements[routeElements.length - 1]
-              : ''
-          }
-          subtitle={'Destination'}
-          onPress={() =>
-            handlePressElement(
-              routeElements.length > 1 ? routeElements.length - 1 : 1
-            )
-          }
-        />
-        {routeElements.length > 1 && (
-          <Button
-            onPress={handlePressButton}
-            colorScheme={ColorScheme.neutral}
-            style={styles.icon}
-          >
-            Add Stopover
-          </Button>
-        )}
-      </View>
+      )}
+      {routeElements.length > 1 && (
+        <Button
+          onPress={handlePressButton}
+          colorScheme={ColorScheme.neutral}
+          style={styles.icon}
+        >
+          Add Stopover
+        </Button>
+      )}
     </>
   );
 };
@@ -152,7 +170,7 @@ const styles = StyleSheet.create({
     borderColor: GlobalStyles.colors.gray500,
     borderWidth: 1,
     borderRadius: 20,
-    zIndex: 1,
+    zIndex: 2,
   },
   list: {
     paddingHorizontal: 5,
@@ -174,7 +192,7 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.gray500,
   },
   seperator: {
-    width: '50%',
+    width: '45%',
     height: 12,
     alignSelf: 'flex-start',
     borderRightWidth: 2,

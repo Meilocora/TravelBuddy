@@ -1,15 +1,13 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, View, Text } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { SlideInLeft, SlideOutLeft } from 'react-native-reanimated';
 import OutsidePressHandler from 'react-native-outside-press';
 import { MapViewDirectionsMode } from 'react-native-maps-directions';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { LatLng } from 'react-native-maps';
 
-import { generateRandomString } from '../../utils';
 import IconButton from '../UI/IconButton';
-import { ButtonMode, ColorScheme, Icons, Location } from '../../models';
-import Button from '../UI/Button';
-
+import { Icons, Location } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import RoutePlannerList from './RoutePlannerList';
 
@@ -20,7 +18,7 @@ interface RoutePlannerProps {
   toggleButtonVisibility: () => void;
   showContent: { button: boolean; list: boolean };
   setMode: (mode: MapViewDirectionsMode) => void;
-  onPress: (location: Location) => void;
+  setRoutePoints: (coordinates: LatLng[] | undefined) => void;
 }
 
 const RoutePlanner: React.FC<RoutePlannerProps> = ({
@@ -30,27 +28,21 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
   toggleButtonVisibility,
   showContent,
   setMode,
-  onPress,
+  setRoutePoints,
 }): ReactElement => {
   const [routeLocations, setRouteLocations] = useState<string[]>([]);
 
   const isFocused = useIsFocused();
 
-  // useFocusEffect(() => {
-  //   if (!isFocused) {
-  //     setRouteLocations(undefined); // Reset only when the screen loses focus
-  //   }
-  // });
+  useFocusEffect(() => {
+    if (!isFocused) {
+      setRouteLocations([]); // Reset only when the screen loses focus
+    }
+  });
 
-  // useEffect(() => {
-  //   setRouteLocations(undefined);
-  // }, [mapScope]);
-
-  function handlePressListElement(location: Location) {
-    // setRouteLocations(location.data.name);
-    onPress(location);
-    toggleButtonVisibility();
-  }
+  useEffect(() => {
+    setRouteLocations([]);
+  }, [mapScope]);
 
   function handleAddElement(loc: string, index: number) {
     if (routeLocations.length === 1 && index === 1) {
@@ -62,15 +54,11 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
         prevValues[prevValues.length - 1],
       ]);
     }
-
-    console.log(index);
-
     setRouteLocations((prevValues) => [
       ...prevValues.slice(0, index!),
       loc,
       ...prevValues.slice(index! + 1),
     ]);
-    // }
   }
 
   function handleRemoveElement(loc: string) {
@@ -78,6 +66,21 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
       prevValues.filter((item) => item !== loc)
     );
   }
+
+  function handleSwitchElements(locs: string[]) {
+    setRouteLocations(locs);
+  }
+
+  useEffect(() => {
+    const points = routeLocations
+      .map((name) => locations.find((loc) => loc.data.name === name))
+      .filter((loc): loc is Location => !!loc) // filter out undefined
+      .map((loc) => ({
+        latitude: loc.data.latitude,
+        longitude: loc.data.longitude,
+      }));
+    setRoutePoints(points);
+  }, [routeLocations, locations, setRoutePoints, showContent.list]);
 
   return (
     <>
@@ -132,24 +135,13 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({
                 }
               />
             </View>
-            <ScrollView>
-              <RoutePlannerList
-                locations={locations}
-                routeElements={routeLocations}
-                onAddElement={handleAddElement}
-                onRemoveElement={handleRemoveElement}
-              />
-            </ScrollView>
-            {/* <View>
-              <Button
-                colorScheme={ColorScheme.neutral}
-                onPress={toggleButtonVisibility}
-                mode={ButtonMode.flat}
-                textStyle={styles.buttonText}
-              >
-                Dismiss
-              </Button>
-            </View> */}
+            <RoutePlannerList
+              locations={locations}
+              routeElements={routeLocations}
+              onAddElement={handleAddElement}
+              onRemoveElement={handleRemoveElement}
+              onSwitchElements={handleSwitchElements}
+            />
           </OutsidePressHandler>
         </Animated.View>
       )}

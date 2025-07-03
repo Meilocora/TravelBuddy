@@ -57,6 +57,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   const [pressedLocation, setPressedLocation] = useState<
     Location | undefined
   >();
+  const [routePoints, setRoutePoints] = useState<LatLng[] | undefined>();
 
   const [showContent, setShowContent] = useState([
     { button: true, list: false },
@@ -141,6 +142,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setMapScope(mapType);
     setDirectionDestination(null);
     setPressedLocation(undefined);
+    setRoutePoints(undefined);
+    setRouteInfo(null);
 
     if (mapType !== 'Journey') {
       const filteredLocations = locations.filter(
@@ -183,6 +186,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           { button: false, list: true },
           { button: false, list: false },
         ]);
+        setRoutePoints(undefined);
+        setRouteInfo(null);
       }
     } else if (identifier === 'routePlanner') {
       if (showContent[1].button === false) {
@@ -195,11 +200,11 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           { button: false, list: false },
           { button: false, list: true },
         ]);
+        setDirectionDestination(null);
+        setRouteInfo(null);
       }
     }
   }
-
-  // TODO: Enable routeplanning between all the location
 
   return (
     <View style={styles.root}>
@@ -229,9 +234,9 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         mapScope={mapScope}
         mode={directionsMode}
         setMode={handleChangeDirectionsMode}
-        onPress={() => {}}
         toggleButtonVisibility={() => handleHideButtons('routePlanner')}
         showContent={showContent[1]}
+        setRoutePoints={setRoutePoints}
       />
       <MapView
         style={styles.map}
@@ -246,8 +251,27 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
             apikey={GOOGLE_API_KEY}
             origin={userLocation}
             destination={directionDestination}
-            // TODO: User should be able to enter multiple waypoints and change the origin to another place
-            // waypoints={}
+            strokeWidth={4}
+            strokeColor='blue'
+            precision='high'
+            mode={directionsMode}
+            onError={() => setPopupText('No route found...')}
+            onReady={(result) => {
+              setRouteInfo({
+                distance: result.distance, // in kilometers
+                duration: result.duration, // in minutes
+              });
+            }}
+          />
+        )}
+        {routePoints && routePoints.length > 1 && (
+          <MapViewDirections
+            apikey={GOOGLE_API_KEY}
+            origin={routePoints[0]}
+            destination={routePoints[routePoints.length - 1]}
+            waypoints={
+              routePoints.length > 2 ? routePoints.slice(1, -1) : undefined
+            }
             strokeWidth={4}
             strokeColor='blue'
             precision='high'
