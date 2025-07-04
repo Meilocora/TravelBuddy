@@ -14,12 +14,11 @@ import { generateRandomString } from '../../utils';
 import Button from '../UI/Button';
 import { ButtonMode, ColorScheme } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
-import { StageData } from '../../screens/JourneyBottomTabsNavigator/Map';
 
 interface MapTypeSelectorProps {
   onChangeMapType: (mapType: string) => void;
   value: string;
-  mapScopeList: StageData[];
+  mapScopeList: string[];
 }
 
 const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
@@ -28,7 +27,7 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
   mapScopeList,
 }): ReactElement => {
   const [openSelection, setOpenSelection] = useState(false);
-  const mapScopeChoice = mapScopeList.filter((item) => item.name !== value);
+  const mapScopeChoice = mapScopeList.filter((item) => item !== value);
 
   function handleOpenModal() {
     setOpenSelection(true);
@@ -48,8 +47,6 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
     setOpenSelection(false);
   }
 
-  // TODO: First field should be whole journey, next a specific majorStage, next a specific MinorStage
-
   return (
     <View style={styles.root}>
       <View style={styles.container}>
@@ -66,14 +63,14 @@ const MapTypeSelector: React.FC<MapTypeSelectorProps> = ({
             <OutsidePressHandler onOutsidePress={handlePressOutside}>
               <View style={styles.listContainer}>
                 <ScrollView style={styles.list}>
-                  {mapScopeChoice.map((item: StageData) => (
+                  {mapScopeChoice.map((item: string) => (
                     <ListItem
                       key={generateRandomString()}
                       onPress={handlePressListElement.bind(item)}
                       textStyles={styles.listItemText}
                       containerStyles={styles.listItemContainer}
                     >
-                      {item.name}
+                      {item}
                     </ListItem>
                   ))}
                 </ScrollView>

@@ -8,9 +8,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 import { generateRandomString } from '../../utils';
 import IconButton from '../UI/IconButton';
-import { ButtonMode, ColorScheme, Icons, Location } from '../../models';
-import Button from '../UI/Button';
-
+import { Icons, Location } from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 
 interface MapLocationListProps {

@@ -1,5 +1,11 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ReactElement, useCallback, useContext, useState } from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import MapView, { LatLng, Region } from 'react-native-maps';
@@ -16,6 +22,7 @@ import MapsMarker from '../../components/Maps/MapsMarker';
 import MapTypeSelector from '../../components/Maps/MapTypeSelector';
 import {
   addColor,
+  getCurrentLocation,
   getMapLocationsFromJourney,
   getRegionForLocations,
 } from '../../utils/location';
@@ -25,20 +32,15 @@ import Popup from '../../components/UI/Popup';
 import { StagesContext } from '../../store/stages-context';
 import MapLocationElement from '../../components/Maps/MapLocationElement/MapLocationElement';
 import RoutePlanner from '../../components/Maps/RoutePlanner';
-import { UserContext } from '../../store/user-context';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
   route: RouteProp<JourneyBottomTabsParamsList, 'Map'>;
 }
 
-export interface StageData {
-  stageType: 'Journey' | 'MajorStage' | 'MinorStage';
-  id: number;
-  name: string;
-}
-
 const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
+  const [mapScope, setMapScope] = useState<string>('Journey');
+  const [mapScopeList, setMapScopeList] = useState<string[]>(['Journey']);
   const [locations, setLocations] = useState<Location[]>([]);
   const [shownLocations, setShownLocations] = useState<Location[]>([]);
   const [region, setRegion] = useState<Region | null>(null);
@@ -48,6 +50,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     distance: number;
     duration: number;
   } | null>(null);
+  const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [directionsMode, setDirectionsMode] =
     useState<MapViewDirectionsMode>('DRIVING');
   const [popupText, setPopupText] = useState<string | undefined>();
@@ -61,64 +64,48 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     { button: true, list: false },
   ]);
 
-  const userCtx = useContext(UserContext);
   const stagesCtx = useContext(StagesContext);
   const journeyId = stagesCtx.selectedJourneyId!;
   const journey = stagesCtx.findJourney(journeyId);
 
-  const [mapScope, setMapScope] = useState<StageData>({
-    stageType: 'Journey',
-    id: journeyId,
-    name: journey!.name,
-  });
-
-  // TODO: This should be outcourced to MapStyleDetector ... also rename to mapScopeSelector
-  const [mapScopeList, setMapScopeList] = useState<StageData[]>([
-    { stageType: 'Journey', id: journeyId, name: journey!.name },
-  ]);
-
-  let majorStagesData: StageData[] = [];
-  let minorStagesData: StageData[] = [];
+  let majorStageTitles: string[] = [];
+  let minorStageTitles: string[] = [];
 
   if (journey?.majorStages) {
     for (const majorStage of journey.majorStages) {
-      majorStagesData.push({
-        stageType: 'MajorStage',
-        id: majorStage.id,
-        name: majorStage.title,
-      });
+      majorStageTitles.push(majorStage.title);
       if (!majorStage.minorStages) {
         continue;
       }
       for (const minorStage of majorStage.minorStages) {
-        minorStagesData.push({
-          stageType: 'MinorStage',
-          id: minorStage.id,
-          name: minorStage.title,
-        });
+        minorStageTitles.push(minorStage.title);
       }
     }
   }
-  ////////////////////////////////////////////////////////////////////////////
+
+  // const majorStageTitles: string[] = journey?.majorStages
+  //   ? journey.majorStages.map((stage) => stage.title)
+  //   : [];
+
+  useEffect(() => {
+    async function fetchUserLocation() {
+      const currentLocation = await getCurrentLocation();
+      setUserLocation(currentLocation);
+    }
+
+    fetchUserLocation();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       // get data when the screen comes into focus
       async function getLocations() {
-        // TODO: Do this only depending on mapScope
         const locations = getMapLocationsFromJourney(journey!);
         if (locations) {
           setLocations(locations);
-
-          // TODO: Change addColor function aswell
-          const coloredLocations = addColor(locations, mapScope.name);
+          const coloredLocations = addColor(locations, mapScope);
           setShownLocations(coloredLocations);
-          // setMapScopeList((prevValues) => [...prevValues, ...majorStageTitles]);
-          setMapScopeList((prevValues) => [
-            ...prevValues,
-            ...majorStagesData,
-            ...minorStagesData,
-          ]);
+          setMapScopeList((prevValues) => [...prevValues, ...majorStageTitles]);
           const relevantLocations = locations.filter(
             (location) =>
               location.locationType !== 'transportation_departure' &&
@@ -133,11 +120,8 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       return () => {
         // Cleanup function to reset all states when the screen goes out of focus
         setLocations([]);
-        setMapScope({
-          stageType: 'Journey',
-          id: journeyId,
-          name: journey!.name,
-        });
+        setMapScopeList(['Journey']); // Reset the list on cleanup
+        setMapScope('Journey'); // Reset the map scope to default
         setPressedLocation(undefined);
       };
     }, [journeyId])
@@ -170,8 +154,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
   }
 
   async function handleChangeMapType(mapType: string) {
-    // TODO: Whats this exactly?
-    // setMapScope(mapType);
+    setMapScope(mapType);
     setDirectionDestination(null);
     setPressedLocation(undefined);
     setRoutePoints(undefined);
@@ -248,12 +231,12 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       )}
       <MapTypeSelector
         onChangeMapType={handleChangeMapType}
-        value={mapScope.name}
+        value={mapScope}
         mapScopeList={mapScopeList}
       />
       <MapLocationList
         locations={shownLocations}
-        mapScope={mapScope.name}
+        mapScope={mapScope}
         mode={directionsMode}
         setMode={handleChangeDirectionsMode}
         onPress={handlePressListElement}
@@ -262,7 +245,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       />
       <RoutePlanner
         locations={shownLocations}
-        mapScope={mapScope.name}
+        mapScope={mapScope}
         mode={directionsMode}
         setMode={handleChangeDirectionsMode}
         toggleButtonVisibility={() => handleHideButtons('routePlanner')}
@@ -277,10 +260,10 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         showsUserLocation
         showsMyLocationButton
       >
-        {directionDestination && (
+        {directionDestination && userLocation && (
           <MapViewDirections
             apikey={GOOGLE_API_KEY}
-            origin={userCtx.currentLocation}
+            origin={userLocation}
             destination={directionDestination}
             strokeWidth={4}
             strokeColor='blue'
