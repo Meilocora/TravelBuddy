@@ -49,6 +49,8 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
   const customCountryId = route.params.customCountryId || undefined;
   let placesToVisit: undefined | PlaceToVisit[];
   if (customCountryId) {
+    // TODO: Dont show places, that are part of any other minorStage already (or make them transparent!)
+    // ... maybe via new function, that returns all places for all minorStages with this country
     placesToVisit = customCountryCtx.findCountriesPlaces(customCountryId);
   }
 
@@ -154,6 +156,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           }}
         />
       )}
+      {/* TODO: Let user also press maps icon to add the place */}
       <MapView
         initialRegion={region!}
         region={region}

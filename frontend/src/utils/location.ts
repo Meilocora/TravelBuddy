@@ -496,12 +496,8 @@ export function getMapLocationsFromMinorStage(
   return locations || undefined;
 }
 
-export function addColor(locations: Location[], mapScope: string): Location[] {
-  // TODO: Adapt to new mapScope
-  // ... when stageType = Journey => leave as is
-  // ... when stageType = MajorStage => leave as is?
-  // ... when stageType = MinorStage => Only choose color by MinorStageName 
-  if (mapScope === 'Journey') {
+export function addColor(locations: Location[], stageType: string): Location[] {
+  if (stageType === 'Journey') {
     const uniqueMajorStageNames = Array.from(
       new Set(locations.map((location) => location.belonging))
     );
@@ -528,7 +524,7 @@ export function addColor(locations: Location[], mapScope: string): Location[] {
       });
       return locations;
     }
-  } else {
+  } else if (stageType === 'MajorStage') {
     // Count occurrences of minorStageName
     const uniqueMinorStageNames = Array.from(
       new Set(
@@ -560,6 +556,12 @@ export function addColor(locations: Location[], mapScope: string): Location[] {
       });
       return locations;
     }
+  } else {
+    // Make symbols black again, if only one MinorStage is being shown
+    locations.forEach((location) => {
+      delete location.color;
+    });
+    return locations;
   }
 }
 

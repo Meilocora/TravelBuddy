@@ -264,6 +264,71 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     });
   }
 
+  function resetValues() {
+    setInputs({
+      type: {
+        value: '',
+        isValid: true,
+        errors: [],
+      },
+      start_time: {
+        value: null,
+        isValid: true,
+        errors: [],
+      },
+      arrival_time: {
+        value: null,
+        isValid: true,
+        errors: [],
+      },
+      place_of_departure: {
+        value: '',
+        isValid: true,
+        errors: [],
+      },
+      departure_latitude: {
+        value: undefined,
+        isValid: true,
+        errors: [],
+      },
+      departure_longitude: {
+        value: undefined,
+        isValid: true,
+        errors: [],
+      },
+      place_of_arrival: {
+        value: '',
+        isValid: true,
+        errors: [],
+      },
+      arrival_latitude: {
+        value: undefined,
+        isValid: true,
+        errors: [],
+      },
+      arrival_longitude: {
+        value: undefined,
+        isValid: true,
+        errors: [],
+      },
+      transportation_costs: {
+        value: 0,
+        isValid: true,
+        errors: [],
+      },
+      unconvertedAmount: {
+        value: '',
+        isValid: true,
+        errors: [],
+      },
+      link: {
+        value: '',
+        isValid: true,
+        errors: [],
+      },
+    });
+  }
+
   async function validateInputs(): Promise<void> {
     setIsSubmitting(true);
 
@@ -293,6 +358,7 @@ const TransportationForm: React.FC<TransportationFormProps> = ({
     } = response!;
 
     if (!error && transportation) {
+      resetValues();
       onSubmit({
         transportation,
         status,

@@ -99,10 +99,7 @@ def create_custom_country(current_user):
             )
             
             db.session.add(new_country)
-            db.session.commit()
-            
-            print('Here')
-            
+            db.session.commit()            
             
             response_country = {'id': new_country.id,
                                 'name': new_country.name,

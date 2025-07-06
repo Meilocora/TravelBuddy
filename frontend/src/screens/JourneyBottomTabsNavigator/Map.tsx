@@ -78,10 +78,9 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         if (locations) {
           setLocations(locations);
 
-          // TODO: Change addColor function aswell
           const coloredLocations = addColor(locations, mapScope.stageType);
           setShownLocations(coloredLocations);
-          // TODO: Really filter transportations?
+          // Filter locations that could be way off to calculate an accurate region for the MapView
           const relevantLocations = locations.filter(
             (location) =>
               location.locationType !== 'transportation_departure' &&
@@ -158,12 +157,15 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     if (!filteredLocations) {
       return;
     }
-    // TODO: Really filter transportations?
+    // Filter locations that could be way off to calculate an accurate region for the MapView
     const relevantLocations = filteredLocations.filter(
       (location) =>
         location.locationType !== 'transportation_departure' &&
         location.locationType !== 'transportation_arrival'
     );
+
+    // TODO: Problem with same keay for Markers... maybe problem with updating state somewhere
+    // TODO: Maybe delete colors first, so symbols can be black for minorStages
     const coloredLocations = addColor(filteredLocations, mapScope.stageType);
     setShownLocations(coloredLocations);
 
