@@ -13,10 +13,14 @@ import {
   Location,
 } from '../../models';
 import MapsMarker from '../../components/Maps/MapsMarker';
-import MapTypeSelector from '../../components/Maps/MapTypeSelector';
+import MapScopeSelector, {
+  StageData,
+} from '../../components/Maps/MapScopeSelector';
 import {
   addColor,
   getMapLocationsFromJourney,
+  getMapLocationsFromMajorStage,
+  getMapLocationsFromMinorStage,
   getRegionForLocations,
 } from '../../utils/location';
 import MapLocationList from '../../components/Maps/MapLocationList';
@@ -30,12 +34,6 @@ import { UserContext } from '../../store/user-context';
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
   route: RouteProp<JourneyBottomTabsParamsList, 'Map'>;
-}
-
-export interface StageData {
-  stageType: 'Journey' | 'MajorStage' | 'MinorStage';
-  id: number;
-  name: string;
 }
 
 const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
@@ -72,53 +70,18 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     name: journey!.name,
   });
 
-  // TODO: This should be outcourced to MapStyleDetector ... also rename to mapScopeSelector
-  const [mapScopeList, setMapScopeList] = useState<StageData[]>([
-    { stageType: 'Journey', id: journeyId, name: journey!.name },
-  ]);
-
-  let majorStagesData: StageData[] = [];
-  let minorStagesData: StageData[] = [];
-
-  if (journey?.majorStages) {
-    for (const majorStage of journey.majorStages) {
-      majorStagesData.push({
-        stageType: 'MajorStage',
-        id: majorStage.id,
-        name: majorStage.title,
-      });
-      if (!majorStage.minorStages) {
-        continue;
-      }
-      for (const minorStage of majorStage.minorStages) {
-        minorStagesData.push({
-          stageType: 'MinorStage',
-          id: minorStage.id,
-          name: minorStage.title,
-        });
-      }
-    }
-  }
-  ////////////////////////////////////////////////////////////////////////////
-
   useFocusEffect(
     useCallback(() => {
       // get data when the screen comes into focus
       async function getLocations() {
-        // TODO: Do this only depending on mapScope
         const locations = getMapLocationsFromJourney(journey!);
         if (locations) {
           setLocations(locations);
 
           // TODO: Change addColor function aswell
-          const coloredLocations = addColor(locations, mapScope.name);
+          const coloredLocations = addColor(locations, mapScope.stageType);
           setShownLocations(coloredLocations);
-          // setMapScopeList((prevValues) => [...prevValues, ...majorStageTitles]);
-          setMapScopeList((prevValues) => [
-            ...prevValues,
-            ...majorStagesData,
-            ...minorStagesData,
-          ]);
+          // TODO: Really filter transportations?
           const relevantLocations = locations.filter(
             (location) =>
               location.locationType !== 'transportation_departure' &&
@@ -169,41 +132,43 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
     setPressedLocation(undefined);
   }
 
-  async function handleChangeMapType(mapType: string) {
-    // TODO: Whats this exactly?
-    // setMapScope(mapType);
+  async function handleChangeMapScope(mapScope: StageData) {
+    setMapScope(mapScope);
     setDirectionDestination(null);
     setPressedLocation(undefined);
     setRoutePoints(undefined);
     setRouteInfo(null);
 
-    if (mapType !== 'Journey') {
-      const filteredLocations = locations.filter(
-        (location) => location.belonging === mapType
+    let filteredLocations: Location[] | undefined;
+    if (mapScope.stageType === 'MinorStage') {
+      const minorStage = stagesCtx.findMinorStage(mapScope.id);
+      const majorStage = stagesCtx.findMinorStagesMajorStage(mapScope.id);
+      filteredLocations = getMapLocationsFromMinorStage(
+        minorStage!,
+        majorStage!
       );
-      const relevantLocations = filteredLocations.filter(
-        (location) =>
-          location.locationType !== 'transportation_departure' &&
-          location.locationType !== 'transportation_arrival'
-      );
-      const coloredLocations = addColor(filteredLocations, mapType);
-      setShownLocations(coloredLocations);
-
-      return setRegion(await getRegionForLocations(relevantLocations));
+    } else if (mapScope.stageType === 'MajorStage') {
+      const majorStage = stagesCtx.findMajorStage(mapScope.id);
+      filteredLocations = getMapLocationsFromMajorStage(majorStage!);
     } else {
-      const relevantLocations = locations.filter(
-        (location) =>
-          location.locationType !== 'transportation_departure' &&
-          location.locationType !== 'transportation_arrival'
+      const filteredLocations = locations.filter(
+        (location) => location.belonging === mapScope.name
       );
-      const coloredLocations = addColor(locations, mapType);
-      setShownLocations(coloredLocations); // Show all locations for 'Journey'
-
-      return setRegion(await getRegionForLocations(relevantLocations));
     }
-  }
+    if (!filteredLocations) {
+      return;
+    }
+    // TODO: Really filter transportations?
+    const relevantLocations = filteredLocations.filter(
+      (location) =>
+        location.locationType !== 'transportation_departure' &&
+        location.locationType !== 'transportation_arrival'
+    );
+    const coloredLocations = addColor(filteredLocations, mapScope.stageType);
+    setShownLocations(coloredLocations);
 
-  // TODO: Let user also choose a single MinorStage, if he wants (additional selection further right)
+    return setRegion(await getRegionForLocations(relevantLocations));
+  }
 
   function handleHideButtons(identifier: 'locationList' | 'routePlanner') {
     if (identifier === 'locationList') {
@@ -246,10 +211,10 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           colorScheme={ColorScheme.accent}
         />
       )}
-      <MapTypeSelector
-        onChangeMapType={handleChangeMapType}
-        value={mapScope.name}
-        mapScopeList={mapScopeList}
+      <MapScopeSelector
+        onChangeMapScope={handleChangeMapScope}
+        journey={journey!}
+        value={mapScope}
       />
       <MapLocationList
         locations={shownLocations}
@@ -274,8 +239,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         initialRegion={region!}
         region={region!}
         onPress={() => {}}
-        showsUserLocation
-        showsMyLocationButton
       >
         {directionDestination && (
           <MapViewDirections

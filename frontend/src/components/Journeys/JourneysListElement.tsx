@@ -127,6 +127,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
               }
             />
             <View style={styles.countryRow}>
+              {/* TODO: Sort Countries by stages first */}
               {journey.countries.map((country, index) => (
                 <CountryElement
                   country={country}
