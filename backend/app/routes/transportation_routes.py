@@ -26,15 +26,18 @@ def create_major_stage_transportation(current_user, majorStageId):
         return jsonify({'transportationFormValues': response, 'status': 400})
     
     try:     
+        # Remove line breaks from the name
+        clean_place_of_departure = transportation['place_of_departure']['value'].replace('\n', ' ').replace('\r', ' ')
+        clean_place_of_arrival = transportation['place_of_arrival']['value'].replace('\n', ' ').replace('\r', ' ')
         # Create a new transportation
         new_transportation = Transportation(
             type=transportation['type']['value'],
             start_time=parseDateTime(transportation['start_time']['value']),
             arrival_time=parseDateTime(transportation['arrival_time']['value']),
-            place_of_departure=transportation['place_of_departure']['value'],
+            place_of_departure=clean_place_of_departure,
             departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
             departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
-            place_of_arrival=transportation['place_of_arrival']['value'],
+            place_of_arrival=clean_place_of_arrival,
             arrival_latitude=transportation.get('arrival_latitude', {}).get('value', None),
             arrival_longitude=transportation.get('arrival_longitude', {}).get('value', None),
             transportation_costs=transportation['transportation_costs']['value'],
@@ -83,15 +86,18 @@ def create_minor_stage_transportation(current_user, minorStageId):
         return jsonify({'transportationFormValues': response, 'status': 400})
     
     try:
+         # Remove line breaks from the name
+        clean_place_of_departure = transportation['place_of_departure']['value'].replace('\n', ' ').replace('\r', ' ')
+        clean_place_of_arrival = transportation['place_of_arrival']['value'].replace('\n', ' ').replace('\r', ' ')
         # Create a new transportation
         new_transportation = Transportation(
             type=transportation['type']['value'],
             start_time=parseDateTime(transportation['start_time']['value']),
             arrival_time=parseDateTime(transportation['arrival_time']['value']),
-            place_of_departure=transportation['place_of_departure']['value'],
+            place_of_departure=clean_place_of_departure,
             departure_latitude=transportation.get('departure_latitude', {}).get('value', None),
             departure_longitude=transportation.get('departure_longitude', {}).get('value', None),
-            place_of_arrival=transportation['place_of_arrival']['value'],
+            place_of_arrival=clean_place_of_arrival,
             arrival_latitude=transportation.get('arrival_latitude', {}).get('value', None),
             arrival_longitude=transportation.get('arrival_longitude', {}).get('value', None),
             transportation_costs=transportation['transportation_costs']['value'],
@@ -141,14 +147,17 @@ def update_major_stage_transportation(current_user, majorStageId, transportation
         return jsonify({'transportationFormValues': response, 'status': 400})
     
     try:
+         # Remove line breaks from the name
+        clean_place_of_departure = new_transportation['place_of_departure']['value'].replace('\n', ' ').replace('\r', ' ')
+        clean_place_of_arrival = new_transportation['place_of_arrival']['value'].replace('\n', ' ').replace('\r', ' ')
         # Update old transportation
         old_transportation.type = new_transportation['type']['value']
         old_transportation.start_time = parseDateTime(new_transportation['start_time']['value'])
         old_transportation.arrival_time = parseDateTime(new_transportation['arrival_time']['value'])
-        old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
+        old_transportation.place_of_departure = clean_place_of_departure
         old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
         old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)
-        old_transportation.place_of_arrival = new_transportation['place_of_arrival']['value']
+        old_transportation.place_of_arrival = clean_place_of_arrival
         old_transportation.arrival_latitude = new_transportation.get('arrival_latitude', {}).get('value', None)
         old_transportation.arrival_longitude = new_transportation.get('arrival_longitude', {}).get('value', None)
         old_transportation.transportation_costs = new_transportation['transportation_costs']['value']
@@ -195,14 +204,17 @@ def update_minor_stage_transportation(current_user, minorStageId, transportation
         return jsonify({'transportationFormValues': response, 'status': 400})
     
     try:
+        # Remove line breaks from the name
+        clean_place_of_departure = new_transportation['place_of_departure']['value'].replace('\n', ' ').replace('\r', ' ')
+        clean_place_of_arrival = new_transportation['place_of_arrival']['value'].replace('\n', ' ').replace('\r', ' ')
         # Update old transportation
         old_transportation.type = new_transportation['type']['value']
         old_transportation.start_time = parseDateTime(new_transportation['start_time']['value'])
         old_transportation.arrival_time = parseDateTime(new_transportation['arrival_time']['value'])
-        old_transportation.place_of_departure = new_transportation['place_of_departure']['value']
+        old_transportation.place_of_departure = clean_place_of_departure
         old_transportation.departure_latitude = new_transportation.get('departure_latitude', {}).get('value', None)
         old_transportation.departure_longitude = new_transportation.get('departure_longitude', {}).get('value', None)
-        old_transportation.place_of_arrival = new_transportation['place_of_arrival']['value']
+        old_transportation.place_of_arrival = clean_place_of_arrival
         old_transportation.arrival_latitude = new_transportation.get('arrival_latitude', {}).get('value', None)
         old_transportation.arrival_longitude = new_transportation.get('arrival_longitude', {}).get('value', None)
         old_transportation.transportation_costs = new_transportation['transportation_costs']['value']

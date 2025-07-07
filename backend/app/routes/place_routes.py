@@ -78,10 +78,13 @@ def create_place(current_user):
 
     
     try:
+        # Remove line breaks from the name
+        clean_name = place['name']['value'].replace('\n', ' ').replace('\r', ' ')
+
         # Create a new place
         new_place = PlaceToVisit(
             custom_country_id=place['countryId']['value'],
-            name=place['name']['value'],
+            name=clean_name,
             description=place['description']['value'],
             visited=place['visited']['value'],
             favorite=place['favorite']['value'],
@@ -92,7 +95,6 @@ def create_place(current_user):
         )
         db.session.add(new_place)
         db.session.commit()
-        
         
         response_place = {'id': new_place.id,
                 'countryId': new_place.custom_country_id,
@@ -125,9 +127,12 @@ def update_journey(current_user, placeId):
         return jsonify({'placeFormValues': response, 'status': 400})
         
     try:
+         # Remove line breaks from the name
+        clean_name = place['name']['value'].replace('\n', ' ').replace('\r', ' ')
+        
         # Update the place
         db.session.execute(db.update(PlaceToVisit).where(PlaceToVisit.id == placeId).values(
-            name=place['name']['value'],
+            name=clean_name,
             description=place['description']['value'],
             visited=place['visited']['value'],
             favorite=place['favorite']['value'],

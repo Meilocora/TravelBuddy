@@ -72,6 +72,10 @@ interface StagesContextType {
   findTransportationsStage: (
     transportationId: number
   ) => undefined | MajorStage | MinorStage;
+  findAssignedPlaces: (
+    countryId: number,
+    minorStageId: number
+  ) => undefined | PlaceToVisit[];
 }
 
 export const StagesContext = createContext<StagesContextType>({
@@ -100,6 +104,7 @@ export const StagesContext = createContext<StagesContextType>({
   findCurrentMinorStage: () => undefined,
   findNextTransportation: () => undefined,
   findTransportationsStage: () => undefined,
+  findAssignedPlaces: (countryId, minorStageId) => undefined,
 });
 
 export default function StagesContextProvider({
@@ -515,6 +520,36 @@ export default function StagesContextProvider({
     return undefined;
   }
 
+  function findAssignedPlaces(
+    countryId: number,
+    minorStageId: number
+  ): undefined | PlaceToVisit[] {
+    const majorStage = findMinorStagesMajorStage(minorStageId);
+    const journey = findMajorStagesJourney(majorStage!.id);
+
+    let assignedPlaces: PlaceToVisit[] = [];
+    if (!journey!.majorStages) {
+      return undefined;
+    }
+    for (const majorStage of journey!.majorStages) {
+      if (!majorStage.minorStages) {
+        continue;
+      }
+      if (majorStage.country.id === countryId) {
+        for (const minorStage of majorStage.minorStages) {
+          if (!minorStage.placesToVisit || minorStage.id === minorStageId) {
+            continue;
+          }
+          for (const place of minorStage.placesToVisit) {
+            assignedPlaces.push(place);
+          }
+        }
+      }
+    }
+
+    return assignedPlaces;
+  }
+
   const value = {
     journeys,
     fetchStagesData,
@@ -536,6 +571,7 @@ export default function StagesContextProvider({
     findCurrentMinorStage,
     findNextTransportation,
     findTransportationsStage,
+    findAssignedPlaces,
   };
 
   return (

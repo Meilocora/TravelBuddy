@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: '100%',
-    paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 20,
     backgroundColor: GlobalStyles.colors.gray400,

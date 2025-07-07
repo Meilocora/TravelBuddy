@@ -198,7 +198,7 @@ const PlaceForm: React.FC<PlaceFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Name'
-              maxLength={15}
+              maxLength={20}
               invalid={!inputs.name.isValid}
               errors={inputs.name.errors}
               mandatory

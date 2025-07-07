@@ -186,15 +186,7 @@ const PlacesSelection = ({
   } else {
     content = (
       <>
-        <View style={styles.mapButtonContainer}>
-          <IconButton
-            icon={Icons.map}
-            onPress={handlePressMapButton}
-            color={GlobalStyles.colors.gray500}
-            containerStyle={styles.mapButton}
-          />
-          <Text style={styles.mapText}>Pick on map!</Text>
-        </View>
+        <View style={styles.mapButtonContainer}></View>
         <InfoText content='No items found...' style={styles.info} />
         <View style={{ flexDirection: 'row' }}>
           <Button
@@ -236,6 +228,8 @@ const PlacesSelection = ({
     </View>
   );
 };
+
+// TODO: Change styling for longer lists
 
 const styles = StyleSheet.create({
   outerContainer: {

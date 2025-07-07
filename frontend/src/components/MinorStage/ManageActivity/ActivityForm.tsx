@@ -272,7 +272,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
           <View style={styles.formRow}>
             <Input
               label='Place'
-              maxLength={15}
+              maxLength={20}
               invalid={!inputs.place.isValid}
               errors={inputs.place.errors}
               textInputConfig={{

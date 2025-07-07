@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, {
   ReactElement,
   useContext,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
@@ -12,16 +13,21 @@ import MapView, {
   LatLng,
   MapPressEvent,
   Marker,
+  PoiClickEvent,
   Region,
 } from 'react-native-maps';
 import GooglePlacesTextInput from 'react-native-google-places-textinput';
 
-import { ColorScheme, PlaceToVisit, StackParamList } from '../models';
+import { ColorScheme, Location, PlaceToVisit, StackParamList } from '../models';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
 import { GlobalStyles } from '../constants/styles';
 import Button from '../components/UI/Button';
-import { formatPlaceToLocation, getPlaceDetails } from '../utils/location';
+import {
+  formatPlaceToLocation,
+  getPlaceDetails,
+  getRegionForLocations,
+} from '../utils/location';
 import { CustomCountryContext } from '../store/custom-country-context';
 import MapsMarker from '../components/Maps/MapsMarker';
 import { generateRandomString } from '../utils';
@@ -47,12 +53,6 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
 
   const minorStageId = route.params.minorStageId;
   const customCountryId = route.params.customCountryId || undefined;
-  let placesToVisit: undefined | PlaceToVisit[];
-  if (customCountryId) {
-    // TODO: Dont show places, that are part of any other minorStage already (or make them transparent!)
-    // ... maybe via new function, that returns all places for all minorStages with this country
-    placesToVisit = customCountryCtx.findCountriesPlaces(customCountryId);
-  }
 
   const [hasLocation, setHasLocation] = useState(route.params.hasLocation);
   const [region, setRegion] = useState<Region>({
@@ -65,6 +65,43 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     route.params.initialTitle
   );
   const [showModal, setShowModal] = useState(false);
+
+  let placesToVisit: undefined | PlaceToVisit[];
+  if (customCountryId) {
+    placesToVisit = customCountryCtx.findCountriesPlaces(customCountryId);
+
+    if (minorStageId) {
+      const assignedPlaces = stagesCtx.findAssignedPlaces(
+        customCountryId,
+        minorStageId
+      );
+
+      // Filter out places that are already assigned to any minorStage
+      if (placesToVisit && assignedPlaces) {
+        placesToVisit = placesToVisit.filter(
+          (place) =>
+            !assignedPlaces.some((assigned) => assigned.name === place.name)
+        );
+      }
+    }
+  }
+
+  // TODO: Why this broke everything?!
+  useEffect(() => {
+    async function calculateAverageRegion() {
+      let locationsToVisit: Location[] = [];
+      if (placesToVisit) {
+        for (const place of placesToVisit) {
+          locationsToVisit.push(formatPlaceToLocation(place));
+        }
+      }
+      if (locationsToVisit) {
+        setRegion(await getRegionForLocations(locationsToVisit));
+      }
+    }
+
+    calculateAverageRegion();
+  }, [placesToVisit]);
 
   function selectLocationHandler(event: MapPressEvent) {
     const lat = event.nativeEvent.coordinate.latitude;
@@ -79,6 +116,19 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     setShowModal(true);
   }
 
+  function handlePoiClick(event: PoiClickEvent) {
+    const { coordinate, name } = event.nativeEvent;
+    setRegion({
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.04,
+    });
+    setTitle(name.substring(0, 20));
+    setHasLocation(true);
+    setShowModal(true);
+  }
+
   async function handleSearchResult(place: any) {
     if (place) {
       const latLng: LatLng = await getPlaceDetails(place);
@@ -88,7 +138,7 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
         latitudeDelta: 0.1,
         longitudeDelta: 0.04,
       });
-      setTitle(place.structuredFormat.mainText.text);
+      setTitle(place.structuredFormat.mainText.text.substring(0, 20));
       setHasLocation(true);
       setShowModal(true);
     }
@@ -156,14 +206,14 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
           }}
         />
       )}
-      {/* TODO: Let user also press maps icon to add the place */}
       <MapView
         initialRegion={region!}
         region={region}
         onPress={route.params.onPressMarker ? undefined : selectLocationHandler}
+        onPoiClick={handlePoiClick}
         style={styles.map}
       >
-        {initialLocation && hasLocation && (
+        {initialLocation && hasLocation && !minorStageId && (
           <Marker
             title={title}
             coordinate={{

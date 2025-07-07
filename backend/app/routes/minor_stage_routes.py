@@ -43,15 +43,15 @@ def create_minor_stage(current_user, majorStageId):
             scheduled_end_time=parseDate(minor_stage['scheduled_end_time']['value']),
             major_stage_id=majorStageId
         )
-        print(new_minor_stage.title,new_minor_stage.scheduled_start_time, new_minor_stage.scheduled_end_time, new_minor_stage.major_stage_id)
         db.session.add(new_minor_stage)
         db.session.commit()
         
-        print('There')
         
+         # Remove line breaks from the name
+        clean_place = minor_stage['accommodation_place']['value'].replace('\n', ' ').replace('\r', ' ')
          # Create a new accommodation for the minor stage
         new_accommodation = Accommodation(
-            place=minor_stage['accommodation_place']['value'],
+            place=clean_place,
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
             latitude=minor_stage.get('accommodation_latitude', {}).get('value', None),
@@ -141,9 +141,11 @@ def update_minor_stage(current_user, majorStageId, minorStageId):
         ))
         db.session.commit()
                 
+        # Remove line breaks from the name
+        clean_place = minor_stage['accommodation_place']['value'].replace('\n', ' ').replace('\r', ' ')
          # Update the accommodation for the minor stage
         db.session.execute(db.update(Accommodation).where(Accommodation.minor_stage_id == minorStageId).values(
-            place=minor_stage['accommodation_place']['value'],
+            place=clean_place,
             costs=minor_stage['accommodation_costs']['value'],
             booked=minor_stage['accommodation_booked']['value'],
             latitude=minor_stage.get('accommodation_latitude', {}).get('value', None),
