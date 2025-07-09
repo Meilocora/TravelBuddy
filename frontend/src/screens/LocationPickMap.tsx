@@ -18,7 +18,7 @@ import MapView, {
 } from 'react-native-maps';
 import GooglePlacesTextInput from 'react-native-google-places-textinput';
 
-import { ColorScheme, Location, PlaceToVisit, StackParamList } from '../models';
+import { ColorScheme, PlaceToVisit, StackParamList } from '../models';
 import { GOOGLE_API_KEY } from '@env';
 import Modal from '../components/UI/Modal';
 import { GlobalStyles } from '../constants/styles';
@@ -86,17 +86,19 @@ const LocationPickMap: React.FC<LocationPickMapProps> = ({
     }
   }
 
-  // TODO: Why this broke everything?!
   useEffect(() => {
     async function calculateAverageRegion() {
-      let locationsToVisit: Location[] = [];
-      if (placesToVisit) {
-        for (const place of placesToVisit) {
-          locationsToVisit.push(formatPlaceToLocation(place));
-        }
-      }
-      if (locationsToVisit) {
-        setRegion(await getRegionForLocations(locationsToVisit));
+      if (!placesToVisit || placesToVisit.length === 0) return;
+      const locationsToVisit = placesToVisit.map(formatPlaceToLocation);
+      const newRegion = await getRegionForLocations(locationsToVisit);
+
+      // Only update if region actually changes
+      if (
+        !region ||
+        region.latitude !== newRegion.latitude ||
+        region.longitude !== newRegion.longitude
+      ) {
+        setRegion(newRegion);
       }
     }
 

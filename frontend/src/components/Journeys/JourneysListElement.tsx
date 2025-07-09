@@ -3,7 +3,12 @@ import { ReactElement, useContext } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { BottomTabsParamList, Icons, Journey } from '../../models';
+import {
+  BottomTabsParamList,
+  CustomCountry,
+  Icons,
+  Journey,
+} from '../../models';
 import { GlobalStyles } from '../../constants/styles';
 import {
   formatAmount,
@@ -43,15 +48,24 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
   );
   const majorStagesQty = journey.majorStages?.length || 0;
   let currentCountry: string;
+  let countryList: CustomCountry[] = [];
   let minorStagesQty = 0;
   if (journey.majorStages) {
     for (const majorStage of journey.majorStages) {
       minorStagesQty += majorStage.minorStages?.length || 0;
+      countryList.push(majorStage.country);
       if (majorStage.currentMajorStage) {
         currentCountry = majorStage.country.name;
       }
     }
   }
+
+  for (const country of journey.countries) {
+    if (!countryList.some((c) => c.name === country.name)) {
+      countryList.push(country);
+    }
+  }
+
   const isOver = validateIsOver(journey.scheduled_end_time);
 
   const elementDetailInfo: ElementDetailInfo[] = [
@@ -127,8 +141,7 @@ const JourneyListElement: React.FC<JourneyListElementProps> = ({
               }
             />
             <View style={styles.countryRow}>
-              {/* TODO: Sort Countries by stages first */}
-              {journey.countries.map((country, index) => (
+              {countryList.map((country, index) => (
                 <CountryElement
                   country={country}
                   currentCountry={country.name === currentCountry}

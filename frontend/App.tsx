@@ -53,13 +53,11 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Extra Functionality for Map
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile as part of userContext
-
 // TODO: Change all LayoutAnimations into something that actually works
-// TODO: Add Chatbot, thats translates into local language
 // TODO: Fix custom progress bar
-// TODO: Maybe make it possible to have several accommodations for one minorStage?
+
+// TODO: Add Chatbot, thats translates into local language
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Auth = createNativeStackNavigator<AuthStackParamList>();

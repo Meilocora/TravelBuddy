@@ -30,6 +30,7 @@ import { StagesContext } from '../../store/stages-context';
 import MapLocationElement from '../../components/Maps/MapLocationElement/MapLocationElement';
 import RoutePlanner from '../../components/Maps/RoutePlanner';
 import { UserContext } from '../../store/user-context';
+import { generateRandomString } from '../../utils';
 
 interface MapProps {
   navigation: NativeStackNavigationProp<JourneyBottomTabsParamsList, 'Map'>;
@@ -150,9 +151,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
       const majorStage = stagesCtx.findMajorStage(mapScope.id);
       filteredLocations = getMapLocationsFromMajorStage(majorStage!);
     } else {
-      const filteredLocations = locations.filter(
-        (location) => location.belonging === mapScope.name
-      );
+      filteredLocations = locations;
     }
     if (!filteredLocations) {
       return;
@@ -164,8 +163,6 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
         location.locationType !== 'transportation_arrival'
     );
 
-    // TODO: Problem with same keay for Markers... maybe problem with updating state somewhere
-    // TODO: Maybe delete colors first, so symbols can be black for minorStages
     const coloredLocations = addColor(filteredLocations, mapScope.stageType);
     setShownLocations(coloredLocations);
 
@@ -285,7 +282,7 @@ const Map: React.FC<MapProps> = ({ navigation, route }): ReactElement => {
           const isActive = pressedLocation && location === pressedLocation;
           return (
             <MapsMarker
-              key={location.data.latitude + ',' + location.data.longitude}
+              key={generateRandomString()}
               location={location}
               active={isActive}
             />

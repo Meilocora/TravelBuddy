@@ -14,8 +14,6 @@ interface UserProfileChartProps {
   journeys: Journey[];
 }
 
-// TODO: Check if this really works with several journeys
-
 const UserProfileChart: React.FC<UserProfileChartProps> = ({
   journeys,
 }): ReactElement => {

@@ -108,7 +108,7 @@ const PlacesSelection = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       onCloseModal();
-    }, 3000);
+    }, 10000);
 
     return () => clearTimeout(timer); // Clear the timer if component unmounts or fetchedData changes
   }, [fetchedData, onCloseModal]);
@@ -155,7 +155,7 @@ const PlacesSelection = ({
 
   if (fetchedData.length > 0) {
     content = (
-      <ScrollView style={styles.list}>
+      <>
         <View style={styles.mapButtonContainer}>
           <IconButton
             icon={Icons.map}
@@ -165,14 +165,16 @@ const PlacesSelection = ({
           />
           <Text style={styles.mapText}>Pick on map!</Text>
         </View>
-        {fetchedData.map((item) => (
-          <ListItem
-            key={generateRandomString()}
-            onPress={handlePressListElement.bind(item)}
-          >
-            {item}
-          </ListItem>
-        ))}
+        <ScrollView style={styles.list}>
+          {fetchedData.map((item) => (
+            <ListItem
+              key={generateRandomString()}
+              onPress={handlePressListElement.bind(item)}
+            >
+              {item}
+            </ListItem>
+          ))}
+        </ScrollView>
         <Button
           colorScheme={ColorScheme.neutral}
           mode={ButtonMode.flat}
@@ -181,7 +183,7 @@ const PlacesSelection = ({
         >
           Dismiss
         </Button>
-      </ScrollView>
+      </>
     );
   } else {
     content = (
@@ -229,14 +231,12 @@ const PlacesSelection = ({
   );
 };
 
-// TODO: Change styling for longer lists
-
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
     width: '85%',
     height: '100%',
-    top: '30%',
+    top: 150,
     left: '7.5%',
     position: 'absolute',
   },
