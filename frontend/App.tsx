@@ -55,8 +55,8 @@ import UserContextProvider from './src/store/user-context';
 
 // TODO: ColorSchemes => colorful, dark, light inside UserProfile as part of userContext
 // TODO: Change all LayoutAnimations into something that actually works
-// TODO: Fix custom progress bar
 
+// TODO: Fix custom progress bar
 // TODO: Add Chatbot, thats translates into local language
 
 const Stack = createNativeStackNavigator<StackParamList>();

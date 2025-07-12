@@ -19,8 +19,6 @@ interface AmountElementProps {
   ) => void;
 }
 
-// TODO: default value must also initially be input for amount, that is sent to backend!
-
 const AmountElement: React.FC<AmountElementProps> = ({
   unconvertedInput,
   maxAmount = 0,
