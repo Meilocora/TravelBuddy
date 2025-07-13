@@ -7,6 +7,7 @@ import pytz
 from db import db
 from app.models import Costs, Spendings, Transportation, MajorStage, MinorStage, Accommodation, Activity
 
+
 def parseDate(dateString: str): 
     return datetime.strptime(dateString, '%d.%m.%Y')
 
