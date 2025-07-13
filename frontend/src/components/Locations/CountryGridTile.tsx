@@ -7,12 +7,17 @@ import GridInfoLine from './GridInfoLine';
 import { formatQuantity } from '../../utils';
 import { getLanguageNames } from '../../utils/languages';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 
 interface CountryGridTileProps {
   country: CustomCountry;
+  index: number;
 }
 
-const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
+const CountryGridTile: React.FC<CountryGridTileProps> = ({
+  country,
+  index,
+}) => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const languages = getLanguageNames(country.languages, true);
@@ -25,7 +30,9 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
   }
 
   return (
-    <View
+    <Animated.View
+      entering={FadeInDown.delay(index * 200).duration(700)}
+      exiting={FadeOutDown}
       style={[styles.container, country.visited ? styles.visited : undefined]}
     >
       <Pressable
@@ -63,7 +70,7 @@ const CountryGridTile: React.FC<CountryGridTileProps> = ({ country }) => {
           />
         </View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 };
 

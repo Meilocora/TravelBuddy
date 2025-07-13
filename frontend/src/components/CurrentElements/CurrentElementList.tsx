@@ -155,14 +155,18 @@ const CurrentElementList: React.FC<
               onPress={handleGoToMinorStage}
               colorScheme={ColorScheme.complementary}
             />
-            <CurrentElement
-              title={`"${currentMinorStage!.accommodation.place}"`}
-              subtitle='Current Accommodation'
-              description={formatAmount(currentMinorStage.accommodation.costs)}
-              indicator={Indicators.currentAccommodation}
-              onPress={handleShowAccommodation}
-              colorScheme={ColorScheme.complementary}
-            />
+            {currentMinorStage.accommodation.place !== '' && (
+              <CurrentElement
+                title={`"${currentMinorStage!.accommodation.place}"`}
+                subtitle='Current Accommodation'
+                description={formatAmount(
+                  currentMinorStage.accommodation.costs
+                )}
+                indicator={Indicators.currentAccommodation}
+                onPress={handleShowAccommodation}
+                colorScheme={ColorScheme.complementary}
+              />
+            )}
           </>
         )}
         {nextTransportation && (

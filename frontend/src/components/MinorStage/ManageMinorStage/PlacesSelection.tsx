@@ -1,12 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import {
-  LayoutAnimation,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, Text } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Region } from 'react-native-maps';
@@ -96,7 +89,6 @@ const PlacesSelection = ({
         const namesNotChosen = names.filter(
           (name) => !chosenPlaces.includes(name)
         );
-        LayoutAnimation.linear();
         setFetchedData(namesNotChosen);
       }
     }

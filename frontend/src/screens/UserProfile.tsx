@@ -26,8 +26,6 @@ interface UserProfileProps {
   navigation: NativeStackNavigationProp<StackParamList, 'UserProfile'>;
 }
 
-// TODO: change ColorScheme,
-
 const UserProfile: React.FC<UserProfileProps> = ({
   route,
   navigation,

@@ -53,8 +53,7 @@ import ShowMap from './src/screens/ShowMap';
 import StagesContextProvider from './src/store/stages-context';
 import UserContextProvider from './src/store/user-context';
 
-// TODO: Change all LayoutAnimations into something that actually works
-
+// TODO: Add Animations
 // TODO: Fix custom progress bar
 // TODO: Add Chatbot, thats translates into local language
 

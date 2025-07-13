@@ -1,11 +1,5 @@
 import { ReactElement, useContext, useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Text,
-  LayoutAnimation,
-} from 'react-native';
+import { Pressable, StyleSheet, View, Text } from 'react-native';
 
 import ElementTitle from '../UI/list/ElementTitle';
 import { GlobalStyles } from '../../constants/styles';
@@ -45,10 +39,6 @@ const TransportationBox: React.FC<TransportationBoxProps> = ({
   }
 
   const handleOpenInfoBox = () => {
-    LayoutAnimation.configureNext({
-      duration: 500,
-      update: { type: 'spring', springDamping: 0.6 },
-    });
     setOpenInfoBox((prevState) => !prevState);
   };
 

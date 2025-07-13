@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react';
-import { View, StyleSheet, LayoutAnimation } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { MinorStage } from '../../../models';
 import ContentHeader from './ContentHeader';
@@ -24,10 +24,6 @@ const ContentBox: React.FC<ContenBoxProps> = ({
   const isOver = validateIsOver(minorStage.scheduled_end_time);
 
   const handleOnPressHeader = (header: string) => {
-    LayoutAnimation.configureNext({
-      duration: 500,
-      update: { type: 'spring', springDamping: 0.7 },
-    });
     stagesCtx.setActiveHeaderHandler(minorStage.id, header.toLowerCase());
   };
 

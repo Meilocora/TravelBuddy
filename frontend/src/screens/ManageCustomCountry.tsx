@@ -4,7 +4,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { View, StyleSheet, LayoutAnimation } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import {
   BottomTabsParamList,
@@ -64,7 +64,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
   }, [navigation, isEditing]);
 
   function handleChangeEdit() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsEditing((prevValue) => !prevValue);
   }
 
@@ -94,7 +93,6 @@ const ManageCustomCountry: React.FC<ManageCustomCountryProps> = ({
   }
 
   function handleTogglePlaces() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsShowingPlaces((prevState) => !prevState);
   }
 

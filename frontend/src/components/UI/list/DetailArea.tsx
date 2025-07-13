@@ -28,7 +28,7 @@ const DetailArea: React.FC<DetailProps> = ({
 }): ReactElement => {
   return (
     <View style={[styles.detailsContainer, areaStyle]}>
-      {elementDetailInfo.map((info) => (
+      {elementDetailInfo.map((info, index) => (
         <ElementDetail
           key={generateRandomString()}
           title={info.title}

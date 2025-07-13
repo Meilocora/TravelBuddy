@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   Keyboard,
-  LayoutAnimation,
   StyleSheet,
   View,
 } from 'react-native';
@@ -64,7 +63,6 @@ const SearchElement = <T, U>({
         const { items, error } = await onFetchRequest(debouncedSearchTerm);
 
         if (!error && items) {
-          LayoutAnimation.linear();
           setFetchedData(items);
         } else if (error) {
           setError(error);
@@ -149,6 +147,7 @@ const SearchElement = <T, U>({
             <Input
               errors={[]}
               invalid={false}
+              maxLength={100}
               label={searchTermLabel}
               textInputConfig={{
                 value: searchTerm,

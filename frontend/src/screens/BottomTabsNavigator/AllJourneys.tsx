@@ -22,6 +22,12 @@ import {
 import { UserContext } from '../../store/user-context';
 import { GlobalStyles } from '../../constants/styles';
 import { LatLng } from 'react-native-maps';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface AllJourneysProps {
   navigation: NativeStackNavigationProp<BottomTabsParamList, 'AllJourneys'>;
@@ -109,10 +115,29 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
     setRefresh((prev) => prev + 1);
   }
 
+  // Animation for ActivityIndicator \\
+  const scale = useSharedValue(1);
+  const reanimatedSzyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  }, []);
+  useEffect(() => {
+    scale.value = withRepeat(withTiming(2, { duration: 2000 }), -1, true);
+  }, []);
+
+  //  \\
+
   let content;
   if (isFetching) {
     content = (
-      <ActivityIndicator size='large' color={GlobalStyles.colors.primary100} />
+      <Animated.View style={[styles.indicator, reanimatedSzyle]}>
+        <ActivityIndicator
+          size='large'
+          color={GlobalStyles.colors.primary100}
+          style={styles.indicator}
+        />
+      </Animated.View>
     );
   } else if (stagesCtx.journeys.length === 0 && !error) {
     content = <InfoText content='No Journeys found!' />;
@@ -142,6 +167,9 @@ const AllJourneys: React.FC<AllJourneysProps> = ({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  indicator: {
+    marginVertical: 'auto',
   },
 });
 

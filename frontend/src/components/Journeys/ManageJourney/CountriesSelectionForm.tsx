@@ -1,10 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, Text, View } from 'react-native';
+
 import { GlobalStyles } from '../../../constants/styles';
 import IconButton from '../../UI/IconButton';
 import { Icons } from '../../../models';
 import TagCloud from '../../UI/TagCloud';
-import Selection from './CountriesSelection';
 import { fetchCustomCountries } from '../../../utils/http/custom_country';
 import { generateRandomString } from '../../../utils';
 import CountriesSelection from './CountriesSelection';
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 8,
+    backgroundColor: 'black',
   },
   errorText: {
     fontSize: 16,

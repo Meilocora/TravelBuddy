@@ -1,12 +1,8 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import {
-  LayoutAnimation,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import OutsidePressHandler from 'react-native-outside-press';
 
 import { generateRandomString } from '../../../utils';
 import InfoText from '../../UI/InfoText';
@@ -15,7 +11,6 @@ import ListItem from '../../UI/search/ListItem';
 import { FetchCustomCountryResponseProps } from '../../../utils/http/custom_country';
 import Button from '../../UI/Button';
 import { BottomTabsParamList, ButtonMode, ColorScheme } from '../../../models';
-import OutsidePressHandler from 'react-native-outside-press';
 
 interface CountriesSelectionProps {
   onFetchRequest: (
@@ -44,7 +39,6 @@ const CountriesSelection = ({
         const namesNotChosen = names.filter(
           (name) => !chosenCountries.includes(name)
         );
-        LayoutAnimation.linear();
         setFetchedData(namesNotChosen);
       }
     }
@@ -73,8 +67,8 @@ const CountriesSelection = ({
 
   if (fetchedData.length > 0) {
     content = (
-      <ScrollView style={styles.list}>
-        <OutsidePressHandler onOutsidePress={onCloseModal}>
+      <OutsidePressHandler onOutsidePress={onCloseModal}>
+        <ScrollView style={styles.list}>
           {fetchedData.map((item) => (
             <ListItem
               key={generateRandomString()}
@@ -83,16 +77,16 @@ const CountriesSelection = ({
               {item}
             </ListItem>
           ))}
-          <Button
-            colorScheme={ColorScheme.neutral}
-            mode={ButtonMode.flat}
-            onPress={onCloseModal}
-            style={styles.button}
-          >
-            Dismiss
-          </Button>
-        </OutsidePressHandler>
-      </ScrollView>
+        </ScrollView>
+        <Button
+          colorScheme={ColorScheme.neutral}
+          mode={ButtonMode.flat}
+          onPress={onCloseModal}
+          style={styles.button}
+        >
+          Dismiss
+        </Button>
+      </OutsidePressHandler>
     );
   } else {
     content = (
@@ -101,7 +95,6 @@ const CountriesSelection = ({
         <Button
           colorScheme={ColorScheme.accent}
           onPress={handlePressAdd}
-          // mode={ButtonMode.flat}
           style={styles.button}
         >
           Add Country!
@@ -124,7 +117,7 @@ const CountriesSelection = ({
 const styles = StyleSheet.create({
   outerContainer: {
     position: 'absolute',
-    bottom: 140,
+    bottom: '50%',
     paddingVertical: 5,
     paddingHorizontal: 10,
     width: '90%',
@@ -138,7 +131,6 @@ const styles = StyleSheet.create({
   list: {
     marginHorizontal: 15,
     paddingHorizontal: 10,
-    height: 'auto',
     maxHeight: 300,
     maxWidth: 290,
   },
